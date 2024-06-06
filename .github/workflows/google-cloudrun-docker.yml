@@ -71,7 +71,7 @@ jobs:
         with:
           project_id: ${{ env.PROJECT_ID }}
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
-          access_token: 'access_token'
+          token_format: 'access_token'
 
 
       # BEGIN - Docker auth and build (NOTE: If you already have a container image, these Docker steps can be omitted)
