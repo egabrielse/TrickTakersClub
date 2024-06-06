@@ -8,7 +8,6 @@ env:
   PROJECT_ID: tricktakersclub 
   GAR_LOCATION: us-central1 
   FRONTEND_SERVICE: frontend-service
-  FRONTEND_PORT: 80
   REGION: us-central1
 
 jobs:
