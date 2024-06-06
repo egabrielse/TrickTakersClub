@@ -2,6 +2,7 @@ name: Build and Deploy to Cloud Run
 
 on:
   push:
+    # Only run workflow when a new tag is created
     tags: ["*"]
 
 env:
@@ -27,6 +28,7 @@ jobs:
         with:
           project_id: ${{ env.PROJECT_ID }}
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+          # Required to produced `steps.auth.outputs.access_token` for docker-auth step
           token_format: 'access_token'
 
 

@@ -3,7 +3,7 @@ services:
   frontend:
     image: client
     ports:
-      - "${FRONTEND_PORT}:80"
+      - "${FRONTEND_PORT}:8080"
     build:
       dockerfile: Dockerfile
       context: ./frontend
