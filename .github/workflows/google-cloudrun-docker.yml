@@ -83,6 +83,15 @@ jobs:
     needs: [build-frontend, build-backend]
     runs-on: ubuntu-latest
     steps:
+      - name: Google Auth
+        id: auth
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+          # Required to produced `steps.auth.outputs.access_token` for docker-auth step
+          token_format: 'access_token'
+
       - name: Deploy Frontend
         id: deploy-frontend
         uses: 'google-github-actions/deploy-cloudrun@v2'
