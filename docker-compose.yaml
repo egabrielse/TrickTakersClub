@@ -1,5 +1,14 @@
 version: '3.7'
 services:
+  # Golang backend
+  backend:
+    build:
+      dockerfile: Dockerfile
+      context: ./backend
+    image: backend
+    ports:
+      - "8080:8080"
+
   # React app bootstrapped with Vite and served with Nginx
   frontend:
     build:
@@ -9,13 +18,4 @@ services:
       - backend
     image: frontend
     ports:
-      - "${FRONTEND_PORT}:5173"
-
-  # Golang backend
-  backend:
-    build:
-      dockerfile: Dockerfile
-      context: ./backend
-    image: backend
-    ports:
-      - "${BACKEND_PORT}:8080"
+      - "5173:5173"
