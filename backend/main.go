@@ -2,9 +2,9 @@ package main
 
 import (
 	"main/api"
+	"main/utils"
 	"math/rand"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -18,6 +18,6 @@ func main() {
 	router := api.InitRouter()
 
 	// Start listening for requests
-	port := ":" + os.Getenv("BACKEND_PORT")
+	port := ":" + utils.GetEnvVariable("PORT")
 	logrus.Fatal(http.ListenAndServe(port, *router))
 }

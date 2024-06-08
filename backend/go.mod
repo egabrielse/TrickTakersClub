@@ -5,6 +5,7 @@ go 1.19
 require github.com/julienschmidt/httprouter v1.3.0
 
 require (
+	github.com/joho/godotenv v1.5.1
 	github.com/rs/cors v1.10.1
 	github.com/sirupsen/logrus v1.4.2
 )
