@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"main/api"
+	"main/infrastructure/cache"
 	"math/rand"
 	"net/http"
 	"os"
@@ -13,7 +14,7 @@ import (
 )
 
 func main() {
-	// 1. Load environment variables from .env file if it exists
+	// Load environment variables from .env file if it exists
 	if _, err := os.Stat(".env"); errors.Is(err, os.ErrNotExist) {
 		logrus.Info("No .env file found")
 	} else if err := godotenv.Load(".env"); err != nil {
@@ -21,13 +22,16 @@ func main() {
 		return
 	}
 
-	// 2. Set seed for random number generator
+	// Set seed for random number generator
 	rand.Seed(time.Now().UnixNano())
 
-	// 3. Initialize router
+	// Initialize Redis client
+	cache.InitRedisClient()
+
+	// Initialize router
 	router := api.InitRouter()
 
-	// 4. Start listening for requests
+	// Start listening for requests
 	port := ":" + os.Getenv("PORT")
 	logrus.Fatal(http.ListenAndServe(port, *router))
 }

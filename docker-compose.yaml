@@ -5,6 +5,8 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./backend
+    depends_on:
+      - play-cache
     image: backend
     ports:
       - "8080:8080"
@@ -19,3 +21,22 @@ services:
     image: frontend
     ports:
       - "5173:5173"
+
+  # Redis Database
+  play-cache:
+    command: [
+      "redis-server",
+      "--loglevel warning",
+      "--user default on >IMZZZwi63WHSFV5MJ^wiDt@z781r%SAX ~* &* +@all",
+    ]
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    restart: always
+    volumes:
+      - play-cache:/data
+
+
+volumes:
+  play-cache:
+    driver: local

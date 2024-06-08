@@ -3,3 +3,6 @@ up:
 
 down:
 	docker compose down
+
+play-cache:
+	docker compose up --detach --build play-cache
