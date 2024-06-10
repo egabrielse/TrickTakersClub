@@ -3,7 +3,7 @@ package main
 import (
 	"errors"
 	"main/api"
-	"main/infrastructure/cache"
+	"main/infrastructure/persistance"
 	"math/rand"
 	"net/http"
 	"os"
@@ -26,7 +26,7 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	// Initialize Redis client
-	cache.InitRedisClient()
+	persistance.InitRedisCache()
 
 	// Initialize router
 	router := api.InitRouter()
