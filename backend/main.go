@@ -4,6 +4,7 @@ import (
 	"errors"
 	"main/api"
 	"main/infrastructure/persistance"
+	"main/utils/logger"
 	"math/rand"
 	"net/http"
 	"os"
@@ -21,6 +22,9 @@ func main() {
 		logrus.Error("Error loading .env file")
 		return
 	}
+
+	// Configure logger
+	logger.ConfigureLogrus()
 
 	// Set seed for random number generator
 	rand.Seed(time.Now().UnixNano())
