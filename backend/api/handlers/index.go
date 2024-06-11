@@ -7,12 +7,19 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-// HealthCheck is a handler function that returns a 200 OK response.
-// Its purpose is to check if the server is running.
+type HealthCheckResponseBody struct {
+	Redis bool `json:"redis"`
+}
+
+// HealthCheck is a handler function that returns the health status of the application
 func HealthCheck(r *http.Request, p httprouter.Params) (code int, body any) {
-	rdb := persistance.GetRedisClient()
-	if _, err := rdb.Ping(r.Context()).Result(); err != nil {
-		return http.StatusInternalServerError, nil
+	statuses := HealthCheckResponseBody{
+		Redis: false,
 	}
-	return http.StatusOK, nil
+	// Check if Redis is connected
+	rdb := persistance.GetRedisClient()
+	if _, err := rdb.Ping(r.Context()).Result(); err == nil {
+		statuses.Redis = true
+	}
+	return http.StatusOK, statuses
 }
