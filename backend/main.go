@@ -4,7 +4,7 @@ import (
 	"errors"
 	"main/api"
 	"main/infrastructure/persistance"
-	"main/utils/logger"
+	"main/utils"
 	"math/rand"
 	"net/http"
 	"os"
@@ -18,13 +18,12 @@ func main() {
 	// Load environment variables from .env file if it exists
 	if _, err := os.Stat(".env"); errors.Is(err, os.ErrNotExist) {
 		logrus.Info("No .env file found")
-	} else if err := godotenv.Load(".env"); err != nil {
-		logrus.Error("Error loading .env file")
+	} else if err := godotenv.Load(".env"); utils.LogOnError(err) {
 		return
 	}
 
 	// Configure logger
-	logger.ConfigureLogrus()
+	utils.ConfigureLogrus()
 
 	// Set seed for random number generator
 	rand.Seed(time.Now().UnixNano())
