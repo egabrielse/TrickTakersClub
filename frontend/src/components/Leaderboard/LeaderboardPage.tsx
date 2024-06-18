@@ -1,9 +1,9 @@
-import Logo from "../common/Logo";
+import AppLogo from "../common/AppLogo";
 
 export default function LeaderboardPage() {
   return (
     <>
-      <Logo size="large" />
+      <AppLogo size="large" />
       <h2>Leaderboard Page</h2>
     </>
   )

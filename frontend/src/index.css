@@ -1,5 +1,5 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: monospace , system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -54,10 +54,34 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+@keyframes ellipsis {
+  25% {
+    content: "   ";
+  }
+  50% {
+    content: ".  ";
+  }
+  75% {
+    content: ".. ";
+  }
+  100% {
+    content: "...";
+  }
+}
+
+/* Animated ellipsis for loading text */
+span.loading-text:after {
+  content: "...";
+  overflow: hidden;
+  white-space: nowrap;
+  animation: ellipsis 1.5s infinite;
+  animation-fill-mode: forwards;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
+    background-color: #f0f0f0;
   }
   a:hover {
     color: #747bff;

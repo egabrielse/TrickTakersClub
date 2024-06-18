@@ -1,10 +1,11 @@
-import Logo from '../common/Logo'
+import AppLogo from '../common/AppLogo'
+import AppName from '../common/AppName'
 
 export default function HomePage() {
   return (
     <>
-      <Logo size="large" />
-      <h2>Trick Takers Club</h2>
+      <AppLogo size="large" />
+      <AppName size="xxlarge" />
     </>
   )
 }

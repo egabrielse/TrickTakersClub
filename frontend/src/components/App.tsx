@@ -1,9 +1,9 @@
+import './App.scss'
 import { PATHS } from '../constants/path';
-import './App.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import HomePage from './Home/HomePage';
-import LoginPage from './Login/LoginPage';
-import RegisterPage from './Register/RegisterPage';
+import LoginPage from './Authentication/LoginPage';
+import RegisterPage from './Authentication/RegisterPage';
 import TablePage from './Table/TablePage';
 import LeaderboardPage from './Leaderboard/LeaderboardPage';
 import RulesPage from './Rules/RulesPage';
