@@ -1,11 +1,12 @@
+import './HomePage.scss'
 import AppLogo from '../common/AppLogo'
 import AppName from '../common/AppName'
 
 export default function HomePage() {
   return (
-    <>
-      <AppLogo size="large" />
+    <div className='HomePage'>
+      <AppLogo size="xlarge" />
       <AppName size="xxlarge" />
-    </>
+    </div>
   )
 }
