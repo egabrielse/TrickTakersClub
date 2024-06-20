@@ -6,7 +6,8 @@ services:
       dockerfile: Dockerfile
       context: ./backend
     depends_on:
-      - play-cache
+      - redis-data
+      - firebase
     image: backend
     ports:
       - "8080:8080"
@@ -23,7 +24,7 @@ services:
       - "5173:5173"
 
   # Redis Database
-  play-cache:
+  redis:
     command: [
       "redis-server",
       "--loglevel warning",
@@ -34,9 +35,22 @@ services:
       - "6379:6379"
     restart: always
     volumes:
-      - play-cache:/data
+      - redis-data:/data
+
+  # Firebase emulator
+  firebase:
+    build: 
+      dockerfile: Dockerfile
+      context: ./firebase
+    volumes:
+      - firebase-data:/app
+    ports:
+      - "127.0.0.1:9099:9099" # auth
+      - "127.0.0.1:4000:4000" # ui
 
 
 volumes:
-  play-cache:
+  redis-data:
+    driver: local
+  firebase-data:
     driver: local
