@@ -1,0 +1,25 @@
+.RootLayout {
+    display: grid;
+    grid-template-areas: "left body right";
+    grid-template-columns: 160px 1fr 160px;
+    gap: 1rem;
+    padding: 1rem;
+    width: calc(100vw - 2rem);
+    height: calc(100vh - 2rem);
+
+    &-Body {
+        grid-area: body;
+    }
+
+    &-LeftAside {
+        grid-area: left;
+    }
+
+    &-RightAside {
+        grid-area: right;
+    }
+
+    @media (max-width: 900px) {
+        grid-template-columns: 0px 1fr 0px;
+    }
+}

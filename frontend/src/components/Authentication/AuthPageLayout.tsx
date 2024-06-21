@@ -1,6 +1,6 @@
 import './AuthPageLayout.scss'
 import Grid from '@mui/material/Grid'
-import Tile from '../common/layout/Tile';
+import Tile from '../common/Tile';
 
 type AuthPageLayoutProps = {
   children: React.ReactNode;
