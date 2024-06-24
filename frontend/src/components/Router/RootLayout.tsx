@@ -1,17 +1,19 @@
 import { ReactNode } from 'react';
 import './RootLayout.scss';
 import { Outlet } from 'react-router';
+import CustomDialog from '../dialog/CustomDialog';
 
-function RootLayout(): ReactNode {
+export default function RootLayout(): ReactNode {
   return (
-    <div className='RootLayout'>
-      <aside className='RootLayout-LeftAside'/>
-      <div className='RootLayout-Body'>
-        <Outlet />
+    <>
+      <CustomDialog />
+      <div className='RootLayout'>
+        <aside className='RootLayout-LeftAside'/>
+        <div className='RootLayout-Body'>
+          <Outlet />
+        </div>
+        <aside className='RootLayout-RightAside'/>
       </div>
-      <aside className='RootLayout-RightAside'/>
-    </div>
+    </>
   )
 }
-
-export default RootLayout;

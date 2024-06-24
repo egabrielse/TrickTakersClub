@@ -6,9 +6,13 @@
     padding: 1rem;
     width: calc(100vw - 2rem);
     height: calc(100vh - 2rem);
+    // Note: Only supports minimum screen size of 1220px by 600px
+    min-height: 600px;
+    min-width: calc(900px + 160px + 160px + 2rem);
 
     &-Body {
         grid-area: body;
+        align-content: center;    
     }
 
     &-LeftAside {
@@ -17,9 +21,5 @@
 
     &-RightAside {
         grid-area: right;
-    }
-
-    @media (max-width: 900px) {
-        grid-template-columns: 0px 1fr 0px;
     }
 }

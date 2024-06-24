@@ -1,28 +1,23 @@
 import { PATHS } from '../constants/path';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import HomePage from './Home/HomePage';
-import LoginPage from './Authentication/LoginPage';
-import RegisterPage from './Authentication/RegisterPage';
-import RootLayout from './Router/RootLayout';
-import RootErrorBoundary from './Router/RootErrorBoundary';
+import HomePage from './home/HomePage';
+import RootLayout from './router/RootLayout';
+import RootErrorBoundary from './router/RootErrorBoundary';
+import { Provider } from 'react-redux';
+import { store } from '../redux/store';
+import AuthProvider from './providers/AuthProvider';
 
 const router = createBrowserRouter([
   {
     path: PATHS.ROOT,
-    element: <RootLayout />,
+    element: (
+      <RootLayout />
+    ),
     errorElement: <RootErrorBoundary />,
     children: [
       {
         index: true,
         element:  <HomePage />,
-      },
-      {
-        path: PATHS.LOGIN,
-        element: <LoginPage />,
-      },
-      {
-        path: PATHS.REGISTER,
-        element: <RegisterPage />,
       },
     ]
   },
@@ -30,6 +25,10 @@ const router = createBrowserRouter([
 
 export default function App() {
   return (
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </Provider>
   )
 }

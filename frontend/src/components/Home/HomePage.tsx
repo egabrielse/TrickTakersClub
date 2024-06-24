@@ -1,12 +1,17 @@
-import './HomePage.scss'
-import AppLogo from '../common/AppLogo'
-import AppName from '../common/AppName'
+import Tile from '../common/Tile';
+import './HomePage.scss';
+import PlayTile from './tiles/PlayTile';
+import ProfileTile from './tiles/ProfileTile';
 
 export default function HomePage() {
   return (
     <div className='HomePage'>
-      <AppLogo size="xlarge" />
-      <AppName size="xxlarge" />
+      <Tile gridArea='A'>A</Tile>
+      <PlayTile />
+      <Tile gridArea='C'>C</Tile>
+      <Tile gridArea='D'>D</Tile>
+      <ProfileTile />
+      <Tile gridArea='F'>F</Tile>
     </div>
   )
 }

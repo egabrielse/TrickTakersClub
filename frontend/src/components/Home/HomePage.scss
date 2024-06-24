@@ -1,7 +1,17 @@
 .HomePage {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    grid-template-areas:
+        "A play-tile C"
+        "D profile-tile F";
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    justify-content: stretch;
+    justify-items: stretch;
+    align-content: stretch;
+    align-items: stretch;
+    gap: 0.5rem;
     height: 100%;
-    width: 100%;
+    max-height: 600px;
+    max-width: 900px;
+    margin: auto;
 }
