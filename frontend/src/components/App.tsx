@@ -1,23 +1,46 @@
-import { PATHS } from '../constants/path';
+import { SEGMENTS } from '../constants/path';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import HomePage from './home/HomePage';
-import RootLayout from './router/RootLayout';
-import RootErrorBoundary from './router/RootErrorBoundary';
+import RootLayout from './layout/RootLayout';
+import RootErrorBoundary from './error/RootErrorBoundary';
 import { Provider } from 'react-redux';
 import { store } from '../redux/store';
 import AuthProvider from './providers/AuthProvider';
+import AppPageLayout from './layout/AppPageLayout';
+import HomePage from './home/HomePage';
 
 const router = createBrowserRouter([
   {
-    path: PATHS.ROOT,
+    path: "/",
     element: (
       <RootLayout />
     ),
     errorElement: <RootErrorBoundary />,
     children: [
       {
-        index: true,
-        element:  <HomePage />,
+        path: SEGMENTS.APP,
+        element:  <AppPageLayout />,
+        children: [
+          {
+            index: true,
+            element: <HomePage />,
+          },
+          {
+            path: SEGMENTS.LEADERBOARD,
+            element: <div>Leaderboard</div>,
+          },
+          {
+            path: SEGMENTS.RULES,
+            element: <div>Rules</div>,
+          },
+          {
+            path: SEGMENTS.PROFILE,
+            element: <div>Profile</div>,
+          },
+          {
+            path: SEGMENTS.ABOUT,
+            element: <div>About</div>
+          },
+        ],
       },
     ]
   },

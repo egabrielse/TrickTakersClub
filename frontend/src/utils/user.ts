@@ -1,38 +1,14 @@
-/**
- * Generates a hex color based on the username.
- * @param username username to generate color for
- * @returns hex color (e.g. "#FF0000")
- */
-export function usernameToColor(username: string): string {
-    let hash = 0;
-    let i;
-    let color = '#';
-
-    for (i = 0; i < username.length; i += 1) {
-        hash = username.charCodeAt(i) + ((hash << 5) - hash);
-    }
-
-    for (i = 0; i < 3; i += 1) {
-        const value = (hash >> (i * 8)) & 0xff;
-        color += `00${value.toString(16)}`.slice(-2);
-    }
-
-    return color;
-}
+import { Size } from "../types/size";
+import { scaleBySize } from "./size";
 
 /**
  * Converts avatar size to pixels.
  * @param size name of the size ("small", "medium", etc.)
  * @returns pixel size of the avatar
  */
-export function avatarSizeToPixels(size: string): number {
-    return size === "xlarge"
-        ? 64
-        : size === "large"
-        ? 44
-        : size === "small"
-        ? 24
-        : 32;
+export function getAvatarPixelSize(size: Size): number {
+    const basePixelSize = 32;
+    return scaleBySize(size, basePixelSize);
 }
 
 /**
@@ -40,32 +16,22 @@ export function avatarSizeToPixels(size: string): number {
  * @param size name of the size ("small", "medium", etc.)
  * @returns font size of the avatar
  */
-export function avatarSizeToFontSize(size: string): string {
-    switch (size) {
-        case "xlarge":
-            return "2rem";
-        case "large":
-            return "1.75rem";
-        case "medium":
-            return "1.25rem";
-        default:
-            // small
-            return "1rem";
-    }
+export function getAvatarFontSize(size: Size, charCount: 1 | 2 | 3): number {
+    const baseFontSize = 24;
+    const scaledPixelSize = scaleBySize(size as Size, baseFontSize);
+    if (charCount === 3) return scaledPixelSize * 0.5;
+    if (charCount === 2) return scaledPixelSize * 0.75;
+    return scaledPixelSize;
 }
 
-export function displayNameSizeToFontSize(size: string): string {
-    switch (size) {
-        case "xlarge":
-            return "1.5rem";
-        case "large":
-            return "1rem";
-        case "medium":
-            return "0.75rem";
-        default:
-            // small
-            return "0.66rem";
-    }
+/**
+ * Converts display name size to font size.
+ * @param size name of the size ("small", "medium", etc.)
+ * @returns font size of the display name
+ */
+export function getDisplayNameFontSize(size: Size): number {
+    const baseFontSize = 16;
+    return scaleBySize(size, baseFontSize);
 }
 
 /**
@@ -73,7 +39,27 @@ export function displayNameSizeToFontSize(size: string): string {
  * @param username username to get initials for
  * @returns initials (e.g. "JD" "for John Doe")
  */
-export function initials(username: string): string {
+export function getInitials(username: string): string {
     const nameArr = username.split(' ');
+    nameArr.push("G");
     return nameArr.map((n) => n[0]).join('').toUpperCase();
 }
+
+/**
+ * Generates a hex color based on the username.
+ * @param username username to generate color for
+ * @returns hex color (e.g. "#FF0000")
+ */
+export function usernameToColor(username: string): string {
+    let hash = 0;
+    let color = '#';
+    for (let i = 0; i < username.length; i += 1) {
+        hash = username.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    for (let i = 0; i < 3; i += 1) {
+        const value = (hash >> (i * 8)) & 0xff;
+        color += `00${value.toString(16)}`.slice(-2);
+    }
+    return color;
+}
+
