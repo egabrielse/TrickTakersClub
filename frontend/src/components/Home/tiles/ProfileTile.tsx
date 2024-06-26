@@ -6,27 +6,35 @@ import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { selectAuthLoading, selectUser } from "../../../redux/selectors";
 import UserSnapshot from "../../common/UserSnapshot";
 import LogoutIcon from '@mui/icons-material/Logout';
-import SettingsIcon from '@mui/icons-material/Settings';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import { DIALOG_TYPES } from "../../../constants/dialog";
+import { useNavigate } from "react-router";
+import { PATHS } from "../../../constants/path";
 
 export default function ProfileTile() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const user = useAppSelector(selectUser);
   const loading = useAppSelector(selectAuthLoading);
 
   const handleLogin = () => {
-    dispatch(dialogSlice.actions.openDialog("login"));
+    dispatch(dialogSlice.actions.openDialog(DIALOG_TYPES.LOGIN));
   };
 
-  const handleRegister = () => {
-    dispatch(dialogSlice.actions.openDialog("register"));
+  const handleSignUp = () => {
+    dispatch(dialogSlice.actions.openDialog(DIALOG_TYPES.REGISTER));
   };
 
   const handleLogout = () => {
     dispatch(authSlice.actions.logout());
   }
 
+  const viewAccount = () => {
+    navigate(PATHS.ACCOUNT);
+  }
+
   return (
-    <Tile loading={loading} gridArea="profile" spacing="center">
+    <Tile loading={loading} gridArea="profile" spacing="space-evenly">
       {user ? (
         <>
           <UserSnapshot user={user} variant="name-column" size="xlarge" />
@@ -34,10 +42,10 @@ export default function ProfileTile() {
             <Button
               variant="contained"
               color="primary"
-              onClick={handleLogout}
-              startIcon={<SettingsIcon />}
+              onClick={viewAccount}
+              startIcon={<ManageAccountsIcon />}
             >
-              Settings
+              Account
             </Button>
             <Button
               variant="contained"
@@ -69,9 +77,9 @@ export default function ProfileTile() {
             variant="contained"
             fullWidth
             color="secondary"
-            onClick={handleRegister}
+            onClick={handleSignUp}
           >
-            Register
+            Create Account
           </Button>
         </>
       )}

@@ -1,4 +1,13 @@
+export const ERROR_MESSAGES = {
+    INVALID_CREDENTIALS: 'Incorrect email or password.',
+    ALREADY_EXISTS: 'An account with this email already exists.',
+    DEFAULT: 'An error occurred. Please try again later.',
+}
+
 export const VALIDATION_ERRORS = {
+    DISPLAY_NAME: {
+        REQUIRED: 'Display name is required',
+    },
     EMAIL: {
         REQUIRED: 'Email is required',
         INVALID: 'Email is invalid',

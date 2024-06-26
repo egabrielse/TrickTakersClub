@@ -1,3 +1,4 @@
+import { generateSlug } from "random-word-slugs";
 import { Size } from "../types/size";
 import { scaleBySize } from "./size";
 
@@ -30,7 +31,7 @@ export function getAvatarFontSize(size: Size, charCount: 1 | 2 | 3): number {
  * @returns font size of the display name
  */
 export function getDisplayNameFontSize(size: Size): number {
-    const baseFontSize = 16;
+    const baseFontSize = 14;
     return scaleBySize(size, baseFontSize);
 }
 
@@ -41,8 +42,15 @@ export function getDisplayNameFontSize(size: Size): number {
  */
 export function getInitials(username: string): string {
     const nameArr = username.split(' ');
-    nameArr.push("G");
     return nameArr.map((n) => n[0]).join('').toUpperCase();
+}
+
+/**
+ * Generates a random username consisting of two words (e.g. "Red Apple").
+ * @returns a random username
+ */
+export function generateDisplayName() {
+    return generateSlug(2, { format: 'title' });
 }
 
 /**

@@ -8,4 +8,5 @@ if (import.meta.env.VITE_FIREBASE_AUTH_EMULATOR_HOST) {
     console.log(import.meta.env.VITE_FIREBASE_AUTH_EMULATOR_HOST)
     connectAuthEmulator(auth, import.meta.env.VITE_FIREBASE_AUTH_EMULATOR_HOST);
 }
+
 export default auth;

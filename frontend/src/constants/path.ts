@@ -1,6 +1,6 @@
 export const SEGMENTS = {
     APP: 'app',
-    PROFILE: 'profile',
+    ACCOUNT: 'account',
     LEADERBOARD: 'leaderboard',
     RULES: 'rules',
     ABOUT: 'about',
@@ -12,7 +12,7 @@ export const PATHS = {
     TABLE: `/${SEGMENTS.TABLE}`,
     APP: `/${SEGMENTS.APP}`,
     HOME: `/${SEGMENTS.APP}`, // Index of the APP
-    PROFILE: `/${SEGMENTS.APP}/${SEGMENTS.PROFILE}`,
+    ACCOUNT: `/${SEGMENTS.APP}/${SEGMENTS.ACCOUNT}`,
     LEADERBOARD: `/${SEGMENTS.APP}/${SEGMENTS.LEADERBOARD}`,
     RULES: `/${SEGMENTS.APP}/${SEGMENTS.RULES}`,
     ABOUT: `/${SEGMENTS.APP}/${SEGMENTS.ABOUT}`,

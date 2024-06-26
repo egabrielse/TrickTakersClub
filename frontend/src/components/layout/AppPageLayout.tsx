@@ -6,7 +6,7 @@ import { PATHS } from "../../constants/path";
 import HomeIcon from "@mui/icons-material/Home";
 import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 import RuleIcon from "@mui/icons-material/Rule";
-import PersonIcon from "@mui/icons-material/Person";
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import InfoIcon from "@mui/icons-material/Info";
 
 export default function AppPageLayout() {
@@ -43,11 +43,11 @@ export default function AppPageLayout() {
           onClick={() => handleChange(PATHS.RULES)}
         />
         <Tab
-          key={PATHS.PROFILE}
-          value={PATHS.PROFILE}
-          icon={<PersonIcon />}
-          label="Profile"
-          onClick={() => handleChange(PATHS.PROFILE)}
+          key={PATHS.ACCOUNT}
+          value={PATHS.ACCOUNT}
+          icon={<ManageAccountsIcon />}
+          label="Account"
+          onClick={() => handleChange(PATHS.ACCOUNT)}
         />
         <Tab
           key={PATHS.ABOUT}

@@ -3,16 +3,19 @@ import Typography from "@mui/material/Typography";
 import Logo from "../../common/AppLogo";
 import { useAppDispatch } from "../../../redux/hooks";
 import dialogSlice from "../../../redux/slices/dialog.slice";
-import { Button, DialogActions, TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { useFormik } from "formik";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { AuthErrorCodes, createUserWithEmailAndPassword } from "firebase/auth";
 import auth from "../../../firebase/auth";
 import { useState } from "react";
 import DialogHeader from "../components/DialogHeader";
 import DialogBody from "../components/DialogBody";
-import { VALIDATION_ERRORS } from "../../../constants/auth";
 import { LoadingButton } from "@mui/lab";
 import CloseDialogButton from "../components/CloseDialogButton";
+import { DIALOG_TYPES } from "../../../constants/dialog";
+import { ERROR_MESSAGES, VALIDATION_ERRORS } from "../../../constants/error";
+import DialogErrorMessage from "../components/DialogErrorMessage";
+import DialogFooter from "../components/DialogFooter";
 
 const validationSchema = yup.object({
   email: yup
@@ -21,11 +24,13 @@ const validationSchema = yup.object({
     .required(VALIDATION_ERRORS.EMAIL.REQUIRED),
   password: yup
     .string()
+    .trim()
     .min(8, VALIDATION_ERRORS.PASSWORD.MIN)
     .max(32, VALIDATION_ERRORS.PASSWORD.MAX)
     .required(VALIDATION_ERRORS.PASSWORD.REQUIRED),
   confirm: yup
     .string()
+    .trim()
     .oneOf([yup.ref("password"), ""], VALIDATION_ERRORS.CONFIRM_PASSWORD.MATCH)
     .required(VALIDATION_ERRORS.CONFIRM_PASSWORD.REQUIRED),
 });
@@ -33,29 +38,39 @@ const validationSchema = yup.object({
 export default function RegisterDialog() {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const formik = useFormik({
     initialValues: {
+      displayName: "",
       email: "",
       password: "",
       confirm: "",
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
+      setLoading(true);
       createUserWithEmailAndPassword(auth, values.email, values.password)
         .then(() => {
-          setLoading(true);
-          dispatch(dialogSlice.actions.closeDialog());
+          setLoading(false)
+          dispatch(dialogSlice.actions.closeDialog())
+          dispatch(dialogSlice.actions.openDialog(DIALOG_TYPES.INIT_ACCOUNT));
         })
-        .catch((error) => {
-          alert(error.message);
-        });
+        .catch((e) => {
+          setLoading(false)
+          if (e.code === AuthErrorCodes.EMAIL_EXISTS) {
+            setError(ERROR_MESSAGES.ALREADY_EXISTS);
+          } else {
+            setError(ERROR_MESSAGES.DEFAULT);
+          }
+        })
     },
   });
 
+  // Open login dialog
   const openLoginDialog = () => {
     dispatch(dialogSlice.actions.closeDialog());
-    dispatch(dialogSlice.actions.openDialog("login"));
+    dispatch(dialogSlice.actions.openDialog(DIALOG_TYPES.LOGIN));
   };
 
   return (
@@ -122,16 +137,10 @@ export default function RegisterDialog() {
                 : " "
             }
           />
+          <DialogErrorMessage error={error} clearError={() => setError(null)} />
         </DialogBody>
-        <DialogActions style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", padding: "1rem"}}>
-          <Button
-            onClick={openLoginDialog}
-            variant="outlined"
-            style={{ alignSelf: "start" }}
-            disabled={loading}
-          >
-            Sign In
-          </Button>
+
+        <DialogFooter>
           <LoadingButton
             color="primary"
             loading={loading}
@@ -141,7 +150,14 @@ export default function RegisterDialog() {
           >
             Sign Up!
           </LoadingButton>
-        </DialogActions>
+          <Button
+            onClick={openLoginDialog}
+            variant="outlined"
+            disabled={loading}
+          >
+            Sign In
+          </Button>
+        </DialogFooter>
       </form>
     </>
   );

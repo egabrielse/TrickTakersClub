@@ -1,19 +1,20 @@
-import * as React from 'react';
-import Dialog from '@mui/material/Dialog';
-import Slide from '@mui/material/Slide';
-import { TransitionProps } from '@mui/material/transitions';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import dialogSlice from '../../redux/slices/dialog.slice';
-import { selectDialogOpen, selectDialogType } from '../../redux/selectors';
-import LoginDialog from './contents/LoginDialog';
-import RegisterDialog from './contents/RegisterDialog';
-import { DIALOG_TYPES } from '../../constants/dialog';
+import * as React from "react";
+import Dialog from "@mui/material/Dialog";
+import Slide from "@mui/material/Slide";
+import { TransitionProps } from "@mui/material/transitions";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import dialogSlice from "../../redux/slices/dialog.slice";
+import { selectDialogOpen, selectDialogType } from "../../redux/selectors";
+import LoginDialog from "./contents/LoginDialog";
+import RegisterDialog from "./contents/RegisterDialog";
+import { DIALOG_TYPES } from "../../constants/dialog";
+import InitAccountDialog from "./contents/InitAccountDialog";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement;
   },
-  ref: React.Ref<unknown>,
+  ref: React.Ref<unknown>
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -34,11 +35,13 @@ export default function CustomDialog() {
         return <LoginDialog />;
       case DIALOG_TYPES.REGISTER:
         return <RegisterDialog />;
+      case DIALOG_TYPES.INIT_ACCOUNT:
+        return <InitAccountDialog />;
       default:
         console.error(`Unknown dialog type: ${dialogType}`);
         return null;
     }
-  }
+  };
 
   return (
     <Dialog
@@ -47,7 +50,8 @@ export default function CustomDialog() {
       keepMounted
       onClose={handleClose}
       maxWidth="sm"
-      component={'div'}
+      component={"div"}
+      closeAfterTransition
     >
       {renderDialogContent()}
     </Dialog>

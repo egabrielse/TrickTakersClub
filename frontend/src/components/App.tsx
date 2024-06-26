@@ -33,8 +33,8 @@ const router = createBrowserRouter([
             element: <div>Rules</div>,
           },
           {
-            path: SEGMENTS.PROFILE,
-            element: <div>Profile</div>,
+            path: SEGMENTS.ACCOUNT,
+            element: <div>Account</div>,
           },
           {
             path: SEGMENTS.ABOUT,
