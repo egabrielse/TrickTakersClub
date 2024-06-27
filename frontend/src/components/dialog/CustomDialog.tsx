@@ -1,20 +1,20 @@
-import * as React from "react";
 import Dialog from "@mui/material/Dialog";
 import Slide from "@mui/material/Slide";
 import { TransitionProps } from "@mui/material/transitions";
+import * as React from "react";
+import { DIALOG_TYPES } from "../../constants/dialog";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import dialogSlice from "../../redux/slices/dialog.slice";
 import { selectDialogOpen, selectDialogType } from "../../redux/selectors";
+import dialogSlice from "../../redux/slices/dialog.slice";
+import InitAccountDialog from "./contents/InitAccountDialog";
 import LoginDialog from "./contents/LoginDialog";
 import RegisterDialog from "./contents/RegisterDialog";
-import { DIALOG_TYPES } from "../../constants/dialog";
-import InitAccountDialog from "./contents/InitAccountDialog";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement;
   },
-  ref: React.Ref<unknown>
+  ref: React.Ref<unknown>,
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
 });

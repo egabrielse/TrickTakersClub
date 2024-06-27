@@ -1,8 +1,8 @@
 import { Button } from "@mui/material";
-import Tile from "../../layout/Tile";
 import AppLogo from "../../common/AppLogo";
 import AppName from "../../common/AppName";
 import CardFanIcon from "../../common/CardFanIcon";
+import Tile from "../../layout/Tile";
 
 export default function PlayTile() {
   return (

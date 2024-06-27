@@ -9,7 +9,11 @@ type ErrorDialogProps = {
   srcImage: string;
 };
 
-export default function ErrorDialog({ title, details, srcImage }: ErrorDialogProps): ReactNode {
+export default function ErrorDialog({
+  title,
+  details,
+  srcImage,
+}: ErrorDialogProps): ReactNode {
   return (
     <Paper className="ErrorDialog card" elevation={5}>
       <Box className="ErrorDialog-Image" component="img" src={srcImage} />

@@ -1,7 +1,7 @@
-import { Middleware, configureStore } from '@reduxjs/toolkit';
-import loggerMiddleware from './middleware/logger';
-import authSlice from './slices/auth.slice';
-import dialogSlice from './slices/dialog.slice';
+import { Middleware, configureStore } from "@reduxjs/toolkit";
+import loggerMiddleware from "./middleware/logger";
+import authSlice from "./slices/auth.slice";
+import dialogSlice from "./slices/dialog.slice";
 
 const additionalMiddleware: Middleware[] = [];
 
@@ -14,7 +14,8 @@ export const store = configureStore({
     auth: authSlice.reducer,
     dialog: dialogSlice.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(additionalMiddleware),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(additionalMiddleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

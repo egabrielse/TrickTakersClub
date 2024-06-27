@@ -1,5 +1,5 @@
-import "./Tile.scss";
 import CircularProgress from "@mui/material/CircularProgress";
+import "./Tile.scss";
 
 type TileProps = {
   children: React.ReactNode;

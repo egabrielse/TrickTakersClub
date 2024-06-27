@@ -1,8 +1,8 @@
+import HomeIcon from "@mui/icons-material/Home";
 import { Button } from "@mui/material";
 import { ReactNode } from "react";
 import { useNavigate } from "react-router";
 import { PATHS } from "../../constants/path";
-import HomeIcon from '@mui/icons-material/Home';
 
 export default function ReturnHomeButton(): ReactNode {
   const navigate = useNavigate();

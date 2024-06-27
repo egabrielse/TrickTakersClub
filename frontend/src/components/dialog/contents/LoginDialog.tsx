@@ -1,21 +1,21 @@
-import * as yup from "yup";
-import Typography from "@mui/material/Typography";
-import Logo from "../../common/AppLogo";
-import { useFormik } from "formik";
+import { LoadingButton } from "@mui/lab";
 import { Button, TextField } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import { AuthErrorCodes, signInWithEmailAndPassword } from "firebase/auth";
-import auth from "../../../firebase/auth";
+import { useFormik } from "formik";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import dialogSlice from "../../../redux/slices/dialog.slice";
-import DialogHeader from "../components/DialogHeader";
-import DialogFooter from "../components/DialogFooter";
-import DialogBody from "../components/DialogBody";
-import { LoadingButton } from "@mui/lab";
-import CloseDialogButton from "../components/CloseDialogButton";
+import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { ERROR_MESSAGES, VALIDATION_ERRORS } from "../../../constants/error";
+import auth from "../../../firebase/auth";
+import dialogSlice from "../../../redux/slices/dialog.slice";
+import Logo from "../../common/AppLogo";
+import CloseDialogButton from "../components/CloseDialogButton";
+import DialogBody from "../components/DialogBody";
 import DialogErrorMessage from "../components/DialogErrorMessage";
+import DialogFooter from "../components/DialogFooter";
+import DialogHeader from "../components/DialogHeader";
 
 const validationSchema = yup.object({
   email: yup
@@ -46,8 +46,8 @@ export default function LoginDialog() {
       setLoading(true);
       signInWithEmailAndPassword(auth, values.email, values.password)
         .then(() => {
-          setLoading(false)
-          dispatch(dialogSlice.actions.closeDialog())
+          setLoading(false);
+          dispatch(dialogSlice.actions.closeDialog());
         })
         .catch((error) => {
           if (error.code === AuthErrorCodes.USER_DELETED) {
@@ -57,7 +57,7 @@ export default function LoginDialog() {
           } else {
             setError(ERROR_MESSAGES.DEFAULT);
           }
-        })
+        });
     },
   });
 

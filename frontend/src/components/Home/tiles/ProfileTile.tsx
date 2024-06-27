@@ -1,15 +1,15 @@
+import LogoutIcon from "@mui/icons-material/Logout";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import { Button, Divider } from "@mui/material";
-import Tile from "../../layout/Tile";
-import dialogSlice from "../../../redux/slices/dialog.slice";
-import authSlice from "../../../redux/slices/auth.slice";
+import { useNavigate } from "react-router";
+import { DIALOG_TYPES } from "../../../constants/dialog";
+import { PATHS } from "../../../constants/path";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { selectAuthLoading, selectUser } from "../../../redux/selectors";
+import authSlice from "../../../redux/slices/auth.slice";
+import dialogSlice from "../../../redux/slices/dialog.slice";
 import UserSnapshot from "../../common/UserSnapshot";
-import LogoutIcon from '@mui/icons-material/Logout';
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import { DIALOG_TYPES } from "../../../constants/dialog";
-import { useNavigate } from "react-router";
-import { PATHS } from "../../../constants/path";
+import Tile from "../../layout/Tile";
 
 export default function ProfileTile() {
   const dispatch = useAppDispatch();
@@ -27,18 +27,25 @@ export default function ProfileTile() {
 
   const handleLogout = () => {
     dispatch(authSlice.actions.logout());
-  }
+  };
 
   const viewAccount = () => {
     navigate(PATHS.ACCOUNT);
-  }
+  };
 
   return (
     <Tile loading={loading} gridArea="profile" spacing="space-evenly">
       {user ? (
         <>
           <UserSnapshot user={user} variant="name-column" size="xlarge" />
-          <div style={{ display: "flex", width: "100%", alignContent: "space-between", justifyContent: "space-between"}}>
+          <div
+            style={{
+              display: "flex",
+              width: "100%",
+              alignContent: "space-between",
+              justifyContent: "space-between",
+            }}
+          >
             <Button
               variant="contained"
               color="primary"

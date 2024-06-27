@@ -1,20 +1,20 @@
-import * as yup from "yup";
+import LoopIcon from "@mui/icons-material/Loop";
+import { LoadingButton } from "@mui/lab";
+import { Box, Button, MenuItem, TextField } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import Logo from "../../common/AppLogo";
+import { reload, updateProfile } from "firebase/auth";
+import { useFormik } from "formik";
+import { useEffect, useState } from "react";
+import * as yup from "yup";
+import { VALIDATION_ERRORS } from "../../../constants/error";
+import auth from "../../../firebase/auth";
 import { useAppDispatch } from "../../../redux/hooks";
 import dialogSlice from "../../../redux/slices/dialog.slice";
-import { Box, Button, MenuItem, TextField } from "@mui/material";
-import { useFormik } from "formik";
-import { reload, updateProfile } from "firebase/auth";
-import auth from "../../../firebase/auth";
-import { useEffect, useState } from "react";
-import DialogHeader from "../components/DialogHeader";
-import DialogBody from "../components/DialogBody";
-import { LoadingButton } from "@mui/lab";
-import { VALIDATION_ERRORS } from "../../../constants/error";
-import LoopIcon from "@mui/icons-material/Loop";
 import { generateDisplayName } from "../../../utils/user";
+import Logo from "../../common/AppLogo";
+import DialogBody from "../components/DialogBody";
 import DialogFooter from "../components/DialogFooter";
+import DialogHeader from "../components/DialogHeader";
 
 const validationSchema = yup.object({
   displayName: yup.string().required(VALIDATION_ERRORS.DISPLAY_NAME.REQUIRED),
@@ -32,13 +32,14 @@ export default function InitAccountDialog() {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setLoading(true);
-      updateProfile(auth.currentUser!, { displayName: values.displayName})
-        .then(() => {
-          setLoading(false)
-          // reload the user to get the updated display name
-          reload(auth.currentUser!)
-          dispatch(dialogSlice.actions.closeDialog())
-        })
+      updateProfile(auth.currentUser!, {
+        displayName: values.displayName,
+      }).then(() => {
+        setLoading(false);
+        // reload the user to get the updated display name
+        reload(auth.currentUser!);
+        dispatch(dialogSlice.actions.closeDialog());
+      });
     },
   });
 
@@ -61,7 +62,6 @@ export default function InitAccountDialog() {
   useEffect(() => {
     cycleNameOptions();
   }, []);
-
 
   return (
     <>

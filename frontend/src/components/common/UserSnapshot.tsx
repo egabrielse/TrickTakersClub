@@ -1,8 +1,8 @@
-import "./UserSnapshot.scss";
-import UserAvatar from "./UserAvatar";
 import { User } from "firebase/auth";
-import { getDisplayNameFontSize } from "../../utils/user";
 import { Size } from "../../types/size";
+import { getDisplayNameFontSize } from "../../utils/user";
+import UserAvatar from "./UserAvatar";
+import "./UserSnapshot.scss";
 
 type UserProps = {
   user: User;

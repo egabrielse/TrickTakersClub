@@ -3,7 +3,10 @@ type CardFanIconProps = {
   stroke?: string;
 };
 
-export default function CardFanIcon({ size = 24, stroke = "#000000" }: CardFanIconProps) {
+export default function CardFanIcon({
+  size = 24,
+  stroke = "#000000",
+}: CardFanIconProps) {
   return (
     <svg
       width={size}

@@ -1,6 +1,6 @@
-import { Size } from '../../types/size';
-import { getAppNameFontSize } from '../../utils/size';
-import './AppName.scss'
+import { Size } from "../../types/size";
+import { getAppNameFontSize } from "../../utils/size";
+import "./AppName.scss";
 
 type AppNameProps = {
   size: Size;

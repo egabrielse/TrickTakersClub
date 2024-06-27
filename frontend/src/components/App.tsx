@@ -1,24 +1,22 @@
-import { SEGMENTS } from '../constants/path';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import RootLayout from './layout/RootLayout';
-import RootErrorBoundary from './error/RootErrorBoundary';
-import { Provider } from 'react-redux';
-import { store } from '../redux/store';
-import AuthProvider from './providers/AuthProvider';
-import AppPageLayout from './layout/AppPageLayout';
-import HomePage from './home/HomePage';
+import { Provider } from "react-redux";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { SEGMENTS } from "../constants/path";
+import { store } from "../redux/store";
+import RootErrorBoundary from "./error/RootErrorBoundary";
+import HomePage from "./home/HomePage";
+import AppPageLayout from "./layout/AppPageLayout";
+import RootLayout from "./layout/RootLayout";
+import AuthProvider from "./providers/AuthProvider";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <RootLayout />
-    ),
+    element: <RootLayout />,
     errorElement: <RootErrorBoundary />,
     children: [
       {
         path: SEGMENTS.APP,
-        element:  <AppPageLayout />,
+        element: <AppPageLayout />,
         children: [
           {
             index: true,
@@ -38,11 +36,11 @@ const router = createBrowserRouter([
           },
           {
             path: SEGMENTS.ABOUT,
-            element: <div>About</div>
+            element: <div>About</div>,
           },
         ],
       },
-    ]
+    ],
   },
 ]);
 
@@ -53,5 +51,5 @@ export default function App() {
         <RouterProvider router={router} />
       </AuthProvider>
     </Provider>
-  )
+  );
 }

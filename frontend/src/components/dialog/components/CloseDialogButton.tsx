@@ -1,8 +1,8 @@
-import "./CloseDialogButton.scss";
-import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { IconButton } from "@mui/material";
 import { useAppDispatch } from "../../../redux/hooks";
 import dialogSlice from "../../../redux/slices/dialog.slice";
+import "./CloseDialogButton.scss";
 
 export default function CloseDialogButton() {
   const dispatch = useAppDispatch();

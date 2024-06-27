@@ -1,12 +1,12 @@
 import Avatar from "@mui/material/Avatar";
 import Skeleton from "@mui/material/Skeleton";
+import { Size } from "../../types/size";
 import {
   getAvatarFontSize,
   getAvatarPixelSize,
   getInitials,
   usernameToColor,
 } from "../../utils/user";
-import { Size } from "../../types/size";
 
 type UserAvatarProps = {
   bgColor?: string;
@@ -20,7 +20,10 @@ export default function UserAvatar(props: UserAvatarProps) {
   // defaults to medium if not provided
   const initials = getInitials(props.name || "");
   const pixelSize = getAvatarPixelSize(props.size || "medium");
-  const fontSize = getAvatarFontSize(props.size || "medium", initials.length as 1 | 2 | 3);
+  const fontSize = getAvatarFontSize(
+    props.size || "medium",
+    initials.length as 1 | 2 | 3,
+  );
 
   if (props.loading) {
     return <Skeleton variant="circular" width={pixelSize} height={pixelSize} />;

@@ -1,13 +1,13 @@
-import './AppPageLayout.scss';
-import { Outlet, useLocation, useNavigate } from "react-router";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import { PATHS } from "../../constants/path";
 import HomeIcon from "@mui/icons-material/Home";
-import LeaderboardIcon from "@mui/icons-material/Leaderboard";
-import RuleIcon from "@mui/icons-material/Rule";
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import InfoIcon from "@mui/icons-material/Info";
+import LeaderboardIcon from "@mui/icons-material/Leaderboard";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import RuleIcon from "@mui/icons-material/Rule";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import { Outlet, useLocation, useNavigate } from "react-router";
+import { PATHS } from "../../constants/path";
+import "./AppPageLayout.scss";
 
 export default function AppPageLayout() {
   const location = useLocation();
@@ -16,11 +16,15 @@ export default function AppPageLayout() {
   const handleChange = (newPath: string) => {
     if (newPath === location.pathname) return;
     navigate(newPath);
-  }
-    
+  };
+
   return (
-    <div className='AppPageLayout'>
-      <Tabs className="AppPageLayout-NavBar" value={location.pathname} orientation="vertical">
+    <div className="AppPageLayout">
+      <Tabs
+        className="AppPageLayout-NavBar"
+        value={location.pathname}
+        orientation="vertical"
+      >
         <Tab
           key={PATHS.HOME}
           value={PATHS.HOME}
@@ -57,9 +61,9 @@ export default function AppPageLayout() {
           onClick={() => handleChange(PATHS.ABOUT)}
         />
       </Tabs>
-      <div className='AppPageLayout-PageContent'>
+      <div className="AppPageLayout-PageContent">
         <Outlet />
       </div>
     </div>
-  )
+  );
 }

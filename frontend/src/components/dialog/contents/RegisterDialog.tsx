@@ -1,21 +1,21 @@
-import * as yup from "yup";
-import Typography from "@mui/material/Typography";
-import Logo from "../../common/AppLogo";
-import { useAppDispatch } from "../../../redux/hooks";
-import dialogSlice from "../../../redux/slices/dialog.slice";
-import { Button, TextField } from "@mui/material";
-import { useFormik } from "formik";
-import { AuthErrorCodes, createUserWithEmailAndPassword } from "firebase/auth";
-import auth from "../../../firebase/auth";
-import { useState } from "react";
-import DialogHeader from "../components/DialogHeader";
-import DialogBody from "../components/DialogBody";
 import { LoadingButton } from "@mui/lab";
-import CloseDialogButton from "../components/CloseDialogButton";
+import { Button, TextField } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import { AuthErrorCodes, createUserWithEmailAndPassword } from "firebase/auth";
+import { useFormik } from "formik";
+import { useState } from "react";
+import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { ERROR_MESSAGES, VALIDATION_ERRORS } from "../../../constants/error";
+import auth from "../../../firebase/auth";
+import { useAppDispatch } from "../../../redux/hooks";
+import dialogSlice from "../../../redux/slices/dialog.slice";
+import Logo from "../../common/AppLogo";
+import CloseDialogButton from "../components/CloseDialogButton";
+import DialogBody from "../components/DialogBody";
 import DialogErrorMessage from "../components/DialogErrorMessage";
 import DialogFooter from "../components/DialogFooter";
+import DialogHeader from "../components/DialogHeader";
 
 const validationSchema = yup.object({
   email: yup
@@ -52,18 +52,18 @@ export default function RegisterDialog() {
       setLoading(true);
       createUserWithEmailAndPassword(auth, values.email, values.password)
         .then(() => {
-          setLoading(false)
-          dispatch(dialogSlice.actions.closeDialog())
+          setLoading(false);
+          dispatch(dialogSlice.actions.closeDialog());
           dispatch(dialogSlice.actions.openDialog(DIALOG_TYPES.INIT_ACCOUNT));
         })
         .catch((e) => {
-          setLoading(false)
+          setLoading(false);
           if (e.code === AuthErrorCodes.EMAIL_EXISTS) {
             setError(ERROR_MESSAGES.ALREADY_EXISTS);
           } else {
             setError(ERROR_MESSAGES.DEFAULT);
           }
-        })
+        });
     },
   });
 
