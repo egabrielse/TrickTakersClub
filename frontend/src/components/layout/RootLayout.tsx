@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { Outlet } from "react-router";
 import AdPlaceholder from "../common/AdPlaceholder";
 import CustomDialog from "../dialog/CustomDialog";
+import Header from "../header/Header";
 import "./RootLayout.scss";
 
 export default function RootLayout(): ReactNode {
@@ -9,12 +10,13 @@ export default function RootLayout(): ReactNode {
     <>
       <CustomDialog />
       <div className="RootLayout">
+        <Header />
         <aside className="RootLayout-LeftAside">
           <AdPlaceholder />
         </aside>
-        <div className="RootLayout-Body">
+        <main className="RootLayout-Body">
           <Outlet />
-        </div>
+        </main>
         <aside className="RootLayout-RightAside">
           <AdPlaceholder />
         </aside>

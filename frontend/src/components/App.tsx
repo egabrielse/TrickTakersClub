@@ -3,8 +3,6 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { SEGMENTS } from "../constants/path";
 import { store } from "../redux/store";
 import RootErrorBoundary from "./error/RootErrorBoundary";
-import HomePage from "./home/HomePage";
-import AppPageLayout from "./layout/AppPageLayout";
 import RootLayout from "./layout/RootLayout";
 import AuthProvider from "./providers/AuthProvider";
 
@@ -15,26 +13,16 @@ const router = createBrowserRouter([
     errorElement: <RootErrorBoundary />,
     children: [
       {
-        path: SEGMENTS.APP,
-        element: <AppPageLayout />,
-        children: [
-          {
-            index: true,
-            element: <HomePage />,
-          },
-          {
-            path: SEGMENTS.LEADERBOARD,
-            element: <div>Leaderboard</div>,
-          },
-          {
-            path: SEGMENTS.RULES,
-            element: <div>Rules</div>,
-          },
-          {
-            path: SEGMENTS.ACCOUNT,
-            element: <div>Account</div>,
-          },
-        ],
+        path: SEGMENTS.RULES,
+        element: <div>Rules</div>,
+      },
+      {
+        path: SEGMENTS.ACCOUNT,
+        element: <div>Account</div>,
+      },
+      {
+        path: SEGMENTS.TABLE,
+        element: <div>Table</div>,
       },
     ],
   },

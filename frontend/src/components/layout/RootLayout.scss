@@ -1,31 +1,27 @@
 .RootLayout {
-  display: grid;
-  grid-template-areas: "left body right";
-  grid-template-columns: 160px 1fr 160px;
-  gap: 1rem;
-  padding: 1rem;
-  width: calc(100vw - 2rem);
-  height: calc(100vh - 2rem);
-  // Note: Only supports minimum screen size of 1220px by 624px
-  min-height: 624px;
-  min-width: calc(900px + 160px + 160px + 2rem);
+    position: relative;
+    width: 100vw;
+    height: 100vh;
 
-  &-Body {
-    grid-area: body;
-    align-content: center;
-  }
+    &-Body {
+        height: calc(100vh - 4rem);
+        overflow: hidden;
+        padding: 4rem calc(160px + 2rem) 0 calc(160px + 2rem);
+    }
 
-  &-LeftAside {
-    grid-area: left;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
+    &-LeftAside {
+        position: fixed;
+        height: 600px;
+        width: 160px;
+        left: 1rem;
+        top: calc(50% - 300px);
+    }
 
-  &-RightAside {
-    grid-area: right;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
+    &-RightAside {
+        position: fixed;
+        height: 600px;
+        width: 160px;
+        right: 1rem;
+        top: calc(50% - 300px);
+    }
 }
