@@ -55,7 +55,6 @@ export default function AccountToolbar() {
             <Button
               onClick={handleLogin}
               style={{ textWrap: "nowrap" }}
-              color="secondary"
               variant="contained"
             >
               Login
@@ -65,7 +64,6 @@ export default function AccountToolbar() {
             <Button
               onClick={handleSignUp}
               style={{ textWrap: "nowrap" }}
-              color="secondary"
               variant="contained"
             >
               Sign In

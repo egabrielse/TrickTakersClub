@@ -5,7 +5,7 @@ import NavToolbar from "./NavToolbar";
 
 export default function Header() {
   return (
-    <AppBar>
+    <AppBar color="secondary">
       <Toolbar>
         <NavToolbar />
         <AccountToolbar />
