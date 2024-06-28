@@ -7,8 +7,8 @@ import Tile from "../../layout/Tile";
 export default function PlayTile() {
   return (
     <Tile gridArea="play">
-      <AppLogo size="xxlarge" />
-      <AppName size="large" />
+      <AppLogo size="xlarge" />
+      <AppName width="100%" />
       <Button
         size="large"
         variant="contained"

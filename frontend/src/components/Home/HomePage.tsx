@@ -1,3 +1,4 @@
+import AppLogo from "../common/AppLogo";
 import Tile from "../layout/Tile";
 import "./HomePage.scss";
 import PlayTile from "./tiles/PlayTile";
@@ -8,7 +9,9 @@ export default function HomePage() {
     <div className="HomePage">
       <PlayTile />
       <ProfileTile />
-      <Tile gridArea="C">C</Tile>
+      <Tile gridArea="C">
+        <AppLogo size="large" color="white" />
+      </Tile>
     </div>
   );
 }
