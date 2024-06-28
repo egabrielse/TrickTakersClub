@@ -1,5 +1,4 @@
 import HomeIcon from "@mui/icons-material/Home";
-import InfoIcon from "@mui/icons-material/Info";
 import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import RuleIcon from "@mui/icons-material/Rule";
@@ -52,13 +51,6 @@ export default function AppPageLayout() {
           icon={<ManageAccountsIcon />}
           label="Account"
           onClick={() => handleChange(PATHS.ACCOUNT)}
-        />
-        <Tab
-          key={PATHS.ABOUT}
-          value={PATHS.ABOUT}
-          icon={<InfoIcon />}
-          label="About"
-          onClick={() => handleChange(PATHS.ABOUT)}
         />
       </Tabs>
       <div className="AppPageLayout-PageContent">

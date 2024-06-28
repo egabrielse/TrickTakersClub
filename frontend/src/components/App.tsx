@@ -34,10 +34,6 @@ const router = createBrowserRouter([
             path: SEGMENTS.ACCOUNT,
             element: <div>Account</div>,
           },
-          {
-            path: SEGMENTS.ABOUT,
-            element: <div>About</div>,
-          },
         ],
       },
     ],
