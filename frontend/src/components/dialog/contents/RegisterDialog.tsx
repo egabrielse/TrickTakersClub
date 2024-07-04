@@ -1,16 +1,17 @@
+import LoopIcon from "@mui/icons-material/Loop";
 import { LoadingButton } from "@mui/lab";
-import { Button, TextField } from "@mui/material";
+import { Box, Button, MenuItem, TextField } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import { AuthErrorCodes, createUserWithEmailAndPassword } from "firebase/auth";
 import { useFormik } from "formik";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
-import { ERROR_MESSAGES, VALIDATION_ERRORS } from "../../../constants/error";
-import auth from "../../../firebase/auth";
+import { VALIDATION_ERRORS } from "../../../constants/error";
+import dialogActions from "../../../redux/features/dialog/actions";
 import { useAppDispatch } from "../../../redux/hooks";
-import dialogSlice from "../../../redux/slices/dialog.slice";
+import { generateDisplayName } from "../../../utils/user";
 import Logo from "../../common/AppLogo";
+import { AuthContext } from "../../providers/AuthProvider";
 import CloseDialogButton from "../components/CloseDialogButton";
 import DialogBody from "../components/DialogBody";
 import DialogErrorMessage from "../components/DialogErrorMessage";
@@ -18,6 +19,7 @@ import DialogFooter from "../components/DialogFooter";
 import DialogHeader from "../components/DialogHeader";
 
 const validationSchema = yup.object({
+  displayName: yup.string().required(VALIDATION_ERRORS.DISPLAY_NAME.REQUIRED),
   email: yup
     .string()
     .email(VALIDATION_ERRORS.EMAIL.INVALID)
@@ -37,8 +39,16 @@ const validationSchema = yup.object({
 
 export default function RegisterDialog() {
   const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const { register, loading, error, clearError } = useContext(AuthContext);
+  const [displayNameOptions, setDisplayNameOptions] = useState<string[]>([]);
+
+  const onSuccess = () => {
+    dispatch(dialogActions.closeDialog());
+  };
+
+  const onFailure = () => {
+    // Do nothing
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -49,29 +59,41 @@ export default function RegisterDialog() {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      setLoading(true);
-      createUserWithEmailAndPassword(auth, values.email, values.password)
-        .then(() => {
-          setLoading(false);
-          dispatch(dialogSlice.actions.closeDialog());
-          dispatch(dialogSlice.actions.openDialog(DIALOG_TYPES.INIT_ACCOUNT));
-        })
-        .catch((e) => {
-          setLoading(false);
-          if (e.code === AuthErrorCodes.EMAIL_EXISTS) {
-            setError(ERROR_MESSAGES.ALREADY_EXISTS);
-          } else {
-            setError(ERROR_MESSAGES.DEFAULT);
-          }
-        });
+      register(
+        values.email,
+        values.password,
+        values.displayName,
+        onSuccess,
+        onFailure,
+      );
     },
   });
 
   // Open login dialog
   const openLoginDialog = () => {
-    dispatch(dialogSlice.actions.closeDialog());
-    dispatch(dialogSlice.actions.openDialog(DIALOG_TYPES.LOGIN));
+    dispatch(dialogActions.closeDialog());
+    dispatch(dialogActions.openDialog(DIALOG_TYPES.LOGIN));
   };
+
+  // Generate new display name options
+  const cycleNameOptions = () => {
+    const newOptions = [];
+    for (let i = 0; i < 5; i++) {
+      newOptions.push(generateDisplayName());
+    }
+    setDisplayNameOptions(newOptions);
+  };
+
+  // Handle cycling through display name options
+  const handleCycleNameOptions = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    cycleNameOptions();
+  };
+
+  // Generate initial display name options when form is first opened
+  useEffect(() => {
+    cycleNameOptions();
+  }, []);
 
   return (
     <>
@@ -84,6 +106,66 @@ export default function RegisterDialog() {
       </DialogHeader>
       <form onSubmit={formik.handleSubmit}>
         <DialogBody>
+          <TextField
+            fullWidth
+            id="display-name"
+            name="display-name"
+            label="Display Name"
+            size="small"
+            select
+            disabled={loading}
+            value={formik.values.displayName}
+            onBlur={formik.handleBlur}
+            error={
+              formik.touched.displayName && Boolean(formik.errors.displayName)
+            }
+            helperText={
+              formik.touched.displayName && formik.errors.displayName
+                ? formik.errors.displayName
+                : " "
+            }
+          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "end",
+                padding: "0 0.5rem",
+              }}
+            >
+              <Button
+                onClick={handleCycleNameOptions}
+                startIcon={<LoopIcon />}
+                variant="text"
+                sx={{
+                  textTransform: "none",
+                  fontStyle: "italic",
+                  fontSize: "0.75rem",
+                }}
+              >
+                Cycle Names
+              </Button>
+            </Box>
+            {formik.values.displayName &&
+              !displayNameOptions.includes(formik.values.displayName) && (
+                <MenuItem
+                  selected
+                  key={formik.values.displayName}
+                  value={formik.values.displayName}
+                >
+                  {formik.values.displayName}
+                </MenuItem>
+              )}
+            {displayNameOptions.map((name) => (
+              <MenuItem
+                key={name}
+                value={name}
+                selected={name === formik.values.displayName}
+                onClick={() => formik.setFieldValue("displayName", name)}
+              >
+                {name}
+              </MenuItem>
+            ))}
+          </TextField>
           <TextField
             fullWidth
             id="email"
@@ -137,7 +219,7 @@ export default function RegisterDialog() {
                 : " "
             }
           />
-          <DialogErrorMessage error={error} clearError={() => setError(null)} />
+          <DialogErrorMessage error={error} clearError={clearError} />
         </DialogBody>
 
         <DialogFooter>
@@ -155,7 +237,7 @@ export default function RegisterDialog() {
             variant="outlined"
             disabled={loading}
           >
-            Sign In
+            Sign Up
           </Button>
         </DialogFooter>
       </form>

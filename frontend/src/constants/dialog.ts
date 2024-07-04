@@ -1,5 +1,5 @@
 export const DIALOG_TYPES = {
   LOGIN: "login",
   REGISTER: "register",
-  INIT_ACCOUNT: "init-account",
+  RESET_PASSWORD: "reset-password",
 } as const;

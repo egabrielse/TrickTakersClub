@@ -1,11 +1,12 @@
 import { LoadingButton } from "@mui/lab";
-import { Button, Link, TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { useFormik } from "formik";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useDispatch } from "react-redux";
 import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
+import { DISPLAY_MESSAGES } from "../../../constants/display";
 import { VALIDATION_ERRORS } from "../../../constants/error";
 import dialogActions from "../../../redux/features/dialog/actions";
 import Logo from "../../common/AppLogo";
@@ -15,6 +16,7 @@ import DialogBody from "../components/DialogBody";
 import DialogErrorMessage from "../components/DialogErrorMessage";
 import DialogFooter from "../components/DialogFooter";
 import DialogHeader from "../components/DialogHeader";
+import DialogMessage from "../components/DialogMessage";
 
 const validationSchema = yup.object({
   email: yup
@@ -22,20 +24,15 @@ const validationSchema = yup.object({
     .trim()
     .email(VALIDATION_ERRORS.EMAIL.INVALID)
     .required(VALIDATION_ERRORS.EMAIL.REQUIRED),
-  password: yup
-    .string()
-    .trim()
-    .min(8, VALIDATION_ERRORS.PASSWORD.MIN)
-    .max(32, VALIDATION_ERRORS.PASSWORD.MAX)
-    .required(VALIDATION_ERRORS.PASSWORD.REQUIRED),
 });
 
-export default function LoginDialog() {
+export default function ResetPassDialog() {
   const dispatch = useDispatch();
-  const { error, loading, login, clearError } = useContext(AuthContext);
+  const [sent, setSent] = useState(false);
+  const { error, loading, resetPassword, clearError } = useContext(AuthContext);
 
   const onSuccess = () => {
-    dispatch(dialogActions.closeDialog());
+    setSent(true);
   };
 
   const onFailure = () => {
@@ -45,22 +42,16 @@ export default function LoginDialog() {
   const formik = useFormik({
     initialValues: {
       email: "",
-      password: "",
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      login(values.email, values.password, onSuccess, onFailure);
+      resetPassword(values.email, onSuccess, onFailure);
     },
   });
 
   const openRegisterDialog = () => {
     dispatch(dialogActions.closeDialog());
-    dispatch(dialogActions.openDialog(DIALOG_TYPES.REGISTER));
-  };
-
-  const openResetPassDialog = () => {
-    dispatch(dialogActions.closeDialog());
-    dispatch(dialogActions.openDialog(DIALOG_TYPES.RESET_PASSWORD));
+    dispatch(dialogActions.openDialog(DIALOG_TYPES.LOGIN));
   };
 
   return (
@@ -69,7 +60,7 @@ export default function LoginDialog() {
       <DialogHeader>
         <Logo size="large" />
         <Typography variant="h5" align="center">
-          Login to Trick Takers Club
+          Reset Password
         </Typography>
       </DialogHeader>
       <form onSubmit={formik.handleSubmit}>
@@ -80,6 +71,7 @@ export default function LoginDialog() {
             name="email"
             label="Email"
             size="small"
+            disabled={sent}
             value={formik.values.email}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -90,32 +82,10 @@ export default function LoginDialog() {
                 : " "
             }
           />
-          <TextField
-            fullWidth
-            id="password"
-            name="password"
-            label="Password"
-            type="password"
-            size="small"
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.password && Boolean(formik.errors.password)}
-            helperText={
-              formik.touched.password && formik.errors.password
-                ? formik.errors.password
-                : " "
-            }
+          <DialogMessage
+            message={sent ? DISPLAY_MESSAGES.RESET_PASSWORD : null}
+            type="success"
           />
-          <Link
-            component="button"
-            variant="body1"
-            onClick={openResetPassDialog}
-            style={{ paddingBottom: "1rem" }}
-            underline="hover"
-          >
-            Forgot your password?
-          </Link>
           <DialogErrorMessage error={error} clearError={clearError} />
         </DialogBody>
         <DialogFooter>
@@ -124,16 +94,16 @@ export default function LoginDialog() {
             loading={loading}
             type="submit"
             variant="contained"
-            disabled={!formik.isValid}
+            disabled={!formik.isValid || sent}
           >
-            Sign In!
+            Reset
           </LoadingButton>
           <Button
             onClick={openRegisterDialog}
             variant="outlined"
             style={{ alignSelf: "start" }}
           >
-            Sign Up
+            Login
           </Button>
         </DialogFooter>
       </form>

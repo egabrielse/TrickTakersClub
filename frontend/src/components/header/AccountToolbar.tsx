@@ -7,21 +7,20 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
 import { DIALOG_TYPES } from "../../constants/dialog";
 import { PATHS } from "../../constants/path";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { selectUser } from "../../redux/selectors";
-import authSlice from "../../redux/slices/auth.slice";
-import dialogSlice from "../../redux/slices/dialog.slice";
+import dialogActions from "../../redux/features/dialog/actions";
+import { useAppDispatch } from "../../redux/hooks";
 import UserSnapshot from "../common/UserSnapshot";
+import { AuthContext } from "../providers/AuthProvider";
 
 export default function AccountToolbar() {
+  const { loading, user, logout } = useContext(AuthContext);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-  const user = useAppSelector(selectUser);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -32,15 +31,16 @@ export default function AccountToolbar() {
   };
 
   const handleLogin = () => {
-    dispatch(dialogSlice.actions.openDialog(DIALOG_TYPES.LOGIN));
+    dispatch(dialogActions.openDialog(DIALOG_TYPES.LOGIN));
   };
 
   const handleSignUp = () => {
-    dispatch(dialogSlice.actions.openDialog(DIALOG_TYPES.REGISTER));
+    dispatch(dialogActions.openDialog(DIALOG_TYPES.REGISTER));
   };
 
   const handleLogout = () => {
-    dispatch(authSlice.actions.logout());
+    setAnchorElUser(null);
+    logout();
   };
 
   const handleOpenAccountPage = () => {
@@ -49,7 +49,7 @@ export default function AccountToolbar() {
 
   return (
     <Toolbar disableGutters style={{ gap: 12 }}>
-      {user === null ? (
+      {loading ? null : user === null ? (
         <>
           <Tooltip title="Login">
             <Button
@@ -66,7 +66,7 @@ export default function AccountToolbar() {
               style={{ textWrap: "nowrap" }}
               variant="contained"
             >
-              Sign In
+              Sign Up
             </Button>
           </Tooltip>
         </>
@@ -83,12 +83,11 @@ export default function AccountToolbar() {
               vertical: "bottom",
               horizontal: "right",
             }}
-            keepMounted
             transformOrigin={{
               vertical: "top",
               horizontal: "right",
             }}
-            open={Boolean(anchorElUser)}
+            open={anchorElUser !== null}
             onClose={handleCloseUserMenu}
           >
             <MenuItem onClick={handleOpenAccountPage}>

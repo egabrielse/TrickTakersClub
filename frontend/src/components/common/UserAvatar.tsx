@@ -38,6 +38,7 @@ export default function UserAvatar(props: UserAvatarProps) {
           width: pixelSize,
           height: pixelSize,
           fontSize,
+          color: "#FFFFFF",
         }}
       />
     );
@@ -50,6 +51,7 @@ export default function UserAvatar(props: UserAvatarProps) {
           width: pixelSize,
           height: pixelSize,
           fontSize,
+          color: "#FFFFFF",
         }}
         children={initials}
       />

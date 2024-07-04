@@ -3,12 +3,12 @@ import Slide from "@mui/material/Slide";
 import { TransitionProps } from "@mui/material/transitions";
 import * as React from "react";
 import { DIALOG_TYPES } from "../../constants/dialog";
+import dialogActions from "../../redux/features/dialog/actions";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { selectDialogOpen, selectDialogType } from "../../redux/selectors";
-import dialogSlice from "../../redux/slices/dialog.slice";
-import InitAccountDialog from "./contents/InitAccountDialog";
 import LoginDialog from "./contents/LoginDialog";
 import RegisterDialog from "./contents/RegisterDialog";
+import ResetPassDialog from "./contents/ResetPassDialog";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -25,7 +25,7 @@ export default function CustomDialog() {
   const dialogType = useAppSelector(selectDialogType);
 
   const handleClose = () => {
-    dispatch(dialogSlice.actions.closeDialog());
+    dispatch(dialogActions.closeDialog());
   };
 
   const renderDialogContent = () => {
@@ -35,8 +35,8 @@ export default function CustomDialog() {
         return <LoginDialog />;
       case DIALOG_TYPES.REGISTER:
         return <RegisterDialog />;
-      case DIALOG_TYPES.INIT_ACCOUNT:
-        return <InitAccountDialog />;
+      case DIALOG_TYPES.RESET_PASSWORD:
+        return <ResetPassDialog />;
       default:
         console.error(`Unknown dialog type: ${dialogType}`);
         return null;

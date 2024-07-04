@@ -1,5 +1,5 @@
-import { User } from "firebase/auth";
 import { Size } from "../../types/size";
+import { User } from "../../types/user";
 import { getDisplayNameFontSize } from "../../utils/user";
 import UserAvatar from "./UserAvatar";
 import "./UserSnapshot.scss";
