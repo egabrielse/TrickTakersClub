@@ -5,6 +5,7 @@ type TileProps = {
   children: React.ReactNode;
   gridArea?: string;
   loading?: boolean;
+  flex?: number;
   orientation?: "horizontal" | "vertical";
   alignment?: "start" | "center" | "end";
   spacing?: "space-evenly" | "space-between" | "stretch" | "center";
@@ -12,6 +13,7 @@ type TileProps = {
 };
 
 export default function Tile(props: TileProps) {
+  const flex = props.flex || undefined;
   const gridArea = props.gridArea;
   const flexDirection = props.orientation === "horizontal" ? "row" : "column";
   const justifyContent = props.spacing || "space-evenly";
@@ -21,7 +23,14 @@ export default function Tile(props: TileProps) {
   return (
     <div
       className="Tile"
-      style={{ gridArea, flexDirection, justifyContent, alignItems, overflow }}
+      style={{
+        flex,
+        gridArea,
+        flexDirection,
+        justifyContent,
+        alignItems,
+        overflow,
+      }}
     >
       {props.loading ? <CircularProgress /> : props.children}
     </div>

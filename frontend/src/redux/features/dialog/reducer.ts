@@ -7,6 +7,7 @@ export interface DialogState {
     type: DialogType | undefined;
 }
 
+// TODO: add logic to redirect after successful login
 const initialState: DialogState = {
     open: false,
     type: undefined,

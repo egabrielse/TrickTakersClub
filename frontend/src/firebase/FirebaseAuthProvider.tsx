@@ -7,9 +7,9 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { ReactNode, createContext, useEffect, useState } from "react";
-import auth from "../../firebase/auth";
-import { User } from "../../types/user";
-import { getErrorForDisplay } from "../../utils/error";
+import { User } from "../types/user";
+import { getErrorForDisplay } from "../utils/error";
+import auth from "./auth";
 
 type AuthContextState = {
   user: User | null;
@@ -54,7 +54,7 @@ type AuthProviderProps = {
   children: ReactNode;
 };
 
-export default function AuthProvider({ children }: AuthProviderProps) {
+export default function FirebaseAuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

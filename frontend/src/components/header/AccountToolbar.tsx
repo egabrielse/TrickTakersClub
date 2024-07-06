@@ -10,11 +10,11 @@ import {
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
 import { DIALOG_TYPES } from "../../constants/dialog";
-import { PATHS } from "../../constants/path";
+import { PATHS } from "../../constants/url";
+import { AuthContext } from "../../firebase/FirebaseAuthProvider";
 import dialogActions from "../../redux/features/dialog/actions";
 import { useAppDispatch } from "../../redux/hooks";
 import UserSnapshot from "../common/UserSnapshot";
-import { AuthContext } from "../providers/AuthProvider";
 
 export default function AccountToolbar() {
   const { loading, user, logout } = useContext(AuthContext);

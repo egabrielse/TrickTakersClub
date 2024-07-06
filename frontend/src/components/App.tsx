@@ -1,34 +1,42 @@
 import { ThemeProvider } from "@emotion/react";
 import { createTheme } from "@mui/material";
 import { Provider } from "react-redux";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { SEGMENTS } from "../constants/path";
+import {
+  Route,
+  RouterProvider,
+  createBrowserRouter,
+  createRoutesFromElements,
+} from "react-router-dom";
+import { SEGMENTS } from "../constants/url";
+import FirebaseAuthProvider from "../firebase/FirebaseAuthProvider";
 import { store } from "../redux/store";
-import RootErrorBoundary from "./error/RootErrorBoundary";
 import RootLayout from "./layout/RootLayout";
-import AuthProvider from "./providers/AuthProvider";
+import AccountPage from "./pages/AccountPage";
+import PrivateRoutes from "./pages/PrivateRoutes";
+import PublicRoutes from "./pages/PublicRoutes";
+import RootErrorBoundary from "./pages/RootErrorBoundary";
+import RulesPage from "./pages/RulesPage";
+import TablePage from "./pages/TablePage";
+import HomePage from "./pages/home/HomePage";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <RootLayout />,
-    errorElement: <RootErrorBoundary />,
-    children: [
-      {
-        path: SEGMENTS.RULES,
-        element: <div>Rules</div>,
-      },
-      {
-        path: SEGMENTS.ACCOUNT,
-        element: <div>Account</div>,
-      },
-      {
-        path: SEGMENTS.TABLE,
-        element: <div>Table</div>,
-      },
-    ],
-  },
-]);
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route
+      path="/"
+      element={<RootLayout />}
+      errorElement={<RootErrorBoundary />}
+    >
+      <Route element={<PublicRoutes />}>
+        <Route index element={<HomePage />} />
+        <Route path={SEGMENTS.RULES} element={<RulesPage />} />
+      </Route>
+      <Route element={<PrivateRoutes />}>
+        <Route path={SEGMENTS.ACCOUNT} element={<AccountPage />} />
+        <Route path={SEGMENTS.TABLE} element={<TablePage />} />
+      </Route>
+    </Route>,
+  ),
+);
 
 const theme = createTheme({
   palette: {
@@ -49,11 +57,11 @@ const theme = createTheme({
 export default function App() {
   return (
     <Provider store={store}>
-      <AuthProvider>
+      <FirebaseAuthProvider>
         <ThemeProvider theme={theme}>
           <RouterProvider router={router} />
         </ThemeProvider>
-      </AuthProvider>
+      </FirebaseAuthProvider>
     </Provider>
   );
 }

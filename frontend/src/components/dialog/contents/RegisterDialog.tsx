@@ -7,11 +7,11 @@ import { useContext, useEffect, useState } from "react";
 import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { VALIDATION_ERRORS } from "../../../constants/error";
+import { AuthContext } from "../../../firebase/FirebaseAuthProvider";
 import dialogActions from "../../../redux/features/dialog/actions";
 import { useAppDispatch } from "../../../redux/hooks";
 import { generateDisplayName } from "../../../utils/user";
 import Logo from "../../common/AppLogo";
-import { AuthContext } from "../../providers/AuthProvider";
 import CloseDialogButton from "../components/CloseDialogButton";
 import DialogBody from "../components/DialogBody";
 import DialogErrorMessage from "../components/DialogErrorMessage";
@@ -237,7 +237,7 @@ export default function RegisterDialog() {
             variant="outlined"
             disabled={loading}
           >
-            Sign Up
+            Login
           </Button>
         </DialogFooter>
       </form>

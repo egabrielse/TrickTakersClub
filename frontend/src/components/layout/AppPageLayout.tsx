@@ -5,7 +5,7 @@ import RuleIcon from "@mui/icons-material/Rule";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import { Outlet, useLocation, useNavigate } from "react-router";
-import { PATHS } from "../../constants/path";
+import { PATHS } from "../../constants/url";
 import "./AppPageLayout.scss";
 
 export default function AppPageLayout() {
