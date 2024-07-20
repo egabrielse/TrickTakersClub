@@ -7,7 +7,7 @@ type HeartProps = {
 export default function Heart({
   size = 24,
   fill = "#000000",
-  rotate,
+  rotate = 0,
 }: HeartProps) {
   return (
     <svg height={size} viewBox="0 0 512 512" transform={`rotate(${rotate})`}>

@@ -73,24 +73,28 @@ export default function OverviewSection() {
         picked loses. Point values are as follows:
       </p>
       <table>
-        <tr>
-          <th>Card</th>
-          <th>Aces</th>
-          <th>Tens</th>
-          <th>Kings</th>
-          <th>Queens</th>
-          <th>Jacks</th>
-          <th>Other</th>
-        </tr>
-        <tr>
-          <th>Value</th>
-          <td>11</td>
-          <td>10</td>
-          <td>4</td>
-          <td>3</td>
-          <td>2</td>
-          <td>0</td>
-        </tr>
+        <thead>
+          <tr>
+            <th>Card</th>
+            <th>Aces</th>
+            <th>Tens</th>
+            <th>Kings</th>
+            <th>Queens</th>
+            <th>Jacks</th>
+            <th>Other</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Value</th>
+            <td>11</td>
+            <td>10</td>
+            <td>4</td>
+            <td>3</td>
+            <td>2</td>
+            <td>0</td>
+          </tr>
+        </tbody>
       </table>
     </>
   );

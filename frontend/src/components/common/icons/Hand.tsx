@@ -7,7 +7,7 @@ type HandProps = {
 export default function Hand({
   size = 24,
   fill = "#000000",
-  rotate,
+  rotate = 0,
 }: HandProps) {
   return (
     <svg height={size} viewBox="0 0 512 512" transform={`rotate(${rotate})`}>

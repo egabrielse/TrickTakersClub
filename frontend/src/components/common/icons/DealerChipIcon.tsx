@@ -7,7 +7,7 @@ type DealerChipIconProps = {
 export default function DealerChipIcon({
   size = 24,
   fill = "#000000",
-  rotate,
+  rotate = 0,
 }: DealerChipIconProps) {
   return (
     <svg

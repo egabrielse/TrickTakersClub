@@ -1,6 +1,5 @@
 import PreviewIcon from "@mui/icons-material/Preview";
 import ScoreBoardIcon from "@mui/icons-material/Scoreboard";
-import { useLocation } from "react-router";
 import PageTopper from "../../common/PageTopper";
 import CardsIcon from "../../common/icons/CardsIcon";
 import DealerIcon from "../../common/icons/DealerIcon";
@@ -26,9 +25,6 @@ const SECTIONS = {
 } as const;
 
 export default function RulesPage() {
-  const location = useLocation();
-
-  console.log(location);
   return (
     <div className="RulesPage">
       <Scrollable

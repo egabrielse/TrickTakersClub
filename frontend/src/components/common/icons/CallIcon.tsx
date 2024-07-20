@@ -7,7 +7,7 @@ type CallProps = {
 export default function Call({
   size = 24,
   fill = "#000000",
-  rotate,
+  rotate = 0,
 }: CallProps) {
   return (
     <svg height={size} viewBox="0 0 512 512" transform={`rotate(${rotate})`}>

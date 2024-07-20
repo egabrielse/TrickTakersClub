@@ -7,7 +7,7 @@ type SpadeProps = {
 export default function Spade({
   size = 24,
   fill = "#000000",
-  rotate,
+  rotate = 0,
 }: SpadeProps) {
   return (
     <svg height={size} viewBox="0 0 512 512" transform={`rotate(${rotate})`}>

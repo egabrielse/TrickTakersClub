@@ -20,8 +20,8 @@ export default function StyledTitle({
   const fontSize = size ? getAppNameFontSize(size) : undefined;
   const cursor = onClick ? "pointer" : "default";
   return (
-    <text className="StyledTitle" style={{ cursor, fontSize, color, width }}>
+    <div className="StyledTitle" style={{ cursor, fontSize, color, width }}>
       {title.toUpperCase()}
-    </text>
+    </div>
   );
 }

@@ -7,7 +7,7 @@ type DealerIconProps = {
 export default function DealerIcon({
   size = 24,
   fill = "#000000",
-  rotate,
+  rotate = 0,
 }: DealerIconProps) {
   return (
     <svg height={size} viewBox="0 0 512 512" transform={`rotate(${rotate})`}>
