@@ -31,7 +31,9 @@ export default function RulesPage() {
   console.log(location);
   return (
     <div className="RulesPage">
-      <Scrollable header={<PageTopper title="Sheepshead" pre="How to play" />}>
+      <Scrollable
+        header={<PageTopper hideLogo title="Sheepshead" pre="How to play" />}
+      >
         <ScrollableSection
           id={SECTIONS.OVERVIEW}
           title="Overview"

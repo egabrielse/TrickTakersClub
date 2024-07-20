@@ -22,12 +22,9 @@ export default function HomePage() {
       />
       <PlayButton />
       <Tile flex={1} alignment="start" spacing="stretch">
-        <div>
-          <h1>Sheepshead</h1>
-          <h3>
-            Wisconsin's <i>Unofficial</i> State Card Game
-          </h3>
-        </div>
+        <h2>
+          Wisconsin's <i>Unofficial</i> State Card Game
+        </h2>
         <p>
           Sheepshead is a complex point-trick-taking card game that is most
           popular in the state of Wisconsin. It is played with 32 cards from a
