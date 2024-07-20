@@ -12,13 +12,13 @@ export default function RootLayout(): ReactNode {
       <div className="RootLayout">
         <Header />
         <aside className="RootLayout-LeftAside">
-          <AdPlaceholder />
+          <AdPlaceholder type="vertical" />
         </aside>
         <main className="RootLayout-Body">
           <Outlet />
         </main>
         <aside className="RootLayout-RightAside">
-          <AdPlaceholder />
+          <AdPlaceholder type="vertical" />
         </aside>
       </div>
     </>

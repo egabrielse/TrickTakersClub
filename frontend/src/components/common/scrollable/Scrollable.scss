@@ -1,0 +1,13 @@
+.Scrollable {
+    height: 100%;
+    overflow-y: scroll;
+    position: relative;
+    padding: 0 1rem 2rem 1rem;
+
+    &-Header {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        padding-top: 2rem;
+    }
+}

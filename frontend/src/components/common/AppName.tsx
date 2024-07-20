@@ -1,21 +1,29 @@
 import { Size } from "../../types/size";
 import { getAppNameFontSize } from "../../utils/size";
-import "./AppName.scss";
 
 type AppNameProps = {
   size?: Size;
   width?: "100%" | "auto";
   color?: string;
+  onClick?: () => void;
 };
 
 export default function AppName({
   size,
   color = "black",
   width,
+  onClick,
 }: AppNameProps) {
   const fontSize = size ? getAppNameFontSize(size) : undefined;
+  const cursor = onClick ? "pointer" : "default";
   return (
-    <svg height={fontSize} width={width} viewBox="0 0 732 56">
+    <svg
+      style={{ cursor }}
+      height={fontSize}
+      width={width}
+      viewBox="0 0 732 56"
+      onClick={onClick}
+    >
       <g transform="matrix(1.7228177834 0 0 1.7228177642 365.4882698804 28.0916348708)">
         <path
           stroke="none"

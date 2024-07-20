@@ -1,12 +1,12 @@
-type CardFanIconProps = {
+type CardsIconProps = {
   size?: number;
   stroke?: string;
 };
 
-export default function CardFanIcon({
+export default function CardsIcon({
   size = 24,
   stroke = "#000000",
-}: CardFanIconProps) {
+}: CardsIconProps) {
   return (
     <svg
       width={size}

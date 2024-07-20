@@ -1,8 +1,7 @@
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router";
 import { PATHS } from "../../../constants/url";
-import AppLogo from "../../common/AppLogo";
-import AppName from "../../common/AppName";
+import PageTopper from "../../common/PageTopper";
 import Tile from "../../common/Tile";
 import "./HomePage.scss";
 import PlayButton from "./PlayButton";
@@ -16,14 +15,11 @@ export default function HomePage() {
 
   return (
     <div className="HomePage">
-      <div className="HomePage-Header">
-        <AppLogo size="xlarge" color="white" />
-        <div className="HomePage-Header-AnnotatedName">
-          <h3>Welcome to</h3>
-          <AppName size="xlarge" color="white" />
-          <h4>Play Sheepshead Online</h4>
-        </div>
-      </div>
+      <PageTopper
+        title="Trick Takers Club"
+        pre="Welcome to"
+        post="Play Sheepshead Online"
+      />
       <PlayButton />
       <Tile flex={1} alignment="start" spacing="stretch">
         <div>

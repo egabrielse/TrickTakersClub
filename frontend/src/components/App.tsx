@@ -11,11 +11,11 @@ import { SEGMENTS } from "../constants/url";
 import FirebaseAuthProvider from "../firebase/FirebaseAuthProvider";
 import { store } from "../redux/store";
 import RootLayout from "./layout/RootLayout";
+import RulesPage from "./pages//rules/RulesPage";
 import AccountPage from "./pages/AccountPage";
 import PrivateRoutes from "./pages/PrivateRoutes";
 import PublicRoutes from "./pages/PublicRoutes";
 import RootErrorBoundary from "./pages/RootErrorBoundary";
-import RulesPage from "./pages/RulesPage";
 import TablePage from "./pages/TablePage";
 import HomePage from "./pages/home/HomePage";
 

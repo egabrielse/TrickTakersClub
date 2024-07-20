@@ -4,12 +4,23 @@ import { scaleBySize } from "../../utils/size";
 type AppLogoProps = {
   size: Size;
   color?: "black" | "white";
+  onClick?: () => void;
 };
 
-export default function AppLogo({ size, color = "black" }: AppLogoProps) {
+export default function AppLogo({
+  size,
+  color = "black",
+  onClick,
+}: AppLogoProps) {
   const pixelSize = scaleBySize(size, 64);
+  const cursor = onClick ? "pointer" : "default";
   return (
-    <svg height={pixelSize} viewBox="0 0 500 365.571">
+    <svg
+      style={{ cursor }}
+      height={pixelSize}
+      viewBox="0 0 500 365.571"
+      onClick={onClick}
+    >
       <g transform="matrix(2.4901019128 0 0 2.4901018874 250.3531073446 183.1384423446)">
         <g transform="matrix(0.0364508871 0 0 -0.0364508871 0 0)">
           <path
