@@ -3,7 +3,7 @@ import { scaleBySize } from "../../utils/size";
 
 type AppLogoProps = {
   size: Size;
-  color?: "black" | "white";
+  color?: string;
   onClick?: () => void;
 };
 

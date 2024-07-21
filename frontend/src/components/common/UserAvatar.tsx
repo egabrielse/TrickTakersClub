@@ -34,6 +34,7 @@ export default function UserAvatar(props: UserAvatarProps) {
         src={props.src}
         sizes="large"
         sx={{
+          border: "1px solid #FFFFFF",
           bgcolor: props.bgColor || "#FFFFFF",
           width: pixelSize,
           height: pixelSize,
@@ -47,6 +48,7 @@ export default function UserAvatar(props: UserAvatarProps) {
       <Avatar
         alt={props.name}
         sx={{
+          border: "1px solid #FFFFFF",
           bgcolor: props.bgColor || usernameToColor(props.name),
           width: pixelSize,
           height: pixelSize,
@@ -57,6 +59,14 @@ export default function UserAvatar(props: UserAvatarProps) {
       />
     );
   } else {
-    return <Avatar sx={{ width: pixelSize, height: pixelSize }} />;
+    return (
+      <Avatar
+        sx={{
+          border: "1px solid #FFFFFF",
+          width: pixelSize,
+          height: pixelSize,
+        }}
+      />
+    );
   }
 }

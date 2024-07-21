@@ -39,36 +39,33 @@ export default function AccountToolbar() {
   };
 
   const handleLogout = () => {
-    setAnchorElUser(null);
+    handleCloseUserMenu();
     logout();
   };
 
   const handleOpenAccountPage = () => {
     navigate(PATHS.ACCOUNT);
+    handleCloseUserMenu();
   };
 
   return (
     <Toolbar disableGutters style={{ gap: 12 }}>
       {loading ? null : user === null ? (
         <>
-          <Tooltip title="Login">
-            <Button
-              onClick={handleLogin}
-              style={{ textWrap: "nowrap" }}
-              variant="contained"
-            >
-              Login
-            </Button>
-          </Tooltip>
-          <Tooltip title="Sign Up">
-            <Button
-              onClick={handleSignUp}
-              style={{ textWrap: "nowrap" }}
-              variant="contained"
-            >
-              Sign Up
-            </Button>
-          </Tooltip>
+          <Button
+            onClick={handleLogin}
+            style={{ textWrap: "nowrap" }}
+            variant="contained"
+          >
+            Login
+          </Button>
+          <Button
+            onClick={handleSignUp}
+            style={{ textWrap: "nowrap" }}
+            variant="contained"
+          >
+            Sign Up
+          </Button>
         </>
       ) : (
         <>
