@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"main/api"
+	"main/infrastructure/firebase"
 	"main/infrastructure/persistance"
 	"main/utils"
 	"math/rand"
@@ -30,6 +31,9 @@ func main() {
 
 	// Initialize Redis client
 	persistance.InitRedisCache()
+
+	// Initialize Firebase app
+	firebase.InitFirebaseApp()
 
 	// Initialize router
 	router := api.InitRouter()

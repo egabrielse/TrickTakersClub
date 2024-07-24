@@ -2,13 +2,13 @@ import { LoadingButton } from "@mui/lab";
 import { Button, Link, TextField } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { useFormik } from "formik";
-import { useContext } from "react";
-import { useDispatch } from "react-redux";
 import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { VALIDATION_ERRORS } from "../../../constants/error";
-import { AuthContext } from "../../../firebase/FirebaseAuthProvider";
+import authActions from "../../../redux/features/auth/action";
 import dialogActions from "../../../redux/features/dialog/actions";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { selectAuthError, selectAuthLoading } from "../../../redux/selectors";
 import Logo from "../../common/AppLogo";
 import CloseDialogButton from "../components/CloseDialogButton";
 import DialogBody from "../components/DialogBody";
@@ -31,16 +31,9 @@ const validationSchema = yup.object({
 });
 
 export default function LoginDialog() {
-  const dispatch = useDispatch();
-  const { error, loading, login, clearError } = useContext(AuthContext);
-
-  const onSuccess = () => {
-    dispatch(dialogActions.closeDialog());
-  };
-
-  const onFailure = () => {
-    // Do nothing
-  };
+  const dispatch = useAppDispatch();
+  const error = useAppSelector(selectAuthError);
+  const loading = useAppSelector(selectAuthLoading);
 
   const formik = useFormik({
     initialValues: {
@@ -49,7 +42,12 @@ export default function LoginDialog() {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      login(values.email, values.password, onSuccess, onFailure);
+      const { email, password } = values;
+      dispatch(authActions.login({ email, password }))
+        .unwrap()
+        .then(() => {
+          dispatch(dialogActions.closeDialog());
+        });
     },
   });
 
@@ -61,6 +59,10 @@ export default function LoginDialog() {
   const openResetPassDialog = () => {
     dispatch(dialogActions.closeDialog());
     dispatch(dialogActions.openDialog(DIALOG_TYPES.RESET_PASSWORD));
+  };
+
+  const handleClearError = () => {
+    dispatch(authActions.resetError());
   };
 
   return (
@@ -116,7 +118,7 @@ export default function LoginDialog() {
           >
             Forgot your password?
           </Link>
-          <DialogErrorMessage error={error} clearError={clearError} />
+          <DialogErrorMessage error={error} clearError={handleClearError} />
         </DialogBody>
         <DialogFooter>
           <LoadingButton

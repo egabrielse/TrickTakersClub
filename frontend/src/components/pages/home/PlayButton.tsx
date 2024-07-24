@@ -1,13 +1,16 @@
 import { Button } from "@mui/material";
+import indexActions from "../../../redux/features/index/actions";
+import { useAppDispatch } from "../../../redux/hooks";
 import Club from "../../common/icons/Club";
 import Diamond from "../../common/icons/Diamond";
 import Heart from "../../common/icons/Heart";
 import Spade from "../../common/icons/Spade";
 
 export default function PlayButton() {
+  const dispatch = useAppDispatch();
+
   const handlePlay = () => {
-    // TODO: Implement play button
-    console.log("Play Sheepshead");
+    dispatch(indexActions.healthCheck());
   };
 
   return (

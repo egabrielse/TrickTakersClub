@@ -3,13 +3,14 @@ import { LoadingButton } from "@mui/lab";
 import { Box, Button, MenuItem, TextField } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { useFormik } from "formik";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { VALIDATION_ERRORS } from "../../../constants/error";
-import { AuthContext } from "../../../firebase/FirebaseAuthProvider";
+import authActions from "../../../redux/features/auth/action";
 import dialogActions from "../../../redux/features/dialog/actions";
-import { useAppDispatch } from "../../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { selectAuthError, selectAuthLoading } from "../../../redux/selectors";
 import { generateDisplayName } from "../../../utils/user";
 import Logo from "../../common/AppLogo";
 import CloseDialogButton from "../components/CloseDialogButton";
@@ -39,16 +40,9 @@ const validationSchema = yup.object({
 
 export default function RegisterDialog() {
   const dispatch = useAppDispatch();
-  const { register, loading, error, clearError } = useContext(AuthContext);
+  const error = useAppSelector(selectAuthError);
+  const loading = useAppSelector(selectAuthLoading);
   const [displayNameOptions, setDisplayNameOptions] = useState<string[]>([]);
-
-  const onSuccess = () => {
-    dispatch(dialogActions.closeDialog());
-  };
-
-  const onFailure = () => {
-    // Do nothing
-  };
 
   const formik = useFormik({
     initialValues: {
@@ -59,13 +53,12 @@ export default function RegisterDialog() {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      register(
-        values.email,
-        values.password,
-        values.displayName,
-        onSuccess,
-        onFailure,
-      );
+      const { email, password, displayName } = values;
+      dispatch(authActions.signUp({ email, password, displayName }))
+        .unwrap()
+        .then(() => {
+          dispatch(dialogActions.closeDialog());
+        });
     },
   });
 
@@ -88,6 +81,10 @@ export default function RegisterDialog() {
   const handleCycleNameOptions = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     cycleNameOptions();
+  };
+
+  const handleClearError = () => {
+    dispatch(authActions.resetError());
   };
 
   // Generate initial display name options when form is first opened
@@ -219,7 +216,7 @@ export default function RegisterDialog() {
                 : " "
             }
           />
-          <DialogErrorMessage error={error} clearError={clearError} />
+          <DialogErrorMessage error={error} clearError={handleClearError} />
         </DialogBody>
 
         <DialogFooter>

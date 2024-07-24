@@ -2,14 +2,15 @@ import { LoadingButton } from "@mui/lab";
 import { Button, TextField } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { useFormik } from "formik";
-import { useContext, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useState } from "react";
 import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { DISPLAY_MESSAGES } from "../../../constants/display";
 import { VALIDATION_ERRORS } from "../../../constants/error";
-import { AuthContext } from "../../../firebase/FirebaseAuthProvider";
+import authActions from "../../../redux/features/auth/action";
 import dialogActions from "../../../redux/features/dialog/actions";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { selectAuthError, selectAuthLoading } from "../../../redux/selectors";
 import Logo from "../../common/AppLogo";
 import CloseDialogButton from "../components/CloseDialogButton";
 import DialogBody from "../components/DialogBody";
@@ -27,17 +28,10 @@ const validationSchema = yup.object({
 });
 
 export default function ResetPassDialog() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [sent, setSent] = useState(false);
-  const { error, loading, resetPassword, clearError } = useContext(AuthContext);
-
-  const onSuccess = () => {
-    setSent(true);
-  };
-
-  const onFailure = () => {
-    // Do nothing
-  };
+  const error = useAppSelector(selectAuthError);
+  const loading = useAppSelector(selectAuthLoading);
 
   const formik = useFormik({
     initialValues: {
@@ -45,13 +39,19 @@ export default function ResetPassDialog() {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      resetPassword(values.email, onSuccess, onFailure);
+      dispatch(authActions.sendPasswordResetEmail(values.email))
+        .unwrap()
+        .then(() => setSent(true));
     },
   });
 
   const openRegisterDialog = () => {
     dispatch(dialogActions.closeDialog());
     dispatch(dialogActions.openDialog(DIALOG_TYPES.LOGIN));
+  };
+
+  const handleClearError = () => {
+    dispatch(authActions.resetError());
   };
 
   return (
@@ -86,7 +86,7 @@ export default function ResetPassDialog() {
             message={sent ? DISPLAY_MESSAGES.RESET_PASSWORD : null}
             type="success"
           />
-          <DialogErrorMessage error={error} clearError={clearError} />
+          <DialogErrorMessage error={error} clearError={handleClearError} />
         </DialogBody>
         <DialogFooter>
           <LoadingButton

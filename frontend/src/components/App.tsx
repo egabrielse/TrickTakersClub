@@ -1,5 +1,6 @@
 import { ThemeProvider } from "@emotion/react";
 import { createTheme } from "@mui/material";
+import axios from "axios";
 import { Provider } from "react-redux";
 import {
   Route,
@@ -53,6 +54,8 @@ const theme = createTheme({
     },
   },
 });
+
+axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 
 export default function App() {
   return (

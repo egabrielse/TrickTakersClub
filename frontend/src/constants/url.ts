@@ -6,8 +6,9 @@ export const SEGMENTS = {
 } as const;
 
 export const PATHS = {
-  ACCOUNT: `/${SEGMENTS.ACCOUNT}`,
   ROOT: "/",
+  ACCOUNT: `/${SEGMENTS.ACCOUNT}`,
+  HOME: `/${SEGMENTS.HOME}`,
   RULES: `/${SEGMENTS.RULES}`,
   TABLE: `/${SEGMENTS.TABLE}`,
 };

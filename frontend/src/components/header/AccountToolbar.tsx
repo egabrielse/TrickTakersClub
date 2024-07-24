@@ -7,17 +7,19 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { DIALOG_TYPES } from "../../constants/dialog";
 import { PATHS } from "../../constants/url";
-import { AuthContext } from "../../firebase/FirebaseAuthProvider";
+import authActions from "../../redux/features/auth/action";
 import dialogActions from "../../redux/features/dialog/actions";
-import { useAppDispatch } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { selectAuthLoading, selectAuthUser } from "../../redux/selectors";
 import UserSnapshot from "../common/UserSnapshot";
 
 export default function AccountToolbar() {
-  const { loading, user, logout } = useContext(AuthContext);
+  const loading = useAppSelector(selectAuthLoading);
+  const user = useAppSelector(selectAuthUser);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -40,7 +42,7 @@ export default function AccountToolbar() {
 
   const handleLogout = () => {
     handleCloseUserMenu();
-    logout();
+    dispatch(authActions.logout());
   };
 
   const handleOpenAccountPage = () => {
