@@ -25,8 +25,7 @@ func HealthCheck(r *http.Request, p httprouter.Params) (code int, body any) {
 		statuses.Redis = true
 	}
 
-	app := firebase.GetFirebaseApp()
-	if _, err := app.Auth(r.Context()); err == nil {
+	if _, err := firebase.GetFirebaseAuth(r.Context()); err == nil {
 		statuses.FirebaseAuth = true
 	}
 	return http.StatusOK, statuses

@@ -6,6 +6,7 @@ import (
 	"os"
 
 	fb "firebase.google.com/go/v4"
+	"firebase.google.com/go/v4/auth"
 )
 
 var firebaseApp *fb.App
@@ -21,7 +22,11 @@ func InitFirebaseApp() {
 	}
 }
 
-// GetFirebaseApp returns the Firebase app
-func GetFirebaseApp() *fb.App {
-	return firebaseApp
+// GetFirebaseAuth returns the Firebase auth client
+func GetFirebaseAuth(ctx context.Context) (*auth.Client, error) {
+	if auth, err := firebaseApp.Auth(ctx); err != nil {
+		return nil, err
+	} else {
+		return auth, nil
+	}
 }

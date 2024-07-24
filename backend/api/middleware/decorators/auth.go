@@ -16,8 +16,7 @@ func TokenAuthentication(handler middleware.RequestHandler) middleware.RequestHa
 			return http.StatusUnauthorized, "Missing authorization header"
 		}
 		tokenString = tokenString[len("Bearer "):]
-		app := firebase.GetFirebaseApp()
-		if auth, err := app.Auth(r.Context()); err != nil {
+		if auth, err := firebase.GetFirebaseAuth(r.Context()); err != nil {
 			return http.StatusInternalServerError, "Error connecting to auth service"
 		} else if token, err := auth.VerifyIDToken(r.Context(), tokenString); err != nil {
 			return http.StatusUnauthorized, "Invalid token"
