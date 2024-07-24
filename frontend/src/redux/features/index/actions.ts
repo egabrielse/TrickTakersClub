@@ -1,13 +1,13 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { healthCheck } from "../../../api/index.api";
 
-export const TABLE_ACTIONS = {
-    CREATE_TABLE: "table/createTable",
+export const INDEX_ACTIONS = {
+    HEALTH_CHECK: "index/HEALTH_CHECK",
 };
 
 const indexActions = {
     healthCheck: createAsyncThunk(
-        TABLE_ACTIONS.CREATE_TABLE,
+        INDEX_ACTIONS.HEALTH_CHECK,
         async () => {
             const data = await healthCheck();
             return data;

@@ -2,8 +2,8 @@ import { createAction } from "@reduxjs/toolkit";
 import { DialogType } from "../../../types/dialog";
 
 export const DIALOG_ACTIONS = {
-    OPEN_DIALOG: "dialog/openDialog",
-    CLOSE_DIALOG: "dialog/closeDialog",
+    OPEN_DIALOG: "dialog/OPEN_DIALOG",
+    CLOSE_DIALOG: "dialog/CLOSE_DIALOG",
 };
 
 const dialogActions = {

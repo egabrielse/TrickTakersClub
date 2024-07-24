@@ -10,12 +10,12 @@ import auth from "../../../firebase/auth";
 import { User } from "../../../types/user";
 
 export const AUTH_ACTIONS = {
-    LOGIN: "auth/login",
-    SIGNUP: "auth/signup",
-    LOGOUT: "auth/logout",
-    RESET_ERROR: "auth/resetError",
-    INITIALIZE_USER: "auth/initializeUser",
-    SEND_PASSWORD_RESET_EMAIL: "auth/sendPasswordResetEmail",
+    LOGIN: "auth/LOGIN",
+    SIGNUP: "auth/SIGNUP",
+    LOGOUT: "auth/LOGOUT",
+    RESET_ERROR: "auth/RESET_ERROR",
+    INITIALIZE_USER: "auth/INITIALIZE_USER",
+    SEND_PASSWORD_RESET_EMAIL: "auth/SEND_PASSWORD_RESET_EMAIL",
 };
 
 type InitializeUserPayload = {
