@@ -1,5 +1,5 @@
 import { Button } from "@mui/material";
-import indexActions from "../../../redux/features/index/actions";
+import tableActions from "../../../redux/features/table/actions";
 import { useAppDispatch } from "../../../redux/hooks";
 import Club from "../../common/icons/Club";
 import Diamond from "../../common/icons/Diamond";
@@ -10,7 +10,7 @@ export default function PlayButton() {
   const dispatch = useAppDispatch();
 
   const handlePlay = () => {
-    dispatch(indexActions.healthCheck());
+    dispatch(tableActions.createTable());
   };
 
   return (

@@ -18,7 +18,7 @@ export default function HomePage() {
       <PageTopper
         title="Trick Takers Club"
         pre="Welcome to"
-        post="Play Sheepshead Online"
+        post="Home to Sheepshead"
       />
       <PlayButton />
       <Tile flex={1} alignment="start" spacing="stretch">

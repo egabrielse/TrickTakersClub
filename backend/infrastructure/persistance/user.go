@@ -1,4 +1,4 @@
-package cache
+package persistance
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 
 const ExpirationUser = 0
 
-func createKey(id string) string {
+func createUserKey(id string) string {
 	return "user:" + id
 }
 
@@ -25,7 +25,7 @@ func NewUserRepoImplementation(rdb *redis.Client) *UserRepoImplementation {
 // Get returns the user entity from the redis cache
 func (r *UserRepoImplementation) Get(ctx context.Context, ID string) (*entity.UserEntity, error) {
 	var user entity.UserEntity
-	if result, err := r.rdb.Get(ctx, createKey(ID)).Result(); err != nil {
+	if result, err := r.rdb.Get(ctx, createUserKey(ID)).Result(); err != nil {
 		return nil, err
 	} else if err := user.UnmarshalBinary([]byte(result)); err != nil {
 		return nil, err
@@ -36,7 +36,7 @@ func (r *UserRepoImplementation) Get(ctx context.Context, ID string) (*entity.Us
 
 // GetAll returns all the user entities from the redis cache
 func (r *UserRepoImplementation) GetAll(ctx context.Context) ([]*entity.UserEntity, error) {
-	if keys, err := r.rdb.Keys(ctx, createKey("*")).Result(); err != nil {
+	if keys, err := r.rdb.Keys(ctx, createUserKey("*")).Result(); err != nil {
 		return nil, err
 	} else {
 		users := make([]*entity.UserEntity, len(keys))
@@ -57,7 +57,7 @@ func (r *UserRepoImplementation) GetAll(ctx context.Context) ([]*entity.UserEnti
 
 // Save saves the user entity to the redis cache
 func (r *UserRepoImplementation) Save(ctx context.Context, user *entity.UserEntity) error {
-	if _, err := r.rdb.Set(ctx, createKey(user.ID), user, ExpirationUser).Result(); err != nil {
+	if _, err := r.rdb.Set(ctx, createUserKey(user.ID), user, ExpirationUser).Result(); err != nil {
 		return err
 	}
 	return nil

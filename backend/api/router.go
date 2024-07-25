@@ -22,9 +22,12 @@ func InitRouter() *http.Handler {
 	// router.GET("/v1/user/:id", middleware.HandleWith(handlers.GetUser, decorators.RequestLogging))
 	// router.GET("/v1/users", middleware.HandleWith(handlers.GetAllUsers, decorators.RequestLogging))
 
+	router.POST("/v1/table", middleware.HandleWith(handlers.CreateTable, decorators.RequestLogging, decorators.TokenAuthentication))
+	router.GET("/v1/table/:id", middleware.HandleWith(handlers.GetTable, decorators.RequestLogging, decorators.TokenAuthentication))
+	router.GET("/v1/table", middleware.HandleWith(handlers.GetAllTables, decorators.RequestLogging, decorators.TokenAuthentication))
+
 	// 3. Add CORS middleware
-	cors := middleware.SetupCors()
-	routerWithCORS := cors.Handler(router)
+	routerWithCORS := middleware.SetupCors().Handler(router)
 
 	// 4. Return initialized router
 	return &routerWithCORS

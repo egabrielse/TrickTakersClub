@@ -1,8 +1,7 @@
 package handlers
 
 import (
-	"main/infrastructure/firebase"
-	"main/infrastructure/persistance"
+	"main/infrastructure"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -20,12 +19,12 @@ func HealthCheck(r *http.Request, p httprouter.Params) (code int, body any) {
 		FirebaseAuth: false,
 	}
 	// Check if Redis is connected
-	rdb := persistance.GetRedisClient()
+	rdb := infrastructure.GetRedisClient()
 	if _, err := rdb.Ping(r.Context()).Result(); err == nil {
 		statuses.Redis = true
 	}
 
-	if _, err := firebase.GetFirebaseAuth(r.Context()); err == nil {
+	if _, err := infrastructure.GetFirebaseAuth(r.Context()); err == nil {
 		statuses.FirebaseAuth = true
 	}
 	return http.StatusOK, statuses

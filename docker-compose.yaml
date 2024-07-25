@@ -6,8 +6,17 @@ services:
       dockerfile: Dockerfile
       context: ./backend
     depends_on:
-      - redis-data
+      - redis
       - firebase
+    environment:
+      - ENV=development
+      - PORT=8080
+      - REDIS_HOST=redis:6379
+      - REDIS_USER=default
+      - REDIS_PASS=IMZZZwi63WHSFV5MJ
+      - FIREBASE_AUTH_EMULATOR_HOST=firebase:9099
+      - FIREBASE_PROJECT_ID=demo-tricktakersclub
+      - BROWSER_ORIGIN=http://localhost:5173
     image: backend
     ports:
       - "8080:8080"
@@ -28,7 +37,7 @@ services:
     command: [
       "redis-server",
       "--loglevel warning",
-      "--user default on >IMZZZwi63WHSFV5MJ^wiDt@z781r%SAX ~* &* +@all",
+      "--user default on >IMZZZwi63WHSFV5MJ ~* &* +@all",
     ]
     image: redis:latest
     ports:
