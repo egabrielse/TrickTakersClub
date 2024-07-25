@@ -1,9 +1,9 @@
-import { FirebaseError } from "firebase/app";
 import { AuthErrorCodes } from "firebase/auth";
 import { ERROR_MESSAGES } from "../constants/error";
+import { SerializedError } from "@reduxjs/toolkit";
 
-export const getErrorForDisplay = (error: unknown) => {
-    if (error instanceof FirebaseError) {
+export const getErrorForDisplay = (error: SerializedError) => {
+    if (error?.name === "FirebaseError") {
         if (error.code === AuthErrorCodes.EMAIL_EXISTS) {
             return ERROR_MESSAGES.ALREADY_EXISTS;
         } else if (error.code === AuthErrorCodes.USER_DELETED) {
