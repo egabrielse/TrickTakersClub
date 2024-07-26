@@ -2,7 +2,6 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router";
 import { PATHS } from "../../../constants/url";
 import PageTopper from "../../common/PageTopper";
-import Tile from "../../common/Tile";
 import "./HomePage.scss";
 import PlayButton from "./PlayButton";
 
@@ -21,10 +20,8 @@ export default function HomePage() {
         post="Home to Sheepshead"
       />
       <PlayButton />
-      <Tile flex={1} alignment="start" spacing="stretch">
-        <h2>
-          Wisconsin's <i>Unofficial</i> State Card Game
-        </h2>
+      <h1>The Unofficial Card Game of Wisconsin</h1>
+      <div>
         <p>
           Sheepshead is a complex point-trick-taking card game that is most
           popular in the state of Wisconsin. It is played with 32 cards from a
@@ -36,10 +33,10 @@ export default function HomePage() {
           will find it to be a rewarding and challenging game, requiring a lot
           of strategy and skill, and a bit of luck.
         </p>
-        <Button variant="contained" color="primary" onClick={handleRulesClick}>
-          Rules
+        <Button onClick={handleRulesClick} variant="contained" color="primary">
+          Learn the Rules
         </Button>
-      </Tile>
+      </div>
     </div>
   );
 }

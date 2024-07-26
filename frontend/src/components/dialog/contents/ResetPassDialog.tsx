@@ -47,7 +47,7 @@ export default function ResetPassDialog() {
 
   const openRegisterDialog = () => {
     dispatch(dialogActions.closeDialog());
-    dispatch(dialogActions.openDialog(DIALOG_TYPES.LOGIN));
+    dispatch(dialogActions.openDialog({ type: DIALOG_TYPES.LOGIN }));
   };
 
   const handleClearError = () => {

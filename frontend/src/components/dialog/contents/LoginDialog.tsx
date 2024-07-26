@@ -53,12 +53,12 @@ export default function LoginDialog() {
 
   const openRegisterDialog = () => {
     dispatch(dialogActions.closeDialog());
-    dispatch(dialogActions.openDialog(DIALOG_TYPES.REGISTER));
+    dispatch(dialogActions.openDialog({ type: DIALOG_TYPES.REGISTER }));
   };
 
   const openResetPassDialog = () => {
     dispatch(dialogActions.closeDialog());
-    dispatch(dialogActions.openDialog(DIALOG_TYPES.RESET_PASSWORD));
+    dispatch(dialogActions.openDialog({ type: DIALOG_TYPES.RESET_PASSWORD }));
   };
 
   const handleClearError = () => {

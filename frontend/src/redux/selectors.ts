@@ -7,4 +7,4 @@ export const selectAuthError = (state: RootState) => state.auth.error;
 
 // Dialog Slice
 export const selectDialogOpen = (state: RootState) => state.dialog.open;
-export const selectDialogType = (state: RootState) => state.dialog.type;
+export const selectDialogPayload = (state: RootState) => state.dialog.payload;

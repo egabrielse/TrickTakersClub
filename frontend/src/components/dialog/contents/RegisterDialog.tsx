@@ -65,7 +65,7 @@ export default function RegisterDialog() {
   // Open login dialog
   const openLoginDialog = () => {
     dispatch(dialogActions.closeDialog());
-    dispatch(dialogActions.openDialog(DIALOG_TYPES.LOGIN));
+    dispatch(dialogActions.openDialog({ type: DIALOG_TYPES.LOGIN }));
   };
 
   // Generate new display name options

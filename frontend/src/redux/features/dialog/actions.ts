@@ -1,5 +1,5 @@
 import { createAction } from "@reduxjs/toolkit";
-import { DialogType } from "../../../types/dialog";
+import { DialogPayload } from "../../../types/dialog";
 
 export const DIALOG_ACTIONS = {
     OPEN_DIALOG: "dialog/OPEN_DIALOG",
@@ -7,7 +7,7 @@ export const DIALOG_ACTIONS = {
 };
 
 const dialogActions = {
-    openDialog: createAction<DialogType>(DIALOG_ACTIONS.OPEN_DIALOG),
+    openDialog: createAction<DialogPayload>(DIALOG_ACTIONS.OPEN_DIALOG),
     closeDialog: createAction(DIALOG_ACTIONS.CLOSE_DIALOG),
 };
 

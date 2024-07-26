@@ -17,7 +17,7 @@ export default function PrivateRoutes() {
     // Automatically redirect to home page if user is not logged in and show login dialog.
     if (user === null && !loading) {
       navigate(PATHS.ROOT);
-      dispatch(dialogActions.openDialog(DIALOG_TYPES.LOGIN));
+      dispatch(dialogActions.openDialog({ type: DIALOG_TYPES.LOGIN }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);

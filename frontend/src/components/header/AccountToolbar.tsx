@@ -33,11 +33,11 @@ export default function AccountToolbar() {
   };
 
   const handleLogin = () => {
-    dispatch(dialogActions.openDialog(DIALOG_TYPES.LOGIN));
+    dispatch(dialogActions.openDialog({ type: DIALOG_TYPES.LOGIN }));
   };
 
   const handleSignUp = () => {
-    dispatch(dialogActions.openDialog(DIALOG_TYPES.REGISTER));
+    dispatch(dialogActions.openDialog({ type: DIALOG_TYPES.REGISTER }));
   };
 
   const handleLogout = () => {

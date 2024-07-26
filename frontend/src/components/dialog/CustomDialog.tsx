@@ -5,7 +5,8 @@ import * as React from "react";
 import { DIALOG_TYPES } from "../../constants/dialog";
 import dialogActions from "../../redux/features/dialog/actions";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { selectDialogOpen, selectDialogType } from "../../redux/selectors";
+import { selectDialogOpen, selectDialogPayload } from "../../redux/selectors";
+import ErrorDialog from "./contents/ErrorDialog";
 import LoginDialog from "./contents/LoginDialog";
 import RegisterDialog from "./contents/RegisterDialog";
 import ResetPassDialog from "./contents/ResetPassDialog";
@@ -22,23 +23,27 @@ const Transition = React.forwardRef(function Transition(
 export default function CustomDialog() {
   const dispatch = useAppDispatch();
   const open = useAppSelector(selectDialogOpen);
-  const dialogType = useAppSelector(selectDialogType);
+  const dialogPayload = useAppSelector(selectDialogPayload);
 
   const handleClose = () => {
     dispatch(dialogActions.closeDialog());
   };
 
   const renderDialogContent = () => {
-    if (!open) return null;
-    switch (dialogType) {
+    console.log("dialogPayload", dialogPayload);
+    if (!open || dialogPayload === undefined) return null;
+    console.log("here");
+    switch (dialogPayload?.type) {
       case DIALOG_TYPES.LOGIN:
         return <LoginDialog />;
       case DIALOG_TYPES.REGISTER:
         return <RegisterDialog />;
       case DIALOG_TYPES.RESET_PASSWORD:
         return <ResetPassDialog />;
+      case DIALOG_TYPES.ERROR:
+        return <ErrorDialog {...dialogPayload.props} />;
       default:
-        console.error(`Unknown dialog type: ${dialogType}`);
+        console.error("Unknown dialog payload", dialogPayload);
         return null;
     }
   };
