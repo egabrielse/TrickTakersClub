@@ -1,6 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { DialogPayload } from "../../../types/dialog";
-import dialogActions from "./actions";
+import dialogActions, { DialogPayload } from "./actions";
 
 export interface DialogState {
     open: boolean;

@@ -26,7 +26,9 @@ export default function CustomDialog() {
   const dialogPayload = useAppSelector(selectDialogPayload);
 
   const handleClose = () => {
-    dispatch(dialogActions.closeDialog());
+    if (dialogPayload?.closeable !== false) {
+      dispatch(dialogActions.closeDialog());
+    }
   };
 
   const renderDialogContent = () => {

@@ -33,6 +33,7 @@ export default function RootErrorBoundary(): ReactNode {
     dispatch(
       dialogActions.openDialog({
         type: DIALOG_TYPES.ERROR,
+        closeable: false,
         props: { title: getErrorTitle(), message: getErrorDetails() },
       }),
     );
