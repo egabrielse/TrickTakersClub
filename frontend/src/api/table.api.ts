@@ -18,3 +18,17 @@ export async function createTable() {
         return response.data;
     }
 }
+
+export async function fetchTable(tableId: string) {
+    if (!auth.currentUser) {
+        throw new Error("User not logged in");
+    } else {
+        const idToken = await auth.currentUser.getIdToken();
+        const response = await axios.get(`/v1/table/${tableId}`, {
+            headers: {
+                Authorization: `Bearer ${idToken}`,
+            },
+        });
+        return response.data;
+    }
+}

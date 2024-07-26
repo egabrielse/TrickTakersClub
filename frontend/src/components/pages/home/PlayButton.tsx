@@ -1,4 +1,6 @@
 import { Button } from "@mui/material";
+import { useNavigate } from "react-router";
+import { PATHS } from "../../../constants/url";
 import tableActions from "../../../redux/features/table/actions";
 import { useAppDispatch } from "../../../redux/hooks";
 import Club from "../../common/icons/Club";
@@ -8,9 +10,14 @@ import Spade from "../../common/icons/Spade";
 
 export default function PlayButton() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const handlePlay = () => {
-    dispatch(tableActions.createTable());
+    dispatch(tableActions.createTable())
+      .unwrap()
+      .then((table) => {
+        navigate(PATHS.TABLE.replace(":tableId", table.id));
+      });
   };
 
   return (

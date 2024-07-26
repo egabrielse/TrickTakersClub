@@ -10,5 +10,5 @@ export const PATHS = {
   ACCOUNT: `/${SEGMENTS.ACCOUNT}`,
   HOME: `/${SEGMENTS.HOME}`,
   RULES: `/${SEGMENTS.RULES}`,
-  TABLE: `/${SEGMENTS.TABLE}`,
+  TABLE: `/${SEGMENTS.TABLE}/:tableId`,
 };

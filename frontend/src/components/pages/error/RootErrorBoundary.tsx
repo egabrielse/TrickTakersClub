@@ -1,8 +1,9 @@
 import { HttpStatusCode } from "axios";
 import { ReactNode } from "react";
 import { isRouteErrorResponse, useRouteError } from "react-router";
-import ReturnHomeButton from "../common/ReturnHomeButton";
-import Tile from "../common/Tile";
+
+import ReturnHomeButton from "../../common/ReturnHomeButton";
+import Tile from "../../common/Tile";
 import "./RootErrorBoundary.scss";
 
 export default function RootErrorBoundary(): ReactNode {

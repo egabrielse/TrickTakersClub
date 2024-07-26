@@ -8,7 +8,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
 } from "react-router-dom";
-import { SEGMENTS } from "../constants/url";
+import { PATHS } from "../constants/url";
 import FirebaseAuthProvider from "../firebase/FirebaseAuthProvider";
 import { store } from "../redux/store";
 import RootLayout from "./layout/RootLayout";
@@ -16,9 +16,9 @@ import RulesPage from "./pages//rules/RulesPage";
 import AccountPage from "./pages/AccountPage";
 import PrivateRoutes from "./pages/PrivateRoutes";
 import PublicRoutes from "./pages/PublicRoutes";
-import RootErrorBoundary from "./pages/RootErrorBoundary";
-import TablePage from "./pages/TablePage";
+import RootErrorBoundary from "./pages/error/RootErrorBoundary";
 import HomePage from "./pages/home/HomePage";
+import TablePage from "./pages/table/TablePage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -29,11 +29,11 @@ const router = createBrowserRouter(
     >
       <Route element={<PublicRoutes />}>
         <Route index element={<HomePage />} />
-        <Route path={SEGMENTS.RULES} element={<RulesPage />} />
+        <Route path={PATHS.RULES} element={<RulesPage />} />
       </Route>
       <Route element={<PrivateRoutes />}>
-        <Route path={SEGMENTS.ACCOUNT} element={<AccountPage />} />
-        <Route path={SEGMENTS.TABLE} element={<TablePage />} />
+        <Route path={PATHS.ACCOUNT} element={<AccountPage />} />
+        <Route path={PATHS.TABLE} element={<TablePage />} />
       </Route>
     </Route>,
   ),
