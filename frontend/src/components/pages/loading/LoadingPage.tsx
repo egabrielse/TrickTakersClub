@@ -1,10 +1,10 @@
-import { CircularProgress } from "@mui/material";
+import { PuffLoader } from "react-spinners";
 import "./LoadingPage.scss";
 
 export default function LoadingPage() {
   return (
     <div className="LoadingPage">
-      <CircularProgress />
+      <PuffLoader color="white" size={50} />
     </div>
   );
 }

@@ -19,12 +19,18 @@ export async function createTable() {
     }
 }
 
+type FetchTableResponse = {
+    id: string;
+    hostId: string;
+    users: Record<string, boolean>;
+};
+
 export async function fetchTable(tableId: string) {
     if (!auth.currentUser) {
         throw new Error("User not logged in");
     } else {
         const idToken = await auth.currentUser.getIdToken();
-        const response = await axios.get(`/v1/table/${tableId}`, {
+        const response = await axios.get<FetchTableResponse>(`/v1/table/${tableId}`, {
             headers: {
                 Authorization: `Bearer ${idToken}`,
             },

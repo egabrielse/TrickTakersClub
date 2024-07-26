@@ -32,9 +32,7 @@ export default function CustomDialog() {
   };
 
   const renderDialogContent = () => {
-    console.log("dialogPayload", dialogPayload);
     if (!open || dialogPayload === undefined) return null;
-    console.log("here");
     switch (dialogPayload?.type) {
       case DIALOG_TYPES.LOGIN:
         return <LoginDialog />;

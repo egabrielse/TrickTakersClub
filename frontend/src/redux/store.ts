@@ -2,6 +2,7 @@ import { Middleware, configureStore } from "@reduxjs/toolkit";
 import loggerMiddleware from "./middleware/logger";
 import dialogReducer from "./features/dialog/reducer";
 import authReducer from "./features/auth/reducer";
+import tableReducer from "./features/table/reducer";
 
 
 const additionalMiddleware: Middleware[] = [];
@@ -14,6 +15,7 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
     dialog: dialogReducer,
+    table: tableReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(additionalMiddleware),
