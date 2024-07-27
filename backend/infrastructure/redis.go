@@ -1,18 +1,18 @@
 package infrastructure
 
 import (
-	"os"
+	"main/utils"
 
 	"github.com/redis/go-redis/v9"
 )
 
 var rdb *redis.Client
 
-// InitRedisCache initializes the Redis client and the Redis-based repository implementations
-func InitRedisCache() {
-	addr := os.Getenv("REDIS_HOST")
-	user := os.Getenv("REDIS_USER")
-	pass := os.Getenv("REDIS_PASS")
+// InitRedisClient initializes the Redis client
+func InitRedisClient() {
+	addr := utils.GetEnvironmentVariable("REDIS_HOST")
+	user := utils.GetEnvironmentVariable("REDIS_USER")
+	pass := utils.GetEnvironmentVariable("REDIS_PASS")
 
 	// Initialize Redis client
 	rdb = redis.NewClient(&redis.Options{

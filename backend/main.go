@@ -8,7 +8,6 @@ import (
 	"main/utils"
 	"math/rand"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -25,11 +24,8 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	// Initialize Redis client
-	infrastructure.InitRedisCache()
-
-	// Instantiate the Redis-based repository implementations
-	rdb := infrastructure.GetRedisClient()
-	repository.InitUserRepo(persistance.NewUserRepoImplementation(rdb))
+	// TODO: Uncomment this line when Redis is needed for pub/sub
+	// infrastructure.InitRedisClient()
 
 	// Initialize Firebase app
 	infrastructure.InitFirebaseApp()
@@ -42,6 +38,6 @@ func main() {
 	router := api.InitRouter()
 
 	// Start listening for requests
-	port := ":" + os.Getenv("PORT")
+	port := ":" + utils.GetEnvironmentVariable("PORT")
 	logrus.Fatal(http.ListenAndServe(port, *router))
 }

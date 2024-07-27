@@ -3,7 +3,7 @@ package infrastructure
 import (
 	"context"
 	"log"
-	"os"
+	"main/utils"
 
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go/v4"
@@ -15,7 +15,7 @@ var firebaseStore *firestore.Client
 
 // InitFirebaseApp initializes the Firebase app
 func InitFirebaseApp() {
-	projectID := os.Getenv("FIREBASE_PROJECT_ID")
+	projectID := utils.GetEnvironmentVariable("FIREBASE_PROJECT_ID")
 	config := &firebase.Config{ProjectID: projectID}
 	app, err := firebase.NewApp(context.Background(), config)
 	if err != nil {

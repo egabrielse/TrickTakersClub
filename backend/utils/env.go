@@ -1,18 +1,23 @@
 package utils
 
 import (
-	"errors"
 	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
 
-// LoadEnvironmentVariables loads environment variables from a .env file if it exists
+// LoadEnvironmentVariables loads environment variables from a .env
 func LoadEnvironmentVariables() {
-	if _, err := os.Stat(".env"); errors.Is(err, os.ErrNotExist) {
-		logrus.Info("No .env file found")
-	} else if err := godotenv.Load(".env"); LogOnError(err) {
-		return
+	err := godotenv.Load(".env")
+	LogOnError(err)
+}
+
+// GetEnvironmentVariable retrieves an environment variable by key
+func GetEnvironmentVariable(key string) string {
+	variable := os.Getenv(key)
+	if variable == "" {
+		logrus.Fatalf("Environment variable %s not found", key)
 	}
+	return variable
 }
