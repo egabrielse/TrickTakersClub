@@ -3,7 +3,7 @@ import tableActions from "./actions";
 
 export interface TableState {
     id: string
-    hostId: string
+    creatorID: string
     users: Record<string, boolean>
     loading?: boolean
     error?: string
@@ -11,7 +11,7 @@ export interface TableState {
 
 const initialState: TableState = {
     id: "",
-    hostId: "",
+    creatorID: "",
     users: {}
 };
 
@@ -21,7 +21,7 @@ const tableReducer = createReducer(initialState, (builder) => builder
     })
     .addCase(tableActions.fetchTable.fulfilled, (state, action) => {
         state.id = action.payload.id;
-        state.hostId = action.payload.hostId;
+        state.creatorID = action.payload.creatorID;
         state.users = action.payload.users;
         state.loading = false;
     })

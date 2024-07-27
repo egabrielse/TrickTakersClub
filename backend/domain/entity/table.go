@@ -7,16 +7,16 @@ import (
 )
 
 type TableEntity struct {
-	ID     string          `json:"id"`
-	HostID string          `json:"hostId"`
-	Users  map[string]bool `json:"users"`
+	ID        string          `json:"id"`
+	CreatorID string          `json:"creatorID"`
+	Users     map[string]bool `json:"users"`
 }
 
-func NewTableEntity(hostId string) *TableEntity {
+func NewTableEntity(creatorID string) *TableEntity {
 	return &TableEntity{
-		ID:     uuid.New().String(),
-		HostID: hostId,
-		Users:  make(map[string]bool),
+		ID:        uuid.New().String(),
+		CreatorID: creatorID,
+		Users:     make(map[string]bool),
 	}
 }
 

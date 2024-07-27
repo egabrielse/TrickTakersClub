@@ -15,7 +15,9 @@ services:
       - REDIS_USER=default
       - REDIS_PASS=IMZZZwi63WHSFV5MJ
       - FIREBASE_AUTH_EMULATOR_HOST=firebase:9099
+      - FIRESTORE_EMULATOR_HOST=firebase:8088
       - FIREBASE_PROJECT_ID=demo-tricktakersclub
+      - FIREBASE_API_KEY=dummy-api-key
       - BROWSER_ORIGIN=http://localhost:5173
     image: backend
     ports:
@@ -55,6 +57,7 @@ services:
       - firebase-data:/app
     ports:
       - "127.0.0.1:9099:9099" # auth
+      - "127.0.0.1:8088:8088" # firestore
       - "127.0.0.1:4000:4000" # ui
 
 

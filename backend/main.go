@@ -2,7 +2,9 @@ package main
 
 import (
 	"main/api"
+	"main/domain/repository"
 	"main/infrastructure"
+	"main/infrastructure/persistance"
 	"main/utils"
 	"math/rand"
 	"net/http"
@@ -25,8 +27,16 @@ func main() {
 	// Initialize Redis client
 	infrastructure.InitRedisCache()
 
+	// Instantiate the Redis-based repository implementations
+	rdb := infrastructure.GetRedisClient()
+	repository.InitUserRepo(persistance.NewUserRepoImplementation(rdb))
+
 	// Initialize Firebase app
 	infrastructure.InitFirebaseApp()
+
+	// Instantiate the Firestore-based repository implementations
+	store := infrastructure.GetFirebaseStore()
+	repository.InitTableRepo(persistance.NewTableRepoImplementation(store))
 
 	// Initialize router
 	router := api.InitRouter()

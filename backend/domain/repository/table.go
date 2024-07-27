@@ -7,7 +7,6 @@ import (
 
 type TableRepo interface {
 	Get(ctx context.Context, ID string) (*entity.TableEntity, error)
-	GetAll(ctx context.Context) ([]*entity.TableEntity, error)
 	Save(ctx context.Context, user *entity.TableEntity) error
 }
 

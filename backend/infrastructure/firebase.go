@@ -5,28 +5,43 @@ import (
 	"log"
 	"os"
 
+	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/auth"
 )
 
-var firebaseApp *firebase.App
+var firebaseAuth *auth.Client
+var firebaseStore *firestore.Client
 
 // InitFirebaseApp initializes the Firebase app
 func InitFirebaseApp() {
 	projectID := os.Getenv("FIREBASE_PROJECT_ID")
 	config := &firebase.Config{ProjectID: projectID}
-	if app, err := firebase.NewApp(context.Background(), config); err != nil {
+	app, err := firebase.NewApp(context.Background(), config)
+	if err != nil {
 		log.Fatalf("error initializing app: %v\n", err)
+		return
+	}
+	// Initialize Firebase auth client
+	if auth, err := app.Auth(context.Background()); err != nil {
+		log.Fatalf("error getting Auth client: %v\n", err)
 	} else {
-		firebaseApp = app
+		firebaseAuth = auth
+	}
+
+	// Initialize Firestore client
+	if store, err := app.Firestore(context.Background()); err != nil {
+		log.Fatalf("error getting Firestore client: %v\n", err)
+	} else {
+		firebaseStore = store
 	}
 }
 
 // GetFirebaseAuth returns the Firebase auth client
-func GetFirebaseAuth(ctx context.Context) (*auth.Client, error) {
-	if auth, err := firebaseApp.Auth(ctx); err != nil {
-		return nil, err
-	} else {
-		return auth, nil
-	}
+func GetFirebaseAuth() *auth.Client {
+	return firebaseAuth
+}
+
+func GetFirebaseStore() *firestore.Client {
+	return firebaseStore
 }

@@ -11,7 +11,7 @@ export const selectDialogPayload = (state: RootState) => state.dialog.payload;
 
 // Table Slice
 export const selectTableId = (state: RootState) => state.table.id;
-export const selectTableHostId = (state: RootState) => state.table.hostId;
+export const selectTableHostId = (state: RootState) => state.table.creatorID;
 export const selectTableUsers = (state: RootState) => state.table.users;
 export const selectTableLoading = (state: RootState) => state.table.loading;
 export const selectTableError = (state: RootState) => state.table.error;

@@ -18,8 +18,8 @@ RUN firebase setup:emulators:ui
 
 # Expose the emulator ports
 # These must match the ports in the firebase.json file
-#       AUTH  UI   emulator ports
-EXPOSE  9099  9000
+#       AUTH  STORE  UI   emulator ports
+EXPOSE  9099  8088   4000
 
 # Start the emulator
 CMD ["firebase", "emulators:start", "--project=demo-tricktakersclub", "--import=./data", "--export-on-exit"]

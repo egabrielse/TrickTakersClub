@@ -4,60 +4,36 @@ import (
 	"context"
 	"main/domain/entity"
 
-	"github.com/redis/go-redis/v9"
+	"cloud.google.com/go/firestore"
 	"github.com/sirupsen/logrus"
 )
 
-const ExpirationTable = 0
-
-func createKey(id string) string {
-	return "table:" + id
-}
+const TableCollection = "tables"
 
 type TableRepoImplementation struct {
-	rdb *redis.Client
+	db *firestore.Client
 }
 
-func NewTableRepoImplementation(rdb *redis.Client) *TableRepoImplementation {
-	return &TableRepoImplementation{rdb: rdb}
+func NewTableRepoImplementation(db *firestore.Client) *TableRepoImplementation {
+	return &TableRepoImplementation{db: db}
 }
 
 // Get returns the table entity from the redis cache
 func (r *TableRepoImplementation) Get(ctx context.Context, ID string) (*entity.TableEntity, error) {
 	var table entity.TableEntity
-	if result, err := r.rdb.Get(ctx, createKey(ID)).Result(); err != nil {
+	if snapshot, err := r.db.Collection(TableCollection).Doc(ID).Get(ctx); err != nil {
 		return nil, err
-	} else if err := table.UnmarshalBinary([]byte(result)); err != nil {
+	} else if err := snapshot.DataTo(&table); err != nil {
 		return nil, err
 	} else {
 		return &table, nil
 	}
 }
 
-// GetAll returns all the table entities from the redis cache
-func (r *TableRepoImplementation) GetAll(ctx context.Context) ([]*entity.TableEntity, error) {
-	if keys, err := r.rdb.Keys(ctx, createKey("*")).Result(); err != nil {
-		return nil, err
-	} else {
-		tables := make([]*entity.TableEntity, len(keys))
-		for i, key := range keys {
-			table := &entity.TableEntity{}
-			if result, err := r.rdb.Get(ctx, key).Result(); err != nil {
-				continue
-			} else if err := table.UnmarshalBinary([]byte(result)); err != nil {
-				logrus.Error(err)
-				return nil, err
-			} else {
-				tables[i] = table
-			}
-		}
-		return tables, nil
-	}
-}
-
 // Save saves the table entity to the redis cache
 func (r *TableRepoImplementation) Save(ctx context.Context, table *entity.TableEntity) error {
-	if _, err := r.rdb.Set(ctx, createKey(table.ID), table, ExpirationTable).Result(); err != nil {
+	if _, err := r.db.Collection(TableCollection).Doc(table.ID).Set(ctx, table); err != nil {
+		logrus.Error(err)
 		return err
 	}
 	return nil

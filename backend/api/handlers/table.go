@@ -30,12 +30,3 @@ func GetTable(r *http.Request, p httprouter.Params) (code int, body any) {
 		return http.StatusOK, table
 	}
 }
-
-func GetAllTables(r *http.Request, p httprouter.Params) (code int, body any) {
-	tableRepo := repository.GetTableRepo()
-	if tables, err := tableRepo.GetAll(r.Context()); err != nil {
-		return http.StatusInternalServerError, nil
-	} else {
-		return http.StatusOK, tables
-	}
-}

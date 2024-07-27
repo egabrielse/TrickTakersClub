@@ -1,8 +1,6 @@
 package infrastructure
 
 import (
-	"main/domain/repository"
-	"main/infrastructure/persistance"
 	"os"
 
 	"github.com/redis/go-redis/v9"
@@ -23,10 +21,6 @@ func InitRedisCache() {
 		Password: pass,
 		DB:       0,
 	})
-
-	// Initialize redis-based repository implementations
-	repository.InitUserRepo(persistance.NewUserRepoImplementation(rdb))
-	repository.InitTableRepo(persistance.NewTableRepoImplementation(rdb))
 }
 
 // GetRedisClient returns the Redis client
