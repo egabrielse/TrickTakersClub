@@ -39,5 +39,6 @@ func main() {
 
 	// Start listening for requests
 	port := ":" + utils.GetEnvironmentVariable("PORT")
+	logrus.Infof("Listening on port %s", port)
 	logrus.Fatal(http.ListenAndServe(port, *router))
 }
