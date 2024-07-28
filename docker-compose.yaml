@@ -17,7 +17,7 @@ services:
       - FIREBASE_AUTH_EMULATOR_HOST=firebase:9099
       - FIRESTORE_EMULATOR_HOST=firebase:8088
       - FIREBASE_PROJECT_ID=demo-tricktakersclub
-      - FIREBASE_API_KEY=dummy-api-key
+      - FIREBASE_API_KEY=demo-api-key
       - BROWSER_ORIGIN=http://localhost:5173
     image: backend
     ports:
@@ -28,6 +28,16 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./frontend
+      args:
+        - FIREBASE_AUTH_EMULATOR_HOST=http://127.0.0.1:9099
+        - FIREBASE_API_KEY=demo-api-key
+        - FIREBASE_AUTH_DOMAIN=demo-tricktakersclub.firebaseapp.com
+        - FIREBASE_PROJECT_ID=demo-tricktakersclub
+        - FIREBASE_STORAGE_BUCKET=demo-tricktakersclub.appspot.com
+        - FIREBASE_MESSAGING_SENDER_ID=demo-messageing-sender-id
+        - FIREBASE_APP_ID=demo-app-id
+        - FIREBASE_MEASUREMENT_ID=demo-measurement-id
+        - BACKEND_HOST=http://localhost:8080
     depends_on:
       - backend
     image: frontend
