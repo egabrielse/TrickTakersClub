@@ -5,7 +5,7 @@ import CardsIcon from "../../common/icons/CardsIcon";
 import DealerIcon from "../../common/icons/DealerIcon";
 import Hand from "../../common/icons/Hand";
 import ShapesIcon from "../../common/icons/ShapesIcon";
-import Scrollable from "../../scrollable/Scrollable";
+import ScrollableContainer from "../../scrollable/ScrollableContainer";
 import ScrollableSection from "../../scrollable/ScrollableSection";
 import "./RulesPage.scss";
 import Dealing from "./sections/Dealing";
@@ -27,8 +27,8 @@ const SECTIONS = {
 export default function RulesPage() {
   return (
     <div className="RulesPage">
-      <Scrollable
-        header={<PageTopper hideLogo title="Sheepshead" pre="How to play" />}
+      <ScrollableContainer
+        header={<PageTopper title="Sheepshead" pre="How to play" />}
       >
         <ScrollableSection
           id={SECTIONS.OVERVIEW}
@@ -72,7 +72,7 @@ export default function RulesPage() {
         >
           <Variations />
         </ScrollableSection>
-      </Scrollable>
+      </ScrollableContainer>
     </div>
   );
 }

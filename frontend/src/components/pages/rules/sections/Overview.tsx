@@ -14,15 +14,16 @@ export default function OverviewSection() {
         French-suited deck, consisting of 32 cards: 7-10s, Jacks, Queens, Kings,
         and Aces.
       </p>
+      <p>TODO: Links to wikipedia and sheepshead.org</p>
 
       <h3>Suits</h3>
       <p>
         Cards are split up into four suits, which do not necessarily match the
-        standard suit of the card. There is the <b>Trump</b> suit, which
-        consists of all <b>Queens</b>, <b>Jacks</b>, and <b>Diamonds</b>. Then
-        there are the remaining <b>Fail</b> suits: <b>Clubs</b>, <b>Hearts</b>,
-        and <b>Spades</b>. They are called "fail" suits, because any card from
-        the Trump suit will beat or "trump" them.
+        standard suit of the card. The <b>Trump</b> suit consists of all{" "}
+        <b>Queens</b>, <b>Jacks</b>, and <b>Diamonds</b>. Then there are the
+        remaining <b>Fail</b> suits: <b>Clubs</b>, <b>Hearts</b>, and{" "}
+        <b>Spades</b>. They are called "fail" suits, because any card from the
+        Trump suit will beat or "trump" them.
       </p>
 
       <h3>Card Strength</h3>

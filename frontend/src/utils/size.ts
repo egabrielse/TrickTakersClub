@@ -9,5 +9,5 @@ export const scaleBySize = (size: Size, base: number) => {
 };
 
 export const getAppNameFontSize = (size: Size) => {
-  return scaleBySize(size, 24);
+  return scaleBySize(size, 48);
 };

@@ -1,8 +1,8 @@
-.Scrollable {
+.ScrollableContainer {
     height: 100%;
     overflow-y: scroll;
     position: relative;
-    padding: 0 1rem 2rem 1rem;
+    padding: 1rem 1rem 2rem 1rem;
 
     &-Header {
         display: flex;

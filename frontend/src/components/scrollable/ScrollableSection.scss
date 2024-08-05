@@ -1,18 +1,23 @@
+@import '../../index.scss';
+
 .ScrollableSection {
     display: flex;
     flex-direction: column;
+    margin: 2rem 1rem;
+    border: 1px solid white;
+    border-radius: 8px;
 
     &-Header {
         display: flex;
         align-items: center;
         gap: 1rem;
-        border-radius: 5px;
+        border-radius: 5px 5px 0 0;
         background-color: white;
         padding: 1rem;
-        color: #0C4767;
-        margin: 3rem 0 0 0;
+        color: $secondary-color;
         position: sticky;
-        top: 5px;
+        // box-shadow: 0 2px 5px 1px black;
+        top: 0;
 
         h2 {
             margin: 0;
@@ -21,7 +26,7 @@
 
     &-Body {
         overflow: hidden;
-        padding: 0 1rem;
+        padding: 0 1rem 1rem 1rem;
 
         h3 {
             font-size: 1.5rem;

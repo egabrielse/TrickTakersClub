@@ -1,27 +1,29 @@
+@import "../../index.scss";
+
 .RootLayout {
-    position: relative;
-    width: 100vw;
+    display: grid;
+    grid-template-areas:
+        "HEADER HEADER HEADER"
+        "LEFT BODY RIGHT";
+    grid-template-columns: 160px 1fr 160px;
+    grid-template-rows: 3rem 1fr;
+    column-gap: 2rem;
     height: 100vh;
+    width: 100vw;
+
+    &-Header {
+        background-color: $surface-color;
+        box-shadow: 0 0 10px 3px black;
+        z-index: 2;
+    }
 
     &-Body {
-        height: calc(100vh - 4rem);
-        overflow: hidden;
-        padding: 4rem calc(160px + 2rem) 0 calc(160px + 2rem);
+        overflow: scroll;
     }
 
-    &-LeftAside {
-        position: fixed;
-        height: 600px;
-        width: 160px;
-        left: 1rem;
-        top: calc(50% - 300px);
-    }
-
-    &-RightAside {
-        position: fixed;
-        height: 600px;
-        width: 160px;
-        right: 1rem;
-        top: calc(50% - 300px);
+    &-Aside {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 }

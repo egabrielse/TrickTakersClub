@@ -13,7 +13,9 @@ import FirebaseAuthProvider from "../firebase/FirebaseAuthProvider";
 import { store } from "../redux/store";
 import RootLayout from "./layout/RootLayout";
 import RulesPage from "./pages//rules/RulesPage";
+import AboutPage from "./pages/AboutPage";
 import AccountPage from "./pages/AccountPage";
+import LeaderboardPage from "./pages/LeaderboardPage";
 import PrivateRoutes from "./pages/PrivateRoutes";
 import PublicRoutes from "./pages/PublicRoutes";
 import RootErrorBoundary from "./pages/error/RootErrorBoundary";
@@ -29,7 +31,10 @@ const router = createBrowserRouter(
     >
       <Route element={<PublicRoutes />}>
         <Route index element={<HomePage />} />
+        <Route path={PATHS.HOME} element={<HomePage />} />
+        <Route path={PATHS.LEADERBOARD} element={<LeaderboardPage />} />
         <Route path={PATHS.RULES} element={<RulesPage />} />
+        <Route path={PATHS.ABOUT} element={<AboutPage />} />
       </Route>
       <Route element={<PrivateRoutes />}>
         <Route path={PATHS.ACCOUNT} element={<AccountPage />} />
