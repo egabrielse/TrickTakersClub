@@ -9,12 +9,26 @@ export default function OverviewSection() {
         >
           point-trick-taking
         </a>{" "}
-        game, where the goal is to get points by winning tricks. It's played
-        with a Piquet pack, which is a subset of a standard 52 card,
-        French-suited deck, consisting of 32 cards: 7-10s, Jacks, Queens, Kings,
-        and Aces.
+        game, typically played with 5 players. The goal is of the game is to get
+        61 points by winning tricks. It's played with a Piquet pack, which is a
+        subset of a standard 52 card, French-suited deck. This pack consists of
+        32 cards: 7-10s, Jacks, Queens, Kings, and Aces.
       </p>
-      <p>TODO: Links to wikipedia and sheepshead.org</p>
+      <p>
+        The following rules are compiled from{" "}
+        <a
+          target="_blank"
+          href="https://en.wikipedia.org/wiki/Sheepshead_(card_game)"
+        >
+          Wikipedia
+        </a>
+        ,{" "}
+        <a target="_blank" href="http://www.sheepshead.org/rules">
+          Sheepshead.org
+        </a>
+        , and from personal experience playing the game. These rules are not
+        meant to be exhaustive, but rather a starting point for beginners.
+      </p>
 
       <h3>Suits</h3>
       <p>
@@ -65,7 +79,7 @@ export default function OverviewSection() {
         </li>
       </ol>
 
-      <h3>Card Point Values</h3>
+      <h3>Card Values</h3>
       <p>
         Each card has a point value associated with it. The sum of point
         collected by taking tricks is what determines the winner of a hand. In
