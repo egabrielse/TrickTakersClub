@@ -18,7 +18,7 @@ export default function AppHeader() {
     <div className="AppHeader">
       <HeaderSection>
         <AppLogo size="small" color="white" onClick={returnHome} />
-        <NavigationMenu />
+        {location.pathname.startsWith(PATHS.TABLE) && <NavigationMenu />}
       </HeaderSection>
       <HeaderSection>
         <AccountToolbar />
