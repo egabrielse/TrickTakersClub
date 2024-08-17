@@ -4,11 +4,13 @@ import authActions from "../redux/features/auth/actions";
 import { useAppDispatch } from "../redux/hooks";
 import auth from "./auth";
 
-type AuthProviderProps = {
+type FirebaseAuthProviderProps = {
   children: ReactNode;
 };
 
-export default function FirebaseAuthProvider({ children }: AuthProviderProps) {
+export default function FirebaseAuthProvider({
+  children,
+}: FirebaseAuthProviderProps) {
   const dispatch = useAppDispatch();
   const [initialized, setInitialized] = useState(false);
 
