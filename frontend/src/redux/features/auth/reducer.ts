@@ -1,6 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { User } from "../../../types/user";
-import authActions from "./action";
+import authActions from "./actions";
 import { getErrorForDisplay } from "../../../utils/error";
 export interface AuthState {
     user: User | null;

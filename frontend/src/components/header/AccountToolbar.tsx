@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { DIALOG_TYPES } from "../../constants/dialog";
 import { PATHS } from "../../constants/url";
-import authActions from "../../redux/features/auth/action";
+import authActions from "../../redux/features/auth/actions";
 import dialogActions from "../../redux/features/dialog/actions";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { selectAuthLoading, selectAuthUser } from "../../redux/selectors";

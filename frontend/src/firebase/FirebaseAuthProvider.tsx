@@ -1,6 +1,6 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { ReactNode, useEffect, useState } from "react";
-import authActions from "../redux/features/auth/action";
+import authActions from "../redux/features/auth/actions";
 import { useAppDispatch } from "../redux/hooks";
 import auth from "./auth";
 

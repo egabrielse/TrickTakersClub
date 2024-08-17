@@ -7,7 +7,7 @@ import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { DISPLAY_MESSAGES } from "../../../constants/display";
 import { VALIDATION_ERRORS } from "../../../constants/error";
-import authActions from "../../../redux/features/auth/action";
+import authActions from "../../../redux/features/auth/actions";
 import dialogActions from "../../../redux/features/dialog/actions";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { selectAuthError, selectAuthLoading } from "../../../redux/selectors";
