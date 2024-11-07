@@ -21,7 +21,7 @@ export async function createTable() {
 
 type FetchTableResponse = {
     id: string;
-    creatorID: string;
+    creatorId: string;
     users: Record<string, boolean>;
 };
 

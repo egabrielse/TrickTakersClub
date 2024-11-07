@@ -8,14 +8,14 @@ import (
 
 type TableEntity struct {
 	ID        string          `json:"id"`
-	CreatorID string          `json:"creatorID"`
+	CreatorID string          `json:"creatorId"`
 	Users     map[string]bool `json:"users"`
 }
 
-func NewTableEntity(creatorID string) *TableEntity {
+func NewTableEntity(creatorId string) *TableEntity {
 	return &TableEntity{
 		ID:        uuid.New().String(),
-		CreatorID: creatorID,
+		CreatorID: creatorId,
 		Users:     make(map[string]bool),
 	}
 }

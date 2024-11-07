@@ -1,6 +1,6 @@
 import LogoutIcon from "@mui/icons-material/Logout";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-import { Button, IconButton, Menu, MenuItem } from "@mui/material";
+import { IconButton, Menu, MenuItem } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { DIALOG_TYPES } from "../../constants/dialog";
@@ -10,6 +10,7 @@ import dialogActions from "../../redux/features/dialog/actions";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { selectAuthLoading, selectAuthUser } from "../../redux/selectors";
 import UserSnapshot from "../common/UserSnapshot";
+import "./AccountToolbar.scss";
 
 export default function AccountToolbar() {
   const loading = useAppSelector(selectAuthLoading);
@@ -40,44 +41,45 @@ export default function AccountToolbar() {
     handleCloseUserMenu();
   };
 
-  return loading ? null : user === null ? (
-    <>
-      <Button
-        onClick={handleLogin}
-        style={{ textWrap: "nowrap" }}
-        variant="contained"
-        size="small"
-      >
-        Login
-      </Button>
-    </>
-  ) : (
-    <>
-      <IconButton onClick={handleOpenUserMenu} style={{ padding: 0 }}>
-        <UserSnapshot user={user} variant="avatar" size="large" />
-      </IconButton>
-      <Menu
-        anchorEl={anchorElUser}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        open={anchorElUser !== null}
-        onClose={handleCloseUserMenu}
-      >
-        <MenuItem onClick={handleOpenAccountPage}>
-          <ManageAccountsIcon />
-          Account
-        </MenuItem>
-        <MenuItem onClick={handleLogout}>
-          <LogoutIcon />
-          Logout
-        </MenuItem>
-      </Menu>
-    </>
-  );
+  if (loading) {
+    return null;
+  } else {
+    return (
+      <div className="AccountToolbar">
+        {user === null ? (
+          <button onClick={handleLogin} style={{ textWrap: "nowrap" }}>
+            Login
+          </button>
+        ) : (
+          <>
+            <IconButton onClick={handleOpenUserMenu} style={{ padding: 0 }}>
+              <UserSnapshot user={user} variant="avatar" size="large" />
+            </IconButton>
+            <Menu
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "right",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={anchorElUser !== null}
+              onClose={handleCloseUserMenu}
+            >
+              <MenuItem onClick={handleOpenAccountPage}>
+                <ManageAccountsIcon />
+                Account
+              </MenuItem>
+              <MenuItem onClick={handleLogout}>
+                <LogoutIcon />
+                Logout
+              </MenuItem>
+            </Menu>
+          </>
+        )}
+      </div>
+    );
+  }
 }

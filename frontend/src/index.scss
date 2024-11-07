@@ -1,6 +1,6 @@
 $primary-color: #b51414;
 $secondary-color: #0C4767;
-$background-color: #006400;
+$background-color: #4b7c34;
 $surface-color: #795C32;
 $highlight-color: #e5bd46;
 $highlight-color-light: #f7db77;
@@ -10,7 +10,6 @@ $highlight-color-light: #f7db77;
   font-weight: 400;
   color: white;
   background: $background-color;
-  box-shadow: inset 0 0 5rem 2rem black;
   text-rendering: optimizeLegibility;
 }
 
@@ -43,6 +42,15 @@ h1 {
 
 button {
   font-family: Courier, monospace !important;
+  line-height: 2;
+  font-size: medium;
+}
+
+input {
+  font-family: Courier, monospace !important;
+  font-size: medium;
+  line-height: 1.5;
+  padding: 0.5rem;
 }
 
 @keyframes ellipsis {

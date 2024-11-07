@@ -20,7 +20,7 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function CustomDialog() {
+export default function PopupDialog() {
   const dispatch = useAppDispatch();
   const open = useAppSelector(selectDialogOpen);
   const dialogPayload = useAppSelector(selectDialogPayload);
