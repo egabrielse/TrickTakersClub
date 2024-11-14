@@ -49,8 +49,8 @@ const authActions = {
             return {
                 user: {
                     uid: response.user.uid,
-                    email: response.user.email,
-                    displayName: response.user.displayName,
+                    email: String(response.user.email),
+                    displayName: String(response.user.displayName),
                 },
             };
         },
@@ -67,8 +67,8 @@ const authActions = {
             return {
                 user: {
                     uid: res.user.uid,
-                    email: res.user.email,
-                    displayName: res.user.displayName,
+                    email: String(res.user.email),
+                    displayName: String(res.user.displayName),
                 },
             };
         },

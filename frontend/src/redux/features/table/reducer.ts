@@ -1,18 +1,22 @@
 import { createReducer } from "@reduxjs/toolkit";
 import tableActions from "./actions";
+import { CONNECTION_STATUS } from "../../../constants/connection";
+import { ConnectionStatus } from "../../../types/connection";
 
 export interface TableState {
     id: string
-    creatorId: string
-    users: Record<string, boolean>
-    loading?: boolean
+    hostId: string
+    loading: boolean
     error?: string
+    status: ConnectionStatus
 }
 
 const initialState: TableState = {
     id: "",
-    creatorId: "",
-    users: {}
+    hostId: "",
+    loading: true,
+    status: CONNECTION_STATUS.DISCONNECTED,
+
 };
 
 const tableReducer = createReducer(initialState, (builder) => builder
@@ -21,8 +25,7 @@ const tableReducer = createReducer(initialState, (builder) => builder
     })
     .addCase(tableActions.fetchTable.fulfilled, (state, action) => {
         state.id = action.payload.id;
-        state.creatorId = action.payload.creatorId;
-        state.users = action.payload.users;
+        state.hostId = action.payload.hostId;
         state.loading = false;
     })
     .addCase(tableActions.fetchTable.rejected, (state, action) => {

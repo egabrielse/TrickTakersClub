@@ -2,9 +2,9 @@ import { createAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { createTable, fetchTable } from "../../../api/table.api";
 
 export const TABLE_ACTIONS = {
-    CREATE_TABLE: "index/CREATE_TABLE",
-    FETCH_TABLE: "index/FETCH_TABLE",
-    RESET_TABLE: "index/RESET_TABLE",
+    CREATE_TABLE: "table/CREATE_TABLE",
+    FETCH_TABLE: "table/FETCH_TABLE",
+    RESET_TABLE: "table/RESET_TABLE",
 };
 
 const tableActions = {

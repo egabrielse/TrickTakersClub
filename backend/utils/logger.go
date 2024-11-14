@@ -6,7 +6,9 @@ import (
 
 // InitLogger initializes the global logger
 func ConfigureLogrus() {
-	logrus.SetFormatter(&logrus.JSONFormatter{})
+	logrus.SetFormatter(&logrus.JSONFormatter{
+		PrettyPrint: true,
+	})
 	logrus.SetReportCaller(true)
 }
 

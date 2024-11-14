@@ -16,6 +16,7 @@ import AccountPage from "./pages/account/AccountPage";
 import RootErrorBoundary from "./pages/error/RootErrorBoundary";
 import HomePage from "./pages/home/HomePage";
 import TablePage from "./pages/table/TablePage";
+import TablePageWrapper from "./pages/table/TablePageWrapper";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -29,7 +30,14 @@ const router = createBrowserRouter(
       <Route path={PATHS.RULES} element={<RulesPage />} />
       <Route element={<PrivateRoutes />}>
         <Route path={PATHS.ACCOUNT} element={<AccountPage />} />
-        <Route path={PATHS.TABLE} element={<TablePage />} />
+        <Route
+          path={PATHS.TABLE}
+          element={
+            <TablePageWrapper>
+              <TablePage />
+            </TablePageWrapper>
+          }
+        />
       </Route>
     </Route>,
   ),

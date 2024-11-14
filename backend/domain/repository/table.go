@@ -7,7 +7,8 @@ import (
 
 type TableRepo interface {
 	Get(ctx context.Context, ID string) (*entity.TableEntity, error)
-	Save(ctx context.Context, user *entity.TableEntity) error
+	Delete(ctx context.Context, ID string) error
+	Save(ctx context.Context, table *entity.TableEntity) error
 }
 
 var tableRepo TableRepo

@@ -3,20 +3,22 @@ package entity
 import (
 	"encoding/json"
 
-	"github.com/google/uuid"
+	"github.com/sio/coolname"
 )
 
 type TableEntity struct {
-	ID        string          `json:"id"`
-	CreatorID string          `json:"creatorId"`
-	Users     map[string]bool `json:"users"`
+	ID     string `json:"id"`
+	HostID string `json:"hostId"`
 }
 
-func NewTableEntity(creatorId string) *TableEntity {
-	return &TableEntity{
-		ID:        uuid.New().String(),
-		CreatorID: creatorId,
-		Users:     make(map[string]bool),
+func NewTableEntity(hostId string) (*TableEntity, error) {
+	if id, err := coolname.SlugN(3); err != nil {
+		return nil, err
+	} else {
+		return &TableEntity{
+			ID:     id,
+			HostID: hostId,
+		}, nil
 	}
 }
 

@@ -30,6 +30,15 @@ func (r *TableRepoImplementation) Get(ctx context.Context, ID string) (*entity.T
 	}
 }
 
+// Delete deletes the table entity from the redis cache
+func (r *TableRepoImplementation) Delete(ctx context.Context, ID string) error {
+	if _, err := r.db.Collection(TableCollection).Doc(ID).Delete(ctx); err != nil {
+		logrus.Error(err)
+		return err
+	}
+	return nil
+}
+
 // Save saves the table entity to the redis cache
 func (r *TableRepoImplementation) Save(ctx context.Context, table *entity.TableEntity) error {
 	if _, err := r.db.Collection(TableCollection).Doc(table.ID).Set(ctx, table); err != nil {

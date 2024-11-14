@@ -23,10 +23,6 @@ func main() {
 	// Set seed for random number generator
 	rand.Seed(time.Now().UnixNano())
 
-	// Initialize Redis client
-	// TODO: Uncomment this line when Redis is needed for pub/sub
-	// infrastructure.InitRedisClient()
-
 	// Initialize Firebase app
 	infrastructure.InitFirebaseApp()
 

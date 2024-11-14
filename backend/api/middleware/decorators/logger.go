@@ -3,7 +3,6 @@ package decorators
 import (
 	"main/api/middleware"
 	"net/http"
-	"time"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/sirupsen/logrus"
@@ -16,10 +15,9 @@ func RequestLogging(handler middleware.RequestHandler) middleware.RequestHandler
 
 		// Log request information (not including parameters, which could contain sensitive information).
 		logrus.WithFields(logrus.Fields{
-			"timestamp": time.Now().Format(time.RFC3339),
-			"method":    r.Method,
-			"path":      r.URL.Path,
-			"status":    status,
+			"method": r.Method,
+			"path":   r.URL.Path,
+			"status": status,
 		}).Info()
 
 		// Return the response status status and body.
