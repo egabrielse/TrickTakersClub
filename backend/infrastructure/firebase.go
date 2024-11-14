@@ -19,7 +19,7 @@ func InitFirebaseApp() {
 	config := &firebase.Config{ProjectID: projectID}
 	app, err := firebase.NewApp(context.Background(), config)
 	if err != nil {
-		log.Fatalf("error initializing app: %v\n", err)
+		log.Fatalf("error initializing firebase: %v\n", err)
 		return
 	}
 	// Initialize Firebase auth client

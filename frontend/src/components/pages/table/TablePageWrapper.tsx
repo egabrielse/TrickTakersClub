@@ -2,6 +2,7 @@ import * as Ably from "ably";
 import { AblyProvider, ChannelProvider } from "ably/react";
 import { useEffect, useRef } from "react";
 import { useParams } from "react-router";
+import { fetchAblyToken } from "../../../api/ably.api";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import dialogActions from "../../../redux/features/dialog/actions";
 import tableActions from "../../../redux/features/table/actions";
@@ -12,9 +13,6 @@ import {
   selectTableLoading,
 } from "../../../redux/selectors";
 import LoadingPage from "../loading/LoadingPage";
-
-// TODO: Should use token authentication in production
-const ABLY_API_KEY = import.meta.env.VITE_ABLY_API_KEY;
 
 type TablePageWrapperProps = {
   children: React.ReactNode;
@@ -32,10 +30,25 @@ export default function TablePageWrapper({ children }: TablePageWrapperProps) {
   const user = useAppSelector(selectAuthUser);
   const clientRef = useRef(
     new Ably.Realtime({
-      key: ABLY_API_KEY,
+      authCallback: async (_, callback) => {
+        try {
+          const result = await fetchAblyToken();
+          callback(null, result.tokenRequest);
+        } catch (error) {
+          callback(error as string, null);
+          return;
+        }
+      },
       clientId: user!.uid,
     }),
   );
+
+  useEffect(() => {
+    dispatch(tableActions.fetchTable(paramTableId));
+    return () => {
+      dispatch(tableActions.resetTable());
+    };
+  }, [dispatch, paramTableId]);
 
   useEffect(() => {
     if (error) {
@@ -50,10 +63,6 @@ export default function TablePageWrapper({ children }: TablePageWrapperProps) {
       );
     }
   }, [dispatch, error]);
-
-  useEffect(() => {
-    dispatch(tableActions.fetchTable(paramTableId));
-  }, [dispatch, paramTableId]);
 
   return loading ? (
     <LoadingPage />

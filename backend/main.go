@@ -26,6 +26,9 @@ func main() {
 	// Initialize Firebase app
 	infrastructure.InitFirebaseApp()
 
+	// Initialize Ably client
+	infrastructure.InitAblyRestClient()
+
 	// Instantiate the Firestore-based repository implementations
 	store := infrastructure.GetFirebaseStore()
 	repository.InitTableRepo(persistance.NewTableRepoImplementation(store))

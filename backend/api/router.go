@@ -14,6 +14,9 @@ func InitRouter() *http.Handler {
 	router := httprouter.New()
 
 	// 2. Define routes and their handlers
+	// -> Ably routes
+	router.GET("/v1/ably/token", middleware.HandleWith(handlers.AblyAuth, decorators.RequestLogging, decorators.TokenAuthentication))
+
 	// -> Index routes
 	router.GET("/v1", middleware.HandleWith(handlers.HealthCheck, decorators.RequestLogging))
 
