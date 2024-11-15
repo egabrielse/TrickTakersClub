@@ -1,10 +1,10 @@
 package infrastructure
 
 import (
-	"log"
 	"main/utils"
 
 	"github.com/ably/ably-go/ably"
+	"github.com/sirupsen/logrus"
 )
 
 var ablyClient *ably.REST
@@ -14,7 +14,7 @@ func InitAblyRestClient() {
 	key := utils.GetEnvironmentVariable("ABLY_API_KEY")
 	options := []ably.ClientOption{ably.WithKey(key)}
 	if client, err := ably.NewREST(options...); utils.LogOnError(err) {
-		log.Fatalf("error initializing ably: %v\n", err)
+		logrus.Fatalf("Error Initializing Ably: ", err)
 		return
 	} else {
 		ablyClient = client
