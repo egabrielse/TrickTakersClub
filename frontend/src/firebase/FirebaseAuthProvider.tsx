@@ -18,7 +18,7 @@ export default function FirebaseAuthProvider({
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (initialized) {
         return;
-      } else if (!user) {
+      } else if (user === null) {
         dispatch(authActions.initializeUser({ user: null }));
         setInitialized(true);
       } else {
@@ -26,8 +26,8 @@ export default function FirebaseAuthProvider({
           authActions.initializeUser({
             user: {
               uid: user.uid,
-              email: user?.email,
-              displayName: user?.displayName,
+              email: String(user.email),
+              displayName: String(user.displayName),
             },
           }),
         );
