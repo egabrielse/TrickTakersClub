@@ -1,13 +1,12 @@
 import { useChannel, usePresence, usePresenceListener } from "ably/react";
-import { useState } from "react";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import dialogActions from "../../../redux/features/dialog/actions";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { selectTableId } from "../../../redux/selectors";
+import Chat from "./Chat/Chat";
 import "./TablePage.scss";
 
 export default function TablePage() {
-  const [value, setValue] = useState("");
   const tableId = useAppSelector(selectTableId);
   const dispatch = useAppDispatch();
   usePresence(tableId);
@@ -29,20 +28,11 @@ export default function TablePage() {
     );
   });
 
-  const { publish } = useChannel(tableId, "chat", (msg) => {
-    console.log(msg.data);
-  });
-
-  const sendChatMessage = () => {
-    publish("chat", value);
-    setValue("");
-  };
-
   return (
     <div className="TablePage">
+      <Chat />
       <span>{tableId}</span>
-      <input value={value} onChange={(e) => setValue(e.target.value)} />
-      <button onClick={sendChatMessage}>Send</button>
+      <div></div>
     </div>
   );
 }

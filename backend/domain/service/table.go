@@ -11,7 +11,7 @@ import (
 )
 
 // TimeoutDuration is the duration after which the service will be stopped if no activity is detected
-const TimeoutDuration = time.Minute * 5
+const TimeoutDuration = time.Minute * 10
 
 // TableService represents the service for controlling the table
 type TableService struct {
