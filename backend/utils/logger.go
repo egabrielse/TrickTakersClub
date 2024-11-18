@@ -8,11 +8,11 @@ import (
 )
 
 // InitLogger initializes the global logger
-func ConfigureLogrus() {
+func ConfigureLogger() {
 	logrus.SetFormatter(&logrus.TextFormatter{
 		ForceColors: true,
 		CallerPrettyfier: func(f *runtime.Frame) (string, string) {
-			return "", fmt.Sprintf("%s:%d", f.File, f.Line)
+			return "", fmt.Sprintf("%s:%d", f.File[4:], f.Line)
 		},
 	})
 	logrus.SetReportCaller(true)

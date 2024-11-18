@@ -18,7 +18,7 @@ func main() {
 	utils.LoadEnvironmentVariables()
 
 	// Configure logger
-	utils.ConfigureLogrus()
+	utils.ConfigureLogger()
 
 	// Set seed for random number generator
 	rand.Seed(time.Now().UnixNano())
