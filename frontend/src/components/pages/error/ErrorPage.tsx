@@ -5,9 +5,9 @@ import { DIALOG_TYPES } from "../../../constants/dialog";
 import dialogActions from "../../../redux/features/dialog/actions";
 import { useAppDispatch } from "../../../redux/hooks";
 import PopupDialog from "../../dialog/PopupDialog";
-import "./RootErrorBoundary.scss";
+import "./ErrorPage.scss";
 
-export default function RootErrorBoundary(): ReactNode {
+export default function ErrorPage(): ReactNode {
   const error = useRouteError();
   const dispatch = useAppDispatch();
 
@@ -40,7 +40,7 @@ export default function RootErrorBoundary(): ReactNode {
   }, [dispatch, error, getErrorDetails, getErrorTitle]);
 
   return (
-    <div className="RootErrorBoundary">
+    <div className="ErrorPage">
       <PopupDialog />
     </div>
   );
