@@ -1,24 +1,13 @@
 import Dialog from "@mui/material/Dialog";
-import Slide from "@mui/material/Slide";
-import { TransitionProps } from "@mui/material/transitions";
-import * as React from "react";
 import { DIALOG_TYPES } from "../../constants/dialog";
 import dialogActions from "../../redux/features/dialog/actions";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { selectDialogOpen, selectDialogPayload } from "../../redux/selectors";
+import SlideTransition from "../common/SlideTransition";
 import ErrorDialog from "./contents/ErrorDialog";
 import LoginDialog from "./contents/LoginDialog";
 import RegisterDialog from "./contents/RegisterDialog";
-import ResetPassDialog from "./contents/ResetPassDialog";
-
-const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & {
-    children: React.ReactElement;
-  },
-  ref: React.Ref<unknown>,
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+import ResetPasswordDialog from "./contents/ResetPasswordDialog";
 
 export default function PopupDialog() {
   const dispatch = useAppDispatch();
@@ -26,9 +15,7 @@ export default function PopupDialog() {
   const dialogPayload = useAppSelector(selectDialogPayload);
 
   const handleClose = () => {
-    if (dialogPayload?.closeable !== false) {
-      dispatch(dialogActions.closeDialog());
-    }
+    dispatch(dialogActions.closeDialog());
   };
 
   const renderDialogContent = () => {
@@ -39,7 +26,7 @@ export default function PopupDialog() {
       case DIALOG_TYPES.REGISTER:
         return <RegisterDialog />;
       case DIALOG_TYPES.RESET_PASSWORD:
-        return <ResetPassDialog />;
+        return <ResetPasswordDialog />;
       case DIALOG_TYPES.ERROR:
         return <ErrorDialog {...dialogPayload.props} />;
       default:
@@ -51,9 +38,9 @@ export default function PopupDialog() {
   return (
     <Dialog
       open={open}
-      TransitionComponent={Transition}
+      TransitionComponent={SlideTransition}
       keepMounted
-      onClose={handleClose}
+      onClose={dialogPayload?.closeable ? handleClose : undefined}
       maxWidth="sm"
       component={"div"}
       closeAfterTransition

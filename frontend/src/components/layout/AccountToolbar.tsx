@@ -1,20 +1,20 @@
 import LogoutIcon from "@mui/icons-material/Logout";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import { IconButton, Menu, MenuItem } from "@mui/material";
-import { useState } from "react";
+import { signOut } from "firebase/auth";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
 import { DIALOG_TYPES } from "../../constants/dialog";
 import { PATHS } from "../../constants/url";
-import authActions from "../../redux/features/auth/actions";
+import auth from "../../firebase/auth";
 import dialogActions from "../../redux/features/dialog/actions";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { selectAuthLoading, selectAuthUser } from "../../redux/selectors";
+import { useAppDispatch } from "../../redux/hooks";
 import UserSnapshot from "../common/UserSnapshot";
+import { AuthContext } from "../pages/auth/AuthContextProvider";
 import "./AccountToolbar.scss";
 
 export default function AccountToolbar() {
-  const loading = useAppSelector(selectAuthLoading);
-  const user = useAppSelector(selectAuthUser);
+  const { initialized, user } = useContext(AuthContext);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -28,12 +28,14 @@ export default function AccountToolbar() {
   };
 
   const handleLogin = () => {
-    dispatch(dialogActions.openDialog({ type: DIALOG_TYPES.LOGIN }));
+    dispatch(
+      dialogActions.openDialog({ type: DIALOG_TYPES.LOGIN, closeable: true }),
+    );
   };
 
   const handleLogout = () => {
     handleCloseUserMenu();
-    dispatch(authActions.logout());
+    signOut(auth);
   };
 
   const handleOpenAccountPage = () => {
@@ -41,7 +43,7 @@ export default function AccountToolbar() {
     handleCloseUserMenu();
   };
 
-  if (loading) {
+  if (!initialized) {
     return null;
   } else {
     return (

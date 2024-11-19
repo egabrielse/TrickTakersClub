@@ -1,20 +1,21 @@
 import { Button } from "@mui/material";
+import { useContext } from "react";
 import { useNavigate } from "react-router";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { PATHS } from "../../../constants/url";
 import dialogActions from "../../../redux/features/dialog/actions";
 import tableActions from "../../../redux/features/table/actions";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { selectAuthUser } from "../../../redux/selectors";
+import { useAppDispatch } from "../../../redux/hooks";
 import Club from "../../common/icons/Club";
 import Diamond from "../../common/icons/Diamond";
 import Heart from "../../common/icons/Heart";
 import Spade from "../../common/icons/Spade";
+import { AuthContext } from "../auth/AuthContextProvider";
 
 export default function PlayButton() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const user = useAppSelector(selectAuthUser);
+  const { user } = useContext(AuthContext);
 
   const handlePlay = () => {
     if (user === null) {

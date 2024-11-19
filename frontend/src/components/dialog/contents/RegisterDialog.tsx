@@ -1,16 +1,16 @@
 import LoopIcon from "@mui/icons-material/Loop";
 import { LoadingButton } from "@mui/lab";
 import { Box, Button, MenuItem, TextField } from "@mui/material";
-import Typography from "@mui/material/Typography";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { VALIDATION_ERRORS } from "../../../constants/error";
-import authActions from "../../../redux/features/auth/actions";
+import auth from "../../../firebase/auth";
 import dialogActions from "../../../redux/features/dialog/actions";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { selectAuthError, selectAuthLoading } from "../../../redux/selectors";
+import { selectDialogPayload } from "../../../redux/selectors";
 import { generateDisplayName } from "../../../utils/user";
 import Logo from "../../common/AppLogo";
 import CloseDialogButton from "../components/CloseDialogButton";
@@ -38,26 +38,40 @@ const validationSchema = yup.object({
     .required(VALIDATION_ERRORS.CONFIRM_PASSWORD.REQUIRED),
 });
 
+const initialValues = {
+  displayName: "",
+  email: "",
+  password: "",
+  confirm: "",
+};
+
 export default function RegisterDialog() {
   const dispatch = useAppDispatch();
-  const error = useAppSelector(selectAuthError);
-  const loading = useAppSelector(selectAuthLoading);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const dialogPayload = useAppSelector(selectDialogPayload);
   const [displayNameOptions, setDisplayNameOptions] = useState<string[]>([]);
 
   const formik = useFormik({
-    initialValues: {
-      displayName: "",
-      email: "",
-      password: "",
-      confirm: "",
-    },
+    initialValues: initialValues,
     validationSchema: validationSchema,
-    onSubmit: async (values) => {
+    onSubmit: (values) => {
+      setLoading(true);
       const { email, password, displayName } = values;
-      dispatch(authActions.signUp({ email, password, displayName }))
-        .unwrap()
-        .then(() => {
-          dispatch(dialogActions.closeDialog());
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((response) => {
+          updateProfile(response.user, { displayName })
+            .then(() => {
+              response.user.reload();
+              console.log("Profile updated");
+            })
+            .catch(() => {
+              console.error("Profile update failed");
+            });
+          console.log(response);
+        })
+        .catch((error) => {
+          console.error(error);
         });
     },
   });
@@ -65,7 +79,12 @@ export default function RegisterDialog() {
   // Open login dialog
   const openLoginDialog = () => {
     dispatch(dialogActions.closeDialog());
-    dispatch(dialogActions.openDialog({ type: DIALOG_TYPES.LOGIN }));
+    dispatch(
+      dialogActions.openDialog({
+        type: DIALOG_TYPES.LOGIN,
+        closeable: dialogPayload?.closeable,
+      }),
+    );
   };
 
   // Generate new display name options
@@ -84,7 +103,7 @@ export default function RegisterDialog() {
   };
 
   const handleClearError = () => {
-    dispatch(authActions.resetError());
+    setError(null);
   };
 
   // Generate initial display name options when form is first opened
@@ -94,12 +113,10 @@ export default function RegisterDialog() {
 
   return (
     <>
-      <CloseDialogButton />
+      {dialogPayload?.closeable && <CloseDialogButton />}
       <DialogHeader>
         <Logo size="large" />
-        <Typography variant="h5" align="center">
-          Create a New Account
-        </Typography>
+        <h2>CREATE A NEW ACCOUNT</h2>
       </DialogHeader>
       <form onSubmit={formik.handleSubmit}>
         <DialogBody>
@@ -110,6 +127,7 @@ export default function RegisterDialog() {
             label="Display Name"
             size="small"
             select
+            autoComplete="off"
             disabled={loading}
             value={formik.values.displayName}
             onBlur={formik.handleBlur}
@@ -169,6 +187,7 @@ export default function RegisterDialog() {
             name="email"
             label="Email"
             size="small"
+            autoComplete="off"
             disabled={loading}
             value={formik.values.email}
             onChange={formik.handleChange}
@@ -187,6 +206,7 @@ export default function RegisterDialog() {
             label="Password"
             type="password"
             size="small"
+            autoComplete="off"
             disabled={loading}
             value={formik.values.password}
             onChange={formik.handleChange}
@@ -203,6 +223,7 @@ export default function RegisterDialog() {
             id="confirm"
             name="confirm"
             label="Confirm Password"
+            autoComplete="off"
             type="password"
             size="small"
             disabled={loading}

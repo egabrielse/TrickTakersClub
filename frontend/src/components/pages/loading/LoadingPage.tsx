@@ -4,7 +4,7 @@ import "./LoadingPage.scss";
 export default function LoadingPage() {
   return (
     <div className="LoadingPage">
-      <PuffLoader color="white" size={50} />
+      <PuffLoader color="white" size={64} />
     </div>
   );
 }

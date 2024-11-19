@@ -7,12 +7,12 @@ import {
   createRoutesFromElements,
 } from "react-router-dom";
 import { PATHS } from "../constants/url";
-import FirebaseAuthProvider from "../firebase/FirebaseAuthProvider";
 import { store } from "../redux/store";
 import RootLayout from "./layout/RootLayout";
 import RulesPage from "./pages//rules/RulesPage";
-import PrivateRoutes from "./pages/PrivateRoutes";
 import AccountPage from "./pages/account/AccountPage";
+import AuthContextProvider from "./pages/auth/AuthContextProvider";
+import PrivateRoutes from "./pages/auth/PrivateRoutes";
 import ErrorPage from "./pages/error/ErrorPage";
 import HomePage from "./pages/home/HomePage";
 import TablePage from "./pages/table/TablePage";
@@ -44,9 +44,9 @@ axios.defaults.baseURL = import.meta.env.VITE_BACKEND_HOST;
 export default function App() {
   return (
     <Provider store={store}>
-      <FirebaseAuthProvider>
+      <AuthContextProvider>
         <RouterProvider router={router} />
-      </FirebaseAuthProvider>
+      </AuthContextProvider>
     </Provider>
   );
 }

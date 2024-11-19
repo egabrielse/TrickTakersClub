@@ -1,14 +1,15 @@
 import { LoadingButton } from "@mui/lab";
 import { Button, Link, TextField } from "@mui/material";
-import Typography from "@mui/material/Typography";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useFormik } from "formik";
+import { useState } from "react";
 import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { VALIDATION_ERRORS } from "../../../constants/error";
-import authActions from "../../../redux/features/auth/actions";
+import auth from "../../../firebase/auth";
 import dialogActions from "../../../redux/features/dialog/actions";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { selectAuthError, selectAuthLoading } from "../../../redux/selectors";
+import { selectDialogPayload } from "../../../redux/selectors";
 import Logo from "../../common/AppLogo";
 import CloseDialogButton from "../components/CloseDialogButton";
 import DialogBody from "../components/DialogBody";
@@ -30,49 +31,69 @@ const validationSchema = yup.object({
     .required(VALIDATION_ERRORS.PASSWORD.REQUIRED),
 });
 
+const initialValues = {
+  email: "",
+  password: "",
+};
+
 export default function LoginDialog() {
   const dispatch = useAppDispatch();
-  const error = useAppSelector(selectAuthError);
-  const loading = useAppSelector(selectAuthLoading);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const dialogPayload = useAppSelector(selectDialogPayload);
+  const closeable = dialogPayload?.closeable;
 
   const formik = useFormik({
-    initialValues: {
-      email: "",
-      password: "",
-    },
+    initialValues: initialValues,
     validationSchema: validationSchema,
     onSubmit: (values) => {
+      setLoading(true);
       const { email, password } = values;
-      dispatch(authActions.login({ email, password }))
-        .unwrap()
-        .then(() => {
+      signInWithEmailAndPassword(auth, email, password)
+        .then((response) => {
+          console.log(response);
           dispatch(dialogActions.closeDialog());
+        })
+        .catch((error) => {
+          console.error(error);
+          setError(error);
+        })
+        .finally(() => {
+          setLoading(false);
         });
     },
   });
 
   const openRegisterDialog = () => {
     dispatch(dialogActions.closeDialog());
-    dispatch(dialogActions.openDialog({ type: DIALOG_TYPES.REGISTER }));
+    dispatch(
+      dialogActions.openDialog({
+        type: DIALOG_TYPES.REGISTER,
+        closeable: closeable,
+      }),
+    );
   };
 
   const openResetPassDialog = () => {
     dispatch(dialogActions.closeDialog());
-    dispatch(dialogActions.openDialog({ type: DIALOG_TYPES.RESET_PASSWORD }));
+    dispatch(
+      dialogActions.openDialog({
+        type: DIALOG_TYPES.RESET_PASSWORD,
+        closeable: closeable,
+      }),
+    );
   };
 
   const handleClearError = () => {
-    dispatch(authActions.resetError());
+    setError(null);
   };
 
   return (
     <>
-      <CloseDialogButton />
+      {closeable && <CloseDialogButton />}
       <DialogHeader>
         <Logo size="large" />
-        <Typography variant="h5" align="center">
-          Login to Trick Takers Club
-        </Typography>
+        <h2>LOGIN TO ACCOUNT</h2>
       </DialogHeader>
       <form onSubmit={formik.handleSubmit}>
         <DialogBody>

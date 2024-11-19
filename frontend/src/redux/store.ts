@@ -1,7 +1,6 @@
 import { Middleware, configureStore } from "@reduxjs/toolkit";
 import loggerMiddleware from "./middleware/logger";
 import dialogReducer from "./features/dialog/reducer";
-import authReducer from "./features/auth/reducer";
 import tableReducer from "./features/table/reducer";
 
 
@@ -13,7 +12,6 @@ if (import.meta.env.DEV) {
 
 export const store = configureStore({
   reducer: {
-    auth: authReducer,
     dialog: dialogReducer,
     table: tableReducer,
   },

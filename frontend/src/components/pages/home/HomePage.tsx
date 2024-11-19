@@ -1,5 +1,6 @@
 import { Divider } from "@mui/material";
 import { ErrorMessage, Field, Form, Formik } from "formik";
+import { useContext } from "react";
 import { useNavigate } from "react-router";
 import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
@@ -7,15 +8,16 @@ import { VALIDATION_ERRORS } from "../../../constants/error";
 import { PATHS } from "../../../constants/url";
 import dialogActions from "../../../redux/features/dialog/actions";
 import tableActions from "../../../redux/features/table/actions";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { selectAuthUser } from "../../../redux/selectors";
+import { useAppDispatch } from "../../../redux/hooks";
 import AppLogo from "../../common/AppLogo";
+import AccountToolbar from "../../layout/AccountToolbar";
+import { AuthContext } from "../auth/AuthContextProvider";
 import "./HomePage.scss";
 
 export default function HomePage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const user = useAppSelector(selectAuthUser);
+  const { user } = useContext(AuthContext);
 
   const navigateToTable = (tableId: string) => {
     navigate(PATHS.TABLE.replace(":tableId", tableId));
@@ -33,6 +35,7 @@ export default function HomePage() {
 
   return (
     <div className="HomePage">
+      <AccountToolbar />
       <AppLogo size="xlarge" color="white" />
       <h1>TRICK TAKERS CLUB</h1>
       <button type="button" onClick={handlePlay}>
@@ -55,6 +58,7 @@ export default function HomePage() {
               <Field
                 type="input"
                 name="tableId"
+                autoComplete="off"
                 placeholder="Enter Table Code"
               />
               <ErrorMessage name="tableId" component="div" />

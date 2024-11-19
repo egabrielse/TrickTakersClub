@@ -1,17 +1,14 @@
 import * as Ably from "ably";
 import { AblyProvider, ChannelProvider } from "ably/react";
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { useParams } from "react-router";
 import { fetchAblyToken } from "../../../api/ably.api";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import dialogActions from "../../../redux/features/dialog/actions";
 import tableActions from "../../../redux/features/table/actions";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import {
-  selectAuthUser,
-  selectTableError,
-  selectTableLoading,
-} from "../../../redux/selectors";
+import { selectTableError, selectTableLoading } from "../../../redux/selectors";
+import { AuthContext } from "../auth/AuthContextProvider";
 import LoadingPage from "../loading/LoadingPage";
 
 type TablePageWrapperProps = {
@@ -27,7 +24,7 @@ export default function TablePageWrapper({ children }: TablePageWrapperProps) {
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectTableLoading);
   const error = useAppSelector(selectTableError);
-  const user = useAppSelector(selectAuthUser);
+  const { user } = useContext(AuthContext);
   const clientRef = useRef(
     new Ably.Realtime({
       authCallback: async (_, callback) => {

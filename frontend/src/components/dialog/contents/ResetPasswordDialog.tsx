@@ -1,16 +1,15 @@
 import { LoadingButton } from "@mui/lab";
 import { Button, TextField } from "@mui/material";
-import Typography from "@mui/material/Typography";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { useFormik } from "formik";
 import { useState } from "react";
 import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { DISPLAY_MESSAGES } from "../../../constants/display";
 import { VALIDATION_ERRORS } from "../../../constants/error";
-import authActions from "../../../redux/features/auth/actions";
+import auth from "../../../firebase/auth";
 import dialogActions from "../../../redux/features/dialog/actions";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { selectAuthError, selectAuthLoading } from "../../../redux/selectors";
+import { useAppDispatch } from "../../../redux/hooks";
 import Logo from "../../common/AppLogo";
 import CloseDialogButton from "../components/CloseDialogButton";
 import DialogBody from "../components/DialogBody";
@@ -27,21 +26,30 @@ const validationSchema = yup.object({
     .required(VALIDATION_ERRORS.EMAIL.REQUIRED),
 });
 
+const initialValues = {
+  email: "",
+};
+
 export default function ResetPassDialog() {
   const dispatch = useAppDispatch();
   const [sent, setSent] = useState(false);
-  const error = useAppSelector(selectAuthError);
-  const loading = useAppSelector(selectAuthLoading);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const formik = useFormik({
-    initialValues: {
-      email: "",
-    },
+    initialValues: initialValues,
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      dispatch(authActions.sendPasswordResetEmail(values.email))
-        .unwrap()
-        .then(() => setSent(true));
+      setLoading(true);
+      sendPasswordResetEmail(auth, values.email)
+        .then(() => setSent(true))
+        .catch((error) => {
+          console.error(error);
+          setError(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     },
   });
 
@@ -51,7 +59,7 @@ export default function ResetPassDialog() {
   };
 
   const handleClearError = () => {
-    dispatch(authActions.resetError());
+    setError(null);
   };
 
   return (
@@ -59,9 +67,7 @@ export default function ResetPassDialog() {
       <CloseDialogButton />
       <DialogHeader>
         <Logo size="large" />
-        <Typography variant="h5" align="center">
-          Reset Password
-        </Typography>
+        <h2>RESET PASSWORD</h2>
       </DialogHeader>
       <form onSubmit={formik.handleSubmit}>
         <DialogBody>
@@ -71,6 +77,7 @@ export default function ResetPassDialog() {
             name="email"
             label="Email"
             size="small"
+            autoComplete="off"
             disabled={sent}
             value={formik.values.email}
             onChange={formik.handleChange}
