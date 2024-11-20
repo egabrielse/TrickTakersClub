@@ -1,9 +1,9 @@
 import { useContext, useEffect } from "react";
 import { Outlet } from "react-router";
 import { DIALOG_TYPES } from "../../../constants/dialog";
-import { AuthContext } from "../../providers/AuthProvider";
-import { DialogContext } from "../../providers/DialogProvider";
+import { DialogContext } from "../../dialog/DialogProvider";
 import LoadingPage from "../loading/LoadingPage";
+import { AuthContext } from "./AuthProvider";
 
 export default function PrivateRoutes() {
   const { openDialog } = useContext(DialogContext);

@@ -1,6 +1,6 @@
 import { useChannel } from "ably/react";
 import { useContext, useState } from "react";
-import { TableStateContext } from "../../../providers/TableStateProvider";
+import { TableStateContext } from "../TableStateProvider";
 import "./Chat.scss";
 
 export default function Chat() {

@@ -1,10 +1,10 @@
 import { useChannel, usePresence, usePresenceListener } from "ably/react";
 import { useContext } from "react";
 import { DIALOG_TYPES } from "../../../constants/dialog";
-import { DialogContext } from "../../providers/DialogProvider";
-import { TableStateContext } from "../../providers/TableStateProvider";
+import { DialogContext } from "../../dialog/DialogProvider";
 import Chat from "./Chat/Chat";
 import "./TablePage.scss";
+import { TableStateContext } from "./TableStateProvider";
 
 export default function TablePage() {
   const { table } = useContext(TableStateContext);

@@ -8,9 +8,9 @@ import { DIALOG_TYPES } from "../../../constants/dialog";
 import { VALIDATION_ERRORS } from "../../../constants/error";
 import { PATHS } from "../../../constants/url";
 import AppLogo from "../../common/AppLogo";
+import { DialogContext } from "../../dialog/DialogProvider";
 import AccountToolbar from "../../layout/AccountToolbar";
-import { AuthContext } from "../../providers/AuthProvider";
-import { DialogContext } from "../../providers/DialogProvider";
+import { AuthContext } from "../auth/AuthProvider";
 import "./HomePage.scss";
 
 export default function HomePage() {
@@ -24,7 +24,7 @@ export default function HomePage() {
 
   const handlePlay = () => {
     if (user === null) {
-      openDialog({ type: DIALOG_TYPES.LOGIN });
+      openDialog({ type: DIALOG_TYPES.LOGIN, closeable: true });
     } else {
       createTable()
         .then((table) => navigateToTable(table.id))

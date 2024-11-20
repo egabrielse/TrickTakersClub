@@ -1,9 +1,11 @@
+import { Dialog } from "@mui/material";
 import { HttpStatusCode } from "axios";
 import { ReactNode, useCallback, useContext, useEffect } from "react";
 import { isRouteErrorResponse, useRouteError } from "react-router";
 import { DIALOG_TYPES } from "../../../constants/dialog";
-import PopupDialog from "../../dialog/PopupDialog";
-import { DialogContext } from "../../providers/DialogProvider";
+import SlideTransition from "../../common/SlideTransition";
+import { DialogContext } from "../../dialog/DialogProvider";
+import ErrorDialog from "../../dialog/contents/ErrorDialog";
 import "./ErrorPage.scss";
 
 export default function ErrorPage(): ReactNode {
@@ -38,7 +40,15 @@ export default function ErrorPage(): ReactNode {
 
   return (
     <div className="ErrorPage">
-      <PopupDialog />
+      <Dialog
+        closeAfterTransition
+        component={"div"}
+        keepMounted
+        open={true}
+        TransitionComponent={SlideTransition}
+      >
+        <ErrorDialog title={getErrorTitle()} message={getErrorDetails()} />
+      </Dialog>
     </div>
   );
 }

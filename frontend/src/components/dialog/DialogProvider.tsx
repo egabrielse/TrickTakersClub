@@ -9,10 +9,10 @@ import {
 import { DIALOG_TYPES } from "../../constants/dialog";
 import { DialogParams } from "../../types/dialog";
 import SlideTransition from "../common/SlideTransition";
-import ErrorDialog from "../dialog/contents/ErrorDialog";
-import LoginDialog from "../dialog/contents/LoginDialog";
-import RegisterDialog from "../dialog/contents/RegisterDialog";
-import ResetPassDialog from "../dialog/contents/ResetPasswordDialog";
+import ErrorDialog from "./contents/ErrorDialog";
+import LoginDialog from "./contents/LoginDialog";
+import RegisterDialog from "./contents/RegisterDialog";
+import ResetPassDialog from "./contents/ResetPasswordDialog";
 
 type DialogContextProviderProps = {
   children: ReactNode;
@@ -30,7 +30,7 @@ export const DialogContext = createContext<{
   closeDialog: () => {},
 });
 
-export default function DialogContextProvider({
+export default function DialogProvider({
   children,
 }: DialogContextProviderProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);

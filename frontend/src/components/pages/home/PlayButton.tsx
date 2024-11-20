@@ -8,8 +8,8 @@ import Club from "../../common/icons/Club";
 import Diamond from "../../common/icons/Diamond";
 import Heart from "../../common/icons/Heart";
 import Spade from "../../common/icons/Spade";
-import { AuthContext } from "../../providers/AuthProvider";
-import { DialogContext } from "../../providers/DialogProvider";
+import { DialogContext } from "../../dialog/DialogProvider";
+import { AuthContext } from "../auth/AuthProvider";
 
 export default function PlayButton() {
   const { openDialog } = useContext(DialogContext);

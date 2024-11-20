@@ -6,11 +6,11 @@ import {
   useState,
 } from "react";
 import { useParams } from "react-router";
-import { fetchTable } from "../../api/table.api";
-import { DIALOG_TYPES } from "../../constants/dialog";
-import { TableEntity } from "../../types/table";
-import LoadingPage from "../pages/loading/LoadingPage";
-import { DialogContext } from "./DialogProvider";
+import { fetchTable } from "../../../api/table.api";
+import { DIALOG_TYPES } from "../../../constants/dialog";
+import { TableEntity } from "../../../types/table";
+import { DialogContext } from "../../dialog/DialogProvider";
+import LoadingPage from "../loading/LoadingPage";
 
 type TableStateProviderProps = {
   children: ReactNode;

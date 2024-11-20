@@ -1,9 +1,9 @@
 import * as Ably from "ably";
 import { AblyProvider, ChannelProvider } from "ably/react";
 import { useContext, useRef, useState } from "react";
-import { fetchAblyToken } from "../../api/ably.api";
-import LoadingPage from "../pages/loading/LoadingPage";
-import { AuthContext } from "./AuthProvider";
+import { fetchAblyToken } from "../../../api/ably.api";
+import { AuthContext } from "../auth/AuthProvider";
+import LoadingPage from "../loading/LoadingPage";
 import { TableStateContext } from "./TableStateProvider";
 
 type TablePageWrapperProps = {
