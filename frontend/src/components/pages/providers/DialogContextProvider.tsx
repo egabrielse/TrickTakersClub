@@ -37,13 +37,11 @@ export default function DialogContextProvider({
   const [params, setParams] = useState<DialogParams | null>(null);
 
   const openDialog = useCallback((params: DialogParams) => {
-    console.log("Opening dialog", params);
     setParams(params);
     setIsOpen(true);
   }, []);
 
   const closeDialog = useCallback(() => {
-    console.log("Closing dialog");
     setParams(null);
     setIsOpen(false);
   }, []);
@@ -75,7 +73,7 @@ export default function DialogContextProvider({
     return () => {
       window.removeEventListener("popstate", closeDialog);
     };
-  }, []);
+  }, [closeDialog]);
 
   return (
     <DialogContext.Provider value={{ isOpen, params, openDialog, closeDialog }}>
