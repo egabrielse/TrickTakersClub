@@ -9,7 +9,7 @@ import { DISPLAY_MESSAGES } from "../../../constants/display";
 import { VALIDATION_ERRORS } from "../../../constants/error";
 import auth from "../../../firebase/auth";
 import Logo from "../../common/AppLogo";
-import { DialogContext } from "../../pages/providers/DialogProvider";
+import { DialogContext } from "../../providers/DialogProvider";
 import CloseDialogButton from "../components/CloseDialogButton";
 import DialogBody from "../components/DialogBody";
 import DialogErrorMessage from "../components/DialogErrorMessage";

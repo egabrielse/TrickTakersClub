@@ -7,9 +7,9 @@ import { DIALOG_TYPES } from "../../../constants/dialog";
 import tableActions from "../../../redux/features/table/actions";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { selectTableError, selectTableLoading } from "../../../redux/selectors";
+import { AuthContext } from "../../providers/AuthProvider";
+import { DialogContext } from "../../providers/DialogProvider";
 import LoadingPage from "../loading/LoadingPage";
-import { AuthContext } from "../providers/AuthProvider";
-import { DialogContext } from "../providers/DialogProvider";
 
 type TablePageWrapperProps = {
   children: React.ReactNode;

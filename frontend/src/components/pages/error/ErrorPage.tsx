@@ -3,7 +3,7 @@ import { ReactNode, useCallback, useContext, useEffect } from "react";
 import { isRouteErrorResponse, useRouteError } from "react-router";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import PopupDialog from "../../dialog/PopupDialog";
-import { DialogContext } from "../providers/DialogProvider";
+import { DialogContext } from "../../providers/DialogProvider";
 import "./ErrorPage.scss";
 
 export default function ErrorPage(): ReactNode {

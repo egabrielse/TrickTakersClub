@@ -8,8 +8,8 @@ import { DIALOG_TYPES } from "../../constants/dialog";
 import { PATHS } from "../../constants/url";
 import auth from "../../firebase/auth";
 import UserSnapshot from "../common/UserSnapshot";
-import { AuthContext } from "../pages/providers/AuthProvider";
-import { DialogContext } from "../pages/providers/DialogProvider";
+import { AuthContext } from "../providers/AuthProvider";
+import { DialogContext } from "../providers/DialogProvider";
 import "./AccountToolbar.scss";
 
 export default function AccountToolbar() {

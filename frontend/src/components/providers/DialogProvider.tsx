@@ -6,13 +6,13 @@ import {
   useEffect,
   useState,
 } from "react";
-import { DIALOG_TYPES } from "../../../constants/dialog";
-import { DialogParams } from "../../../types/dialog";
-import SlideTransition from "../../common/SlideTransition";
-import ErrorDialog from "../../dialog/contents/ErrorDialog";
-import LoginDialog from "../../dialog/contents/LoginDialog";
-import RegisterDialog from "../../dialog/contents/RegisterDialog";
-import ResetPassDialog from "../../dialog/contents/ResetPasswordDialog";
+import { DIALOG_TYPES } from "../../constants/dialog";
+import { DialogParams } from "../../types/dialog";
+import SlideTransition from "../common/SlideTransition";
+import ErrorDialog from "../dialog/contents/ErrorDialog";
+import LoginDialog from "../dialog/contents/LoginDialog";
+import RegisterDialog from "../dialog/contents/RegisterDialog";
+import ResetPassDialog from "../dialog/contents/ResetPasswordDialog";
 
 type DialogContextProviderProps = {
   children: ReactNode;

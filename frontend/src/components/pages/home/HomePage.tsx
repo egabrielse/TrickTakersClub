@@ -10,8 +10,8 @@ import tableActions from "../../../redux/features/table/actions";
 import { useAppDispatch } from "../../../redux/hooks";
 import AppLogo from "../../common/AppLogo";
 import AccountToolbar from "../../layout/AccountToolbar";
-import { AuthContext } from "../providers/AuthProvider";
-import { DialogContext } from "../providers/DialogProvider";
+import { AuthContext } from "../../providers/AuthProvider";
+import { DialogContext } from "../../providers/DialogProvider";
 import "./HomePage.scss";
 
 export default function HomePage() {

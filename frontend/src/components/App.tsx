@@ -13,10 +13,10 @@ import RulesPage from "./pages//rules/RulesPage";
 import AccountPage from "./pages/account/AccountPage";
 import PrivateRoutes from "./pages/auth/PrivateRoutes";
 import HomePage from "./pages/home/HomePage";
-import AuthProvider from "./pages/providers/AuthProvider";
-import DialogProvider from "./pages/providers/DialogProvider";
 import TablePage from "./pages/table/TablePage";
 import TablePageWrapper from "./pages/table/TablePageWrapper";
+import AuthProvider from "./providers/AuthProvider";
+import DialogProvider from "./providers/DialogProvider";
 
 const router = createBrowserRouter(
   createRoutesFromElements(

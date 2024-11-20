@@ -3,7 +3,7 @@ import { Button } from "@mui/material";
 import { useContext } from "react";
 import { useNavigate } from "react-router";
 import { PATHS } from "../../../constants/url";
-import { DialogContext } from "../../pages/providers/DialogProvider";
+import { DialogContext } from "../../providers/DialogProvider";
 import DialogBody from "../components/DialogBody";
 import DialogFooter from "../components/DialogFooter";
 import DialogHeader from "../components/DialogHeader";
