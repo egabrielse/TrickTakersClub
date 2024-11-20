@@ -6,15 +6,16 @@ import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { VALIDATION_ERRORS } from "../../../constants/error";
 import { PATHS } from "../../../constants/url";
-import dialogActions from "../../../redux/features/dialog/actions";
 import tableActions from "../../../redux/features/table/actions";
 import { useAppDispatch } from "../../../redux/hooks";
 import AppLogo from "../../common/AppLogo";
 import AccountToolbar from "../../layout/AccountToolbar";
-import { AuthContext } from "../auth/AuthContextProvider";
+import { AuthContext } from "../providers/AuthContextProvider";
+import { DialogContext } from "../providers/DialogContextProvider";
 import "./HomePage.scss";
 
 export default function HomePage() {
+  const { openDialog } = useContext(DialogContext);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
@@ -25,7 +26,7 @@ export default function HomePage() {
 
   const handlePlay = () => {
     if (user === null) {
-      dispatch(dialogActions.openDialog({ type: DIALOG_TYPES.LOGIN }));
+      openDialog({ type: DIALOG_TYPES.LOGIN });
     } else {
       dispatch(tableActions.createTable())
         .unwrap()

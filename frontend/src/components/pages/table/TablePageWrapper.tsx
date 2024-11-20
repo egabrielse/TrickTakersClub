@@ -4,12 +4,12 @@ import { useContext, useEffect, useRef } from "react";
 import { useParams } from "react-router";
 import { fetchAblyToken } from "../../../api/ably.api";
 import { DIALOG_TYPES } from "../../../constants/dialog";
-import dialogActions from "../../../redux/features/dialog/actions";
 import tableActions from "../../../redux/features/table/actions";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { selectTableError, selectTableLoading } from "../../../redux/selectors";
-import { AuthContext } from "../auth/AuthContextProvider";
 import LoadingPage from "../loading/LoadingPage";
+import { AuthContext } from "../providers/AuthContextProvider";
+import { DialogContext } from "../providers/DialogContextProvider";
 
 type TablePageWrapperProps = {
   children: React.ReactNode;
@@ -20,6 +20,7 @@ type TablePageWrapperProps = {
  */
 export default function TablePageWrapper({ children }: TablePageWrapperProps) {
   const params = useParams();
+  const { openDialog } = useContext(DialogContext);
   const paramTableId = String(params.tableId);
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectTableLoading);
@@ -49,17 +50,15 @@ export default function TablePageWrapper({ children }: TablePageWrapperProps) {
 
   useEffect(() => {
     if (error) {
-      dispatch(
-        dialogActions.openDialog({
-          type: DIALOG_TYPES.ERROR,
-          props: {
-            title: "Table Not Found",
-            message: "There was an error finding this table.",
-          },
-        }),
-      );
+      openDialog({
+        type: DIALOG_TYPES.ERROR,
+        props: {
+          title: "Table Not Found",
+          message: "There was an error finding this table.",
+        },
+      });
     }
-  }, [dispatch, error]);
+  }, [error, openDialog]);
 
   return loading ? (
     <LoadingPage />

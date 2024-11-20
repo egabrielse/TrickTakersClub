@@ -7,15 +7,14 @@ import { useNavigate } from "react-router";
 import { DIALOG_TYPES } from "../../constants/dialog";
 import { PATHS } from "../../constants/url";
 import auth from "../../firebase/auth";
-import dialogActions from "../../redux/features/dialog/actions";
-import { useAppDispatch } from "../../redux/hooks";
 import UserSnapshot from "../common/UserSnapshot";
-import { AuthContext } from "../pages/auth/AuthContextProvider";
+import { AuthContext } from "../pages/providers/AuthContextProvider";
+import { DialogContext } from "../pages/providers/DialogContextProvider";
 import "./AccountToolbar.scss";
 
 export default function AccountToolbar() {
+  const { openDialog } = useContext(DialogContext);
   const { initialized, user } = useContext(AuthContext);
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
@@ -28,9 +27,7 @@ export default function AccountToolbar() {
   };
 
   const handleLogin = () => {
-    dispatch(
-      dialogActions.openDialog({ type: DIALOG_TYPES.LOGIN, closeable: true }),
-    );
+    openDialog({ type: DIALOG_TYPES.LOGIN, closeable: true });
   };
 
   const handleLogout = () => {

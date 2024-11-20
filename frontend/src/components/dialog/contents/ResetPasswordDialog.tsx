@@ -2,15 +2,14 @@ import { LoadingButton } from "@mui/lab";
 import { Button, TextField } from "@mui/material";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { useFormik } from "formik";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { DISPLAY_MESSAGES } from "../../../constants/display";
 import { VALIDATION_ERRORS } from "../../../constants/error";
 import auth from "../../../firebase/auth";
-import dialogActions from "../../../redux/features/dialog/actions";
-import { useAppDispatch } from "../../../redux/hooks";
 import Logo from "../../common/AppLogo";
+import { DialogContext } from "../../pages/providers/DialogContextProvider";
 import CloseDialogButton from "../components/CloseDialogButton";
 import DialogBody from "../components/DialogBody";
 import DialogErrorMessage from "../components/DialogErrorMessage";
@@ -31,7 +30,7 @@ const initialValues = {
 };
 
 export default function ResetPassDialog() {
-  const dispatch = useAppDispatch();
+  const { openDialog, params } = useContext(DialogContext);
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -54,8 +53,7 @@ export default function ResetPassDialog() {
   });
 
   const openRegisterDialog = () => {
-    dispatch(dialogActions.closeDialog());
-    dispatch(dialogActions.openDialog({ type: DIALOG_TYPES.LOGIN }));
+    openDialog({ type: DIALOG_TYPES.REGISTER, closeable: params?.closeable });
   };
 
   const handleClearError = () => {

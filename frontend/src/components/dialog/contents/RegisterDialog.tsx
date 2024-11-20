@@ -3,16 +3,14 @@ import { LoadingButton } from "@mui/lab";
 import { Box, Button, MenuItem, TextField } from "@mui/material";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useFormik } from "formik";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { VALIDATION_ERRORS } from "../../../constants/error";
 import auth from "../../../firebase/auth";
-import dialogActions from "../../../redux/features/dialog/actions";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { selectDialogPayload } from "../../../redux/selectors";
 import { generateDisplayName } from "../../../utils/user";
 import Logo from "../../common/AppLogo";
+import { DialogContext } from "../../pages/providers/DialogContextProvider";
 import CloseDialogButton from "../components/CloseDialogButton";
 import DialogBody from "../components/DialogBody";
 import DialogErrorMessage from "../components/DialogErrorMessage";
@@ -46,10 +44,9 @@ const initialValues = {
 };
 
 export default function RegisterDialog() {
-  const dispatch = useAppDispatch();
+  const { openDialog, params } = useContext(DialogContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const dialogPayload = useAppSelector(selectDialogPayload);
   const [displayNameOptions, setDisplayNameOptions] = useState<string[]>([]);
 
   const formik = useFormik({
@@ -76,15 +73,11 @@ export default function RegisterDialog() {
     },
   });
 
-  // Open login dialog
   const openLoginDialog = () => {
-    dispatch(dialogActions.closeDialog());
-    dispatch(
-      dialogActions.openDialog({
-        type: DIALOG_TYPES.LOGIN,
-        closeable: dialogPayload?.closeable,
-      }),
-    );
+    openDialog({
+      type: DIALOG_TYPES.LOGIN,
+      closeable: params?.closeable,
+    });
   };
 
   // Generate new display name options
@@ -113,7 +106,7 @@ export default function RegisterDialog() {
 
   return (
     <>
-      {dialogPayload?.closeable && <CloseDialogButton />}
+      {params?.closeable && <CloseDialogButton />}
       <DialogHeader>
         <Logo size="large" />
         <h2>CREATE A NEW ACCOUNT</h2>

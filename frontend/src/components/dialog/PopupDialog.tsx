@@ -25,7 +25,7 @@ export default function PopupDialog() {
         return <LoginDialog />;
       case DIALOG_TYPES.REGISTER:
         return <RegisterDialog />;
-      case DIALOG_TYPES.RESET_PASSWORD:
+      case DIALOG_TYPES.RESET:
         return <ResetPasswordDialog />;
       case DIALOG_TYPES.ERROR:
         return <ErrorDialog {...dialogPayload.props} />;

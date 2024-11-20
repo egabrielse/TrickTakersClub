@@ -1,9 +1,9 @@
 import HomeIcon from "@mui/icons-material/Home";
 import { Button } from "@mui/material";
+import { useContext } from "react";
 import { useNavigate } from "react-router";
 import { PATHS } from "../../../constants/url";
-import dialogActions from "../../../redux/features/dialog/actions";
-import { useAppDispatch } from "../../../redux/hooks";
+import { DialogContext } from "../../pages/providers/DialogContextProvider";
 import DialogBody from "../components/DialogBody";
 import DialogFooter from "../components/DialogFooter";
 import DialogHeader from "../components/DialogHeader";
@@ -15,9 +15,10 @@ type ErrorDialogProps = {
 
 export default function ErrorDialog({ title, message }: ErrorDialogProps) {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const { closeDialog } = useContext(DialogContext);
+
   const handleReturnHome = () => {
-    dispatch(dialogActions.closeDialog());
+    closeDialog();
     navigate(PATHS.ROOT);
   };
 

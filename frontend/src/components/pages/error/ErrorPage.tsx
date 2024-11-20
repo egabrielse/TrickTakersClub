@@ -1,15 +1,14 @@
 import { HttpStatusCode } from "axios";
-import { ReactNode, useCallback, useEffect } from "react";
+import { ReactNode, useCallback, useContext, useEffect } from "react";
 import { isRouteErrorResponse, useRouteError } from "react-router";
 import { DIALOG_TYPES } from "../../../constants/dialog";
-import dialogActions from "../../../redux/features/dialog/actions";
-import { useAppDispatch } from "../../../redux/hooks";
 import PopupDialog from "../../dialog/PopupDialog";
+import { DialogContext } from "../providers/DialogContextProvider";
 import "./ErrorPage.scss";
 
 export default function ErrorPage(): ReactNode {
   const error = useRouteError();
-  const dispatch = useAppDispatch();
+  const { openDialog } = useContext(DialogContext);
 
   const getErrorTitle = useCallback(() => {
     if (isRouteErrorResponse(error)) {
@@ -30,14 +29,12 @@ export default function ErrorPage(): ReactNode {
   }, [error]);
 
   useEffect(() => {
-    dispatch(
-      dialogActions.openDialog({
-        type: DIALOG_TYPES.ERROR,
-        closeable: false,
-        props: { title: getErrorTitle(), message: getErrorDetails() },
-      }),
-    );
-  }, [dispatch, error, getErrorDetails, getErrorTitle]);
+    openDialog({
+      type: DIALOG_TYPES.ERROR,
+      closeable: false,
+      props: { title: getErrorTitle(), message: getErrorDetails() },
+    });
+  }, [error, getErrorDetails, getErrorTitle, openDialog]);
 
   return (
     <div className="ErrorPage">

@@ -2,15 +2,13 @@ import { LoadingButton } from "@mui/lab";
 import { Button, Link, TextField } from "@mui/material";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useFormik } from "formik";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { VALIDATION_ERRORS } from "../../../constants/error";
 import auth from "../../../firebase/auth";
-import dialogActions from "../../../redux/features/dialog/actions";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { selectDialogPayload } from "../../../redux/selectors";
 import Logo from "../../common/AppLogo";
+import { DialogContext } from "../../pages/providers/DialogContextProvider";
 import CloseDialogButton from "../components/CloseDialogButton";
 import DialogBody from "../components/DialogBody";
 import DialogErrorMessage from "../components/DialogErrorMessage";
@@ -37,11 +35,9 @@ const initialValues = {
 };
 
 export default function LoginDialog() {
-  const dispatch = useAppDispatch();
+  const { closeDialog, openDialog, params } = useContext(DialogContext);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const dialogPayload = useAppSelector(selectDialogPayload);
-  const closeable = dialogPayload?.closeable;
 
   const formik = useFormik({
     initialValues: initialValues,
@@ -52,7 +48,7 @@ export default function LoginDialog() {
       signInWithEmailAndPassword(auth, email, password)
         .then((response) => {
           console.log(response);
-          dispatch(dialogActions.closeDialog());
+          closeDialog();
         })
         .catch((error) => {
           console.error(error);
@@ -65,23 +61,17 @@ export default function LoginDialog() {
   });
 
   const openRegisterDialog = () => {
-    dispatch(dialogActions.closeDialog());
-    dispatch(
-      dialogActions.openDialog({
-        type: DIALOG_TYPES.REGISTER,
-        closeable: closeable,
-      }),
-    );
+    openDialog({
+      type: DIALOG_TYPES.REGISTER,
+      closeable: params?.closeable,
+    });
   };
 
   const openResetPassDialog = () => {
-    dispatch(dialogActions.closeDialog());
-    dispatch(
-      dialogActions.openDialog({
-        type: DIALOG_TYPES.RESET_PASSWORD,
-        closeable: closeable,
-      }),
-    );
+    openDialog({
+      type: DIALOG_TYPES.RESET,
+      closeable: params?.closeable,
+    });
   };
 
   const handleClearError = () => {
@@ -90,7 +80,7 @@ export default function LoginDialog() {
 
   return (
     <>
-      {closeable && <CloseDialogButton />}
+      {params?.closeable && <CloseDialogButton />}
       <DialogHeader>
         <Logo size="large" />
         <h2>LOGIN TO ACCOUNT</h2>
@@ -102,6 +92,7 @@ export default function LoginDialog() {
             id="email"
             name="email"
             label="Email"
+            autoComplete="off"
             size="small"
             value={formik.values.email}
             onChange={formik.handleChange}
@@ -120,6 +111,7 @@ export default function LoginDialog() {
             label="Password"
             type="password"
             size="small"
+            autoComplete="off"
             value={formik.values.password}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}

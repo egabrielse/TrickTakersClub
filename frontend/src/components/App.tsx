@@ -11,16 +11,16 @@ import { store } from "../redux/store";
 import RootLayout from "./layout/RootLayout";
 import RulesPage from "./pages//rules/RulesPage";
 import AccountPage from "./pages/account/AccountPage";
-import AuthContextProvider from "./pages/auth/AuthContextProvider";
 import PrivateRoutes from "./pages/auth/PrivateRoutes";
-import ErrorPage from "./pages/error/ErrorPage";
 import HomePage from "./pages/home/HomePage";
+import AuthContextProvider from "./pages/providers/AuthContextProvider";
+import DialogContextProvider from "./pages/providers/DialogContextProvider";
 import TablePage from "./pages/table/TablePage";
 import TablePageWrapper from "./pages/table/TablePageWrapper";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<RootLayout />} errorElement={<ErrorPage />}>
+    <Route path="/" element={<RootLayout />}>
       <Route index element={<HomePage />} />
       <Route path={PATHS.HOME} element={<HomePage />} />
       <Route path={PATHS.RULES} element={<RulesPage />} />
@@ -45,7 +45,9 @@ export default function App() {
   return (
     <Provider store={store}>
       <AuthContextProvider>
-        <RouterProvider router={router} />
+        <DialogContextProvider>
+          <RouterProvider router={router} />
+        </DialogContextProvider>
       </AuthContextProvider>
     </Provider>
   );

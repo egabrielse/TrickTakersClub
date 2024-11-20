@@ -3,23 +3,24 @@ import { useContext } from "react";
 import { useNavigate } from "react-router";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { PATHS } from "../../../constants/url";
-import dialogActions from "../../../redux/features/dialog/actions";
 import tableActions from "../../../redux/features/table/actions";
 import { useAppDispatch } from "../../../redux/hooks";
 import Club from "../../common/icons/Club";
 import Diamond from "../../common/icons/Diamond";
 import Heart from "../../common/icons/Heart";
 import Spade from "../../common/icons/Spade";
-import { AuthContext } from "../auth/AuthContextProvider";
+import { AuthContext } from "../providers/AuthContextProvider";
+import { DialogContext } from "../providers/DialogContextProvider";
 
 export default function PlayButton() {
+  const { openDialog } = useContext(DialogContext);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 
   const handlePlay = () => {
     if (user === null) {
-      dispatch(dialogActions.openDialog({ type: DIALOG_TYPES.LOGIN }));
+      openDialog({ type: DIALOG_TYPES.LOGIN });
     } else {
       dispatch(tableActions.createTable())
         .unwrap()
