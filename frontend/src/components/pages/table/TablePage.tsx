@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { useAppSelector } from "../../../redux/hooks";
 import { selectTableId } from "../../../redux/selectors";
-import { DialogContext } from "../providers/DialogContextProvider";
+import { DialogContext } from "../providers/DialogProvider";
 import Chat from "./Chat/Chat";
 import "./TablePage.scss";
 

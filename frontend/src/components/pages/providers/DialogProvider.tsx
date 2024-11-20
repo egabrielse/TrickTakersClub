@@ -63,10 +63,6 @@ export default function DialogContextProvider({
     }
   };
 
-  // useEffect(() => {
-  //   closeDialog();
-  // }, [location]);
-
   useEffect(() => {
     // Close dialog when user navigates back
     window.addEventListener("popstate", closeDialog);

@@ -13,8 +13,8 @@ import RulesPage from "./pages//rules/RulesPage";
 import AccountPage from "./pages/account/AccountPage";
 import PrivateRoutes from "./pages/auth/PrivateRoutes";
 import HomePage from "./pages/home/HomePage";
-import AuthContextProvider from "./pages/providers/AuthContextProvider";
-import DialogContextProvider from "./pages/providers/DialogContextProvider";
+import AuthProvider from "./pages/providers/AuthProvider";
+import DialogProvider from "./pages/providers/DialogProvider";
 import TablePage from "./pages/table/TablePage";
 import TablePageWrapper from "./pages/table/TablePageWrapper";
 
@@ -44,11 +44,11 @@ axios.defaults.baseURL = import.meta.env.VITE_BACKEND_HOST;
 export default function App() {
   return (
     <Provider store={store}>
-      <AuthContextProvider>
-        <DialogContextProvider>
+      <AuthProvider>
+        <DialogProvider>
           <RouterProvider router={router} />
-        </DialogContextProvider>
-      </AuthContextProvider>
+        </DialogProvider>
+      </AuthProvider>
     </Provider>
   );
 }

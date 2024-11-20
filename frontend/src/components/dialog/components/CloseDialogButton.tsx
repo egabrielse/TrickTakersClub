@@ -1,7 +1,7 @@
 import CloseIcon from "@mui/icons-material/Close";
 import { IconButton } from "@mui/material";
 import { useContext } from "react";
-import { DialogContext } from "../../pages/providers/DialogContextProvider";
+import { DialogContext } from "../../pages/providers/DialogProvider";
 import "./CloseDialogButton.scss";
 
 export default function CloseDialogButton() {

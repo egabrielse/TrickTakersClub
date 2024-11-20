@@ -8,8 +8,8 @@ import tableActions from "../../../redux/features/table/actions";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { selectTableError, selectTableLoading } from "../../../redux/selectors";
 import LoadingPage from "../loading/LoadingPage";
-import { AuthContext } from "../providers/AuthContextProvider";
-import { DialogContext } from "../providers/DialogContextProvider";
+import { AuthContext } from "../providers/AuthProvider";
+import { DialogContext } from "../providers/DialogProvider";
 
 type TablePageWrapperProps = {
   children: React.ReactNode;

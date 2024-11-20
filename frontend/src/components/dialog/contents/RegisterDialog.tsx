@@ -10,7 +10,7 @@ import { VALIDATION_ERRORS } from "../../../constants/error";
 import auth from "../../../firebase/auth";
 import { generateDisplayName } from "../../../utils/user";
 import Logo from "../../common/AppLogo";
-import { DialogContext } from "../../pages/providers/DialogContextProvider";
+import { DialogContext } from "../../pages/providers/DialogProvider";
 import CloseDialogButton from "../components/CloseDialogButton";
 import DialogBody from "../components/DialogBody";
 import DialogErrorMessage from "../components/DialogErrorMessage";
