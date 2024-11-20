@@ -47,7 +47,7 @@ export default function LoginDialog() {
       const { email, password } = values;
       signInWithEmailAndPassword(auth, email, password)
         .then((response) => {
-          console.log(response);
+          console.debug(response);
           closeDialog();
         })
         .catch((error) => {

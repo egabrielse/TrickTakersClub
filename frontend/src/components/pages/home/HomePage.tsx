@@ -3,11 +3,10 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useContext } from "react";
 import { useNavigate } from "react-router";
 import * as yup from "yup";
+import { createTable } from "../../../api/table.api";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { VALIDATION_ERRORS } from "../../../constants/error";
 import { PATHS } from "../../../constants/url";
-import tableActions from "../../../redux/features/table/actions";
-import { useAppDispatch } from "../../../redux/hooks";
 import AppLogo from "../../common/AppLogo";
 import AccountToolbar from "../../layout/AccountToolbar";
 import { AuthContext } from "../../providers/AuthProvider";
@@ -16,7 +15,6 @@ import "./HomePage.scss";
 
 export default function HomePage() {
   const { openDialog } = useContext(DialogContext);
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 
@@ -28,9 +26,18 @@ export default function HomePage() {
     if (user === null) {
       openDialog({ type: DIALOG_TYPES.LOGIN });
     } else {
-      dispatch(tableActions.createTable())
-        .unwrap()
-        .then((table) => navigateToTable(table.id));
+      createTable()
+        .then((table) => navigateToTable(table.id))
+        .catch((error) => {
+          console.error(error);
+          openDialog({
+            type: DIALOG_TYPES.ERROR,
+            props: {
+              title: "Error Creating Table",
+              message: "There was an error creating the table.",
+            },
+          });
+        });
     }
   };
 

@@ -1,10 +1,9 @@
 import { Button } from "@mui/material";
 import { useContext } from "react";
 import { useNavigate } from "react-router";
+import { createTable } from "../../../api/table.api";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { PATHS } from "../../../constants/url";
-import tableActions from "../../../redux/features/table/actions";
-import { useAppDispatch } from "../../../redux/hooks";
 import Club from "../../common/icons/Club";
 import Diamond from "../../common/icons/Diamond";
 import Heart from "../../common/icons/Heart";
@@ -14,7 +13,6 @@ import { DialogContext } from "../../providers/DialogProvider";
 
 export default function PlayButton() {
   const { openDialog } = useContext(DialogContext);
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 
@@ -22,10 +20,19 @@ export default function PlayButton() {
     if (user === null) {
       openDialog({ type: DIALOG_TYPES.LOGIN });
     } else {
-      dispatch(tableActions.createTable())
-        .unwrap()
+      createTable()
         .then((table) => {
           navigate(PATHS.TABLE.replace(":tableId", table.id));
+        })
+        .catch((error) => {
+          console.error(error);
+          openDialog({
+            type: DIALOG_TYPES.ERROR,
+            props: {
+              title: "Error Creating Table",
+              message: "There was an error creating the table.",
+            },
+          });
         });
     }
   };

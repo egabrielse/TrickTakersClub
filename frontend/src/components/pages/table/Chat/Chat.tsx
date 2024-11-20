@@ -1,14 +1,13 @@
 import { useChannel } from "ably/react";
-import { useState } from "react";
-import { useAppSelector } from "../../../../redux/hooks";
-import { selectTableId } from "../../../../redux/selectors";
+import { useContext, useState } from "react";
+import { TableStateContext } from "../../../providers/TableStateProvider";
 import "./Chat.scss";
 
 export default function Chat() {
-  const tableId = useAppSelector(selectTableId);
+  const { table } = useContext(TableStateContext);
   const [value, setValue] = useState("");
   const [messages, setMessages] = useState<string[]>([]);
-  const { publish } = useChannel(tableId, "chat", (msg) => {
+  const { publish } = useChannel(table.id, "chat", (msg) => {
     setMessages((prev) => [...prev, msg.data]);
   });
 

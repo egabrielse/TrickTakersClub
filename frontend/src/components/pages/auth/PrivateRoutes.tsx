@@ -11,7 +11,6 @@ export default function PrivateRoutes() {
 
   useEffect(() => {
     if (initialized && user === null) {
-      console.log("Opening login dialog");
       openDialog({ type: DIALOG_TYPES.LOGIN });
     }
   }, [initialized, user, openDialog]);

@@ -60,12 +60,12 @@ export default function RegisterDialog() {
           updateProfile(response.user, { displayName })
             .then(() => {
               response.user.reload();
-              console.log("Profile updated");
+              console.debug("Profile updated");
             })
             .catch(() => {
               console.error("Profile update failed");
             });
-          console.log(response);
+          console.debug(response);
         })
         .catch((error) => {
           console.error(error);
