@@ -1,7 +1,7 @@
-import { User as FirebaseUser, onAuthStateChanged } from "firebase/auth";
+import { User, onAuthStateChanged } from "firebase/auth";
 import { ReactNode, createContext, useEffect, useState } from "react";
 import auth from "../../firebase/auth";
-import { User } from "../../types/user";
+import { UserEntity } from "../../types/user";
 
 type AuthContextProviderProps = {
   children: ReactNode;
@@ -10,7 +10,7 @@ type AuthContextProviderProps = {
 export const AuthContext = createContext<{
   initialized: boolean;
   token: string | null;
-  user: User | null;
+  user: UserEntity | null;
 }>({
   initialized: false,
   token: null,
@@ -22,29 +22,26 @@ export default function AuthContextProvider({
 }: AuthContextProviderProps) {
   const [initialized, setInitialized] = useState<boolean>(false);
   const [token, setToken] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserEntity | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(
-      auth,
-      async (user: FirebaseUser | null) => {
-        if (!initialized) {
-          setInitialized(true);
-        }
-        if (user) {
-          setUser({
-            uid: user.uid,
-            email: user.email || "",
-            displayName: user.displayName || "",
-          });
-          setToken(await user.getIdToken());
-        } else {
-          setUser;
-          setToken(null);
-          setUser;
-        }
-      },
-    );
+    const unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
+      if (!initialized) {
+        setInitialized(true);
+      }
+      if (user) {
+        setUser({
+          uid: user.uid,
+          email: user.email || "",
+          displayName: user.displayName || "",
+        });
+        setToken(await user.getIdToken());
+      } else {
+        setUser;
+        setToken(null);
+        setUser;
+      }
+    });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

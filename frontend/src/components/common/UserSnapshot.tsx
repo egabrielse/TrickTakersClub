@@ -1,11 +1,11 @@
 import { Size } from "../../types/size";
-import { User } from "../../types/user";
+import { UserEntity } from "../../types/user";
 import { getDisplayNameFontSize } from "../../utils/user";
 import UserAvatar from "./UserAvatar";
 import "./UserSnapshot.scss";
 
 type UserProps = {
-  user: User;
+  user: UserEntity;
   variant: "avatar" | "name-row" | "name-column";
   size?: Size;
 };

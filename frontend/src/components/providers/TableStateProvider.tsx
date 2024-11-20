@@ -8,7 +8,7 @@ import {
 import { useParams } from "react-router";
 import { fetchTable } from "../../api/table.api";
 import { DIALOG_TYPES } from "../../constants/dialog";
-import { Table } from "../../types/table";
+import { TableEntity } from "../../types/table";
 import LoadingPage from "../pages/loading/LoadingPage";
 import { DialogContext } from "./DialogProvider";
 
@@ -17,7 +17,7 @@ type TableStateProviderProps = {
 };
 
 export const TableStateContext = createContext<{
-  table: Table;
+  table: TableEntity;
 }>({
   table: {
     id: "",
@@ -33,7 +33,7 @@ export default function TableStateProvider({
   const { openDialog } = useContext(DialogContext);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState(null);
-  const [table, setTable] = useState<Table>({
+  const [table, setTable] = useState<TableEntity>({
     id: "",
     hostId: "",
   });
