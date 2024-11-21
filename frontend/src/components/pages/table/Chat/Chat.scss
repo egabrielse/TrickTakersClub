@@ -1,24 +1,19 @@
 .Chat {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
     display: flex;
     flex-direction: column;
-    padding: 0.5rem;
-    margin: auto;
     gap: 0.5rem;
     border: 1px solid white;
     border-radius: 0.5rem;
-    width: 250px;
+    width: 256px;
+    height: 100%;
     background-color: rgba(white, 0.2);
+    padding: 0.5rem;
 
     &-Messages {
         display: flex;
         flex-direction: column;
-        overflow-y: auto;
-        height: 100%;
-        padding: 0 10px;
-        height: 150px;
+        gap: 6px;
+        flex: 1;
         font-size: small;
     }
 

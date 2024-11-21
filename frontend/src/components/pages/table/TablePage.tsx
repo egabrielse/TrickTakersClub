@@ -3,8 +3,8 @@ import { useContext } from "react";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { DialogContext } from "../../dialog/DialogProvider";
 import Chat from "./Chat/Chat";
+import { TableStateContext } from "./TableContextProvider";
 import "./TablePage.scss";
-import { TableStateContext } from "./TableStateProvider";
 
 export default function TablePage() {
   const { table } = useContext(TableStateContext);
@@ -27,9 +27,12 @@ export default function TablePage() {
 
   return (
     <div className="TablePage">
-      <Chat />
-      <span>{table.id}</span>
-      <div></div>
+      <div className="TablePage-Main">
+        <span>{table.id}</span>
+      </div>
+      <div className="TablePage-SideBar">
+        <Chat />
+      </div>
     </div>
   );
 }

@@ -2,9 +2,9 @@ import * as Ably from "ably";
 import { AblyProvider, ChannelProvider } from "ably/react";
 import { useContext, useRef, useState } from "react";
 import { fetchAblyToken } from "../../../api/ably.api";
-import { AuthContext } from "../auth/AuthProvider";
+import { AuthContext } from "../auth/AuthContextProvider";
 import LoadingPage from "../loading/LoadingPage";
-import { TableStateContext } from "./TableStateProvider";
+import { TableStateContext } from "./TableContextProvider";
 
 type TablePageWrapperProps = {
   children: React.ReactNode;

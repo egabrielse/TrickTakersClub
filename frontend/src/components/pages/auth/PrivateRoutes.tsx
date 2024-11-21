@@ -3,7 +3,7 @@ import { Outlet } from "react-router";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { DialogContext } from "../../dialog/DialogProvider";
 import LoadingPage from "../loading/LoadingPage";
-import { AuthContext } from "./AuthProvider";
+import { AuthContext } from "./AuthContextProvider";
 
 export default function PrivateRoutes() {
   const { openDialog } = useContext(DialogContext);

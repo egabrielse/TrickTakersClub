@@ -1,0 +1,24 @@
+.ChatMessage {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 12px;
+
+    &-MessageContainer {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+
+        &-ByLine {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            font-style: italic;
+
+            &-Sender {
+                font-weight: bold;
+            }
+        }
+    }
+}

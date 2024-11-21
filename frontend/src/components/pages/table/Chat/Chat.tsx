@@ -1,14 +1,16 @@
+import { Message } from "ably";
 import { useChannel } from "ably/react";
 import { useContext, useState } from "react";
-import { TableStateContext } from "../TableStateProvider";
+import { TableStateContext } from "../TableContextProvider";
 import "./Chat.scss";
+import ChatMessage from "./ChatMessage";
 
 export default function Chat() {
   const { table } = useContext(TableStateContext);
   const [value, setValue] = useState("");
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const { publish } = useChannel(table.id, "chat", (msg) => {
-    setMessages((prev) => [...prev, msg.data]);
+    setMessages((prev) => [...prev, msg]);
   });
 
   const sendChatMessage = () => {
@@ -20,7 +22,7 @@ export default function Chat() {
     <div className="Chat">
       <div className="Chat-Messages">
         {messages.map((msg, i) => (
-          <div key={i}>{msg}</div>
+          <ChatMessage key={i} message={msg} />
         ))}
       </div>
       <div className="Chat-Input">
@@ -29,8 +31,13 @@ export default function Chat() {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           size={24}
+          onSubmit={sendChatMessage}
         />
-        <button disabled={value.trim().length === 0} onClick={sendChatMessage}>
+        <button
+          type="submit"
+          disabled={value.trim().length === 0}
+          onClick={sendChatMessage}
+        >
           {"Send"}
         </button>
       </div>

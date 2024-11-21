@@ -10,7 +10,7 @@ import { PATHS } from "../../../constants/url";
 import AppLogo from "../../common/AppLogo";
 import { DialogContext } from "../../dialog/DialogProvider";
 import AccountToolbar from "../../layout/AccountToolbar";
-import { AuthContext } from "../auth/AuthProvider";
+import { AuthContext } from "../auth/AuthContextProvider";
 import "./HomePage.scss";
 
 export default function HomePage() {

@@ -9,7 +9,7 @@ import Diamond from "../../common/icons/Diamond";
 import Heart from "../../common/icons/Heart";
 import Spade from "../../common/icons/Spade";
 import { DialogContext } from "../../dialog/DialogProvider";
-import { AuthContext } from "../auth/AuthProvider";
+import { AuthContext } from "../auth/AuthContextProvider";
 
 export default function PlayButton() {
   const { openDialog } = useContext(DialogContext);

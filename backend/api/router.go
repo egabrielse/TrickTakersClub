@@ -25,6 +25,9 @@ func InitRouter() *http.Handler {
 	router.GET("/v1/table/:id", middleware.HandleWith(handlers.GetTable, decorators.RequestLogging, decorators.TokenAuthentication))
 	router.DELETE("/v1/table/:id", middleware.HandleWith(handlers.DeleteTable, decorators.RequestLogging, decorators.TokenAuthentication))
 
+	// -> User routes
+	router.GET("/v1/user/:id", middleware.HandleWith(handlers.GetUserByID, decorators.RequestLogging, decorators.TokenAuthentication))
+
 	// 3. Add CORS middleware
 	routerWithCORS := middleware.SetupCors().Handler(router)
 

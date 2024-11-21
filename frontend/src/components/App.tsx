@@ -6,14 +6,15 @@ import {
   createRoutesFromElements,
 } from "react-router-dom";
 import { PATHS } from "../constants/url";
+import UserStoreProvider from "./contexts/UserStoreProvider";
 import RulesPage from "./pages//rules/RulesPage";
 import AccountPage from "./pages/account/AccountPage";
-import AuthProvider from "./pages/auth/AuthProvider";
+import AuthContextProvider from "./pages/auth/AuthContextProvider";
 import PrivateRoutes from "./pages/auth/PrivateRoutes";
 import HomePage from "./pages/home/HomePage";
 import TableConnectionProvider from "./pages/table/TableConnectionProvider";
+import TableStateProvider from "./pages/table/TableContextProvider";
 import TablePage from "./pages/table/TablePage";
-import TableStateProvider from "./pages/table/TableStateProvider";
 import RootLayout from "./root/RootLayout";
 
 const router = createBrowserRouter(
@@ -43,8 +44,10 @@ axios.defaults.baseURL = import.meta.env.VITE_BACKEND_HOST;
 
 export default function App() {
   return (
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <AuthContextProvider>
+      <UserStoreProvider>
+        <RouterProvider router={router} />
+      </UserStoreProvider>
+    </AuthContextProvider>
   );
 }

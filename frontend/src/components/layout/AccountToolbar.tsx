@@ -9,7 +9,7 @@ import { PATHS } from "../../constants/url";
 import auth from "../../firebase/auth";
 import UserSnapshot from "../common/UserSnapshot";
 import { DialogContext } from "../dialog/DialogProvider";
-import { AuthContext } from "../pages/auth/AuthProvider";
+import { AuthContext } from "../pages/auth/AuthContextProvider";
 import "./AccountToolbar.scss";
 
 export default function AccountToolbar() {
