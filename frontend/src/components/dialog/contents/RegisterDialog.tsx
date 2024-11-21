@@ -44,7 +44,7 @@ const initialValues = {
 };
 
 export default function RegisterDialog() {
-  const { openDialog, params } = useContext(DialogContext);
+  const { openDialog, closeDialog, params } = useContext(DialogContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [displayNameOptions, setDisplayNameOptions] = useState<string[]>([]);
@@ -61,6 +61,7 @@ export default function RegisterDialog() {
             .then(() => {
               response.user.reload();
               console.debug("Profile updated");
+              closeDialog();
             })
             .catch(() => {
               console.error("Profile update failed");
