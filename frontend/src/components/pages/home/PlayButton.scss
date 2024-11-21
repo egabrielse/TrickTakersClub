@@ -1,0 +1,10 @@
+.PlayButton {
+    display: flex;
+    justify-content: space-between;
+
+    .AdornmentContent {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}

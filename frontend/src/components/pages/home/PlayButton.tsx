@@ -1,5 +1,5 @@
-import { Button } from "@mui/material";
-import { useContext } from "react";
+import { Button, Typography } from "@mui/material";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
 import { createTable } from "../../../api/table.api";
 import { DIALOG_TYPES } from "../../../constants/dialog";
@@ -10,15 +10,19 @@ import Heart from "../../common/icons/Heart";
 import Spade from "../../common/icons/Spade";
 import { DialogContext } from "../../dialog/DialogProvider";
 import { AuthContext } from "../auth/AuthContextProvider";
+import "./PlayButton.scss";
 
 export default function PlayButton() {
   const { openDialog } = useContext(DialogContext);
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
 
   const handlePlay = () => {
+    setLoading(true);
     if (user === null) {
       openDialog({ type: DIALOG_TYPES.LOGIN });
+      setLoading(false);
     } else {
       createTable()
         .then((table) => {
@@ -33,35 +37,33 @@ export default function PlayButton() {
               message: "There was an error creating the table.",
             },
           });
+        })
+        .finally(() => {
+          setLoading(false);
         });
     }
   };
 
   return (
     <Button
-      style={{ fontSize: 24, gap: "1rem" }}
-      variant="contained"
+      className="PlayButton"
       size="large"
-      color="error"
+      disabled={loading}
       onClick={handlePlay}
       endIcon={
-        <div
-          style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
-        >
+        <div className="AdornmentContent">
           <Diamond size={18} fill="white" rotate={45} />
           <Club size={18} fill="white" rotate={135} />
         </div>
       }
       startIcon={
-        <div
-          style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
-        >
+        <div className="AdornmentContent">
           <Heart size={18} fill="white" rotate={315} />
           <Spade size={18} fill="white" rotate={225} />
         </div>
       }
     >
-      Play Sheepshead
+      <Typography variant="h6">Host Table</Typography>
     </Button>
   );
 }
