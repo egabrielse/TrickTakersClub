@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { UserStoreContext } from "../../contexts/UserStoreProvider";
+import { UserStoreContext } from "../../providers/UserStoreProvider";
 import { AuthContext } from "../auth/AuthContextProvider";
 import "./AccountPage.scss";
 
