@@ -2,11 +2,14 @@ import { useChannel, usePresence, usePresenceListener } from "ably/react";
 import { useContext } from "react";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { DialogContext } from "../../dialog/DialogProvider";
+import { AuthContext } from "../auth/AuthContextProvider";
 import Chat from "./Chat/Chat";
+import GameSettings from "./GameSettings/GameSettings";
 import { TableStateContext } from "./TableContextProvider";
 import "./TablePage.scss";
 
 export default function TablePage() {
+  const { user } = useContext(AuthContext);
   const { table } = useContext(TableStateContext);
   const { openDialog } = useContext(DialogContext);
   usePresence(table.id);
@@ -28,9 +31,10 @@ export default function TablePage() {
   return (
     <div className="TablePage">
       <div className="TablePage-Main">
-        <span>{table.id}</span>
+        {user?.uid === table.hostId && <GameSettings />}
       </div>
       <div className="TablePage-SideBar">
+        <span>{table.id}</span>
         <Chat />
       </div>
     </div>

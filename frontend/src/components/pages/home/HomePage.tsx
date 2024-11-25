@@ -1,60 +1,101 @@
-import { Divider, Typography } from "@mui/material";
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import { Divider, Paper, TextField, Typography } from "@mui/material";
+import { useFormik } from "formik";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
 import * as yup from "yup";
+import { createTable } from "../../../api/table.api";
+import { DIALOG_TYPES } from "../../../constants/dialog";
 import { VALIDATION_ERRORS } from "../../../constants/error";
 import { PATHS } from "../../../constants/url";
+import ActionButton from "../../common/ActionButton";
 import AppLogo from "../../common/AppLogo";
+import { DialogContext } from "../../dialog/DialogProvider";
 import AccountToolbar from "../../layout/AccountToolbar";
+import { AuthContext } from "../auth/AuthContextProvider";
 import "./HomePage.scss";
-import PlayButton from "./PlayButton";
+
+const validationSchema = yup.object({
+  tableId: yup
+    .string()
+    .trim()
+    .matches(/^[a-z-]+$/, VALIDATION_ERRORS.TABLE_CODE.INVALID)
+    .required(VALIDATION_ERRORS.TABLE_CODE.REQUIRED),
+});
 
 export default function HomePage() {
+  const { openDialog } = useContext(DialogContext);
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
 
   const navigateToTable = (tableId: string) => {
     navigate(PATHS.TABLE.replace(":tableId", tableId));
   };
 
+  const formik = useFormik({
+    initialValues: { tableId: "" },
+    validationSchema: validationSchema,
+    onSubmit: (values) => navigateToTable(values.tableId),
+  });
+
+  const handlePlay = () => {
+    setLoading(true);
+    if (user === null) {
+      openDialog({ type: DIALOG_TYPES.LOGIN });
+      setLoading(false);
+    } else {
+      createTable()
+        .then((table) => navigateToTable(table.id))
+        .catch((error) => {
+          console.error(error);
+          openDialog({
+            type: DIALOG_TYPES.ERROR,
+            props: {
+              title: "Error Creating Table",
+              message: "There was an error creating the table.",
+            },
+          });
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  };
+
   return (
-    <div className="HomePage">
+    <Paper className="HomePage">
       <AccountToolbar />
       <AppLogo size="xlarge" color="white" />
       <Typography variant="h2" color="white">
         Trick Takers Club
       </Typography>
-      <PlayButton />
+      <ActionButton
+        label="Host Table"
+        onClick={handlePlay}
+        disabled={loading}
+      />
       <Divider orientation="horizontal" color="white" />
-      <Formik
-        initialValues={{ tableId: "" }}
-        onSubmit={(values) => navigateToTable(values.tableId)}
-        validationSchema={yup.object({
-          tableId: yup
-            .string()
-            .trim()
-            .required(VALIDATION_ERRORS.TABLE_CODE.REQUIRED),
-        })}
+      <form
+        onSubmit={formik.handleSubmit}
+        style={{ width: "100%", display: "flex", flexDirection: "column" }}
       >
-        {({ isSubmitting, errors, touched }) => (
-          <Form>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <Field
-                type="input"
-                name="tableId"
-                autoComplete="off"
-                placeholder="Enter Table Code"
-              />
-              <ErrorMessage name="tableId" component="div" />
-              <button
-                type="submit"
-                disabled={isSubmitting || !!(errors.tableId && touched.tableId)}
-              >
-                Join Table
-              </button>
-            </div>
-          </Form>
-        )}
-      </Formik>
-    </div>
+        <TextField
+          id="tableId"
+          name="tableId"
+          label="Table Code"
+          size="medium"
+          value={formik.values.tableId}
+          onChange={formik.handleChange}
+          error={formik.touched.tableId && Boolean(formik.errors.tableId)}
+          helperText={formik.touched.tableId && formik.errors.tableId}
+        />
+        <ActionButton
+          color="secondary"
+          label="Join Table"
+          disabled={loading}
+          type="submit"
+        />
+      </form>
+    </Paper>
   );
 }

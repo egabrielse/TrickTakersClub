@@ -23,5 +23,6 @@ export const VALIDATION_ERRORS = {
   },
   TABLE_CODE: {
     REQUIRED: "Table code is required",
+    INVALID: "Table code must be lowercase letters and dashes",
   },
 };

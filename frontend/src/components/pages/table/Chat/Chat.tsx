@@ -1,3 +1,5 @@
+import SendIcon from "@mui/icons-material/Send";
+import { IconButton, InputAdornment, Paper, TextField } from "@mui/material";
 import { Message } from "ably";
 import { useChannel } from "ably/react";
 import { useContext, useState } from "react";
@@ -19,28 +21,41 @@ export default function Chat() {
   };
 
   return (
-    <div className="Chat">
+    <Paper className="Chat">
       <div className="Chat-Messages">
         {messages.map((msg, i) => (
           <ChatMessage key={i} message={msg} />
         ))}
       </div>
-      <div className="Chat-Input">
-        <input
-          placeholder="Type a message..."
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          size={24}
-          onSubmit={sendChatMessage}
-        />
-        <button
-          type="submit"
-          disabled={value.trim().length === 0}
-          onClick={sendChatMessage}
-        >
-          {"Send"}
-        </button>
-      </div>
-    </div>
+      <TextField
+        id="chat-input"
+        name="chat-input"
+        placeholder="Type a message..."
+        value={value}
+        multiline
+        onChange={(e) => setValue(e.target.value)}
+        onSubmit={sendChatMessage}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            sendChatMessage();
+          }
+        }}
+        slotProps={{
+          input: {
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={sendChatMessage}
+                  disabled={value.trim().length === 0}
+                >
+                  <SendIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          },
+        }}
+      />
+    </Paper>
   );
 }

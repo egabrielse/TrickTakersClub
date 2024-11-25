@@ -7,7 +7,7 @@ const theme = createTheme({
       main: "#044885",
     },
     secondary: {
-      main: "#ffffff",
+      main: "#941111",
     },
     background: {
       default: "#4b7c34",
@@ -121,6 +121,26 @@ const theme = createTheme({
       defaultProps: {
         margin: "dense",
         size: "small",
+        variant: "outlined",
+      },
+    },
+    MuiToggleButton: {
+      styleOverrides: {
+        root: {
+          textTransform: "capitalize",
+        },
+      },
+      defaultProps: {
+        size: "small",
+      },
+    },
+    MuiToggleButtonGroup: {
+      defaultProps: {
+        size: "small",
+      },
+    },
+    MuiPaper: {
+      defaultProps: {
         variant: "outlined",
       },
     },

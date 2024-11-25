@@ -1,0 +1,15 @@
+.GameSettings {
+    padding: 1rem;
+
+    &-Form {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+
+        .LabeledInput {
+            width: 100%;
+        }
+    }
+}
