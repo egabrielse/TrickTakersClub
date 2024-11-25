@@ -1,8 +1,16 @@
 .TablePage {
+    position: relative;
     display: flex;
     width: calc(100vw - 1rem);
     height: calc(100vh - 1rem);
     padding: 0.5rem;
+
+    &-ExitButton {
+        position: absolute !important;
+        top: 0.5rem;
+        left: 0.5rem;
+        padding: 3px 5px !important,
+    }
 
     &-Main {
         display: flex;

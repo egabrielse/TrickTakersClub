@@ -44,12 +44,7 @@ export default function TablePage() {
   return (
     <div className="TablePage">
       <PaperButton
-        style={{
-          position: "absolute",
-          top: "0.5rem",
-          left: "0.5rem",
-          padding: 5,
-        }}
+        className="TablePage-ExitButton"
         onClick={handleLeaveTable}
         startIcon={<LogoutIcon style={{ transform: "rotate(180deg)" }} />}
       >

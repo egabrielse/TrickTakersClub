@@ -5,7 +5,7 @@ export default function PaperButton(props: ButtonProps) {
   return (
     <Button
       {...props}
-      className="PaperButton"
+      className={`PaperButton ${props.className}`}
       variant="contained"
       size="large"
     />
