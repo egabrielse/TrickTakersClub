@@ -1,0 +1,13 @@
+.PaperButton {
+    background-color: #94bc81 !important;
+    border: 1px solid white !important;
+    color: white !important;
+
+    &:hover {
+        background-color: #A9C99A !important;
+    }
+
+    &:active {
+        background-color: rgba(white, 0.5) !important;
+    }
+}
