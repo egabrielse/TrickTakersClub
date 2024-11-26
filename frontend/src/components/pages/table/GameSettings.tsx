@@ -16,7 +16,7 @@ import {
   GAME_DEFAULTS,
   GAME_SETTINGS,
   NO_PICK_RESOLUTIONS,
-} from "../../../../constants/game";
+} from "../../../constants/game";
 import "./GameSettings.scss";
 
 const validationSchema = yup.object({

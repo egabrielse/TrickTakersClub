@@ -8,7 +8,7 @@ import PaperButton from "../../common/PaperButton";
 import { DialogContext } from "../../dialog/DialogProvider";
 import { AuthContext } from "../auth/AuthContextProvider";
 import Chat from "./Chat/Chat";
-import GameSettings from "./GameSettings/GameSettings";
+import GameSettings from "./GameSettings";
 import LinkButton from "./LinkButton";
 import { TableStateContext } from "./TableContextProvider";
 import "./TablePage.scss";
