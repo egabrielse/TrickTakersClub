@@ -1,3 +1,4 @@
+import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import { Menu, MenuItem } from "@mui/material";
@@ -49,9 +50,14 @@ export default function AccountToolbar() {
     return (
       <div className="AccountToolbar">
         {user === null ? (
-          <button onClick={handleLogin} style={{ textWrap: "nowrap" }}>
+          <PaperButton
+            id="login-button"
+            name="login-button"
+            onClick={handleLogin}
+            startIcon={<LoginIcon />}
+          >
             Login
-          </button>
+          </PaperButton>
         ) : (
           <>
             <PaperButton
@@ -59,7 +65,11 @@ export default function AccountToolbar() {
               name="profile-button"
               onClick={handleOpenUserMenu}
             >
-              <ProfileSnapshot uid={user.uid} variant="name-row" size="large" />
+              <ProfileSnapshot
+                uid={user.uid}
+                variant="name-row"
+                size="medium"
+              />
             </PaperButton>
             <Menu
               anchorEl={anchorElUser}

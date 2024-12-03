@@ -12,10 +12,14 @@ type UserProps = {
   size?: Size;
 };
 
-export default function ProfileSnapshot({ uid, variant, size }: UserProps) {
+export default function ProfileSnapshot({
+  uid,
+  variant,
+  size = "medium",
+}: UserProps) {
   const { useCachedUser } = useContext(UserStoreContext);
   const { user, status } = useCachedUser(uid);
-  const displayNameFontSize = getDisplayNameFontSize(size || "medium");
+  const displayNameFontSize = getDisplayNameFontSize(size);
   const includeName = variant === "name-row" || variant === "name-column";
   const flexDirection = variant === "name-row" ? "row" : "column";
 
