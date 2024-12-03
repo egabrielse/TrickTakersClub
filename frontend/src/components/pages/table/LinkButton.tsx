@@ -20,14 +20,16 @@ export default function LinkButton({ tableId }: LinkButtonProps) {
 
   return (
     <Tooltip title={copied ? "Copied!" : "Copy link to table"} placement="left">
-      <PaperButton
-        id="link-button"
-        name="link-button"
-        startIcon={copied ? <CheckIcon /> : <ContentCopyIcon />}
-        onClick={copyLink}
-      >
-        {tableId}
-      </PaperButton>
+      <>
+        <PaperButton
+          id="link-button"
+          name="link-button"
+          startIcon={copied ? <CheckIcon /> : <ContentCopyIcon />}
+          onClick={copyLink}
+        >
+          {tableId}
+        </PaperButton>
+      </>
     </Tooltip>
   );
 }

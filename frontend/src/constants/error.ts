@@ -1,6 +1,9 @@
 export const ERROR_MESSAGES = {
   INVALID_CREDENTIALS: "Incorrect email or password.",
+  INVALID_EMAIL: "Email is invalid.",
   ALREADY_EXISTS: "An account with this email already exists.",
+  PROFILE_UPDATE_FAILED: "Failed to update profile.",
+  INVALID_DISPLAY_NAME: "Display name is invalid.",
   DEFAULT: "An error occurred. Please try again later.",
 };
 

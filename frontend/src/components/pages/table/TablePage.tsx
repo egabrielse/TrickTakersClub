@@ -1,7 +1,8 @@
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useChannel, usePresence, usePresenceListener } from "ably/react";
+import { useChannel, usePresence } from "ably/react";
 import { useContext } from "react";
 import { useNavigate } from "react-router";
+import { CHANNEL_EVENTS } from "../../../constants/ably";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { PATHS } from "../../../constants/url";
 import PaperButton from "../../common/PaperButton";
@@ -18,14 +19,9 @@ export default function TablePage() {
   const { table } = useContext(TableStateContext);
   const { openDialog } = useContext(DialogContext);
   const navigate = useNavigate();
-
   usePresence(table.id);
 
-  usePresenceListener(table.id, (presence) => {
-    console.log(presence);
-  });
-
-  useChannel(table.id, "timeout", () => {
+  useChannel(table.id, CHANNEL_EVENTS.TIMEOUT, () => {
     // navigate to the home page if the table times out
     openDialog({
       type: DIALOG_TYPES.ERROR,

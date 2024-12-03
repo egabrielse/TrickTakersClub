@@ -1,11 +1,12 @@
 import { LoadingButton } from "@mui/lab";
 import { Button, Link, TextField } from "@mui/material";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { FirebaseError } from "firebase/app";
+import { AuthErrorCodes, signInWithEmailAndPassword } from "firebase/auth";
 import { useFormik } from "formik";
 import { useContext, useState } from "react";
 import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
-import { VALIDATION_ERRORS } from "../../../constants/error";
+import { ERROR_MESSAGES, VALIDATION_ERRORS } from "../../../constants/error";
 import auth from "../../../firebase/auth";
 import Logo from "../../common/AppLogo";
 import { DialogContext } from "../DialogProvider";
@@ -36,7 +37,7 @@ const initialValues = {
 
 export default function LoginDialog() {
   const { closeDialog, openDialog, params } = useContext(DialogContext);
-  const [error, setError] = useState(null);
+  const [errMsg, setErrMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const formik = useFormik({
@@ -46,13 +47,23 @@ export default function LoginDialog() {
       setLoading(true);
       const { email, password } = values;
       signInWithEmailAndPassword(auth, email, password)
-        .then((response) => {
-          console.debug(response);
-          closeDialog();
-        })
+        .then(() => closeDialog())
         .catch((error) => {
-          console.error(error);
-          setError(error);
+          if (error instanceof FirebaseError) {
+            switch (error.code) {
+              case AuthErrorCodes.INVALID_EMAIL:
+                setErrMsg(ERROR_MESSAGES.INVALID_EMAIL);
+                break;
+              case AuthErrorCodes.USER_DELETED: // ? why is this user-not-found ?
+              case AuthErrorCodes.INVALID_PASSWORD:
+                setErrMsg(ERROR_MESSAGES.INVALID_CREDENTIALS);
+                break;
+              default:
+                setErrMsg(ERROR_MESSAGES.DEFAULT);
+            }
+          } else {
+            setErrMsg(ERROR_MESSAGES.DEFAULT);
+          }
         })
         .finally(() => {
           setLoading(false);
@@ -75,7 +86,7 @@ export default function LoginDialog() {
   };
 
   const handleClearError = () => {
-    setError(null);
+    setErrMsg(null);
   };
 
   return (
@@ -131,7 +142,7 @@ export default function LoginDialog() {
           >
             Forgot your password?
           </Link>
-          <DialogErrorMessage error={error} clearError={handleClearError} />
+          <DialogErrorMessage error={errMsg} clearError={handleClearError} />
         </DialogBody>
         <DialogFooter>
           <LoadingButton

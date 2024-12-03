@@ -1,12 +1,17 @@
 import LoopIcon from "@mui/icons-material/Loop";
 import { LoadingButton } from "@mui/lab";
 import { Box, Button, MenuItem, TextField } from "@mui/material";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { FirebaseError } from "firebase/app";
+import {
+  AuthErrorCodes,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 import { useFormik } from "formik";
 import { useContext, useEffect, useState } from "react";
 import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
-import { VALIDATION_ERRORS } from "../../../constants/error";
+import { ERROR_MESSAGES, VALIDATION_ERRORS } from "../../../constants/error";
 import auth from "../../../firebase/auth";
 import { generateDisplayName } from "../../../utils/user";
 import Logo from "../../common/AppLogo";
@@ -46,7 +51,7 @@ const initialValues = {
 export default function RegisterDialog() {
   const { openDialog, closeDialog, params } = useContext(DialogContext);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [errMsg, setErrMsg] = useState<string | null>(null);
   const [displayNameOptions, setDisplayNameOptions] = useState<string[]>([]);
 
   const formik = useFormik({
@@ -60,16 +65,28 @@ export default function RegisterDialog() {
           updateProfile(response.user, { displayName })
             .then(() => {
               response.user.reload();
-              console.debug("Profile updated");
               closeDialog();
             })
-            .catch(() => {
-              console.error("Profile update failed");
-            });
-          console.debug(response);
+            .catch(() => setErrMsg(ERROR_MESSAGES.INVALID_DISPLAY_NAME));
         })
         .catch((error) => {
-          console.error(error);
+          if (error instanceof FirebaseError) {
+            switch (error.code) {
+              case AuthErrorCodes.INVALID_EMAIL:
+                setErrMsg(ERROR_MESSAGES.INVALID_EMAIL);
+                break;
+              case AuthErrorCodes.EMAIL_EXISTS:
+                setErrMsg(ERROR_MESSAGES.ALREADY_EXISTS);
+                break;
+              case AuthErrorCodes.INVALID_PASSWORD:
+                setErrMsg(ERROR_MESSAGES.INVALID_CREDENTIALS);
+                break;
+              default:
+                setErrMsg(ERROR_MESSAGES.DEFAULT);
+            }
+          } else {
+            setErrMsg(ERROR_MESSAGES.DEFAULT);
+          }
         });
     },
   });
@@ -97,7 +114,7 @@ export default function RegisterDialog() {
   };
 
   const handleClearError = () => {
-    setError(null);
+    setErrMsg(null);
   };
 
   // Generate initial display name options when form is first opened
@@ -231,7 +248,7 @@ export default function RegisterDialog() {
                 : " "
             }
           />
-          <DialogErrorMessage error={error} clearError={handleClearError} />
+          <DialogErrorMessage error={errMsg} clearError={handleClearError} />
         </DialogBody>
 
         <DialogFooter>

@@ -2,6 +2,7 @@ import * as Ably from "ably";
 import { AblyProvider, ChannelProvider } from "ably/react";
 import { useContext, useRef, useState } from "react";
 import { fetchAblyToken } from "../../../api/ably.api";
+import { userChannel } from "../../../utils/ably";
 import { AuthContext } from "../auth/AuthContextProvider";
 import LoadingPage from "../loading/LoadingPage";
 import { TableStateContext } from "./TableContextProvider";
@@ -37,7 +38,11 @@ export default function TableConnectionProvider({
     <LoadingPage />
   ) : (
     <AblyProvider client={clientRef.current}>
-      <ChannelProvider channelName={table.id}>{children}</ChannelProvider>
+      <ChannelProvider channelName={table.id}>
+        <ChannelProvider channelName={userChannel(table.id, user!.uid)}>
+          {children}
+        </ChannelProvider>
+      </ChannelProvider>
     </AblyProvider>
   );
 }

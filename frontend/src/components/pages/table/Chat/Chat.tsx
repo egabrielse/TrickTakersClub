@@ -3,6 +3,7 @@ import { IconButton, InputAdornment, Paper, TextField } from "@mui/material";
 import { Message } from "ably";
 import { useChannel } from "ably/react";
 import { useContext, useState } from "react";
+import { CHANNEL_EVENTS } from "../../../../constants/ably";
 import { TableStateContext } from "../TableContextProvider";
 import "./Chat.scss";
 import ChatMessage from "./ChatMessage";
@@ -11,12 +12,12 @@ export default function Chat() {
   const { table } = useContext(TableStateContext);
   const [value, setValue] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
-  const { publish } = useChannel(table.id, "chat", (msg) => {
+  const { publish } = useChannel(table.id, CHANNEL_EVENTS.CHAT, (msg) => {
     setMessages((prev) => [...prev, msg]);
   });
 
   const sendChatMessage = () => {
-    publish("chat", value);
+    publish(CHANNEL_EVENTS.CHAT, value);
     setValue("");
   };
 

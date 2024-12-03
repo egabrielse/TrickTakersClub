@@ -1,13 +1,14 @@
 import LogoutIcon from "@mui/icons-material/Logout";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-import { IconButton, Menu, MenuItem } from "@mui/material";
+import { Menu, MenuItem } from "@mui/material";
 import { signOut } from "firebase/auth";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
 import { DIALOG_TYPES } from "../../constants/dialog";
 import { PATHS } from "../../constants/url";
 import auth from "../../firebase/auth";
-import UserSnapshot from "../common/UserSnapshot";
+import PaperButton from "../common/PaperButton";
+import ProfileSnapshot from "../common/ProfileSnapshot";
 import { DialogContext } from "../dialog/DialogProvider";
 import { AuthContext } from "../pages/auth/AuthContextProvider";
 import "./AccountToolbar.scss";
@@ -40,6 +41,8 @@ export default function AccountToolbar() {
     handleCloseUserMenu();
   };
 
+  console.log(user);
+
   if (!initialized) {
     return null;
   } else {
@@ -51,9 +54,13 @@ export default function AccountToolbar() {
           </button>
         ) : (
           <>
-            <IconButton onClick={handleOpenUserMenu} style={{ padding: 0 }}>
-              <UserSnapshot user={user} variant="avatar" size="large" />
-            </IconButton>
+            <PaperButton
+              id="profile-button"
+              name="profile-button"
+              onClick={handleOpenUserMenu}
+            >
+              <ProfileSnapshot uid={user.uid} variant="name-row" size="large" />
+            </PaperButton>
             <Menu
               anchorEl={anchorElUser}
               anchorOrigin={{

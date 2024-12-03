@@ -13,6 +13,21 @@ type CachedUser = {
   status: "loading" | "loaded" | "error";
 };
 
+interface LoadedUser extends CachedUser {
+  user: UserInfo;
+  status: "loaded";
+}
+
+interface LoadingUser extends CachedUser {
+  user: UserInfo | undefined;
+  status: "loading";
+}
+
+interface ErrorUser extends CachedUser {
+  user: undefined;
+  status: "error";
+}
+
 type UserCache = {
   [key: string]: CachedUser;
 };
@@ -22,7 +37,7 @@ type UserStoreProviderProps = {
 };
 
 export const UserStoreContext = createContext<{
-  useCachedUser: (id: string) => CachedUser;
+  useCachedUser: (id: string) => LoadedUser | ErrorUser | LoadingUser;
   refreshUser: (id: string) => void;
 }>({
   useCachedUser: () => ({ user: undefined, status: "loading" }),
@@ -76,15 +91,22 @@ export default function UserStoreProvider({
    * @param id user id
    * @returns record of user info and fetch status
    */
-  const useCachedUser = (id: string): CachedUser => {
+  const useCachedUser = (id: string): LoadedUser | ErrorUser | LoadingUser => {
     const record = userCache[id];
+
     useEffect(() => {
       if (!record) asyncFetchUser(id);
     }, [id, record]);
-    return {
-      user: record?.user,
-      status: record?.status,
-    };
+
+    if (!record) {
+      return { user: undefined, status: "loading" };
+    } else if (record.status === "loading") {
+      return { user: record?.user, status: "loading" };
+    } else if (record.status === "error") {
+      return { user: undefined, status: "error" };
+    } else {
+      return { user: record.user as UserInfo, status: "loaded" };
+    }
   };
 
   return (

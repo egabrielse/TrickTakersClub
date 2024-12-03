@@ -37,9 +37,8 @@ export default function AuthContextProvider({
         });
         setToken(await user.getIdToken());
       } else {
-        setUser;
+        setUser(null);
         setToken(null);
-        setUser;
       }
     });
     return unsubscribe;
