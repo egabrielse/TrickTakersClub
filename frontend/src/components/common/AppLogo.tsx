@@ -9,7 +9,7 @@ type AppLogoProps = {
 
 export default function AppLogo({
   size,
-  color = "black",
+  color = "white",
   onClick,
 }: AppLogoProps) {
   const pixelSize = scaleBySize(size, 48);
