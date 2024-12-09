@@ -42,8 +42,6 @@ export default function AccountToolbar() {
     handleCloseUserMenu();
   };
 
-  console.log(user);
-
   if (!initialized) {
     return null;
   } else {

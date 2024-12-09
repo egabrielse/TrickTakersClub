@@ -2,7 +2,11 @@ package service
 
 import (
 	"context"
+	"main/domain/entity"
+	"main/domain/game"
+	"main/domain/object"
 	"main/domain/repository"
+	"main/domain/service/message"
 	"main/utils"
 	"time"
 
@@ -10,25 +14,15 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// TimeoutDuration is the duration after which the service will be stopped if no activity is detected
-const TimeoutDuration = time.Minute * 10
-const TimeoutEvent = "timeout"
-
-type UserClient struct {
-	ID      string                `json:"id"`
-	Present bool                  `json:"present"`
-	Channel *ably.RealtimeChannel `json:"-"`
-}
-
 // TableService represents the service for controlling the table
 type TableService struct {
-	ID         string                 `json:"id"`
-	HostID     string                 `json:"hostId"`
-	LastUpdate time.Time              `json:"lastUpdate"`
-	Users      map[string]*UserClient `json:"users"`
-	AblyClient *ably.Realtime         `json:"-"`
-	Channel    *ably.RealtimeChannel  `json:"-"`
-	Ctx        context.Context        `json:"-"`
+	Table        *entity.TableEntity    `json:"table"`
+	GameSettings *game.GameSettings     `json:"gameSettings"`
+	LastUpdate   time.Time              `json:"lastUpdate"`
+	Users        map[string]*UserClient `json:"users"`
+	AblyClient   *ably.Realtime         `json:"-"`
+	Channel      *ably.RealtimeChannel  `json:"-"`
+	Ctx          context.Context        `json:"-"`
 }
 
 func NewTableService(tableId string, hostId string) (*TableService, error) {
@@ -44,69 +38,126 @@ func NewTableService(tableId string, hostId string) (*TableService, error) {
 		return nil, err
 	} else {
 		return &TableService{
-			ID:         tableId,
-			HostID:     hostId,
-			LastUpdate: time.Now(),
-			Users:      make(map[string]*UserClient),
-			AblyClient: ablyClient,
-			Channel:    ablyClient.Channels.Get(tableId),
-			Ctx:        ctx,
+			Table: &entity.TableEntity{
+				ID:     tableId,
+				HostID: hostId,
+			},
+			GameSettings: game.NewGameSettings(),
+			LastUpdate:   time.Now(),
+			Users:        make(map[string]*UserClient),
+			AblyClient:   ablyClient,
+			Channel:      ablyClient.Channels.Get(tableId),
+			Ctx:          ctx,
 		}, nil
+	}
+}
+
+func (t *TableService) GetState() *object.TableState {
+	return &object.TableState{
+		TableID:      t.Table.ID,
+		HostID:       t.Table.HostID,
+		GameSettings: t.GameSettings,
+	}
+}
+
+// HandleMessage handles messages received from the public channel
+func (t *TableService) HandlePublicMessage(msg *ably.Message) {
+	// Reset the ticker if any activity is detected
+	t.LastUpdate = time.Now()
+	logrus.Infof("Received message: %s", msg.Data)
+}
+
+// HandlePrivateMessage handles messages sent to the table service via the user's private channel
+func (t *TableService) HandlePrivateMessage(msg *ably.Message) {
+	// Reset the ticker if any activity is detected
+	t.LastUpdate = time.Now()
+	logrus.Infof("Received message: %s", msg.Data)
+	if msg.Name == message.MessageType.UpdateSettings && msg.ClientID == t.Table.HostID {
+		logrus.Info("Received game settings update")
+		payload := msg.Data.(game.GameSettings)
+		t.GameSettings = &payload
+		t.Channel.Publish(t.Ctx, message.MessageType.UpdateSettings, payload)
+	}
+}
+
+func (t *TableService) RegisterPresence(presence *ably.PresenceMessage) {
+	logrus.Infof("User %s entered the table", presence.ClientID)
+	if user, ok := t.Users[presence.ClientID]; ok {
+		user.Enter(t.Ctx, presence.ConnectionID, t.HandlePrivateMessage)
+	} else {
+		user := NewUserClient(
+			presence.ClientID,
+			presence.ConnectionID,
+			t.AblyClient.Channels.Get(t.Table.ID+":"+presence.ClientID),
+		)
+		t.Users[presence.ClientID] = user
+		user.Enter(t.Ctx, presence.ConnectionID, t.HandlePrivateMessage)
+	}
+	// Send the current state of the table/game to the newly registered user
+	t.Users[presence.ClientID].Publish(t.Ctx, message.MessageType.State, t.GetState())
+}
+
+func (t *TableService) UnregisterPresence(presence *ably.PresenceMessage) {
+	logrus.Infof("User %s left the table", presence.ClientID)
+	if _, ok := t.Users[presence.ClientID]; ok {
+		t.Users[presence.ClientID].Leave(t.Ctx, presence.ConnectionID)
 	}
 }
 
 func (t *TableService) StartService() {
 	go func() {
-		logrus.Infof("Starting service for table %s", t.ID)
-		ticker := time.NewTicker(TimeoutDuration)
+		logrus.Infof("Starting service for table %s", t.Table.ID)
+		ticker := time.NewTicker(TickerDuration)
 		defer func() {
-			logrus.Infof("Service for table %s stopped", t.ID)
+			logrus.Infof("Service for table %s stopped", t.Table.ID)
 			ticker.Stop()
 			t.AblyClient.Close()
 			tableRepo := repository.GetTableRepo()
-			err := tableRepo.Delete(t.Ctx, t.ID)
+			err := tableRepo.Delete(t.Ctx, t.Table.ID)
 			utils.LogOnError(err)
 		}()
-		// Initialize the ably client to handle messages and presence
+
 		t.AblyClient.Connection.OnAll(func(change ably.ConnectionStateChange) {
 			logrus.Infof("Connection state changed: %s", change.Current)
 		})
-		//
+
 		t.AblyClient.Connection.Once(ably.ConnectionEventConnected, func(change ably.ConnectionStateChange) {
-			t.Channel.SubscribeAll(t.Ctx, func(msg *ably.Message) {
-				// Reset the ticker if any activity is detected
-				ticker.Reset(TimeoutDuration)
-			})
-			t.Channel.Subscribe(t.Ctx, "chat", func(msg *ably.Message) {
-				logrus.Infof("Received message: %s", msg.Data)
-			})
-			t.Channel.Presence.SubscribeAll(t.Ctx, func(presence *ably.PresenceMessage) {
-				switch presence.Action {
-				case ably.PresenceActionEnter:
-					logrus.Infof("User %s entered the table", presence.ClientID)
-					t.Users[presence.ClientID] = &UserClient{
-						ID:      presence.ClientID,
-						Present: true,
-						Channel: t.AblyClient.Channels.Get(presence.ClientID),
-					}
-				case ably.PresenceActionLeave:
-					logrus.Infof("User %s left the table", presence.ClientID)
-					t.Users[presence.ClientID].Present = false
+			// Subscribe to the public channel messages
+			t.Channel.SubscribeAll(t.Ctx, t.HandlePublicMessage)
+
+			// Check for clients already present at the table
+			if set, err := t.Channel.Presence.Get(t.Ctx); utils.LogOnError(err) {
+				logrus.Error("Failed to get presence set")
+			} else {
+				for _, presence := range set {
+					t.RegisterPresence(presence)
 				}
+			}
+
+			// Subscribe to presence events on the public channel
+			t.Channel.Presence.Subscribe(t.Ctx, ably.PresenceActionEnter, func(presence *ably.PresenceMessage) {
+				t.RegisterPresence(presence)
+			})
+
+			t.Channel.Presence.Subscribe(t.Ctx, ably.PresenceActionLeave, func(presence *ably.PresenceMessage) {
+				t.UnregisterPresence(presence)
 			})
 		})
-		// Connect to the ably service
+
 		t.AblyClient.Connect()
+
 		for {
 			select {
 			case <-ticker.C:
-				// Stop the service if no activity is detected for a certain duration
-				logrus.Infof("Service for table %s timed out", t.ID)
-				// Inform any clients that the service has timed out
-				t.Channel.Publish(t.Ctx, TimeoutEvent, nil)
-				return
+				if time.Since(t.LastUpdate) >= TimeoutDuration {
+					// Stop the service if no activity is detected for a certain duration
+					logrus.Infof("Service for table %s timed out", t.Table.ID)
+					// Inform any clients that the service has timed out
+					t.Channel.Publish(t.Ctx, message.MessageType.Timeout, nil)
+					return
+				}
 			case <-t.Ctx.Done():
-				logrus.Infof("Service for table %s was ended", t.ID)
+				logrus.Infof("Service for table %s was ended", t.Table.ID)
 				return
 			}
 		}

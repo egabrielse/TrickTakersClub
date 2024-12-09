@@ -25,7 +25,7 @@ func CreateTable(r *http.Request, p httprouter.Params) (code int, body any) {
 		return http.StatusInternalServerError, nil
 	} else {
 		tableService.StartService()
-		return http.StatusCreated, CreateTableResponseBody{ID: tableService.ID}
+		return http.StatusCreated, CreateTableResponseBody{ID: tableEntity.ID}
 	}
 }
 

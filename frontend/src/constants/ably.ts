@@ -1,4 +1,5 @@
-export const CHANNEL_EVENTS = {
-    CHAT: "chat",
-    TIMEOUT: "timeout",
+export const CONNECTION_STATUS = {
+    CONNECTED: "connected",
+    DISCONNECTED: "disconnected",
+    CONNECTING: "connecting",
 } as const;

@@ -2,13 +2,15 @@ package entity
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/sio/coolname"
 )
 
 type TableEntity struct {
-	ID     string `json:"id"`
-	HostID string `json:"hostId"`
+	ID      string `json:"id"`
+	HostID  string `json:"hostId"`
+	Created int64  `json:"created"`
 }
 
 func NewTableEntity(hostId string) (*TableEntity, error) {
@@ -16,8 +18,9 @@ func NewTableEntity(hostId string) (*TableEntity, error) {
 		return nil, err
 	} else {
 		return &TableEntity{
-			ID:     id,
-			HostID: hostId,
+			ID:      id,
+			HostID:  hostId,
+			Created: time.Now().Unix(),
 		}, nil
 	}
 }
