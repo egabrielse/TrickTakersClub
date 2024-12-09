@@ -44,10 +44,11 @@ export default function TablePage() {
 
   // Public channel
   const publicChannel = useChannel(publicChannelName, (msg) => {
+    console.log(msg);
     switch (msg.name) {
       case MESSAGE_TYPES.UPDATE_SETTINGS:
-        if (msg?.data?.gameSettings) {
-          setGameSettings(msg.data.gameSettings);
+        if (msg?.data) {
+          setGameSettings(msg.data);
         }
         break;
       case MESSAGE_TYPES.CHAT:
@@ -98,6 +99,7 @@ export default function TablePage() {
    * @param data
    */
   const sendCommand = (name: string, data: object | string) => {
+    console.log("Sending command", name, data);
     privateChannel.publish(name, data);
   };
 

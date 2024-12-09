@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"main/domain/entity"
 	"main/domain/game"
 	"main/domain/object"
@@ -73,34 +74,31 @@ func (t *TableService) HandlePrivateMessage(msg *ably.Message) {
 	t.LastUpdate = time.Now()
 	logrus.Infof("Received message: %s", msg.Data)
 	if msg.Name == message.MessageType.UpdateSettings && msg.ClientID == t.Table.HostID {
-		logrus.Info("Received game settings update")
-		payload := msg.Data.(game.GameSettings)
-		t.GameSettings = &payload
-		t.Channel.Publish(t.Ctx, message.MessageType.UpdateSettings, payload)
+		payload := game.GameSettings{}
+		if err := json.Unmarshal([]byte(msg.Data.(string)), &payload); !utils.LogOnError(err) {
+			t.GameSettings = &payload
+			t.Channel.Publish(t.Ctx, message.MessageType.UpdateSettings, payload)
+		}
 	}
 }
 
-func (t *TableService) RegisterPresence(presence *ably.PresenceMessage) {
-	logrus.Infof("User %s entered the table", presence.ClientID)
-	if user, ok := t.Users[presence.ClientID]; ok {
-		user.Enter(t.Ctx, presence.ConnectionID, t.HandlePrivateMessage)
+func (t *TableService) RegisterClient(clientID string, connectionID string) {
+	logrus.Infof("User %s entered the table", clientID)
+	if user, ok := t.Users[clientID]; ok {
+		user.Enter(t.Ctx, connectionID, t.HandlePrivateMessage)
 	} else {
-		user := NewUserClient(
-			presence.ClientID,
-			presence.ConnectionID,
-			t.AblyClient.Channels.Get(t.Table.ID+":"+presence.ClientID),
-		)
-		t.Users[presence.ClientID] = user
-		user.Enter(t.Ctx, presence.ConnectionID, t.HandlePrivateMessage)
+		user := NewUserClient(clientID, t.Table.ID, t.AblyClient)
+		t.Users[clientID] = user
+		user.Enter(t.Ctx, connectionID, t.HandlePrivateMessage)
 	}
 	// Send the current state of the table/game to the newly registered user
-	t.Users[presence.ClientID].Publish(t.Ctx, message.MessageType.State, t.GetState())
+	t.Users[clientID].Publish(t.Ctx, message.MessageType.State, t.GetState())
 }
 
-func (t *TableService) UnregisterPresence(presence *ably.PresenceMessage) {
-	logrus.Infof("User %s left the table", presence.ClientID)
-	if _, ok := t.Users[presence.ClientID]; ok {
-		t.Users[presence.ClientID].Leave(t.Ctx, presence.ConnectionID)
+func (t *TableService) UnregisterClient(clientID string, connectionID string) {
+	logrus.Infof("User %s left the table", clientID)
+	if _, ok := t.Users[clientID]; ok {
+		t.Users[clientID].Leave(t.Ctx, connectionID)
 	}
 }
 
@@ -130,17 +128,17 @@ func (t *TableService) StartService() {
 				logrus.Error("Failed to get presence set")
 			} else {
 				for _, presence := range set {
-					t.RegisterPresence(presence)
+					t.RegisterClient(presence.ClientID, presence.ConnectionID)
 				}
 			}
 
 			// Subscribe to presence events on the public channel
 			t.Channel.Presence.Subscribe(t.Ctx, ably.PresenceActionEnter, func(presence *ably.PresenceMessage) {
-				t.RegisterPresence(presence)
+				t.RegisterClient(presence.ClientID, presence.ConnectionID)
 			})
 
 			t.Channel.Presence.Subscribe(t.Ctx, ably.PresenceActionLeave, func(presence *ably.PresenceMessage) {
-				t.UnregisterPresence(presence)
+				t.UnregisterClient(presence.ClientID, presence.ConnectionID)
 			})
 		})
 
