@@ -1,0 +1,184 @@
+import { LoadingButton } from "@mui/lab";
+import {
+  Button,
+  Checkbox,
+  FormControlLabel,
+  InputLabel,
+  Paper,
+  Slider,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from "@mui/material";
+import { useContext, useEffect, useState } from "react";
+import {
+  CALLING_METHODS,
+  GAME_SETTINGS_PARAMS,
+  NO_PICK_RESOLUTIONS,
+} from "../../../constants/game";
+import { MESSAGE_TYPES } from "../../../constants/message";
+import { GameSettings } from "../../../types/game";
+import { AuthContext } from "../auth/AuthContextProvider";
+import "./GameSettingsDisplay.scss";
+import { TableContext } from "./TableLoader";
+import { TableState } from "./TablePage";
+
+export default function GameSettingsDisplay() {
+  const { hostId } = useContext(TableContext);
+  const { gameSettings, sendCommand } = useContext(TableState);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [values, setValues] = useState<GameSettings | null>(gameSettings);
+  const { user } = useContext(AuthContext);
+  const isHost = user?.uid === hostId;
+
+  /**
+   * Update the value of a setting
+   * @param name key of the setting
+   * @param value new value
+   */
+  const onChange = (
+    name: string,
+    value: number | number[] | string | boolean,
+  ) => {
+    setIsEditing(true);
+    setValues((prev) => ({ ...prev!, [name]: value }));
+  };
+
+  /**
+   * Cancel editing and reset values to the current game settings
+   */
+  const onCancel = () => {
+    setValues(gameSettings);
+    setIsEditing(false);
+  };
+
+  /**
+   * Send message to update game settings
+   */
+  const onSubmit = () => {
+    setIsSubmitting(true);
+    setIsEditing(false);
+    sendCommand(MESSAGE_TYPES.UPDATE_SETTINGS, values!);
+  };
+
+  /**
+   * Reset values when game settings change
+   */
+  useEffect(() => {
+    setIsSubmitting(false);
+    setValues(gameSettings);
+  }, [gameSettings]);
+
+  return (
+    <Paper className="GameSettingsDisplay">
+      <Typography variant="h1">Game Settings</Typography>
+      {values === null ? (
+        <Typography>Loading...</Typography>
+      ) : (
+        <>
+          <div className="GameSettingsDisplay-Body">
+            <div className="GameSettingsDisplay-Body-LabeledInput">
+              <InputLabel margin="dense">Player Count</InputLabel>
+              <Slider
+                id="playerCount"
+                value={values.playerCount}
+                disabled={!isHost || isSubmitting}
+                onChange={(_, value) => onChange("playerCount", value)}
+                valueLabelDisplay="auto"
+                min={GAME_SETTINGS_PARAMS.MIN_PLAYERS}
+                max={GAME_SETTINGS_PARAMS.MAX_PLAYERS}
+                marks={GAME_SETTINGS_PARAMS.SUPPORTED_PLAYER_COUNTS.map(
+                  (value) => ({ value, label: value.toString() }),
+                )}
+              />
+            </div>
+
+            <div className="GameSettingsDisplay-Body-LabeledInput">
+              <InputLabel margin="dense">Calling Method</InputLabel>
+              <ToggleButtonGroup
+                id="callingMethod"
+                exclusive
+                disabled={!isHost || isSubmitting}
+                value={values.callingMethod}
+                onChange={(_, value) => onChange("callingMethod", value)}
+              >
+                {Object.values(CALLING_METHODS).map((callingMethod) => (
+                  <ToggleButton key={callingMethod} value={callingMethod}>
+                    {callingMethod}
+                  </ToggleButton>
+                ))}
+              </ToggleButtonGroup>
+            </div>
+
+            <div className="GameSettingsDisplay-Body-LabeledInput">
+              <InputLabel margin="dense">No-Pick Resolution</InputLabel>
+              <ToggleButtonGroup
+                id="noPickResolution"
+                exclusive
+                disabled={!isHost || isSubmitting}
+                value={values.noPickResolution}
+                onChange={(_, value) => onChange("noPickResolution", value)}
+              >
+                {Object.values(NO_PICK_RESOLUTIONS).map((noPickResolution) => (
+                  <ToggleButton key={noPickResolution} value={noPickResolution}>
+                    {noPickResolution}
+                  </ToggleButton>
+                ))}
+              </ToggleButtonGroup>
+            </div>
+            <div className="GameSettingsDisplay-Body-LabeledInput">
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "space-evenly",
+                }}
+              >
+                <FormControlLabel
+                  id="doubleOnTheBump"
+                  name="doubleOnTheBump"
+                  disabled={!isHost || isSubmitting}
+                  value={values.doubleOnTheBump}
+                  onChange={(_, checked) =>
+                    onChange("doubleOnTheBump", checked)
+                  }
+                  control={<Checkbox checked={values.doubleOnTheBump} />}
+                  label="Double on the Bump"
+                />
+                <FormControlLabel
+                  id="blitzing"
+                  name="blitzing"
+                  disabled={!isHost || isSubmitting}
+                  value={values.blitzing}
+                  onChange={(_, checked) => onChange("blitzing", checked)}
+                  control={<Checkbox checked={values.blitzing} />}
+                  label="Blitzing"
+                />
+              </div>
+            </div>
+          </div>
+          {isHost && (
+            <div className="GameSettingsDisplay-Footer">
+              <Button
+                variant="outlined"
+                disabled={!isEditing}
+                onClick={onCancel}
+              >
+                Cancel
+              </Button>
+              <LoadingButton
+                loading={isSubmitting}
+                disabled={!isEditing}
+                onClick={onSubmit}
+                variant="contained"
+              >
+                {isSubmitting ? "Submitting..." : "Submit"}
+              </LoadingButton>
+            </div>
+          )}
+        </>
+      )}
+    </Paper>
+  );
+}

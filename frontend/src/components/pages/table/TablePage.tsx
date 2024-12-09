@@ -11,7 +11,7 @@ import PaperButton from "../../common/PaperButton";
 import { DialogContext } from "../../dialog/DialogProvider";
 import LoadingPage from "../loading/LoadingPage";
 import Chat from "./Chat/Chat";
-import GameSettingsDisplay from "./GameSettings/GameSettingsDisplay";
+import GameSettingsDisplay from "./GameSettingsDisplay";
 import LinkButton from "./LinkButton";
 import { TableContext } from "./TableLoader";
 import "./TablePage.scss";

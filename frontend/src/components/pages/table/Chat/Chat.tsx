@@ -32,7 +32,10 @@ export default function Chat() {
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault();
-            onSubmit();
+            if (value.trim().length > 0) {
+              e.preventDefault();
+              onSubmit();
+            }
           }
         }}
         slotProps={{

@@ -25,27 +25,38 @@ const theme = createTheme({
     h1: {
       fontSize: "3rem",
       textTransform: "uppercase",
-      fontWeight: "bolder",
+      fontWeight: 1000,
+      textDecoration: "underline",
+      textUnderlineOffset: "0.2em",
     },
     h2: {
       textTransform: "uppercase",
       fontSize: "2.5rem",
-      fontWeight: "bolder",
+      fontWeight: 800,
     },
     h3: {
       fontSize: "2rem",
+      fontWeight: 800,
     },
     h4: {
       fontSize: "1.75rem",
+      fontWeight: 600,
     },
     h5: {
       fontSize: "1.5rem",
+      fontWeight: 600,
     },
     h6: {
       fontSize: "1.25rem",
+      fontWeight: 400,
     },
     body1: {
       fontSize: "14px",
+      fontWeight: 300,
+    },
+    body2: {
+      fontSize: "12px",
+      fontWeight: 200,
     },
     button: {
       lineHeight: 1.5,
