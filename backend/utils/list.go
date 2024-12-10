@@ -10,3 +10,15 @@ func AlphabetizeList(list []string) []string {
 	}
 	return list
 }
+
+// RelistStartingWith returns a new list with the same elements as the input list, but starting with the element that matches the start value.
+func RelistStartingWith[T comparable](list []T, start T) []T {
+	newList := make([]T, len(list))
+	copy(newList, list)
+	for i, v := range newList {
+		if v == start {
+			return append(newList[i:], newList[:i]...)
+		}
+	}
+	return list
+}

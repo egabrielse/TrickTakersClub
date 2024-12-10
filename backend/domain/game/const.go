@@ -21,19 +21,45 @@ var NoPickResolution = struct {
 }
 
 var GameDefaults = struct {
+	AutoDeal         bool
 	PlayerCount      int
-	MinPlayers       int
-	MaxPlayers       int
 	CallingMethod    string
 	NoPickResolution string
 	DoubleOnTheBump  bool
 	Blitzing         bool
+	Cracking         bool
 }{
+	AutoDeal:         true,
 	PlayerCount:      5,
-	MinPlayers:       3,
-	MaxPlayers:       7,
 	CallingMethod:    CallingMethod.JackOfDiamonds,
 	NoPickResolution: NoPickResolution.ScrewTheDealer,
 	DoubleOnTheBump:  false,
 	Blitzing:         false,
+	Cracking:         false,
 }
+
+var PlayerRole = struct {
+	Picker   string
+	Partner  string
+	Opponent string
+}{
+	Picker:   "picker",
+	Partner:  "partner",
+	Opponent: "opponent",
+}
+
+var HandPhase = struct {
+	Pick  string
+	Call  string
+	Bury  string
+	Play  string
+	Score string
+}{
+	Pick:  "pick",
+	Call:  "call",
+	Bury:  "bury",
+	Play:  "play",
+	Score: "score",
+}
+
+const DeckSize = 32

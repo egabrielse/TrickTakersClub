@@ -11,11 +11,13 @@ export const NO_PICK_RESOLUTIONS = {
 } as const;
 
 export const GAME_SETTINGS_DEFAULTS = {
+    AUTO_DEAL: false,
     PLAYER_COUNT: 5,
     CALLING_METHOD: CALLING_METHODS.JACK_OF_DIAMONDS,
     NO_PICK_RESOLUTION: NO_PICK_RESOLUTIONS.SCREW_THE_DEALER,
     DOUBLE_ON_THE_BUMP: false,
     BLITZING: false,
+    CRACKING: false,
 } as const;
 
 export const GAME_SETTINGS_PARAMS = {
