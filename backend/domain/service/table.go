@@ -2,12 +2,8 @@ package service
 
 import (
 	"context"
-	"encoding/json"
 	"main/domain/entity"
-	"main/domain/game"
-	"main/domain/object"
 	"main/domain/repository"
-	"main/domain/service/message"
 	"main/utils"
 	"time"
 
@@ -17,16 +13,16 @@ import (
 
 // TableService represents the service for controlling the table
 type TableService struct {
-	Table        *entity.TableEntity    `json:"table"`
-	GameSettings *game.GameSettings     `json:"gameSettings"`
-	LastUpdate   time.Time              `json:"lastUpdate"`
-	Users        map[string]*UserClient `json:"users"`
-	AblyClient   *ably.Realtime         `json:"-"`
-	Channel      *ably.RealtimeChannel  `json:"-"`
-	Ctx          context.Context        `json:"-"`
+	Table      *entity.TableEntity    `json:"table"`
+	Game       *Sheepshead            `json:"game"`
+	LastUpdate time.Time              `json:"lastUpdate"`
+	Users      map[string]*UserClient `json:"users"`
+	AblyClient *ably.Realtime         `json:"-"`
+	Channel    *ably.RealtimeChannel  `json:"-"`
+	Ctx        context.Context        `json:"-"`
 }
 
-func NewTableService(tableId string, hostId string) (*TableService, error) {
+func NewTableService(table *entity.TableEntity) (*TableService, error) {
 	ctx := context.Background()
 	key := utils.GetEnvironmentVariable("ABLY_API_KEY")
 
@@ -39,69 +35,92 @@ func NewTableService(tableId string, hostId string) (*TableService, error) {
 		return nil, err
 	} else {
 		return &TableService{
-			Table: &entity.TableEntity{
-				ID:     tableId,
-				HostID: hostId,
-			},
-			GameSettings: game.NewGameSettings(),
-			LastUpdate:   time.Now(),
-			Users:        make(map[string]*UserClient),
-			AblyClient:   ablyClient,
-			Channel:      ablyClient.Channels.Get(tableId),
-			Ctx:          ctx,
+			Table:      table,
+			LastUpdate: time.Now(),
+			Users:      make(map[string]*UserClient),
+			AblyClient: ablyClient,
+			Channel:    ablyClient.Channels.Get(table.ID),
+			Ctx:        ctx,
 		}, nil
 	}
 }
 
-func (t *TableService) GetState() *object.TableState {
-	return &object.TableState{
-		TableID:      t.Table.ID,
-		HostID:       t.Table.HostID,
-		GameSettings: t.GameSettings,
+// GetState returns the current state of the table
+func (t *TableService) GetState() *TableStatePayload {
+	state := &TableStatePayload{
+		TableID: t.Table.ID,
+		HostID:  t.Table.HostID,
+	}
+	if t.Game != nil {
+		state.GameState = t.Game.GetState()
+	}
+	return state
+}
+
+// Broadcast sends a message to all clients connected to the table via the public channel
+func (t *TableService) Broadcast(name string, data interface{}) {
+	t.Channel.Publish(t.Ctx, name, data)
+}
+
+// DirectMessage sends a message to a specific client via their private channel
+func (t *TableService) DirectMessage(clientID string, name string, data interface{}) {
+	if user, ok := t.Users[clientID]; ok {
+		user.Publish(t.Ctx, name, data)
+	} else {
+		logrus.Warnf("User %s not found", clientID)
 	}
 }
 
 // HandleMessage handles messages received from the public channel
-func (t *TableService) HandlePublicMessage(msg *ably.Message) {
+func (t *TableService) HandleMessages(msg *ably.Message) {
 	// Reset the ticker if any activity is detected
 	t.LastUpdate = time.Now()
-	logrus.Infof("Received message: %s", msg.Data)
+	logrus.Infof("Received public message: %s", msg.Data)
 }
 
 // HandlePrivateMessage handles messages sent to the table service via the user's private channel
-func (t *TableService) HandlePrivateMessage(msg *ably.Message) {
+func (t *TableService) HandleCommands(msg *ably.Message) {
 	// Reset the ticker if any activity is detected
 	t.LastUpdate = time.Now()
-	logrus.Infof("Received message: %s", msg.Data)
-	if msg.Name == message.MessageType.UpdateSettings && msg.ClientID == t.Table.HostID {
-		payload := game.GameSettings{}
-		if err := json.Unmarshal([]byte(msg.Data.(string)), &payload); !utils.LogOnError(err) {
-			t.GameSettings = &payload
-			t.Channel.Publish(t.Ctx, message.MessageType.UpdateSettings, payload)
-		}
+	logrus.Infof("Received private message: %s", msg.Data)
+	switch msg.Name {
+	case CommandType.CreateGame:
+		HandleCreateGameCommand(t, msg.ClientID, msg.Data)
+	case CommandType.SitDown:
+		HandleSitDownCommand(t, msg.ClientID, msg.Data)
+	case CommandType.StandUp:
+		HandleStandUpCommand(t, msg.ClientID, msg.Data)
+	case CommandType.EndGame:
+		HandleEndGameCommand(t, msg.ClientID, msg.Data)
+	default:
+		logrus.Warnf("Unknown message type: %s", msg.Name)
 	}
 }
 
+// RegisterClient registers a new client to the table service
 func (t *TableService) RegisterClient(clientID string, connectionID string) {
 	logrus.Infof("User %s entered the table", clientID)
 	if user, ok := t.Users[clientID]; ok {
-		user.Enter(t.Ctx, connectionID, t.HandlePrivateMessage)
+		user.Enter(t.Ctx, connectionID, t.HandleCommands)
 	} else {
 		user := NewUserClient(clientID, t.Table.ID, t.AblyClient)
 		t.Users[clientID] = user
-		user.Enter(t.Ctx, connectionID, t.HandlePrivateMessage)
+		user.Enter(t.Ctx, connectionID, t.HandleCommands)
 	}
 	// Send the current state of the table/game to the newly registered user
-	t.Users[clientID].Publish(t.Ctx, message.MessageType.State, t.GetState())
+	t.DirectMessage(clientID, MessageType.Refresh, t.GetState())
 }
 
+// UnregisterClient unregisters a client from the table service
 func (t *TableService) UnregisterClient(clientID string, connectionID string) {
 	logrus.Infof("User %s left the table", clientID)
 	if _, ok := t.Users[clientID]; ok {
 		t.Users[clientID].Leave(t.Ctx, connectionID)
+		// TODO: user stands up if seated (need to add logic for quitting during a game)
 	}
 }
 
+// StartService starts a goroutine for the table service and begins listening for messages
 func (t *TableService) StartService() {
 	go func() {
 		logrus.Infof("Starting service for table %s", t.Table.ID)
@@ -121,7 +140,7 @@ func (t *TableService) StartService() {
 
 		t.AblyClient.Connection.Once(ably.ConnectionEventConnected, func(change ably.ConnectionStateChange) {
 			// Subscribe to the public channel messages
-			t.Channel.SubscribeAll(t.Ctx, t.HandlePublicMessage)
+			t.Channel.SubscribeAll(t.Ctx, t.HandleMessages)
 
 			// Check for clients already present at the table
 			if set, err := t.Channel.Presence.Get(t.Ctx); utils.LogOnError(err) {
@@ -151,7 +170,7 @@ func (t *TableService) StartService() {
 					// Stop the service if no activity is detected for a certain duration
 					logrus.Infof("Service for table %s timed out", t.Table.ID)
 					// Inform any clients that the service has timed out
-					t.Channel.Publish(t.Ctx, message.MessageType.Timeout, nil)
+					t.Broadcast(MessageType.Timeout, nil)
 					return
 				}
 			case <-t.Ctx.Done():

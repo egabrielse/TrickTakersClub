@@ -1,56 +1,63 @@
 import LogoutIcon from "@mui/icons-material/Logout";
+import { Button } from "@mui/material";
 import { Message } from "ably";
 import { useChannel, usePresence } from "ably/react";
 import { createContext, useContext, useState } from "react";
 import { useNavigate } from "react-router";
+import { COMMAND_TYPES } from "../../../constants/commands";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { MESSAGE_TYPES } from "../../../constants/message";
 import { PATHS } from "../../../constants/url";
+import { TypedCommand } from "../../../types/command";
 import { GameSettings } from "../../../types/game";
+import { TypedMessage } from "../../../types/message";
 import PaperButton from "../../common/PaperButton";
 import { DialogContext } from "../../dialog/DialogProvider";
 import LoadingPage from "../loading/LoadingPage";
 import Chat from "./Chat/Chat";
-import GameSettingsDisplay from "./GameSettingsDisplay";
+import GameMenu from "./GameMenu/GameMenu";
 import LinkButton from "./LinkButton";
 import { TableContext } from "./TableLoader";
 import "./TablePage.scss";
 
 export const TableState = createContext<{
   sendChatMessage: (message: string) => void;
-  sendCommand: (name: string, data: object | string) => void;
-  gameSettings: GameSettings | null;
+  sendCommand: (command: TypedCommand) => void;
   chatMessages: Message[];
+  initialized: boolean;
+  inProgress: boolean;
+  playerOrder: string[];
+  settings: GameSettings | null;
 }>({
   sendChatMessage: () => {},
   sendCommand: () => {},
-  gameSettings: null,
   chatMessages: [],
+  initialized: false,
+  inProgress: false,
+  playerOrder: [],
+  settings: null,
 });
 
 export default function TablePage() {
   // ### Contexts ###
-  const { tableId, publicChannelName, privateChannelName } =
+  const { tableId, broadcastChannelName, directMessageChannelName } =
     useContext(TableContext);
   const { openDialog } = useContext(DialogContext);
   const navigate = useNavigate();
   // ### State ###
-  const [initialized, setInitialized] = useState(false);
-  const [gameSettings, setGameSettings] = useState<GameSettings | null>(null);
+  const [loaded, setLoaded] = useState(false);
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
+  const [initialized, setInitialized] = useState(false);
+  const [inProgress, setInProgress] = useState(false);
+  const [playerOrder, setPlayerOrder] = useState<string[]>([]);
+  const [gameSettings, setGameSettings] = useState<GameSettings | null>(null);
 
   // Enter the public channel presence
-  usePresence(publicChannelName);
+  usePresence(broadcastChannelName);
 
-  // Public channel
-  const publicChannel = useChannel(publicChannelName, (msg) => {
-    console.log(msg);
+  const broadcastChannelHandler = (msg: TypedMessage) => {
+    console.log("Broadcast Message Received", msg);
     switch (msg.name) {
-      case MESSAGE_TYPES.UPDATE_SETTINGS:
-        if (msg?.data) {
-          setGameSettings(msg.data);
-        }
-        break;
       case MESSAGE_TYPES.CHAT:
         setChatMessages((prev) => [...prev, msg]);
         break;
@@ -64,33 +71,62 @@ export default function TablePage() {
           },
         });
         break;
-
+      case MESSAGE_TYPES.SAT_DOWN:
+        setPlayerOrder((prev) => [...prev, msg.data]);
+        break;
+      case MESSAGE_TYPES.STOOD_UP:
+        setPlayerOrder((prev) => prev.filter((player) => player !== msg.data));
+        break;
+      case MESSAGE_TYPES.NEW_GAME:
+        setInitialized(true);
+        setInProgress(false);
+        setGameSettings(msg.data.settings);
+        setPlayerOrder(msg.data.playerOrder);
+        break;
+      case MESSAGE_TYPES.GAME_STARTED:
+        // TODO: more setup
+        setInProgress(true);
+        break;
+      case MESSAGE_TYPES.GAME_OVER:
+        setInitialized(false);
+        setInProgress(false);
+        setGameSettings(null);
+        setPlayerOrder([]);
+        break;
       default:
         break;
     }
-  });
+  };
+
+  // Public channel
+  const broadcastChannel = useChannel(broadcastChannelName, (msg) =>
+    broadcastChannelHandler(msg as TypedMessage),
+  );
+
+  const directMessageHandler = (msg: TypedMessage) => {
+    console.log("Direct Message Received", msg);
+    switch (msg.name) {
+      case MESSAGE_TYPES.REFRESH:
+        setLoaded(true);
+        break;
+
+      default:
+        console.warn("Unhandled message type", msg.name);
+        break;
+    }
+  };
 
   // Private channel
-  const privateChannel = useChannel(privateChannelName, (msg) => {
-    switch (msg.name) {
-      case MESSAGE_TYPES.STATE:
-        setInitialized(true);
-        msg.data;
-        if (msg?.data?.gameSettings) {
-          setGameSettings(msg.data.gameSettings);
-        }
-        break;
-      default:
-        break;
-    }
-  });
+  const directMessageChannel = useChannel(directMessageChannelName, (msg) =>
+    directMessageHandler(msg as TypedMessage),
+  );
 
   /**
    * Sends a chat message to other players
    * @param data
    */
   const sendChatMessage = (message: string) => {
-    publicChannel.publish(MESSAGE_TYPES.CHAT, message);
+    broadcastChannel.publish(MESSAGE_TYPES.CHAT, message);
   };
 
   /**
@@ -98,9 +134,9 @@ export default function TablePage() {
    * @param name
    * @param data
    */
-  const sendCommand = (name: string, data: object | string) => {
+  const sendCommand = ({ name, data }: TypedCommand) => {
     console.log("Sending command", name, data);
-    privateChannel.publish(name, data);
+    directMessageChannel.publish(name, data);
   };
 
   /**
@@ -108,10 +144,18 @@ export default function TablePage() {
    */
   const handleLeaveTable = () => navigate(PATHS.HOME);
 
-  return initialized ? (
-    <TableState.Provider
-      value={{ sendChatMessage, sendCommand, gameSettings, chatMessages }}
-    >
+  const value = {
+    sendChatMessage,
+    sendCommand,
+    chatMessages,
+    playerOrder,
+    inProgress: inProgress,
+    initialized: initialized,
+    settings: gameSettings,
+  };
+
+  return loaded ? (
+    <TableState.Provider value={value}>
       <div className="TablePage">
         <PaperButton
           className="TablePage-ExitButton"
@@ -121,7 +165,24 @@ export default function TablePage() {
           Exit
         </PaperButton>
         <div className="TablePage-Main">
-          {gameSettings && <GameSettingsDisplay />}
+          {initialized && inProgress ? (
+            <div>
+              <Button
+                id="end-game"
+                variant="contained"
+                onClick={() => {
+                  sendCommand({
+                    name: COMMAND_TYPES.END_GAME,
+                    data: undefined,
+                  });
+                }}
+              >
+                End Game
+              </Button>
+            </div>
+          ) : (
+            <GameMenu />
+          )}
         </div>
         <div className="TablePage-SideBar">
           <LinkButton tableId={tableId} />

@@ -1,4 +1,3 @@
-import { LoadingButton } from "@mui/lab";
 import {
   Button,
   Checkbox,
@@ -10,25 +9,31 @@ import {
   ToggleButtonGroup,
   Typography,
 } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import {
   CALLING_METHODS,
+  GAME_SETTINGS_DEFAULTS,
   GAME_SETTINGS_PARAMS,
   NO_PICK_RESOLUTIONS,
 } from "../../../constants/game";
-import { MESSAGE_TYPES } from "../../../constants/message";
 import { GameSettings } from "../../../types/game";
 import { AuthContext } from "../auth/AuthContextProvider";
 import "./GameSettingsDisplay.scss";
 import { TableContext } from "./TableLoader";
-import { TableState } from "./TablePage";
 
 export default function GameSettingsDisplay() {
   const { hostId } = useContext(TableContext);
-  const { gameSettings, sendCommand } = useContext(TableState);
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [values, setValues] = useState<GameSettings | null>(gameSettings);
+  const [values, setValues] = useState<GameSettings>({
+    autoDeal: GAME_SETTINGS_DEFAULTS.AUTO_DEAL,
+    playerCount: GAME_SETTINGS_DEFAULTS.PLAYER_COUNT,
+    callingMethod: GAME_SETTINGS_DEFAULTS.CALLING_METHOD,
+    noPickResolution: GAME_SETTINGS_DEFAULTS.NO_PICK_RESOLUTION,
+    doubleOnTheBump: GAME_SETTINGS_DEFAULTS.DOUBLE_ON_THE_BUMP,
+    blitzing: GAME_SETTINGS_DEFAULTS.BLITZING,
+    cracking: GAME_SETTINGS_DEFAULTS.CRACKING,
+  });
   const { user } = useContext(AuthContext);
   const isHost = user?.uid === hostId;
 
@@ -46,29 +51,13 @@ export default function GameSettingsDisplay() {
   };
 
   /**
-   * Cancel editing and reset values to the current game settings
-   */
-  const onCancel = () => {
-    setValues(gameSettings);
-    setIsEditing(false);
-  };
-
-  /**
    * Send message to update game settings
    */
   const onSubmit = () => {
     setIsSubmitting(true);
     setIsEditing(false);
-    sendCommand(MESSAGE_TYPES.UPDATE_SETTINGS, values!);
+    // sendCommand(MESSAGE_TYPES.CREATE_GAME, values!);
   };
-
-  /**
-   * Reset values when game settings change
-   */
-  useEffect(() => {
-    setIsSubmitting(false);
-    setValues(gameSettings);
-  }, [gameSettings]);
 
   return (
     <Paper className="GameSettingsDisplay">
@@ -161,20 +150,12 @@ export default function GameSettingsDisplay() {
           {isHost && (
             <div className="GameSettingsDisplay-Footer">
               <Button
-                variant="outlined"
-                disabled={!isEditing}
-                onClick={onCancel}
-              >
-                Cancel
-              </Button>
-              <LoadingButton
-                loading={isSubmitting}
                 disabled={!isEditing}
                 onClick={onSubmit}
                 variant="contained"
               >
-                {isSubmitting ? "Submitting..." : "Submit"}
-              </LoadingButton>
+                Confirm
+              </Button>
             </div>
           )}
         </>

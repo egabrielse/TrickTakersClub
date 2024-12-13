@@ -78,3 +78,7 @@ func (u *UserClient) Publish(ctx context.Context, event string, data interface{}
 	}
 	return nil
 }
+
+func (u *UserClient) IsPresent() bool {
+	return len(u.ConnectionIDs) > 0
+}

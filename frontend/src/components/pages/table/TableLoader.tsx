@@ -15,13 +15,13 @@ import LoadingPage from "../loading/LoadingPage";
 export const TableContext = createContext<{
   tableId: string;
   hostId: string;
-  publicChannelName: string;
-  privateChannelName: string;
+  broadcastChannelName: string;
+  directMessageChannelName: string;
 }>({
   tableId: "",
   hostId: "",
-  publicChannelName: "",
-  privateChannelName: "",
+  broadcastChannelName: "",
+  directMessageChannelName: "",
 });
 
 type TableLoaderProps = {
@@ -39,8 +39,9 @@ export default function TableLoader({ children }: TableLoaderProps) {
   const [error, setError] = useState(null);
   const [tableId, setTableId] = useState<string>("");
   const [hostId, setHostId] = useState<string>("");
-  const [publicChannelName, setPublicChannelName] = useState<string>("");
-  const [privateChannelName, setPrivateChannelName] = useState<string>("");
+  const [broadcastChannelName, setPublicChannelName] = useState<string>("");
+  const [directMessageChannelName, setPrivateChannelName] =
+    useState<string>("");
 
   useEffect(() => {
     setLoading(true);
@@ -61,10 +62,15 @@ export default function TableLoader({ children }: TableLoaderProps) {
     <ErrorPage error={error} />
   ) : (
     <TableContext.Provider
-      value={{ tableId, hostId, publicChannelName, privateChannelName }}
+      value={{
+        tableId,
+        hostId,
+        broadcastChannelName,
+        directMessageChannelName,
+      }}
     >
-      <ChannelProvider channelName={publicChannelName}>
-        <ChannelProvider channelName={privateChannelName}>
+      <ChannelProvider channelName={broadcastChannelName}>
+        <ChannelProvider channelName={directMessageChannelName}>
           {children}
         </ChannelProvider>
       </ChannelProvider>

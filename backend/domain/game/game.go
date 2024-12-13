@@ -7,6 +7,7 @@ import (
 )
 
 type Sheepshead struct {
+	InProgress  bool               `json:"inProgress"`  // Whether the game is in progress
 	DealerIndex int                `json:"dealerIndex"` // Index of the dealer in the Players array
 	Hand        *Hand              `json:"hand"`        // Current hand being played
 	Players     map[string]*Player `json:"players"`     // Player hands
@@ -15,24 +16,64 @@ type Sheepshead struct {
 	Settings    *GameSettings      `json:"settings"`    // Game settings
 }
 
-func NewSheepshead(playerIDs []string, settings *GameSettings) *Sheepshead {
-	players := map[string]*Player{}
-	for _, playerID := range playerIDs {
-		players[playerID] = NewPlayer(playerID)
-	}
+func NewSheepshead(settings *GameSettings) *Sheepshead {
 	game := &Sheepshead{
+		InProgress:  false,
 		DealerIndex: -1,
-		Players:     players,
-		Scoreboard:  NewScoreboard(playerIDs),
-		PlayerOrder: playerIDs,
+		PlayerOrder: []string{},
 		Settings:    settings,
 	}
 	return game
 }
 
+type GameState struct {
+	InProgress  bool          `json:"inProgress"`  // Whether the game is in progress
+	DealerIndex int           `json:"dealerIndex"` // Index of the dealer in the Players array
+	Scoreboard  Scoreboard    `json:"scoreboard"`  // Scoreboard
+	PlayerOrder []string      `json:"playerOrder"` // Order of players at the table
+	Settings    *GameSettings `json:"settings"`    // Game settings
+}
+
+func (g *Sheepshead) GetState(playerID string) {
+
+}
+
+func (g *Sheepshead) SitDown(playerID string) error {
+	if g.InProgress || len(g.PlayerOrder) == g.Settings.PlayerCount {
+		return fmt.Errorf("game in progress")
+	} else if _, ok := g.Players[playerID]; ok {
+		return fmt.Errorf("player already seated")
+	} else {
+		g.PlayerOrder = append(g.PlayerOrder, playerID)
+		// Game automatically starts when all seats are filled
+		if len(g.PlayerOrder) == g.Settings.PlayerCount {
+			g.StartNewHand()
+		}
+		return nil
+	}
+}
+
+func (g *Sheepshead) StandUp(playerID string) error {
+	if g.InProgress {
+		return fmt.Errorf("game in progress")
+	} else if _, ok := g.Players[playerID]; !ok {
+		return fmt.Errorf("player not seated")
+	} else {
+		g.PlayerOrder = g.PlayerOrder[:len(g.PlayerOrder)-1]
+		return nil
+	}
+}
+
 func (g *Sheepshead) StartNewHand() {
+	g.InProgress = true
 	g.DealerIndex = (g.DealerIndex + 1) % len(g.PlayerOrder)
 	playerOrder := utils.RelistStartingWith(g.PlayerOrder, g.PlayerOrder[g.DealerIndex])
+	players := map[string]*Player{}
+	for _, playerID := range playerOrder {
+		players[playerID] = NewPlayer(playerID)
+	}
+	g.Players = players
+	g.Scoreboard = NewScoreboard(playerOrder)
 	deck := deck.NewDeck()
 	handSize, blindSize := g.Settings.DeriveHandBlindSize()
 	for _, player := range g.Players {

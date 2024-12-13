@@ -1,12 +1,11 @@
 export const MESSAGE_TYPES = {
     CHAT: "chat",
     TIMEOUT: "timeout",
-    STATE: "state",
-    UPDATE_SETTINGS: "update-settings",
-} as const;
-
-export const CONNECTION_STATUS = {
-    CONNECTED: "connected",
-    DISCONNECTED: "disconnected",
-    CONNECTING: "connecting",
+    REFRESH: "refresh",
+    ERROR: "error",
+    SAT_DOWN: "sat-down",
+    STOOD_UP: "stood-up",
+    NEW_GAME: "new-game",
+    GAME_STARTED: "game-started",
+    GAME_OVER: "game-over",
 } as const;
