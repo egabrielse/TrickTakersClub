@@ -14,10 +14,10 @@ import { TypedMessage } from "../../../types/message";
 import PaperButton from "../../common/PaperButton";
 import { DialogContext } from "../../dialog/DialogProvider";
 import LoadingPage from "../loading/LoadingPage";
+import { ChannelContext } from "./ChannelContextProvider";
 import Chat from "./Chat/Chat";
 import GameMenu from "./GameMenu/GameMenu";
 import LinkButton from "./LinkButton";
-import { TableContext } from "./TableLoader";
 import "./TablePage.scss";
 
 export const TableState = createContext<{
@@ -41,7 +41,7 @@ export const TableState = createContext<{
 export default function TablePage() {
   // ### Contexts ###
   const { tableId, broadcastChannelName, directMessageChannelName } =
-    useContext(TableContext);
+    useContext(ChannelContext);
   const { openDialog } = useContext(DialogContext);
   const navigate = useNavigate();
   // ### State ###

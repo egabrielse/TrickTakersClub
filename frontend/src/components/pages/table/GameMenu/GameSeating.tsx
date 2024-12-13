@@ -2,12 +2,12 @@ import { Button } from "@mui/material";
 import { useContext } from "react";
 import { COMMAND_TYPES } from "../../../../constants/commands";
 import { AuthContext } from "../../auth/AuthContextProvider";
-import { TableContext } from "../TableLoader";
+import { ChannelContext } from "../ChannelContextProvider";
 import { TableState } from "../TablePage";
 import "./GameSeating.scss";
 
 export default function GameSeating() {
-  const { hostId } = useContext(TableContext);
+  const { hostId } = useContext(ChannelContext);
   const { playerOrder, settings, sendCommand } = useContext(TableState);
   const { user } = useContext(AuthContext);
   const isHost = user?.uid === hostId;

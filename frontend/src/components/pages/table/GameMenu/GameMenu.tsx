@@ -1,14 +1,14 @@
 import { Divider, Paper } from "@mui/material";
 import { useContext } from "react";
 import { AuthContext } from "../../auth/AuthContextProvider";
-import { TableContext } from "../TableLoader";
+import { ChannelContext } from "../ChannelContextProvider";
 import { TableState } from "../TablePage";
 import "./GameMenu.scss";
 import GameSeating from "./GameSeating";
 import GameSettingsForm from "./GameSettingsForm";
 
 export default function GameMenu() {
-  const { hostId } = useContext(TableContext);
+  const { hostId } = useContext(ChannelContext);
   const { initialized } = useContext(TableState);
   const { user } = useContext(AuthContext);
   const isHost = user?.uid === hostId;

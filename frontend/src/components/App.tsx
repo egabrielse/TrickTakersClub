@@ -11,7 +11,7 @@ import AccountPage from "./pages/account/AccountPage";
 import AuthContextProvider from "./pages/auth/AuthContextProvider";
 import PrivateRoutes from "./pages/auth/PrivateRoutes";
 import HomePage from "./pages/home/HomePage";
-import TableLoader from "./pages/table/TableLoader";
+import ChannelContextProvider from "./pages/table/ChannelContextProvider";
 import TablePage from "./pages/table/TablePage";
 import MuiThemeProvider from "./providers/MuiThemeProvider";
 import UserStoreProvider from "./providers/UserStoreProvider";
@@ -28,9 +28,9 @@ const router = createBrowserRouter(
         <Route
           path={PATHS.TABLE}
           element={
-            <TableLoader>
+            <ChannelContextProvider>
               <TablePage />
-            </TableLoader>
+            </ChannelContextProvider>
           }
         />
       </Route>

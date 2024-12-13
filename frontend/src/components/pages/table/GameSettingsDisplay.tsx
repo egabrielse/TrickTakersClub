@@ -18,11 +18,11 @@ import {
 } from "../../../constants/game";
 import { GameSettings } from "../../../types/game";
 import { AuthContext } from "../auth/AuthContextProvider";
+import { ChannelContext } from "./ChannelContextProvider";
 import "./GameSettingsDisplay.scss";
-import { TableContext } from "./TableLoader";
 
 export default function GameSettingsDisplay() {
-  const { hostId } = useContext(TableContext);
+  const { hostId } = useContext(ChannelContext);
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [values, setValues] = useState<GameSettings>({
