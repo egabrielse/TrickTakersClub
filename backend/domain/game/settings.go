@@ -7,7 +7,6 @@ type GameSettings struct {
 	NoPickResolution string `json:"noPickResolution"`
 	DoubleOnTheBump  bool   `json:"doubleOnTheBump"`
 	Blitzing         bool   `json:"blitzing"`
-	Cracking         bool   `json:"cracking"`
 }
 
 func NewGameSettings() *GameSettings {
@@ -18,7 +17,6 @@ func NewGameSettings() *GameSettings {
 		NoPickResolution: GameDefaults.NoPickResolution,
 		DoubleOnTheBump:  GameDefaults.DoubleOnTheBump,
 		Blitzing:         GameDefaults.Blitzing,
-		Cracking:         GameDefaults.Cracking,
 	}
 }
 

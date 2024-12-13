@@ -11,5 +11,4 @@ export type GameSettings = {
     noPickResolution: NoPickResolution;
     doubleOnTheBump: boolean;
     blitzing: boolean;
-    cracking: boolean;
 }

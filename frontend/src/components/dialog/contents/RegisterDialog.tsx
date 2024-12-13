@@ -87,7 +87,8 @@ export default function RegisterDialog() {
           } else {
             setErrMsg(ERROR_MESSAGES.DEFAULT);
           }
-        });
+        })
+        .finally(() => setLoading(false));
     },
   });
 

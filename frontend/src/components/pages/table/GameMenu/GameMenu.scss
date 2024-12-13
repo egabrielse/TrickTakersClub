@@ -1,6 +1,7 @@
 .GameMenu {
     display: flex;
     padding: 1rem;
+    gap: 1rem;
 
     &-Settings {
         flex: 1;
@@ -8,9 +9,6 @@
 
     &-Waiting {
         flex: 1;
-    }
-
-    &-Players {
-        flex: 1;
+        max-width: 250px;
     }
 }

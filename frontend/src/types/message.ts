@@ -32,7 +32,7 @@ export interface StoodUpMessage extends Message {
 export interface RefreshMessage extends Message {
     name: typeof MESSAGE_TYPES.REFRESH;
     data: {
-        game: {
+        gameState: {
             playerOrder: string[];
             settings: GameSettings;
         }

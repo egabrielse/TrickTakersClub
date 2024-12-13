@@ -11,45 +11,51 @@ import {
 type UserAvatarProps = {
   bgColor?: string;
   loading?: boolean;
-  src?: string;
+  avatar?: string;
   name?: string;
   size?: Size;
 };
 
-export default function UserAvatar(props: UserAvatarProps) {
+export default function UserAvatar({
+  bgColor,
+  loading,
+  avatar,
+  name,
+  size,
+}: UserAvatarProps) {
   // defaults to medium if not provided
-  const initials = getInitials(props.name || "");
-  const pixelSize = getAvatarPixelSize(props.size || "medium");
+  const initials = getInitials(name || "");
+  const pixelSize = getAvatarPixelSize(size || "medium");
   const fontSize = getAvatarFontSize(
-    props.size || "medium",
+    size || "medium",
     initials.length as 1 | 2 | 3,
   );
 
-  if (props.loading) {
+  if (loading) {
     return <Skeleton variant="circular" width={pixelSize} height={pixelSize} />;
-  } else if (props.src) {
+  } else if (avatar) {
     return (
       <Avatar
-        alt={props.name}
-        src={props.src}
+        alt={name}
         sizes="large"
         sx={{
           border: "1px solid #FFFFFF",
-          bgcolor: props.bgColor || "#FFFFFF",
+          bgcolor: bgColor || "#FFFFFF",
           width: pixelSize,
           height: pixelSize,
           fontSize,
           color: "#FFFFFF",
         }}
+        children={avatar}
       />
     );
-  } else if (props.name) {
+  } else if (name) {
     return (
       <Avatar
-        alt={props.name}
+        alt={name}
         sx={{
           border: "1px solid #FFFFFF",
-          bgcolor: props.bgColor || usernameToColor(props.name),
+          bgcolor: bgColor || usernameToColor(name),
           width: pixelSize,
           height: pixelSize,
           fontSize,

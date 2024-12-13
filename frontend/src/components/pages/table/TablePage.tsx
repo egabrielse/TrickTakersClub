@@ -13,6 +13,7 @@ import { GameSettings } from "../../../types/game";
 import { TypedMessage } from "../../../types/message";
 import PaperButton from "../../common/PaperButton";
 import { DialogContext } from "../../dialog/DialogProvider";
+import { AuthContext } from "../auth/AuthContextProvider";
 import LoadingPage from "../loading/LoadingPage";
 import { ChannelContext } from "./ChannelContextProvider";
 import Chat from "./Chat/Chat";
@@ -43,6 +44,7 @@ export default function TablePage() {
   const { tableId, broadcastChannelName, directMessageChannelName } =
     useContext(ChannelContext);
   const { openDialog } = useContext(DialogContext);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   // ### State ###
   const [loaded, setLoaded] = useState(false);
@@ -56,7 +58,6 @@ export default function TablePage() {
   usePresence(broadcastChannelName);
 
   const broadcastChannelHandler = (msg: TypedMessage) => {
-    console.log("Broadcast Message Received", msg);
     switch (msg.name) {
       case MESSAGE_TYPES.CHAT:
         setChatMessages((prev) => [...prev, msg]);
@@ -104,10 +105,17 @@ export default function TablePage() {
   );
 
   const directMessageHandler = (msg: TypedMessage) => {
-    console.log("Direct Message Received", msg);
+    if (msg.clientId === user?.uid) {
+      return;
+    }
     switch (msg.name) {
       case MESSAGE_TYPES.REFRESH:
         setLoaded(true);
+        if (msg.data.gameState) {
+          setInitialized(true);
+          setGameSettings(msg.data.gameState.settings);
+          setPlayerOrder(msg.data.gameState.playerOrder);
+        }
         break;
 
       default:
@@ -135,7 +143,6 @@ export default function TablePage() {
    * @param data
    */
   const sendCommand = ({ name, data }: TypedCommand) => {
-    console.log("Sending command", name, data);
     directMessageChannel.publish(name, data);
   };
 
