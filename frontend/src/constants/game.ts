@@ -24,4 +24,11 @@ export const GAME_SETTINGS_PARAMS = {
     SUPPORTED_PLAYER_COUNTS: [3, 4, 5, 6, 7],
     MIN_PLAYERS: 3,
     MAX_PLAYERS: 7,
-}
+} as const;
+
+export const HAND_PHASES = {
+    PICK: 'pick',
+    BURY: 'bury',
+    PLAY: 'play',
+    SCORE: 'score',
+} as const;

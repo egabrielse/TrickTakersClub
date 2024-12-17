@@ -34,11 +34,11 @@ const DefaultGameSettings: GameSettings = {
 export default function GameSettingsForm() {
   const { user } = useContext(AuthContext);
   const { hostId } = useContext(ChannelContext);
-  const { sendCommand, initialized, settings } = useContext(TableState);
+  const { sendCommand, gameInProgress, gameSettings } = useContext(TableState);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [values, setValues] = useState<GameSettings>(DefaultGameSettings);
   const isHost = user?.uid === hostId;
-  const inputDisabled = !isHost || isSubmitting || initialized;
+  const inputDisabled = !isHost || isSubmitting || gameInProgress;
 
   const onChange = (
     name: string,
@@ -64,10 +64,10 @@ export default function GameSettingsForm() {
 
   useEffect(() => {
     setIsSubmitting(false);
-    if (settings) {
-      setValues(settings);
+    if (gameSettings) {
+      setValues(gameSettings);
     }
-  }, [settings]);
+  }, [gameSettings]);
 
   return (
     <div className="GameSettingsForm">
@@ -149,7 +149,7 @@ export default function GameSettingsForm() {
       </div>
       {isHost && (
         <div className="GameSettingsForm-Footer">
-          {initialized ? (
+          {gameInProgress ? (
             <Button color="secondary" onClick={handleCancel}>
               Cancel
             </Button>

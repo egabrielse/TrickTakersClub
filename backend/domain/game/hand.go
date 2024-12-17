@@ -8,44 +8,45 @@ import (
 )
 
 type Hand struct {
-	Blind           []*deck.Card `json:"blind"`           // Blind cards
-	CalledCard      *deck.Card   `json:"calledCard"`      // Card called by the picker
-	PartnerID       string       `json:"partnerId"`       // Partner of the picker
-	Phase           string       `json:"phase"`           // Phase of the hand
-	PickOrPassIndex int          `json:"pickOrPassIndex"` // Index of the player who's turn it is to pick or pass
-	PickerID        string       `json:"pickerId"`        // Player who picked the blind
-	PlayerOrder     []string     `json:"playerOrder"`     // Order of players at the table
-	TotalTricks     int          `json:"totalTricks"`     // Total number of tricks in the hand
-	Tricks          []*Trick     `json:"tricks"`          // Tricks played in the hand
+	Blind       []*deck.Card       `json:"blind"`       // Blind cards
+	Players     map[string]*Player `json:"players"`     // Player hands
+	CalledCard  *deck.Card         `json:"calledCard"`  // Card called by the picker
+	PartnerID   string             `json:"partnerId"`   // Partner of the picker
+	Phase       string             `json:"phase"`       // Phase of the hand
+	PickIndex   int                `json:"PickIndex"`   // Index of the player who's turn it is to pick or pass
+	PickerID    string             `json:"pickerId"`    // Player who picked the blind
+	HandOrder   []string           `json:"handOrder"`   // Order of players starting with the dealer
+	TotalTricks int                `json:"totalTricks"` // Total number of tricks in the hand
+	Tricks      []*Trick           `json:"tricks"`      // Tricks played in the hand
 }
 
-func NewHand(playerIDs []string, totalTricks int, blind []*deck.Card) (hand *Hand) {
+func NewHand(handOrder []string, handSize int, blindSize int) (hand *Hand) {
+	deck := deck.NewDeck()
+	players := map[string]*Player{}
+	for _, playerID := range handOrder {
+		hand := deck.Draw(handSize)
+		players[playerID] = NewPlayer(playerID, hand)
+	}
 	return &Hand{
-		Blind:           blind,
-		Phase:           HandPhase.Pick,
-		PickOrPassIndex: 1, // Picking starts with the player to the left of the dealer (index 1)
-		PlayerOrder:     playerIDs,
-		TotalTricks:     totalTricks,
-		Tricks:          []*Trick{},
+		Blind:       deck.Draw(blindSize),
+		Phase:       HandPhase.Pick,
+		Players:     players,
+		PickIndex:   1, // Picking starts with the player to the left of the dealer (index 1)
+		HandOrder:   handOrder,
+		TotalTricks: handSize,
+		Tricks:      []*Trick{},
 	}
 }
 
-func (h *Hand) GetThisTrick() *Trick {
-	if h.Tricks == nil || len(h.Tricks) == 0 {
+func (h *Hand) GetCurrentTrick() *Trick {
+	if len(h.Tricks) == 0 {
 		return nil
 	}
 	return h.Tricks[len(h.Tricks)-1]
 }
 
-func (h *Hand) GetLastTrick() *Trick {
-	if h.Tricks == nil || len(h.Tricks) < 2 {
-		return nil
-	}
-	return h.Tricks[len(h.Tricks)-2]
-}
-
 func (h *Hand) CountPlayedTricks() int {
-	trick := h.GetThisTrick()
+	trick := h.GetCurrentTrick()
 	if trick == nil {
 		return 0
 	} else if trick.IsComplete() {
@@ -58,11 +59,11 @@ func (h *Hand) CountPlayedTricks() int {
 func (h *Hand) WhoIsNext() (playerID string) {
 	switch h.Phase {
 	case HandPhase.Pick:
-		return h.PlayerOrder[h.PickOrPassIndex]
+		return h.HandOrder[h.PickIndex]
 	case HandPhase.Bury, HandPhase.Call:
 		return h.PickerID
 	case HandPhase.Play:
-		if trick := h.GetThisTrick(); trick != nil {
+		if trick := h.GetCurrentTrick(); trick != nil {
 			return trick.GetUpNextID()
 		}
 	}
@@ -71,7 +72,7 @@ func (h *Hand) WhoIsNext() (playerID string) {
 
 func (h *Hand) IsComplete() (isComplete bool) {
 	if len(h.Tricks) == h.TotalTricks {
-		trick := h.GetThisTrick()
+		trick := h.GetCurrentTrick()
 		if trick != nil && trick.IsComplete() {
 			return true
 		}
@@ -83,17 +84,17 @@ func (h *Hand) StartNextTrick() {
 	// Set the phase to play
 	h.Phase = HandPhase.Play
 	// Start the next trick
-	trick := h.GetThisTrick()
+	trick := h.GetCurrentTrick()
 	if trick == nil {
 		// First trick: Player left of the dealer starts the first trick.
-		playOrder := utils.RelistStartingWith(h.PlayerOrder, h.PlayerOrder[1])
-		newTrick := NewTrick(playOrder)
+		trickOrder := utils.RelistStartingWith(h.HandOrder, h.HandOrder[1])
+		newTrick := NewTrick(trickOrder)
 		h.Tricks = append(h.Tricks, newTrick)
 	} else {
 		// Subsequent tricks: Start with the taker of the previous trick.
 		takerID := trick.GetTakerID()
-		playOrder := utils.RelistStartingWith(h.PlayerOrder, takerID)
-		newTrick := NewTrick(playOrder)
+		trickOrder := utils.RelistStartingWith(h.HandOrder, takerID)
+		newTrick := NewTrick(trickOrder)
 		h.Tricks = append(h.Tricks, newTrick)
 	}
 }
@@ -108,12 +109,12 @@ func (h *Hand) PickOrPass(player *Player, pick bool) error {
 		h.Blind = []*deck.Card{}
 		// TODO: Change to PhaseCall when playing 5 player
 		h.Phase = HandPhase.Bury
-	} else if h.PickOrPassIndex == len(h.PlayerOrder)-1 {
+	} else if h.PickIndex == len(h.HandOrder)-1 {
 		// All other players passed, so the dealer must pick (screw the dealer)
-		h.PickOrPassIndex = 0
+		h.PickIndex = 0
 	} else {
 		// Otherwise, move to the next player
-		h.PickOrPassIndex++
+		h.PickIndex++
 	}
 	return nil
 }
@@ -156,7 +157,7 @@ func (h *Hand) Bury(picker *Player, cards []*deck.Card) error {
 func (h *Hand) Play(player *Player, card *deck.Card) error {
 	if h.Phase != HandPhase.Play {
 		return fmt.Errorf("not in play phase")
-	} else if trick := h.GetThisTrick(); trick == nil {
+	} else if trick := h.GetCurrentTrick(); trick == nil {
 		return fmt.Errorf("trick not started")
 	} else if trick.IsComplete() {
 		return fmt.Errorf("trick already complete")
@@ -178,7 +179,7 @@ func (h *Hand) Play(player *Player, card *deck.Card) error {
 }
 
 func (h *Hand) SummarizeHand(players map[string]*Player) *HandSummary {
-	sum := NewHandSummary(h.PlayerOrder)
+	sum := NewHandSummary(h.HandOrder)
 	points := map[string]int{}
 	tricks := map[string]int{}
 

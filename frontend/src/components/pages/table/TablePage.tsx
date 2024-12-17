@@ -1,42 +1,71 @@
 import LogoutIcon from "@mui/icons-material/Logout";
-import { Button } from "@mui/material";
 import { Message } from "ably";
 import { useChannel, usePresence } from "ably/react";
 import { createContext, useContext, useState } from "react";
 import { useNavigate } from "react-router";
-import { COMMAND_TYPES } from "../../../constants/commands";
 import { DIALOG_TYPES } from "../../../constants/dialog";
+import { HAND_PHASES } from "../../../constants/game";
 import { MESSAGE_TYPES } from "../../../constants/message";
 import { PATHS } from "../../../constants/url";
 import { TypedCommand } from "../../../types/command";
-import { GameSettings } from "../../../types/game";
+import {
+  GameSettings,
+  HandPhase,
+  PlayingCard,
+  Scoreboard,
+  TrickState,
+} from "../../../types/game";
 import { TypedMessage } from "../../../types/message";
 import PaperButton from "../../common/PaperButton";
 import { DialogContext } from "../../dialog/DialogProvider";
-import { AuthContext } from "../auth/AuthContextProvider";
 import LoadingPage from "../loading/LoadingPage";
 import { ChannelContext } from "./ChannelContextProvider";
 import Chat from "./Chat/Chat";
+import Game from "./Game/Game";
 import GameMenu from "./GameMenu/GameMenu";
 import LinkButton from "./LinkButton";
+import ScoreboardDisplay from "./ScoreboardDisplay";
 import "./TablePage.scss";
+import useGameState from "./useGameState";
 
 export const TableState = createContext<{
   sendChatMessage: (message: string) => void;
   sendCommand: (command: TypedCommand) => void;
   chatMessages: Message[];
-  initialized: boolean;
-  inProgress: boolean;
+  gameInProgress: boolean;
+  dealerIndex: number;
   playerOrder: string[];
-  settings: GameSettings | null;
+  gameSettings: GameSettings | null;
+  scoreboard: Scoreboard | null;
+  handInProgress: boolean;
+  cardsInBlind: number;
+  calledCard: PlayingCard | null;
+  pickerId: string | null;
+  partnerId: string | null;
+  tricks: TrickState[];
+  phase: HandPhase;
+  upNextId: string;
+  playerHand: PlayingCard[];
+  playerBury: PlayingCard[];
 }>({
   sendChatMessage: () => {},
   sendCommand: () => {},
   chatMessages: [],
-  initialized: false,
-  inProgress: false,
+  gameInProgress: false,
+  dealerIndex: 0,
   playerOrder: [],
-  settings: null,
+  gameSettings: null,
+  scoreboard: {},
+  handInProgress: false,
+  cardsInBlind: 0,
+  calledCard: null,
+  pickerId: null,
+  partnerId: null,
+  tricks: [],
+  phase: HAND_PHASES.PICK,
+  upNextId: "",
+  playerHand: [],
+  playerBury: [],
 });
 
 export default function TablePage() {
@@ -44,20 +73,21 @@ export default function TablePage() {
   const { tableId, broadcastChannelName, directMessageChannelName } =
     useContext(ChannelContext);
   const { openDialog } = useContext(DialogContext);
-  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  // ### State ###
+  // ### Table State ###
   const [loaded, setLoaded] = useState(false);
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
-  const [initialized, setInitialized] = useState(false);
-  const [inProgress, setInProgress] = useState(false);
-  const [playerOrder, setPlayerOrder] = useState<string[]>([]);
-  const [gameSettings, setGameSettings] = useState<GameSettings | null>(null);
+  // ### Game State ###
+  const state = useGameState();
 
   // Enter the public channel presence
   usePresence(broadcastChannelName);
 
-  const broadcastChannelHandler = (msg: TypedMessage) => {
+  /**
+   * Handles incoming messages from the ably channels
+   * @param msg message from the ably channel
+   */
+  const incomingMessageHandler = (msg: TypedMessage) => {
     switch (msg.name) {
       case MESSAGE_TYPES.CHAT:
         setChatMessages((prev) => [...prev, msg]);
@@ -72,61 +102,48 @@ export default function TablePage() {
           },
         });
         break;
+      case MESSAGE_TYPES.REFRESH:
+        setLoaded(true);
+        state.handleRefreshMessage(msg);
+        break;
       case MESSAGE_TYPES.SAT_DOWN:
-        setPlayerOrder((prev) => [...prev, msg.data]);
+        state.handleSatDownMessage(msg);
         break;
       case MESSAGE_TYPES.STOOD_UP:
-        setPlayerOrder((prev) => prev.filter((player) => player !== msg.data));
+        state.handleStoodUpMessage(msg);
         break;
       case MESSAGE_TYPES.NEW_GAME:
-        setInitialized(true);
-        setInProgress(false);
-        setGameSettings(msg.data.settings);
-        setPlayerOrder(msg.data.playerOrder);
+        state.handleNewGameMessage(msg);
         break;
       case MESSAGE_TYPES.GAME_STARTED:
-        // TODO: more setup
-        setInProgress(true);
+        state.handleGameStartedMessage(msg);
         break;
       case MESSAGE_TYPES.GAME_OVER:
-        setInitialized(false);
-        setInProgress(false);
-        setGameSettings(null);
-        setPlayerOrder([]);
+        state.handleGameOverMessage();
+        break;
+      case MESSAGE_TYPES.DEAL_HAND:
+        state.handleDealHandMessage(msg);
+        break;
+      case MESSAGE_TYPES.UP_NEXT:
+        state.handleUpNextMessage(msg);
+        break;
+      case MESSAGE_TYPES.PICK:
+        state.handlePickMessage(msg);
         break;
       default:
+        console.warn("Unhandled message type", msg);
         break;
     }
   };
 
   // Public channel
   const broadcastChannel = useChannel(broadcastChannelName, (msg) =>
-    broadcastChannelHandler(msg as TypedMessage),
+    incomingMessageHandler(msg as TypedMessage),
   );
-
-  const directMessageHandler = (msg: TypedMessage) => {
-    if (msg.clientId === user?.uid) {
-      return;
-    }
-    switch (msg.name) {
-      case MESSAGE_TYPES.REFRESH:
-        setLoaded(true);
-        if (msg.data.gameState) {
-          setInitialized(true);
-          setGameSettings(msg.data.gameState.settings);
-          setPlayerOrder(msg.data.gameState.playerOrder);
-        }
-        break;
-
-      default:
-        console.warn("Unhandled message type", msg.name);
-        break;
-    }
-  };
 
   // Private channel
   const directMessageChannel = useChannel(directMessageChannelName, (msg) =>
-    directMessageHandler(msg as TypedMessage),
+    incomingMessageHandler(msg as TypedMessage),
   );
 
   /**
@@ -155,10 +172,7 @@ export default function TablePage() {
     sendChatMessage,
     sendCommand,
     chatMessages,
-    playerOrder,
-    inProgress: inProgress,
-    initialized: initialized,
-    settings: gameSettings,
+    ...state,
   };
 
   return loaded ? (
@@ -172,27 +186,15 @@ export default function TablePage() {
           Exit
         </PaperButton>
         <div className="TablePage-Main">
-          {initialized && inProgress ? (
-            <div>
-              <Button
-                id="end-game"
-                variant="contained"
-                onClick={() => {
-                  sendCommand({
-                    name: COMMAND_TYPES.END_GAME,
-                    data: undefined,
-                  });
-                }}
-              >
-                End Game
-              </Button>
-            </div>
+          {state.gameInProgress && state.handInProgress ? (
+            <Game />
           ) : (
             <GameMenu />
           )}
         </div>
         <div className="TablePage-SideBar">
           <LinkButton tableId={tableId} />
+          <ScoreboardDisplay />
           <Chat />
         </div>
       </div>

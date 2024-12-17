@@ -13,18 +13,12 @@ type Player struct {
 	Bury     []*deck.Card `json:"bury"`     // Picker's buried cards
 }
 
-func NewPlayer(playerId string) *Player {
+func NewPlayer(playerId string, hand []*deck.Card) *Player {
 	return &Player{
 		PlayerID: playerId,
-		Hand:     []*deck.Card{},
+		Hand:     hand,
 		Bury:     []*deck.Card{},
 	}
-}
-
-func (p *Player) Reset() {
-	p.Hand = []*deck.Card{}
-	p.Bury = []*deck.Card{}
-	p.Role = ""
 }
 
 func (p *Player) SetRole(role string) {

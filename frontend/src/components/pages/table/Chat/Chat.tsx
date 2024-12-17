@@ -1,13 +1,21 @@
 import SendIcon from "@mui/icons-material/Send";
 import { IconButton, InputAdornment, Paper, TextField } from "@mui/material";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { TableState } from "../TablePage";
 import "./Chat.scss";
 import ChatMessage from "./ChatMessage";
 
 export default function Chat() {
+  const bottomRef = useRef<HTMLDivElement>(null);
   const { chatMessages, sendChatMessage } = useContext(TableState);
   const [value, setValue] = useState("");
+  const chatLength = chatMessages.length;
+
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatLength]);
 
   const onSubmit = () => {
     sendChatMessage(value);
@@ -20,6 +28,7 @@ export default function Chat() {
         {chatMessages.map((msg, i) => (
           <ChatMessage key={i} message={msg} />
         ))}
+        <div ref={bottomRef} />
       </div>
       <TextField
         id="chat-input"

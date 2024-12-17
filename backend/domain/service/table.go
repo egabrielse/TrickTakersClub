@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"main/domain/entity"
+	"main/domain/game"
 	"main/domain/repository"
 	"main/utils"
 	"time"
@@ -14,7 +15,7 @@ import (
 // TableService represents the service for controlling the table
 type TableService struct {
 	Table      *entity.TableEntity    `json:"table"`
-	Game       *Sheepshead            `json:"game"`
+	Game       *game.Sheepshead       `json:"game"`
 	LastUpdate time.Time              `json:"lastUpdate"`
 	Users      map[string]*UserClient `json:"users"`
 	AblyClient *ably.Realtime         `json:"-"`
@@ -46,15 +47,41 @@ func NewTableService(table *entity.TableEntity) (*TableService, error) {
 }
 
 // GetState returns the current state of the table
-func (t *TableService) GetState() *TableStatePayload {
-	state := &TableStatePayload{
+func (t *TableService) GetRefreshPayload(clientID string) *RefreshPayload {
+	payload := &RefreshPayload{
 		TableID: t.Table.ID,
 		HostID:  t.Table.HostID,
 	}
+	// A game, send the state of the game
 	if t.Game != nil {
-		state.GameState = t.Game.GetState()
+		payload.GameState = &GameState{
+			DealerIndex: t.Game.DealerIndex,
+			Scoreboard:  t.Game.Scoreboard,
+			PlayerOrder: t.Game.PlayerOrder,
+			HandsPlayed: t.Game.HandsPlayed,
+			Settings:    t.Game.Settings,
+		}
+		// Hand is in progress, send the state of the current hand
+		if t.Game.HandInProgress() {
+			payload.HandState = &HandState{
+				CalledCard:   t.Game.Hand.CalledCard,
+				CardsInBlind: len(t.Game.Hand.Blind),
+				Phase:        t.Game.Hand.Phase,
+				PickerID:     t.Game.Hand.PickerID,
+				PartnerID:    t.Game.Hand.PartnerID,
+				Tricks:       t.Game.Hand.Tricks,
+				UpNextID:     t.Game.Hand.WhoIsNext(),
+			}
+			// Client is a player in the current game, send their hand and bury
+			if player, ok := t.Game.Hand.Players[clientID]; ok {
+				payload.PlayerHandState = &PlayerHandState{
+					Hand: player.Hand,
+					Bury: player.Bury,
+				}
+			}
+		}
 	}
-	return state
+	return payload
 }
 
 // Broadcast sends a message to all clients connected to the table via the public channel
@@ -108,7 +135,7 @@ func (t *TableService) RegisterClient(clientID string, connectionID string) {
 		user.Enter(t.Ctx, connectionID, t.HandleCommands)
 	}
 	// Send the current state of the table/game to the newly registered user
-	t.DirectMessage(clientID, MessageType.Refresh, t.GetState())
+	t.DirectMessage(clientID, MessageType.Refresh, t.GetRefreshPayload(clientID))
 }
 
 // UnregisterClient unregisters a client from the table service

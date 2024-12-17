@@ -4,10 +4,12 @@
     flex-direction: column;
     gap: 0.5rem;
     padding: 0.5rem;
+    overflow: hidden;
 
     &-Messages {
         display: flex;
         flex-direction: column;
+        overflow: scroll;
         gap: 6px;
         flex: 1;
         font-size: small;

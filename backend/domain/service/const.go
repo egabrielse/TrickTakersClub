@@ -6,7 +6,7 @@ import "time"
 const TickerDuration = time.Second * 30
 
 // TimeoutDuration is the duration after which the service will be stopped if no activity is detected
-const TimeoutDuration = time.Minute * 10
+const TimeoutDuration = time.Minute * 30
 
 var MessageType = struct {
 	// Service timed out due to inactivity
@@ -25,8 +25,12 @@ var MessageType = struct {
 	NewGame string
 	// Game has started
 	GameStarted string
-	// Command to end the game
+	// Game has ended
 	GameOver string
+	// Deal cards to players
+	DealHand string
+	// Sent to player who's turn it is
+	UpNext string
 }{
 	Timeout:     "timeout",
 	Chat:        "chat",
@@ -37,6 +41,8 @@ var MessageType = struct {
 	NewGame:     "new-game",
 	GameStarted: "game-started",
 	GameOver:    "game-over",
+	DealHand:    "deal-hand",
+	UpNext:      "up-next",
 }
 
 var CommandType = struct {

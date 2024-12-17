@@ -2,202 +2,191 @@ package game
 
 import (
 	"fmt"
-	"main/domain/game/deck"
 	"main/utils"
 )
 
 type Sheepshead struct {
-	InProgress  bool               `json:"inProgress"`  // Whether the game is in progress
-	DealerIndex int                `json:"dealerIndex"` // Index of the dealer in the Players array
-	Hand        *Hand              `json:"hand"`        // Current hand being played
-	Players     map[string]*Player `json:"players"`     // Player hands
-	Scoreboard  Scoreboard         `json:"scoreboard"`  // Scoreboard
-	PlayerOrder []string           `json:"playerOrder"` // Order of players at the table
-	Settings    *GameSettings      `json:"settings"`    // Game settings
+	DealerIndex int           `json:"dealerIndex"` // Index of the dealer in the Players array
+	Scoreboard  Scoreboard    `json:"scoreboard"`  // Scoreboard
+	Hand        *Hand         `json:"hand"`        // Current hand being played
+	HandsPlayed int           `json:"handsPlayed"` // Number of hands played
+	PlayerOrder []string      `json:"playerOrder"` // Order of players at the table
+	Settings    *GameSettings `json:"settings"`    // Game settings
 }
 
-func NewSheepshead(settings *GameSettings) *Sheepshead {
+func NewSheepshead(playerIDs []string, settings *GameSettings) *Sheepshead {
 	game := &Sheepshead{
-		InProgress:  false,
 		DealerIndex: -1,
-		PlayerOrder: []string{},
+		HandsPlayed: 0,
+		Scoreboard:  nil,
+		PlayerOrder: playerIDs,
 		Settings:    settings,
 	}
 	return game
 }
 
-type GameState struct {
-	InProgress  bool          `json:"inProgress"`  // Whether the game is in progress
-	DealerIndex int           `json:"dealerIndex"` // Index of the dealer in the Players array
-	Scoreboard  Scoreboard    `json:"scoreboard"`  // Scoreboard
-	PlayerOrder []string      `json:"playerOrder"` // Order of players at the table
-	Settings    *GameSettings `json:"settings"`    // Game settings
-}
-
-func (g *Sheepshead) GetState(playerID string) {
-
-}
-
 func (g *Sheepshead) SitDown(playerID string) error {
-	if g.InProgress || len(g.PlayerOrder) == g.Settings.PlayerCount {
-		return fmt.Errorf("game in progress")
-	} else if _, ok := g.Players[playerID]; ok {
-		return fmt.Errorf("player already seated")
+	if g.HandInProgress() || len(g.PlayerOrder) == g.Settings.PlayerCount {
+		return fmt.Errorf("hand in progress")
 	} else {
+		for _, id := range g.PlayerOrder {
+			if id == playerID {
+				return fmt.Errorf("player already seated")
+			}
+		}
 		g.PlayerOrder = append(g.PlayerOrder, playerID)
 		// Game automatically starts when all seats are filled
 		if len(g.PlayerOrder) == g.Settings.PlayerCount {
-			g.StartNewHand()
+			g.StartGame()
 		}
 		return nil
 	}
 }
 
 func (g *Sheepshead) StandUp(playerID string) error {
-	if g.InProgress {
-		return fmt.Errorf("game in progress")
-	} else if _, ok := g.Players[playerID]; !ok {
-		return fmt.Errorf("player not seated")
+	if g.HandInProgress() {
+		return fmt.Errorf("hand in progress")
 	} else {
-		g.PlayerOrder = g.PlayerOrder[:len(g.PlayerOrder)-1]
-		return nil
+		for index, id := range g.PlayerOrder {
+			if id == playerID {
+				g.PlayerOrder = append(g.PlayerOrder[:index], g.PlayerOrder[index+1:]...)
+				return nil
+			}
+		}
+		return fmt.Errorf("player not seated")
 	}
+}
+
+func (g *Sheepshead) StartGame() {
+	g.Scoreboard = NewScoreboard(g.PlayerOrder)
+	g.StartNewHand()
 }
 
 func (g *Sheepshead) StartNewHand() {
-	g.InProgress = true
 	g.DealerIndex = (g.DealerIndex + 1) % len(g.PlayerOrder)
 	playerOrder := utils.RelistStartingWith(g.PlayerOrder, g.PlayerOrder[g.DealerIndex])
-	players := map[string]*Player{}
-	for _, playerID := range playerOrder {
-		players[playerID] = NewPlayer(playerID)
-	}
-	g.Players = players
-	g.Scoreboard = NewScoreboard(playerOrder)
-	deck := deck.NewDeck()
 	handSize, blindSize := g.Settings.DeriveHandBlindSize()
-	for _, player := range g.Players {
-		player.Reset()
-		hand := deck.Draw(handSize)
-		player.TakeCards(hand)
-	}
-	g.Hand = NewHand(playerOrder, handSize, deck.Draw(blindSize))
+	g.Hand = NewHand(playerOrder, handSize, blindSize)
 }
 
-func (g *Sheepshead) UpdateScores(summary *HandSummary) {
-	for _, player := range g.Players {
-		row := g.Scoreboard[player.PlayerID]
-		row.Score += summary.Scores[player.PlayerID]
-		row.TotalPoints += summary.PointsWon[player.PlayerID]
-		row.TotalTricks += summary.TricksWon[player.PlayerID]
-	}
+func (g *Sheepshead) HandInProgress() bool {
+	return g.Hand != nil
 }
 
-func (g *Sheepshead) GetNextTurn() *NextTurn {
-	if g.Hand == nil {
-		return nil
-	} else if upNextID := g.Hand.WhoIsNext(); upNextID == "" {
-		return nil
-	} else if player := g.Players[upNextID]; player == nil {
-		return nil
-	} else {
-		nextTurn := NewNextTurn()
-		nextTurn.PlayerID = upNextID
-		nextTurn.TurnType = g.Hand.Phase
-		switch g.Hand.Phase {
-		case HandPhase.Pick:
-			nextTurn.TurnType = TurnTypePick
-			// nextTurn.BlindSize = g.Settings.BlindSize
-		case HandPhase.Call:
-			nextTurn.TurnType = TurnTypeCall
-			// TODO: Get list of cards to call
-			// TODO: Determine if blitz is possible
-		case HandPhase.Bury:
-			nextTurn.TurnType = TurnTypeBury
-			// TODO: Get list of cards to bury
-			nextTurn.Cards = player.Hand
-			// nextTurn.BlindSize = g.Settings.BlindSize
-		case HandPhase.Play:
-			nextTurn.TurnType = TurnTypePlay
-			trick := g.Hand.GetThisTrick()
-			leadCard := trick.GetLeadingCard()
-			playableCards := deck.FilterForPlayableCards(player.Hand, leadCard)
-			deck.OrderCards(playableCards)
-			nextTurn.Cards = playableCards
-		}
-		return nextTurn
-	}
-}
+// func (g *Sheepshead) UpdateScores(summary *HandSummary) {
+// 	for _, player := range g.Players {
+// 		row := g.Scoreboard[player.PlayerID]
+// 		row.Score += summary.Scores[player.PlayerID]
+// 		row.TotalPoints += summary.PointsWon[player.PlayerID]
+// 		row.TotalTricks += summary.TricksWon[player.PlayerID]
+// 	}
+// }
 
-func (g *Sheepshead) TakeTurn(turn *Turn) error {
-	if g.Hand == nil {
-		return fmt.Errorf("no hand in progress")
-	} else if g.Hand.WhoIsNext() != turn.PlayerID {
-		return fmt.Errorf("not %s's turn", turn.PlayerID)
-	} else if player, ok := g.Players[turn.PlayerID]; !ok {
-		return fmt.Errorf("player not found")
-	} else {
-		result := NewTurnResult()
-		playedTricksCount := g.Hand.CountPlayedTricks()
-		switch turn.TurnType {
-		case TurnTypePick:
-			if turn.Args.Pick {
-				result.PickedCards = make([]*deck.Card, len(g.Hand.Blind))
-				copy(result.PickedCards, g.Hand.Blind)
-			}
-			if err := g.Hand.PickOrPass(player, turn.Args.Pick); err != nil {
-				return err
-			}
+// func (g *Sheepshead) GetNextTurn() *NextTurn {
+// 	if g.Hand == nil {
+// 		return nil
+// 	} else if upNextID := g.Hand.WhoIsNext(); upNextID == "" {
+// 		return nil
+// 	} else if player := g.Players[upNextID]; player == nil {
+// 		return nil
+// 	} else {
+// 		nextTurn := NewNextTurn()
+// 		nextTurn.PlayerID = upNextID
+// 		nextTurn.TurnType = g.Hand.Phase
+// 		switch g.Hand.Phase {
+// 		case HandPhase.Pick:
+// 			nextTurn.TurnType = TurnTypePick
+// 			// nextTurn.BlindSize = g.Settings.BlindSize
+// 		case HandPhase.Call:
+// 			nextTurn.TurnType = TurnTypeCall
+// 			// TODO: Get list of cards to call
+// 			// TODO: Determine if blitz is possible
+// 		case HandPhase.Bury:
+// 			nextTurn.TurnType = TurnTypeBury
+// 			// TODO: Get list of cards to bury
+// 			nextTurn.Cards = player.Hand
+// 			// nextTurn.BlindSize = g.Settings.BlindSize
+// 		case HandPhase.Play:
+// 			nextTurn.TurnType = TurnTypePlay
+// 			trick := g.Hand.GetThisTrick()
+// 			leadCard := trick.GetLeadingCard()
+// 			playableCards := deck.FilterForPlayableCards(player.Hand, leadCard)
+// 			deck.OrderCards(playableCards)
+// 			nextTurn.Cards = playableCards
+// 		}
+// 		return nextTurn
+// 	}
+// }
 
-		case TurnTypeCall:
-			var card *deck.Card
-			if len(turn.Args.Cards) > 1 {
-				return fmt.Errorf("can only call one card")
-			} else if len(turn.Args.Cards) == 1 {
-				card = turn.Args.Cards[0]
-			}
-			if err := g.Hand.Call(player, g.Players, card); err != nil {
-				return err
-			}
+// func (g *Sheepshead) TakeTurn(turn *Turn) error {
+// 	if g.Hand == nil {
+// 		return fmt.Errorf("no hand in progress")
+// 	} else if g.Hand.WhoIsNext() != turn.PlayerID {
+// 		return fmt.Errorf("not %s's turn", turn.PlayerID)
+// 	} else if player, ok := g.Players[turn.PlayerID]; !ok {
+// 		return fmt.Errorf("player not found")
+// 	} else {
+// 		result := NewTurnResult()
+// 		playedTricksCount := g.Hand.CountPlayedTricks()
+// 		switch turn.TurnType {
+// 		case TurnTypePick:
+// 			if turn.Args.Pick {
+// 				result.PickedCards = make([]*deck.Card, len(g.Hand.Blind))
+// 				copy(result.PickedCards, g.Hand.Blind)
+// 			}
+// 			if err := g.Hand.PickOrPass(player, turn.Args.Pick); err != nil {
+// 				return err
+// 			}
 
-		case TurnTypeBury:
-			result.BuriedCards = make([]*deck.Card, len(turn.Args.Cards))
-			copy(result.BuriedCards, turn.Args.Cards)
-			if err := g.Hand.Bury(player, turn.Args.Cards); err != nil {
-				return err
-			}
-			result.NextTrick = g.Hand.GetThisTrick()
+// 		case TurnTypeCall:
+// 			var card *deck.Card
+// 			if len(turn.Args.Cards) > 1 {
+// 				return fmt.Errorf("can only call one card")
+// 			} else if len(turn.Args.Cards) == 1 {
+// 				card = turn.Args.Cards[0]
+// 			}
+// 			if err := g.Hand.Call(player, g.Players, card); err != nil {
+// 				return err
+// 			}
 
-		case TurnTypePlay:
-			if len(turn.Args.Cards) != 1 {
-				return fmt.Errorf("must play one card")
-			}
-			card := turn.Args.Cards[0]
-			result.PlayedCard = card
-			if err := g.Hand.Play(player, card); err != nil {
-				return err
-			}
-			// Check if the trick is completed
-			result.TrickCompleted = playedTricksCount < g.Hand.CountPlayedTricks()
-			if result.TrickCompleted {
-				lastTrick := g.Hand.GetLastTrick()
-				result.TrickSummary = &TrickSummary{
-					TakerID: lastTrick.GetTakerID(),
-					Cards:   lastTrick.Cards,
-					Points:  lastTrick.CountPoints(),
-				}
-				// Check if the hand is completed
-				if g.Hand.IsComplete() {
-					result.HandCompleted = true
-					result.HandSummary = g.Hand.SummarizeHand(g.Players)
-					g.UpdateScores(result.HandSummary)
-				} else {
-					result.NextTrick = g.Hand.GetThisTrick()
-				}
-			}
-		}
-		turn.Result = result
-		turn.NextTurn = g.GetNextTurn()
-		return nil
-	}
-}
+// 		case TurnTypeBury:
+// 			result.BuriedCards = make([]*deck.Card, len(turn.Args.Cards))
+// 			copy(result.BuriedCards, turn.Args.Cards)
+// 			if err := g.Hand.Bury(player, turn.Args.Cards); err != nil {
+// 				return err
+// 			}
+// 			result.NextTrick = g.Hand.GetThisTrick()
+
+// 		case TurnTypePlay:
+// 			if len(turn.Args.Cards) != 1 {
+// 				return fmt.Errorf("must play one card")
+// 			}
+// 			card := turn.Args.Cards[0]
+// 			result.PlayedCard = card
+// 			if err := g.Hand.Play(player, card); err != nil {
+// 				return err
+// 			}
+// 			// Check if the trick is completed
+// 			result.TrickCompleted = playedTricksCount < g.Hand.CountPlayedTricks()
+// 			if result.TrickCompleted {
+// 				lastTrick := g.Hand.GetLastTrick()
+// 				result.TrickSummary = &TrickSummary{
+// 					TakerID: lastTrick.GetTakerID(),
+// 					Cards:   lastTrick.Cards,
+// 					Points:  lastTrick.CountPoints(),
+// 				}
+// 				// Check if the hand is completed
+// 				if g.Hand.IsComplete() {
+// 					result.HandCompleted = true
+// 					result.HandSummary = g.Hand.SummarizeHand(g.Players)
+// 					g.UpdateScores(result.HandSummary)
+// 				} else {
+// 					result.NextTrick = g.Hand.GetThisTrick()
+// 				}
+// 			}
+// 		}
+// 		turn.Result = result
+// 		turn.NextTurn = g.GetNextTurn()
+// 		return nil
+// 	}
+// }

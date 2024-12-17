@@ -8,4 +8,7 @@ export const MESSAGE_TYPES = {
     NEW_GAME: "new-game",
     GAME_STARTED: "game-started",
     GAME_OVER: "game-over",
+    DEAL_HAND: "deal-hand",
+    UP_NEXT: "up-next",
+    PICK: "pick",
 } as const;

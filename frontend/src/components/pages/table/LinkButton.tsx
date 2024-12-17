@@ -26,6 +26,7 @@ export default function LinkButton({ tableId }: LinkButtonProps) {
           name="link-button"
           startIcon={copied ? <CheckIcon /> : <ContentCopyIcon />}
           onClick={copyLink}
+          style={{ fontSize: "0.75rem" }}
         >
           {tableId}
         </PaperButton>

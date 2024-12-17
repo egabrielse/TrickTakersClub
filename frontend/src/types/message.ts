@@ -1,6 +1,14 @@
 import { Message } from "ably";
 import { MESSAGE_TYPES } from "../constants/message";
-import { GameSettings } from "./game";
+import {
+    GameSettings,
+    GameState,
+    HandPhase,
+    HandState,
+    PlayerHandState,
+    PlayingCard,
+    Scoreboard
+} from "./game";
 
 export type MessageType = typeof MESSAGE_TYPES[keyof typeof MESSAGE_TYPES];
 
@@ -32,30 +40,57 @@ export interface StoodUpMessage extends Message {
 export interface RefreshMessage extends Message {
     name: typeof MESSAGE_TYPES.REFRESH;
     data: {
-        gameState: {
-            playerOrder: string[];
-            settings: GameSettings;
-        }
+        tableId: string;
+        hostId: string;
+        gameState?: GameState,
+        handState?: HandState,
+        playerHandState?: PlayerHandState,
     };
 }
 
 export interface NewGameMessage extends Message {
     name: typeof MESSAGE_TYPES.NEW_GAME;
     data: {
-        playerOrder: string[];
         settings: GameSettings;
+        playerOrder: string[];
     };
 }
 
 export interface GameStartedMessage extends Message {
     name: typeof MESSAGE_TYPES.GAME_STARTED;
-    data: undefined;
+    data: {
+        scoreboard: Scoreboard;
+        playerOrder: string[];
+    };
 }
 
 export interface GameOverMessage extends Message {
     name: typeof MESSAGE_TYPES.GAME_OVER;
     data: undefined;
 }
+
+export interface DealHandMessage extends Message {
+    name: typeof MESSAGE_TYPES.DEAL_HAND;
+    data: {
+        dealerIndex: number;
+        cards: PlayingCard[];
+    };
+}
+export interface UpNextMessage extends Message {
+    name: typeof MESSAGE_TYPES.UP_NEXT;
+    data: {
+        playerId: string;
+        phase: HandPhase;
+    };
+}
+
+export interface PickPayload extends Message {
+    name: typeof MESSAGE_TYPES.PICK;
+    data: {
+        cards: PlayingCard[];
+    };
+}
+
 
 export type TypedMessage = (
     ChatMessage |
@@ -66,5 +101,8 @@ export type TypedMessage = (
     RefreshMessage |
     NewGameMessage |
     GameStartedMessage |
-    GameOverMessage
+    GameOverMessage |
+    DealHandMessage |
+    UpNextMessage |
+    PickPayload
 );

@@ -9,13 +9,13 @@ import GameSettingsForm from "./GameSettingsForm";
 
 export default function GameMenu() {
   const { hostId } = useContext(ChannelContext);
-  const { initialized } = useContext(TableState);
+  const { gameInProgress } = useContext(TableState);
   const { user } = useContext(AuthContext);
   const isHost = user?.uid === hostId;
 
   return (
     <Paper className="GameMenu">
-      {isHost || initialized ? (
+      {isHost || gameInProgress ? (
         <div className="GameMenu-Settings">
           <GameSettingsForm />
         </div>
@@ -26,7 +26,7 @@ export default function GameMenu() {
           </span>
         </div>
       )}
-      {initialized && (
+      {gameInProgress && (
         <>
           <Divider orientation="vertical" />
           <div className="GameMenu-Players">

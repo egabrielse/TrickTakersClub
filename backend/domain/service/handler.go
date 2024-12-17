@@ -13,8 +13,9 @@ func HandleCreateGameCommand(t *TableService, clientID string, data interface{})
 	} else if err := json.Unmarshal([]byte(data.(string)), &payload); utils.LogOnError(err) {
 		t.DirectMessage(clientID, MessageType.Error, "invalid settings payload")
 	} else {
-		t.Game = NewSheepshead([]string{t.Table.HostID}, payload)
-		t.Broadcast(MessageType.NewGame, t.Game.GetState())
+		t.Game = game.NewSheepshead([]string{t.Table.HostID}, payload)
+		payload := &NewGamePayload{Settings: t.Game.Settings, PlayerOrder: t.Game.PlayerOrder}
+		t.Broadcast(MessageType.NewGame, payload)
 	}
 }
 
@@ -36,9 +37,21 @@ func HandleSitDownCommand(t *TableService, clientID string, data interface{}) {
 		t.DirectMessage(clientID, MessageType.Error, err.Error())
 	} else {
 		t.Broadcast(MessageType.SatDown, clientID)
-		if t.Game.InProgress {
-			t.Broadcast(MessageType.GameStarted, t.Game.GetState())
-			// TODO: deal hands to players
+		if t.Game.HandInProgress() {
+			t.Broadcast(MessageType.GameStarted, &GameStartedPayload{
+				Scoreboard:  t.Game.Scoreboard,
+				PlayerOrder: t.Game.PlayerOrder,
+			})
+			for _, playerID := range t.Game.PlayerOrder {
+				t.DirectMessage(playerID, MessageType.DealHand, &DealHandPayload{
+					DealerIndex: t.Game.DealerIndex,
+					Cards:       t.Game.Hand.Players[playerID].Hand,
+				})
+			}
+			t.Broadcast(MessageType.UpNext, &UpNextPayload{
+				PlayerID: t.Game.Hand.WhoIsNext(),
+				Phase:    t.Game.Hand.Phase,
+			})
 		}
 	}
 }

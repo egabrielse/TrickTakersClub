@@ -12,15 +12,15 @@ import "./GameSeating.scss";
 
 export default function GameSeating() {
   const { hostId } = useContext(ChannelContext);
-  const { playerOrder, settings, sendCommand } = useContext(TableState);
+  const { playerOrder, gameSettings, sendCommand } = useContext(TableState);
   const { user } = useContext(AuthContext);
   const isHost = user?.uid === hostId;
   const isSeated = playerOrder.includes(user!.uid);
-  const tableFull = playerOrder.length >= settings!.playerCount;
+  const tableFull = playerOrder.length >= gameSettings!.playerCount;
 
   const renderSeats = () => {
     const seats = [];
-    for (let i = 0; i < settings!.playerCount; i++) {
+    for (let i = 0; i < gameSettings!.playerCount; i++) {
       if (playerOrder.length > i) {
         const uid = playerOrder[i];
         seats.push(<ProfileSnapshot key={uid} uid={uid} variant="name-row" />);
