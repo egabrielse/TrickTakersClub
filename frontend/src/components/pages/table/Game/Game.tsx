@@ -4,8 +4,7 @@ import { COMMAND_TYPES } from "../../../../constants/commands";
 import { TableState } from "../TablePage";
 
 export default function Game() {
-  const { playerHand, upNextId, scoreboard, sendCommand } =
-    useContext(TableState);
+  const { playerHand, upNextId, sendCommand } = useContext(TableState);
 
   return (
     <div className="Game">
