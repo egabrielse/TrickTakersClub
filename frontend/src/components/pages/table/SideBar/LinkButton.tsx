@@ -2,7 +2,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { Tooltip } from "@mui/material";
 import { useState } from "react";
-import PaperButton from "../../common/PaperButton";
+import PaperButton from "../../../common/PaperButton";
 
 type LinkButtonProps = {
   tableId: string;

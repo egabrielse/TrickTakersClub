@@ -1,8 +1,8 @@
 import { Skeleton } from "@mui/material";
 import { Message } from "ably";
 import { FunctionComponent, useContext } from "react";
-import UserAvatar from "../../../common/UserAvatar";
-import { UserStoreContext } from "../../../providers/UserStoreProvider";
+import UserAvatar from "../../../../common/UserAvatar";
+import { UserStoreContext } from "../../../../providers/UserStoreProvider";
 import "./ChatMessage.scss";
 
 type MessageProps = {

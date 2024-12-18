@@ -6,7 +6,7 @@ import "time"
 const TickerDuration = time.Second * 30
 
 // TimeoutDuration is the duration after which the service will be stopped if no activity is detected
-const TimeoutDuration = time.Minute * 30
+const TimeoutDuration = time.Minute * 45 // TODO: Change to 10 minutes
 
 var MessageType = struct {
 	// Service timed out due to inactivity

@@ -1,7 +1,7 @@
 import SendIcon from "@mui/icons-material/Send";
 import { IconButton, InputAdornment, Paper, TextField } from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
-import { TableState } from "../TablePage";
+import { TableState } from "../../TablePage";
 import "./Chat.scss";
 import ChatMessage from "./ChatMessage";
 

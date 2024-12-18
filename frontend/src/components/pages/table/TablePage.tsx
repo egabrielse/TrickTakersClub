@@ -20,12 +20,14 @@ import PaperButton from "../../common/PaperButton";
 import { DialogContext } from "../../dialog/DialogProvider";
 import LoadingPage from "../loading/LoadingPage";
 import { ChannelContext } from "./ChannelContextProvider";
-import Chat from "./Chat/Chat";
 import Game from "./Game/Game";
 import GameMenu from "./GameMenu/GameMenu";
-import LinkButton from "./LinkButton";
-import ScoreboardDisplay from "./ScoreboardDisplay";
+import Chat from "./SideBar/Chat/Chat";
+import LinkButton from "./SideBar/LinkButton";
+import ScoreboardDisplay from "./SideBar/ScoreboardDisplay";
 import "./TablePage.scss";
+import EndGameButton from "./TopBar/EndGameButton";
+import UpNextIndicator from "./TopBar/UpNextIndicator";
 import useGameState from "./useGameState";
 
 export const TableState = createContext<{
@@ -178,13 +180,16 @@ export default function TablePage() {
   return loaded ? (
     <TableState.Provider value={value}>
       <div className="TablePage">
-        <PaperButton
-          className="TablePage-ExitButton"
-          onClick={handleLeaveTable}
-          startIcon={<LogoutIcon style={{ transform: "rotate(180deg)" }} />}
-        >
-          Exit
-        </PaperButton>
+        <div className="TablePage-TopBar">
+          <PaperButton
+            onClick={handleLeaveTable}
+            startIcon={<LogoutIcon style={{ transform: "rotate(180deg)" }} />}
+          >
+            Exit
+          </PaperButton>
+          <UpNextIndicator />
+          <EndGameButton />
+        </div>
         <div className="TablePage-Main">
           {state.gameInProgress && state.handInProgress ? (
             <Game />

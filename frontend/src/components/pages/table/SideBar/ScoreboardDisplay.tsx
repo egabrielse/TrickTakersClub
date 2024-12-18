@@ -1,8 +1,8 @@
 import { Paper } from "@mui/material";
 import { useContext } from "react";
-import ProfileSnapshot from "../../common/ProfileSnapshot";
+import ProfileSnapshot from "../../../common/ProfileSnapshot";
+import { TableState } from "../TablePage";
 import "./ScoreboardDisplay.scss";
-import { TableState } from "./TablePage";
 
 export default function ScoreboardDisplay() {
   const { scoreboard } = useContext(TableState);
@@ -24,7 +24,7 @@ export default function ScoreboardDisplay() {
                 return b[1].score - a[1].score;
               })
               .map(([playerId, row]) => (
-                <tr>
+                <tr key={`scoreboard-row-${playerId}`}>
                   <td>
                     <ProfileSnapshot
                       size="small"
