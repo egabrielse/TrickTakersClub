@@ -1,16 +1,16 @@
-import { Paper } from "@mui/material";
-import { HttpStatusCode } from "axios";
+import { Paper, Typography } from "@mui/material";
+import { AxiosError, HttpStatusCode, isAxiosError } from "axios";
 import { ReactNode } from "react";
 import { ErrorResponse, isRouteErrorResponse } from "react-router";
 import "./ErrorPage.scss";
 
 type ErrorPageProps = {
-  error: Error | ErrorResponse | unknown;
+  error: Error | ErrorResponse | AxiosError | unknown;
 };
 
 export default function ErrorPage({ error }: ErrorPageProps): ReactNode {
   const getErrorTitle = () => {
-    if (isRouteErrorResponse(error)) {
+    if (isRouteErrorResponse(error) || isAxiosError(error)) {
       if (error.status === HttpStatusCode.NotFound) {
         return "404 Not Found";
       }
@@ -21,7 +21,7 @@ export default function ErrorPage({ error }: ErrorPageProps): ReactNode {
   };
 
   const getErrorDetails = () => {
-    if (isRouteErrorResponse(error)) {
+    if (isRouteErrorResponse(error) || isAxiosError(error)) {
       if (error.status === HttpStatusCode.NotFound) {
         return "The page you are looking for does not exist.";
       }
@@ -32,9 +32,11 @@ export default function ErrorPage({ error }: ErrorPageProps): ReactNode {
   };
 
   return (
-    <Paper className="ErrorPage">
-      <h2>{getErrorTitle()}</h2>
-      <p>{getErrorDetails()}</p>
-    </Paper>
+    <div className="ErrorPage">
+      <Paper>
+        <Typography variant="h3">{getErrorTitle()}</Typography>
+        <Typography variant="body1">{getErrorDetails()}</Typography>
+      </Paper>
+    </div>
   );
 }
