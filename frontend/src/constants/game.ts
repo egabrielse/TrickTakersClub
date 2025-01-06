@@ -1,4 +1,5 @@
 export const CALLING_METHOD = {
+    ALONE: 'alone',
     JACK_OF_DIAMONDS: 'jack-of-diamonds',
     CALL_AN_ACE: 'call-an-ace',
 } as const;

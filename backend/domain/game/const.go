@@ -1,9 +1,11 @@
 package game
 
 var CallingMethod = struct {
+	Alone          string
 	JackOfDiamonds string
 	CallAnAce      string
 }{
+	Alone:          "alone",
 	JackOfDiamonds: "jack-of-diamonds",
 	CallAnAce:      "call-an-ace",
 }
