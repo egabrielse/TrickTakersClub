@@ -1,0 +1,16 @@
+.Blind {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &-VerticalButton {
+        min-width: 3rem !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+
+        > span {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+        }
+    }
+}

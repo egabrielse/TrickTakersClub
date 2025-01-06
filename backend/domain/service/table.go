@@ -55,7 +55,7 @@ func (t *TableService) GetRefreshPayload(clientID string) *RefreshPayload {
 	// A game, send the state of the game
 	if t.Game != nil {
 		payload.GameState = &GameState{
-			DealerIndex: t.Game.DealerIndex,
+			DealerID:    t.Game.PlayerOrder[t.Game.DealerIndex],
 			Scoreboard:  t.Game.Scoreboard,
 			PlayerOrder: t.Game.PlayerOrder,
 			HandsPlayed: t.Game.HandsPlayed,
@@ -64,13 +64,13 @@ func (t *TableService) GetRefreshPayload(clientID string) *RefreshPayload {
 		// Hand is in progress, send the state of the current hand
 		if t.Game.HandInProgress() {
 			payload.HandState = &HandState{
-				CalledCard:   t.Game.Hand.CalledCard,
-				CardsInBlind: len(t.Game.Hand.Blind),
-				Phase:        t.Game.Hand.Phase,
-				PickerID:     t.Game.Hand.PickerID,
-				PartnerID:    t.Game.Hand.PartnerID,
-				Tricks:       t.Game.Hand.Tricks,
-				UpNextID:     t.Game.Hand.WhoIsNext(),
+				CalledCard: t.Game.Hand.CalledCard,
+				BlindSize:  len(t.Game.Hand.Blind),
+				Phase:      t.Game.Hand.Phase,
+				PickerID:   t.Game.Hand.PickerID,
+				PartnerID:  t.Game.Hand.PartnerID,
+				Tricks:     t.Game.Hand.Tricks,
+				UpNextID:   t.Game.Hand.WhoIsNext(),
 			}
 			// Client is a player in the current game, send their hand and bury
 			if player, ok := t.Game.Hand.Players[clientID]; ok {
@@ -117,7 +117,7 @@ func (t *TableService) HandleCommands(msg *ably.Message) {
 		HandleSitDownCommand(t, msg.ClientID, msg.Data)
 	case CommandType.StandUp:
 		HandleStandUpCommand(t, msg.ClientID, msg.Data)
-	case CommandType.EndGame:
+	case CommandType.EndGameCommand:
 		HandleEndGameCommand(t, msg.ClientID, msg.Data)
 	default:
 		logrus.Warnf("Unknown message type: %s", msg.Name)

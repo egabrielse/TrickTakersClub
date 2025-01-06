@@ -28,8 +28,8 @@ type RefreshPayload struct {
 
 // Direct - Sent to each player at the start of a new hand
 type DealHandPayload struct {
-	DealerIndex int          `json:"dealerIndex"`
-	Cards       []*deck.Card `json:"cards"`
+	DealerID string       `json:"dealerId"`
+	Cards    []*deck.Card `json:"cards"`
 }
 
 // Broadcast - Tells all players of who's turn is it

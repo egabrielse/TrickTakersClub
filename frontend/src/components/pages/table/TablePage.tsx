@@ -4,7 +4,7 @@ import { useChannel, usePresence } from "ably/react";
 import { createContext, useContext, useState } from "react";
 import { useNavigate } from "react-router";
 import { DIALOG_TYPES } from "../../../constants/dialog";
-import { HAND_PHASES } from "../../../constants/game";
+import { HAND_PHASE } from "../../../constants/game";
 import { MESSAGE_TYPES } from "../../../constants/message";
 import { PATHS } from "../../../constants/url";
 import { TypedCommand } from "../../../types/command";
@@ -35,16 +35,17 @@ export const TableState = createContext<{
   sendCommand: (command: TypedCommand) => void;
   chatMessages: Message[];
   gameInProgress: boolean;
-  dealerIndex: number;
+  dealerId: string;
   playerOrder: string[];
   gameSettings: GameSettings | null;
   scoreboard: Scoreboard | null;
   handInProgress: boolean;
-  cardsInBlind: number;
+  blindSize: number;
   calledCard: PlayingCard | null;
   pickerId: string | null;
   partnerId: string | null;
   tricks: TrickState[];
+  latestTrick: TrickState | null;
   phase: HandPhase;
   upNextId: string;
   playerHand: PlayingCard[];
@@ -54,17 +55,18 @@ export const TableState = createContext<{
   sendCommand: () => {},
   chatMessages: [],
   gameInProgress: false,
-  dealerIndex: 0,
+  dealerId: "",
   playerOrder: [],
   gameSettings: null,
   scoreboard: {},
   handInProgress: false,
-  cardsInBlind: 0,
+  blindSize: 0,
   calledCard: null,
   pickerId: null,
   partnerId: null,
   tricks: [],
-  phase: HAND_PHASES.PICK,
+  latestTrick: null,
+  phase: HAND_PHASE.PICK,
   upNextId: "",
   playerHand: [],
   playerBury: [],

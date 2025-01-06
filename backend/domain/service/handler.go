@@ -14,7 +14,10 @@ func HandleCreateGameCommand(t *TableService, clientID string, data interface{})
 		t.DirectMessage(clientID, MessageType.Error, "invalid settings payload")
 	} else {
 		t.Game = game.NewSheepshead([]string{t.Table.HostID}, payload)
-		payload := &NewGamePayload{Settings: t.Game.Settings, PlayerOrder: t.Game.PlayerOrder}
+		payload := &NewGamePayload{
+			Settings:    t.Game.Settings,
+			PlayerOrder: t.Game.PlayerOrder,
+		}
 		t.Broadcast(MessageType.NewGame, payload)
 	}
 }
@@ -44,8 +47,8 @@ func HandleSitDownCommand(t *TableService, clientID string, data interface{}) {
 			})
 			for _, playerID := range t.Game.PlayerOrder {
 				t.DirectMessage(playerID, MessageType.DealHand, &DealHandPayload{
-					DealerIndex: t.Game.DealerIndex,
-					Cards:       t.Game.Hand.Players[playerID].Hand,
+					DealerID: t.Game.PlayerOrder[t.Game.DealerIndex],
+					Cards:    t.Game.Hand.Players[playerID].Hand,
 				})
 			}
 			t.Broadcast(MessageType.UpNext, &UpNextPayload{
@@ -63,5 +66,16 @@ func HandleStandUpCommand(t *TableService, clientID string, data interface{}) {
 		t.DirectMessage(clientID, MessageType.Error, err.Error())
 	} else {
 		t.Broadcast(MessageType.StoodUp, clientID)
+	}
+}
+
+func HandlePickPassCommand(t *TableService, clientID string, data interface{}) {
+	params := &PickPassParams{}
+	if t.Game == nil {
+		t.DirectMessage(clientID, MessageType.Error, "game has not been initialized")
+	} else if t.Game.Hand.WhoIsNext() != clientID {
+		t.DirectMessage(clientID, MessageType.Error, "not your turn")
+	} else if err := json.Unmarshal([]byte(data.(string)), &params); utils.LogOnError(err) {
+		t.DirectMessage(clientID, MessageType.Error, "")
 	}
 }

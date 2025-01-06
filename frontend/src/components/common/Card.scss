@@ -1,0 +1,60 @@
+.CardContainer {
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.2);
+
+    &.selectable {
+        .Card {
+            box-shadow: 1px 0 3px 3px rgba(255, 215, 0, 0.5);
+            cursor: pointer;
+        }
+
+        &:hover {
+            translate: -50% -65% !important;
+            scale: 1.05;
+        }
+    }
+
+    &.selected {
+        .Card {
+            box-shadow: 1px 0 3px 3px rgba(255, 215, 0, 0.5);
+            cursor: pointer;
+        }
+
+        translate: -50% -80% !important;
+        scale: 1.05;
+    }
+
+    .Card {
+        display: flex;
+        border-radius: 5%;
+        box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.75);
+
+        &.selectable {
+            box-shadow: 1px 0 3px 3px rgba(255, 215, 0, 0.5);
+            cursor: pointer;
+
+            &:hover {
+                translate: -50% -65% !important;
+                scale: 1.05;
+            }
+        }
+
+        &.selected {
+            box-shadow: 1px 0 3px 3px rgba(255, 215, 0, 0.5);
+            translate: -50% -80% !important;
+            scale: 1.05;
+            cursor: pointer;
+        }
+    }
+
+    .OverlayText {
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.5);
+        top: 25%;
+        border-radius: 50%;
+        color: white;
+        font-size: 1.5rem;
+        text-align: center;
+        line-height: 1.8;
+    }
+}

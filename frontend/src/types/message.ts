@@ -53,6 +53,7 @@ export interface NewGameMessage extends Message {
     data: {
         settings: GameSettings;
         playerOrder: string[];
+        blindSize: number;
     };
 }
 
@@ -72,7 +73,7 @@ export interface GameOverMessage extends Message {
 export interface DealHandMessage extends Message {
     name: typeof MESSAGE_TYPES.DEAL_HAND;
     data: {
-        dealerIndex: number;
+        dealerId: string;
         cards: PlayingCard[];
     };
 }

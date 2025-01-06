@@ -53,10 +53,10 @@ var CommandType = struct {
 	// Create a new game
 	CreateGame string
 	// End the current game
-	EndGame string
+	EndGameCommand string
 }{
-	SitDown:    "sit-down",
-	StandUp:    "stand-up",
-	CreateGame: "create-game",
-	EndGame:    "end-game",
+	SitDown:        "sit-down",
+	StandUp:        "stand-up",
+	CreateGame:     "create-game",
+	EndGameCommand: "end-game",
 }

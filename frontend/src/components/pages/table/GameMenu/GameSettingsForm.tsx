@@ -11,10 +11,10 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { COMMAND_TYPES } from "../../../../constants/commands";
 import {
-  CALLING_METHODS,
+  CALLING_METHOD,
   GAME_SETTINGS_DEFAULTS,
   GAME_SETTINGS_PARAMS,
-  NO_PICK_RESOLUTIONS,
+  NO_PICK_RESOLUTION,
 } from "../../../../constants/game";
 import { GameSettings } from "../../../../types/game";
 import { AuthContext } from "../../auth/AuthContextProvider";
@@ -98,7 +98,7 @@ export default function GameSettingsForm() {
             value={values.callingMethod}
             onChange={(_, value) => onChange("callingMethod", value)}
           >
-            {Object.values(CALLING_METHODS).map((callingMethod) => (
+            {Object.values(CALLING_METHOD).map((callingMethod) => (
               <ToggleButton key={callingMethod} value={callingMethod}>
                 {callingMethod}
               </ToggleButton>
@@ -115,7 +115,7 @@ export default function GameSettingsForm() {
             value={values.noPickResolution}
             onChange={(_, value) => onChange("noPickResolution", value)}
           >
-            {Object.values(NO_PICK_RESOLUTIONS).map((noPickResolution) => (
+            {Object.values(NO_PICK_RESOLUTION).map((noPickResolution) => (
               <ToggleButton key={noPickResolution} value={noPickResolution}>
                 {noPickResolution}
               </ToggleButton>

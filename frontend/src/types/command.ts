@@ -5,7 +5,7 @@ export type CommandTypes = typeof COMMAND_TYPES[keyof typeof COMMAND_TYPES];
 
 interface Command {
     name: CommandTypes;
-    data: object | string | undefined;
+    data: object | string | boolean | undefined;
 }
 
 export interface SitDownCommand extends Command {
@@ -24,14 +24,20 @@ export interface CreateGameCommand extends Command {
     data: GameSettings;
 }
 
-export interface EndGame extends Command {
+export interface EndGameCommand extends Command {
     name: typeof COMMAND_TYPES.END_GAME;
     data: undefined;
+}
+
+export interface PickCommand extends Command {
+    name: typeof COMMAND_TYPES.PICK;
+    data: boolean;
 }
 
 export type TypedCommand = (
     SitDownCommand |
     StandUpCommand |
     CreateGameCommand |
-    EndGame
+    EndGameCommand |
+    PickCommand
 );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
     GameSettings,
     HandPhase,
@@ -6,7 +6,7 @@ import {
     Scoreboard,
     TrickState
 } from "../../../types/game";
-import { HAND_PHASES } from "../../../constants/game";
+import { HAND_PHASE } from "../../../constants/game";
 import {
     DealHandMessage,
     GameStartedMessage,
@@ -21,18 +21,18 @@ import {
 export default function useGameState() {
     // ~ Game state ~
     const [gameInProgress, setGameInProgress] = useState(false);
-    const [dealerIndex, setDealerIndex] = useState(0);
+    const [dealerId, setDealerId] = useState<string>("");
     const [playerOrder, setPlayerOrder] = useState<string[]>([]);
     const [gameSettings, setGameSettings] = useState<GameSettings | null>(null);
     const [scoreboard, setScoreboard] = useState<Scoreboard | null>(null);
     // ~ Hand state ~
     const [handInProgress, setHandInProgress] = useState(false);
-    const [cardsInBlind, setCardsInBlind] = useState<number>(0);
+    const [blindSize, setBlindSize] = useState<number>(0);
     const [calledCard, setCalledCard] = useState<PlayingCard | null>(null);
     const [pickerId, setPickerId] = useState<string | null>(null);
     const [partnerId, setPartnerId] = useState<string | null>(null);
     const [tricks, setTricks] = useState<TrickState[]>([]);
-    const [phase, setPhase] = useState<HandPhase>(HAND_PHASES.PICK);
+    const [phase, setPhase] = useState<HandPhase>(HAND_PHASE.PICK);
     const [upNextId, setUpNextId] = useState<string>("");
     // ~ Player hand state ~
     const [playerHand, setPlayerHand] = useState<PlayingCard[]>([]);
@@ -40,34 +40,42 @@ export default function useGameState() {
 
     const reset = () => {
         setGameInProgress(false);
-        setDealerIndex(0);
+        setDealerId("");
         setPlayerOrder([]);
         setGameSettings(null);
         setScoreboard({});
         setHandInProgress(false);
-        setCardsInBlind(0);
+        setBlindSize(0);
         setCalledCard(null);
         setPickerId(null);
         setPartnerId(null);
         setTricks([]);
-        setPhase(HAND_PHASES.PICK);
+        setPhase(HAND_PHASE.PICK);
         setUpNextId("");
         setPlayerHand([]);
         setPlayerBury([]);
     }
 
+    const latestTrick = useMemo(() => {
+        if (tricks.length === 0) {
+            return null;
+        } else {
+            return tricks[tricks.length - 1];
+        }
+    }, [tricks]);
+
     const handleRefreshMessage = (message: RefreshMessage) => {
         const { gameState, handState, playerHandState } = message.data;
         if (gameState) {
             setGameInProgress(true);
-            setDealerIndex(gameState.dealerIndex);
+            setDealerId(gameState.dealerId);
             setPlayerOrder(gameState.playerOrder);
             setGameSettings(gameState.settings);
             setScoreboard(gameState.scoreboard);
             setHandInProgress(handState !== undefined);
 
             if (handState) {
-                setCardsInBlind(handState.cardsInBlind);
+                setBlindSize(handState.blindSize);
                 setCalledCard(handState.calledCard);
                 setPickerId(handState.pickerId);
                 setPartnerId(handState.partnerId);
@@ -87,6 +95,7 @@ export default function useGameState() {
         setGameInProgress(true);
         setGameSettings(message.data.settings);
         setPlayerOrder(message.data.playerOrder);
+        setBlindSize(message.data.blindSize);
     }
 
     const handleSatDownMessage = (message: SatDownMessage) => {
@@ -108,7 +117,7 @@ export default function useGameState() {
     }
 
     const handleDealHandMessage = (message: DealHandMessage) => {
-        setDealerIndex(message.data.dealerIndex);
+        setDealerId(message.data.dealerId);
         setPlayerHand(message.data.cards);
     }
 
@@ -133,16 +142,17 @@ export default function useGameState() {
         handleUpNextMessage,
         handlePickMessage,
         gameInProgress,
-        dealerIndex,
+        dealerId,
         playerOrder,
         gameSettings,
         scoreboard,
         handInProgress,
-        cardsInBlind,
+        blindSize,
         calledCard,
         pickerId,
         partnerId,
         tricks,
+        latestTrick: latestTrick,
         phase,
         upNextId,
         playerHand,

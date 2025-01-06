@@ -3,4 +3,5 @@ export const COMMAND_TYPES = {
     STAND_UP: "stand-up",
     CREATE_GAME: "create-game",
     END_GAME: "end-game",
+    PICK: "pick",
 } as const;
