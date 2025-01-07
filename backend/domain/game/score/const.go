@@ -9,7 +9,7 @@ const (
 	PointsAll       = 120
 )
 
-// ScoringFunc is a function that calculates the scores for a hand of Sheepshead
+// ScoringFunc is a function that calculates the scores for a hand of Game
 type ScoringFunc func(
 	pickerID string, // ID of the picker
 	partnerID string, // ID of the picker's partner, empty if none

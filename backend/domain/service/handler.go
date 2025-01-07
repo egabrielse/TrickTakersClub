@@ -13,7 +13,7 @@ func HandleCreateGameCommand(t *TableService, clientID string, data interface{})
 	} else if err := json.Unmarshal([]byte(data.(string)), &payload); utils.LogOnError(err) {
 		t.DirectMessage(clientID, MessageType.Error, "invalid settings payload")
 	} else {
-		t.Game = game.NewSheepshead([]string{t.Table.HostID}, payload)
+		t.Game = game.NewGame([]string{t.Table.HostID}, payload)
 		payload := &NewGamePayload{
 			Settings:    t.Game.Settings,
 			PlayerOrder: t.Game.PlayerOrder,

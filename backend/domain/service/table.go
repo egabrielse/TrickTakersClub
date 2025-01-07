@@ -15,7 +15,7 @@ import (
 // TableService represents the service for controlling the table
 type TableService struct {
 	Table      *entity.TableEntity    `json:"table"`
-	Game       *game.Sheepshead       `json:"game"`
+	Game       *game.Game             `json:"game"`
 	LastUpdate time.Time              `json:"lastUpdate"`
 	Users      map[string]*UserClient `json:"users"`
 	AblyClient *ably.Realtime         `json:"-"`

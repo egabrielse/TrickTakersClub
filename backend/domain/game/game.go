@@ -5,7 +5,7 @@ import (
 	"main/utils"
 )
 
-type Sheepshead struct {
+type Game struct {
 	DealerIndex int           `json:"dealerIndex"` // Index of the dealer in the Players array
 	Scoreboard  Scoreboard    `json:"scoreboard"`  // Scoreboard
 	Hand        *Hand         `json:"hand"`        // Current hand being played
@@ -14,8 +14,8 @@ type Sheepshead struct {
 	Settings    *GameSettings `json:"settings"`    // Game settings
 }
 
-func NewSheepshead(playerIDs []string, settings *GameSettings) *Sheepshead {
-	game := &Sheepshead{
+func NewGame(playerIDs []string, settings *GameSettings) *Game {
+	game := &Game{
 		DealerIndex: -1,
 		HandsPlayed: 0,
 		Scoreboard:  nil,
@@ -25,7 +25,7 @@ func NewSheepshead(playerIDs []string, settings *GameSettings) *Sheepshead {
 	return game
 }
 
-func (g *Sheepshead) SitDown(playerID string) error {
+func (g *Game) SitDown(playerID string) error {
 	if g.HandInProgress() || len(g.PlayerOrder) == g.Settings.PlayerCount {
 		return fmt.Errorf("hand in progress")
 	} else {
@@ -43,7 +43,7 @@ func (g *Sheepshead) SitDown(playerID string) error {
 	}
 }
 
-func (g *Sheepshead) StandUp(playerID string) error {
+func (g *Game) StandUp(playerID string) error {
 	if g.HandInProgress() {
 		return fmt.Errorf("hand in progress")
 	} else {
@@ -57,23 +57,23 @@ func (g *Sheepshead) StandUp(playerID string) error {
 	}
 }
 
-func (g *Sheepshead) StartGame() {
+func (g *Game) StartGame() {
 	g.Scoreboard = NewScoreboard(g.PlayerOrder)
 	g.StartNewHand()
 }
 
-func (g *Sheepshead) StartNewHand() {
+func (g *Game) StartNewHand() {
 	g.DealerIndex = (g.DealerIndex + 1) % len(g.PlayerOrder)
 	playerOrder := utils.RelistStartingWith(g.PlayerOrder, g.PlayerOrder[g.DealerIndex])
 	handSize, blindSize := g.Settings.DeriveHandBlindSize()
 	g.Hand = NewHand(playerOrder, handSize, blindSize)
 }
 
-func (g *Sheepshead) HandInProgress() bool {
+func (g *Game) HandInProgress() bool {
 	return g.Hand != nil
 }
 
-// func (g *Sheepshead) UpdateScores(summary *HandSummary) {
+// func (g *Game) UpdateScores(summary *HandSummary) {
 // 	for _, player := range g.Players {
 // 		row := g.Scoreboard[player.PlayerID]
 // 		row.Score += summary.Scores[player.PlayerID]
@@ -82,7 +82,7 @@ func (g *Sheepshead) HandInProgress() bool {
 // 	}
 // }
 
-// func (g *Sheepshead) GetNextTurn() *NextTurn {
+// func (g *Game) GetNextTurn() *NextTurn {
 // 	if g.Hand == nil {
 // 		return nil
 // 	} else if upNextID := g.Hand.GetUpNextID(); upNextID == "" {
@@ -118,7 +118,7 @@ func (g *Sheepshead) HandInProgress() bool {
 // 	}
 // }
 
-// func (g *Sheepshead) TakeTurn(turn *Turn) error {
+// func (g *Game) TakeTurn(turn *Turn) error {
 // 	if g.Hand == nil {
 // 		return fmt.Errorf("no hand in progress")
 // 	} else if g.Hand.GetUpNextID() != turn.PlayerID {
