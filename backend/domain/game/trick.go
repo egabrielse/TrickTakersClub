@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"main/domain/game/deck"
 )
 
@@ -20,18 +21,16 @@ func NewTrick(turnOrder []string) *Trick {
 	}
 }
 
+// Returns the total amount of points in the trick
 func (t *Trick) CountPoints() (points int) {
 	points = 0
-	for index, card := range t.Cards {
-		if index < t.UpNextIndex {
-			points += card.GetPoints()
-		} else {
-			break
-		}
+	for _, card := range t.Cards {
+		points += card.GetPoints()
 	}
 	return points
 }
 
+// Returns the player ID of the player who's turn it is to play a card
 func (t *Trick) GetUpNextID() (playerID string) {
 	if t.UpNextIndex < len(t.TurnOrder) {
 		return t.TurnOrder[t.UpNextIndex]
@@ -39,6 +38,7 @@ func (t *Trick) GetUpNextID() (playerID string) {
 	return ""
 }
 
+// Returns the card that was played first in the trick
 func (t *Trick) GetLeadingCard() (card *deck.Card) {
 	if len(t.Cards) == 0 {
 		return nil
@@ -46,6 +46,7 @@ func (t *Trick) GetLeadingCard() (card *deck.Card) {
 	return t.Cards[0]
 }
 
+// Returns the suit of the card that was played first in the trick
 func (t *Trick) GetLeadingSuit() (suit string) {
 	if card := t.GetLeadingCard(); card == nil {
 		return ""
@@ -54,6 +55,7 @@ func (t *Trick) GetLeadingSuit() (suit string) {
 	}
 }
 
+// Returns the player ID of the player who is taking the trick
 func (t *Trick) GetTakerID() (playerID string) {
 	if t.TakerIndex != -1 {
 		return t.TurnOrder[t.TakerIndex]
@@ -61,14 +63,21 @@ func (t *Trick) GetTakerID() (playerID string) {
 	return ""
 }
 
+// Returns true if the trick is complete
 func (t *Trick) IsComplete() (isComplete bool) {
 	return len(t.Cards) == len(t.TurnOrder)
 }
 
-func (t *Trick) PlayCard(card *deck.Card) {
-	t.Cards = append(t.Cards, card)
-	if t.TakerIndex == -1 || card.Compare(t.Cards[t.TakerIndex], t.GetLeadingSuit()) {
-		t.TakerIndex = t.UpNextIndex
+// Plays a card in the trick
+func (t *Trick) PlayCard(card *deck.Card) error {
+	if t.IsComplete() {
+		return fmt.Errorf("trick is already complete")
+	} else {
+		t.Cards = append(t.Cards, card)
+		if t.TakerIndex == -1 || card.Compare(t.Cards[t.TakerIndex], t.GetLeadingSuit()) {
+			t.TakerIndex = t.UpNextIndex
+		}
+		t.UpNextIndex++
+		return nil
 	}
-	t.UpNextIndex++
 }

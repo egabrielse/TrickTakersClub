@@ -68,14 +68,3 @@ func HandleStandUpCommand(t *TableService, clientID string, data interface{}) {
 		t.Broadcast(MessageType.StoodUp, clientID)
 	}
 }
-
-func HandlePickPassCommand(t *TableService, clientID string, data interface{}) {
-	params := &PickPassParams{}
-	if t.Game == nil {
-		t.DirectMessage(clientID, MessageType.Error, "game has not been initialized")
-	} else if t.Game.Hand.WhoIsNext() != clientID {
-		t.DirectMessage(clientID, MessageType.Error, "not your turn")
-	} else if err := json.Unmarshal([]byte(data.(string)), &params); utils.LogOnError(err) {
-		t.DirectMessage(clientID, MessageType.Error, "")
-	}
-}

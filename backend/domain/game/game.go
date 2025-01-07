@@ -85,7 +85,7 @@ func (g *Sheepshead) HandInProgress() bool {
 // func (g *Sheepshead) GetNextTurn() *NextTurn {
 // 	if g.Hand == nil {
 // 		return nil
-// 	} else if upNextID := g.Hand.WhoIsNext(); upNextID == "" {
+// 	} else if upNextID := g.Hand.GetUpNextID(); upNextID == "" {
 // 		return nil
 // 	} else if player := g.Players[upNextID]; player == nil {
 // 		return nil
@@ -121,7 +121,7 @@ func (g *Sheepshead) HandInProgress() bool {
 // func (g *Sheepshead) TakeTurn(turn *Turn) error {
 // 	if g.Hand == nil {
 // 		return fmt.Errorf("no hand in progress")
-// 	} else if g.Hand.WhoIsNext() != turn.PlayerID {
+// 	} else if g.Hand.GetUpNextID() != turn.PlayerID {
 // 		return fmt.Errorf("not %s's turn", turn.PlayerID)
 // 	} else if player, ok := g.Players[turn.PlayerID]; !ok {
 // 		return fmt.Errorf("player not found")
