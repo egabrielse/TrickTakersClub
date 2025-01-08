@@ -65,29 +65,19 @@ func (g *Game) StartGame() {
 func (g *Game) StartNewHand() {
 	g.DealerIndex = (g.DealerIndex + 1) % len(g.PlayerOrder)
 	playerOrder := utils.RelistStartingWith(g.PlayerOrder, g.PlayerOrder[g.DealerIndex])
-	handSize, blindSize := g.Settings.DeriveHandBlindSize()
-	g.Hand = NewHand(playerOrder, handSize, blindSize)
+	g.Hand = NewHand(g.Settings, playerOrder, 0)
 }
 
 func (g *Game) HandInProgress() bool {
 	return g.Hand != nil
 }
 
-// func (g *Game) UpdateScores(summary *HandSummary) {
-// 	for _, player := range g.Players {
-// 		row := g.Scoreboard[player.PlayerID]
-// 		row.Score += summary.Scores[player.PlayerID]
-// 		row.TotalPoints += summary.PointsWon[player.PlayerID]
-// 		row.TotalTricks += summary.TricksWon[player.PlayerID]
-// 	}
-// }
-
 // func (g *Game) GetNextTurn() *NextTurn {
 // 	if g.Hand == nil {
 // 		return nil
-// 	} else if upNextID := g.Hand.GetUpNextID(); upNextID == "" {
+// 	} else if upNextID := g.Hand.WhoIsNext(); upNextID == "" {
 // 		return nil
-// 	} else if player := g.Players[upNextID]; player == nil {
+// 	} else if player, err := g.Hand.ValidateUpNext(upNextID); err != nil {
 // 		return nil
 // 	} else {
 // 		nextTurn := NewNextTurn()
@@ -108,7 +98,7 @@ func (g *Game) HandInProgress() bool {
 // 			// nextTurn.BlindSize = g.Settings.BlindSize
 // 		case HandPhase.Play:
 // 			nextTurn.TurnType = TurnTypePlay
-// 			trick := g.Hand.GetThisTrick()
+// 			trick := g.Hand.GetCurrentTrick()
 // 			leadCard := trick.GetLeadingCard()
 // 			playableCards := deck.FilterForPlayableCards(player.Hand, leadCard)
 // 			deck.OrderCards(playableCards)
@@ -118,10 +108,19 @@ func (g *Game) HandInProgress() bool {
 // 	}
 // }
 
+// func (g *Game) UpdateScores(summary *HandSummary) {
+// 	for _, player := range g.Players {
+// 		row := g.Scoreboard[player.PlayerID]
+// 		row.Score += summary.Scores[player.PlayerID]
+// 		row.TotalPoints += summary.PointsWon[player.PlayerID]
+// 		row.TotalTricks += summary.TricksWon[player.PlayerID]
+// 	}
+// }
+
 // func (g *Game) TakeTurn(turn *Turn) error {
 // 	if g.Hand == nil {
 // 		return fmt.Errorf("no hand in progress")
-// 	} else if g.Hand.GetUpNextID() != turn.PlayerID {
+// 	} else if g.Hand.WhoIsNext() != turn.PlayerID {
 // 		return fmt.Errorf("not %s's turn", turn.PlayerID)
 // 	} else if player, ok := g.Players[turn.PlayerID]; !ok {
 // 		return fmt.Errorf("player not found")

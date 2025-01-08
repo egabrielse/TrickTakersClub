@@ -22,3 +22,19 @@ func RelistStartingWith[T comparable](list []T, start T) []T {
 	}
 	return list
 }
+
+func Contains[T comparable](list []T, item T) bool {
+	for _, v := range list {
+		if v == item {
+			return true
+		}
+	}
+	return false
+}
+
+func SumValues(m []int) (sum int) {
+	for _, v := range m {
+		sum += v
+	}
+	return sum
+}

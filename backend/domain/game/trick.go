@@ -31,7 +31,7 @@ func (t *Trick) CountPoints() (points int) {
 }
 
 // Returns the player ID of the player who's turn it is to play a card
-func (t *Trick) GetUpNextID() (playerID string) {
+func (t *Trick) WhoIsNext() (playerID string) {
 	if t.UpNextIndex < len(t.TurnOrder) {
 		return t.TurnOrder[t.UpNextIndex]
 	}

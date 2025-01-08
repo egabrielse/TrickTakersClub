@@ -1,7 +1,5 @@
 import {
   Button,
-  Checkbox,
-  FormControlLabel,
   InputLabel,
   Slider,
   ToggleButton,
@@ -28,7 +26,6 @@ const DefaultGameSettings: GameSettings = {
   callingMethod: GAME_SETTINGS_DEFAULTS.CALLING_METHOD,
   noPickResolution: GAME_SETTINGS_DEFAULTS.NO_PICK_RESOLUTION,
   doubleOnTheBump: GAME_SETTINGS_DEFAULTS.DOUBLE_ON_THE_BUMP,
-  blitzing: GAME_SETTINGS_DEFAULTS.BLITZING,
 };
 
 export default function GameSettingsForm() {
@@ -121,30 +118,6 @@ export default function GameSettingsForm() {
               </ToggleButton>
             ))}
           </ToggleButtonGroup>
-        </div>
-
-        <div className="LabeledInput">
-          <InputLabel margin="dense">Scoring Rules</InputLabel>
-          <div className="Row">
-            <FormControlLabel
-              id="doubleOnTheBump"
-              name="doubleOnTheBump"
-              disabled={inputDisabled}
-              value={values.doubleOnTheBump}
-              onChange={(_, checked) => onChange("doubleOnTheBump", checked)}
-              control={<Checkbox checked={values.doubleOnTheBump} />}
-              label="Double on the Bump"
-            />
-            <FormControlLabel
-              id="blitzing"
-              name="blitzing"
-              disabled={inputDisabled}
-              value={values.blitzing}
-              onChange={(_, checked) => onChange("blitzing", checked)}
-              control={<Checkbox checked={values.blitzing} />}
-              label="Blitzing"
-            />
-          </div>
         </div>
       </div>
       {isHost && (

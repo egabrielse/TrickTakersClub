@@ -1,4 +1,4 @@
-package score
+package scoring
 
 // Key point values in a hand
 const (

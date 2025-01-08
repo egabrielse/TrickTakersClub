@@ -18,7 +18,6 @@ var NoPickResolution = struct {
 }{
 	ScrewTheDealer: "screw-the-dealer",
 	Leasters:       "leasters",
-	Mosters:        "mosters",
 	Doublers:       "doublers",
 }
 
@@ -52,16 +51,26 @@ var PlayerRole = struct {
 
 var HandPhase = struct {
 	Pick  string
-	Call  string
 	Bury  string
+	Call  string
 	Play  string
 	Score string
 }{
 	Pick:  "pick",
-	Call:  "call",
 	Bury:  "bury",
+	Call:  "call",
 	Play:  "play",
 	Score: "score",
 }
 
 const DeckSize = 32
+
+var ScoringMethod = struct {
+	Default  string
+	Leasters string
+	Mosters  string
+}{
+	Default:  "default",
+	Leasters: "leasters",
+	Mosters:  "mosters",
+}

@@ -35,17 +35,17 @@ func TestCountPoints(t *testing.T) {
 	})
 }
 
-func TestGetUpNextID(t *testing.T) {
+func TestWhoIsNext(t *testing.T) {
 	trick := NewTrick(Players)
 
 	t.Run("no card played", func(t *testing.T) {
-		playerID := trick.GetUpNextID()
+		playerID := trick.WhoIsNext()
 		assert.Equal(t, Player1, playerID, "expected Player1")
 	})
 
 	t.Run("one card played", func(t *testing.T) {
 		trick.PlayCard(deck.NewCard(deck.CardSuit.Heart, deck.CardRank.Ten))
-		playerID := trick.GetUpNextID()
+		playerID := trick.WhoIsNext()
 		assert.Equal(t, Player2, playerID, "expected Player2")
 	})
 }

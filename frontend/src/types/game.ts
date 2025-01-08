@@ -10,7 +10,6 @@ export type GameSettings = {
     callingMethod: CallingMethod;
     noPickResolution: NoPickResolution;
     doubleOnTheBump: boolean;
-    blitzing: boolean;
 }
 
 export type PlayingCard = {
