@@ -7,9 +7,12 @@ import (
 func ScoreLeastersHand(
 	points map[string]int,
 	tricks map[string]int,
-) (scores map[string]int) {
+) (
+	scores map[string]int, // Map from player ID to score
+	winnerIDs []string, // List of player IDs who won the hand
+) {
 	playerIDs := utils.MapKeys(points)
-	winnerIDs := []string{}
+	winnerIDs = []string{}
 	winningPoints := 0
 
 	for _, playerID := range playerIDs {
@@ -47,5 +50,5 @@ func ScoreLeastersHand(
 		}
 	}
 
-	return scores
+	return scores, utils.AlphabetizeList(winnerIDs)
 }

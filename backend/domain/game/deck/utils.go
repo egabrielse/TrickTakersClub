@@ -10,3 +10,10 @@ func OrderCards(cards []*Card) {
 		}
 	}
 }
+
+func CountPoints(cards []*Card) (points int) {
+	for _, card := range cards {
+		points += card.GetPoints()
+	}
+	return points
+}

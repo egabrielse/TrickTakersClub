@@ -12,13 +12,31 @@ func ScoreHand(
 	points map[string]int,
 	tricks map[string]int,
 	doubleOnBump bool,
-) (scores map[string]int) {
+) (
+	scores map[string]int, // Map from player ID to score
+	winnerIDs []string, // List of player IDs who won the hand
+) {
 	// sum count of tricks to find total tricks
 	totalTricks := 0
 	for _, trick := range tricks {
 		totalTricks += trick
 	}
 	playerIDs := utils.MapKeys(points)
+	pickingTeamPoints := points[pickerID] + points[partnerID]
+	pickingTeamTricks := tricks[pickerID] + tricks[partnerID]
+
+	// Picking team must take more than half the points to win
+	pickeringTeamWon := pickingTeamPoints > PointsHalf
+
+	// List the IDs of the winners
+	winnerIDs = []string{}
+	for _, ID := range playerIDs {
+		if (ID == pickerID || ID == partnerID) && pickeringTeamWon {
+			winnerIDs = append(winnerIDs, ID)
+		} else if ID != pickerID && ID != partnerID && !pickeringTeamWon {
+			winnerIDs = append(winnerIDs, ID)
+		}
+	}
 
 	// Base score adjustments (defaults to opponents losing 1 point each)
 	opponentBaseScore := -1
@@ -38,9 +56,6 @@ func ScoreHand(
 		pickerBaseScore = int(math.Ceil(float64(len(playerIDs)-2) / 2))
 		partnerBaseScore = int(math.Floor(float64(len(playerIDs)-2) / 2))
 	}
-
-	pickingTeamPoints := points[pickerID] + points[partnerID]
-	pickingTeamTricks := tricks[pickerID] + tricks[partnerID]
 
 	// Apply default score multipliers
 	if pickingTeamTricks == totalTricks || pickingTeamTricks == PointsNone {
@@ -73,5 +88,5 @@ func ScoreHand(
 			scores[ID] = opponentBaseScore * scoreMultiplier
 		}
 	}
-	return scores
+	return scores, utils.AlphabetizeList(winnerIDs)
 }

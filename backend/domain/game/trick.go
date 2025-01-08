@@ -21,15 +21,6 @@ func NewTrick(turnOrder []string) *Trick {
 	}
 }
 
-// Returns the total amount of points in the trick
-func (t *Trick) CountPoints() (points int) {
-	points = 0
-	for _, card := range t.Cards {
-		points += card.GetPoints()
-	}
-	return points
-}
-
 // Returns the player ID of the player who's turn it is to play a card
 func (t *Trick) WhoIsNext() (playerID string) {
 	if t.UpNextIndex < len(t.TurnOrder) {

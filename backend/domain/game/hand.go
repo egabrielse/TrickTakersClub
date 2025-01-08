@@ -220,54 +220,40 @@ func (h *Hand) SummarizeHand() *HandSummary {
 	// Count up the points in the tricks
 	for _, trick := range h.Tricks {
 		takerID := trick.GetTakerID()
-		trickPoints := trick.CountPoints()
 		tricks[takerID] += 1
-		points[takerID] += trickPoints
+		points[takerID] += deck.CountPoints(trick.Cards)
 		sum.TrickSums = append(sum.TrickSums, TrickSummary{
 			TakerID: takerID,
 			Cards:   trick.Cards,
-			Points:  trickPoints,
+			Points:  points[takerID],
 		})
 	}
 
-	if h.PickerID == "" {
+	if h.PickerID == "" && h.Settings.NoPickResolution == NoPickResolution.Leasters {
+		// Leasters Hand (No Picker)
 		sum.PointsWon = points
 		sum.TricksWon = tricks
-
-		switch h.Settings.NoPickResolution {
-		case NoPickResolution.Leasters:
-			sum.Scores = scoring.ScoreLeastersHand(points, tricks)
-		case NoPickResolution.Mosters:
-			sum.Scores = scoring.ScoreMostersHand(points)
-		}
+		sum.Scores, sum.Winners = scoring.ScoreLeastersHand(points, tricks)
+	} else if h.PickerID == "" && h.Settings.NoPickResolution == NoPickResolution.Mosters {
+		// Mosters Hand (No Picker)
+		sum.PointsWon = points
+		sum.TricksWon = tricks
+		sum.Scores, sum.Winners = scoring.ScoreMostersHand(points)
 	} else {
-		// There is a picker, so count the points in the picker's bury
+		// Normal Hand (Someone picked)
 		sum.PickerID = h.PickerID
 		player := h.Players[h.PickerID]
-		buriedPoints := 0
-		for _, card := range player.Bury {
-			buriedPoints += card.GetPoints()
-		}
-		// Add the bury to the points
-		points[h.PickerID] = buriedPoints
+
+		// Count up the points in the bury and add to the picker's points
+		points[h.PickerID] += deck.CountPoints(player.Bury)
 		sum.BurySummary = BurySummary{
 			Cards:  player.Bury,
-			Points: buriedPoints,
-		}
-
-		// Determine the winners of the hand
-		pickersWon := (points[h.PickerID] + points[h.PartnerID]) > scoring.PointsHalf
-		for playerID := range h.Players {
-			if pickersWon && playerID == h.PickerID || playerID == h.PartnerID {
-				sum.Winners = append(sum.Winners, playerID)
-			} else if !pickersWon && playerID != h.PickerID && playerID != h.PartnerID {
-				sum.Winners = append(sum.Winners, playerID)
-			}
+			Points: points[h.PickerID],
 		}
 
 		sum.PointsWon = points
 		sum.TricksWon = tricks
-		sum.Scores = scoring.ScoreHand(h.PickerID, h.PartnerID, points, tricks, h.Settings.DoubleOnTheBump)
+		sum.Scores, sum.Winners = scoring.ScoreHand(h.PickerID, h.PartnerID, points, tricks, h.Settings.DoubleOnTheBump)
 	}
 	return sum
 }

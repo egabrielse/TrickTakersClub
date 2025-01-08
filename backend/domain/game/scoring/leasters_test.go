@@ -19,14 +19,14 @@ func TestScoreLeastersHand(t *testing.T) {
 			"2": 3,
 			"3": 4,
 		}
-		scores := ScoreLeastersHand(points, tricks)
+		scores, winnerIDs := ScoreLeastersHand(points, tricks)
 		expected := map[string]int{
 			"1": -1,
 			"2": 2,
 			"3": -1,
 		}
 		assert.Equal(t, expected, scores)
-
+		assert.Equal(t, []string{"2"}, winnerIDs)
 		utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 	})
 
@@ -45,7 +45,7 @@ func TestScoreLeastersHand(t *testing.T) {
 			"4": 2,
 			"5": 2,
 		}
-		scores := ScoreLeastersHand(points, tricks)
+		scores, winnerIDs := ScoreLeastersHand(points, tricks)
 		expected := map[string]int{
 			"1": -1,
 			"2": 4,
@@ -54,7 +54,7 @@ func TestScoreLeastersHand(t *testing.T) {
 			"5": -1,
 		}
 		assert.Equal(t, expected, scores)
-
+		assert.Equal(t, []string{"2"}, winnerIDs)
 		utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 	})
 
@@ -73,7 +73,7 @@ func TestScoreLeastersHand(t *testing.T) {
 			"4": 2,
 			"5": 2,
 		}
-		scores := ScoreLeastersHand(points, tricks)
+		scores, winnerIDs := ScoreLeastersHand(points, tricks)
 		expected := map[string]int{
 			"1": -2,
 			"2": 3,
@@ -82,7 +82,7 @@ func TestScoreLeastersHand(t *testing.T) {
 			"5": 3,
 		}
 		assert.Equal(t, expected, scores)
-
+		assert.Equal(t, []string{"2", "5"}, winnerIDs)
 		utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 	})
 
@@ -101,7 +101,7 @@ func TestScoreLeastersHand(t *testing.T) {
 			"4": 2,
 			"5": 2,
 		}
-		scores := ScoreLeastersHand(points, tricks)
+		scores, winnerIDs := ScoreLeastersHand(points, tricks)
 		expected := map[string]int{
 			"1": -1,
 			"2": -1,
@@ -110,7 +110,7 @@ func TestScoreLeastersHand(t *testing.T) {
 			"5": 4,
 		}
 		assert.Equal(t, expected, scores)
-
+		assert.Equal(t, []string{"5"}, winnerIDs)
 		utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 	})
 }

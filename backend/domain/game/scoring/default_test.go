@@ -10,8 +10,8 @@ import (
 func TestScoreHand(t *testing.T) {
 	t.Run("Three players", func(t *testing.T) {
 		points := map[string]int{
-			"1": 20,
-			"2": 60,
+			"1": 15,
+			"2": 65,
 			"3": 40,
 		}
 		tricks := map[string]int{
@@ -22,52 +22,52 @@ func TestScoreHand(t *testing.T) {
 
 		t.Run("Picker wins", func(t *testing.T) {
 			pickerID := "2"
-			scores := ScoreHand(pickerID, "", points, tricks, false)
+			scores, winnerIDs := ScoreHand(pickerID, "", points, tricks, false)
 			expected := map[string]int{
 				"1": -1,
 				"2": 2,
 				"3": -1,
 			}
 			assert.Equal(t, expected, scores)
-
+			assert.Equal(t, []string{"2"}, winnerIDs)
 			utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 		})
 
-		t.Run("Opponent wins but picker gets schneider", func(t *testing.T) {
+		t.Run("Opponents win but picker gets schneider", func(t *testing.T) {
 			pickerID := "3"
-			scores := ScoreHand(pickerID, "", points, tricks, false)
+			scores, winnerIDs := ScoreHand(pickerID, "", points, tricks, false)
 			expected := map[string]int{
 				"1": 1,
 				"2": 1,
 				"3": -2,
 			}
 			assert.Equal(t, expected, scores)
-
+			assert.Equal(t, []string{"1", "2"}, winnerIDs)
 			utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 		})
 
 		t.Run("Opponent wins and prevents schneider", func(t *testing.T) {
 			pickerID := "1"
-			scores := ScoreHand(pickerID, "", points, tricks, false)
+			scores, winnerIDs := ScoreHand(pickerID, "", points, tricks, false)
 			expected := map[string]int{
 				"1": -4,
 				"2": 2,
 				"3": 2,
 			}
 			assert.Equal(t, expected, scores)
-
+			assert.Equal(t, []string{"2", "3"}, winnerIDs)
 			utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 		})
 		t.Run("Picker loses with Double on the Bump", func(t *testing.T) {
 			pickerID := "1"
-			scores := ScoreHand(pickerID, "", points, tricks, true)
+			scores, winnerIDs := ScoreHand(pickerID, "", points, tricks, true)
 			expected := map[string]int{
 				"1": -8,
 				"2": 4,
 				"3": 4,
 			}
 			assert.Equal(t, expected, scores)
-
+			assert.Equal(t, []string{"2", "3"}, winnerIDs)
 			utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 		})
 	})
@@ -75,9 +75,9 @@ func TestScoreHand(t *testing.T) {
 	t.Run("Four players", func(t *testing.T) {
 		points := map[string]int{
 			"1": 30,
-			"2": 60,
+			"2": 65,
 			"3": 10,
-			"4": 20,
+			"4": 15,
 		}
 		tricks := map[string]int{
 			"1": 3,
@@ -88,7 +88,7 @@ func TestScoreHand(t *testing.T) {
 
 		t.Run("Picker wins", func(t *testing.T) {
 			pickerID := "2"
-			scores := ScoreHand(pickerID, "", points, tricks, false)
+			scores, winnerIDs := ScoreHand(pickerID, "", points, tricks, false)
 			expected := map[string]int{
 				"1": -1,
 				"2": 3,
@@ -96,12 +96,12 @@ func TestScoreHand(t *testing.T) {
 				"4": -1,
 			}
 			assert.Equal(t, expected, scores)
-
+			assert.Equal(t, []string{"2"}, winnerIDs)
 			utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 		})
 		t.Run("Opponent wins", func(t *testing.T) {
 			pickerID := "1"
-			scores := ScoreHand(pickerID, "", points, tricks, false)
+			scores, winnerIDs := ScoreHand(pickerID, "", points, tricks, false)
 			expected := map[string]int{
 				"1": -3,
 				"2": 1,
@@ -109,12 +109,12 @@ func TestScoreHand(t *testing.T) {
 				"4": 1,
 			}
 			assert.Equal(t, expected, scores)
-
+			assert.Equal(t, []string{"2", "3", "4"}, winnerIDs)
 			utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 		})
 		t.Run("Picker loses with Double on the Bump", func(t *testing.T) {
 			pickerID := "1"
-			scores := ScoreHand(pickerID, "", points, tricks, true)
+			scores, winnerIDs := ScoreHand(pickerID, "", points, tricks, true)
 			expected := map[string]int{
 				"1": -6,
 				"2": 2,
@@ -122,7 +122,7 @@ func TestScoreHand(t *testing.T) {
 				"4": 2,
 			}
 			assert.Equal(t, expected, scores)
-
+			assert.Equal(t, []string{"2", "3", "4"}, winnerIDs)
 			utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 		})
 	})
@@ -143,7 +143,7 @@ func TestScoreHand(t *testing.T) {
 				"4": 0,
 				"5": 0,
 			}
-			scores := ScoreHand("1", "", points, tricks, false)
+			scores, winnerIDs := ScoreHand("1", "", points, tricks, false)
 			expected := map[string]int{
 				"1": 12,
 				"2": -3,
@@ -152,7 +152,7 @@ func TestScoreHand(t *testing.T) {
 				"5": -3,
 			}
 			assert.Equal(t, expected, scores)
-
+			assert.Equal(t, []string{"1"}, winnerIDs)
 			utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 		})
 
@@ -171,7 +171,7 @@ func TestScoreHand(t *testing.T) {
 				"4": 1,
 				"5": 1,
 			}
-			scores := ScoreHand("1", "2", points, tricks, false)
+			scores, winnerIDs := ScoreHand("1", "2", points, tricks, false)
 			expected := map[string]int{
 				"1": 2,
 				"2": 1,
@@ -180,7 +180,7 @@ func TestScoreHand(t *testing.T) {
 				"5": -1,
 			}
 			assert.Equal(t, expected, scores)
-
+			assert.Equal(t, []string{"1", "2"}, winnerIDs)
 			utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 		})
 
@@ -199,7 +199,7 @@ func TestScoreHand(t *testing.T) {
 				"4": 2,
 				"5": 1,
 			}
-			scores := ScoreHand("1", "5", points, tricks, true)
+			scores, winnerIDs := ScoreHand("1", "5", points, tricks, true)
 			expected := map[string]int{
 				"1": -4,
 				"2": 2,
@@ -208,7 +208,7 @@ func TestScoreHand(t *testing.T) {
 				"5": -2,
 			}
 			assert.Equal(t, expected, scores)
-
+			assert.Equal(t, []string{"2", "3", "4"}, winnerIDs)
 			utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 		})
 
@@ -227,7 +227,7 @@ func TestScoreHand(t *testing.T) {
 				"4": 2,
 				"5": 1,
 			}
-			scores := ScoreHand("1", "", points, tricks, true)
+			scores, winnerIDs := ScoreHand("1", "", points, tricks, true)
 			expected := map[string]int{
 				"1": -24,
 				"2": 6,
@@ -236,7 +236,7 @@ func TestScoreHand(t *testing.T) {
 				"5": 6,
 			}
 			assert.Equal(t, expected, scores)
-
+			assert.Equal(t, []string{"2", "3", "4", "5"}, winnerIDs)
 			utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 		})
 	})

@@ -14,13 +14,14 @@ func TestScoreMostersHand(t *testing.T) {
 			"2": 30,
 			"3": 60,
 		}
-		scores := ScoreMostersHand(points)
+		scores, winnerIDs := ScoreMostersHand(points)
 		expected := map[string]int{
 			"1": 1,
 			"2": 1,
 			"3": -2,
 		}
 		assert.Equal(t, expected, scores)
+		assert.Equal(t, []string{"1", "2"}, winnerIDs)
 		utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 	})
 
@@ -31,7 +32,7 @@ func TestScoreMostersHand(t *testing.T) {
 			"3": 60,
 			"4": 20,
 		}
-		scores := ScoreMostersHand(points)
+		scores, winnerIDs := ScoreMostersHand(points)
 		expected := map[string]int{
 			"1": 1,
 			"2": 1,
@@ -39,6 +40,7 @@ func TestScoreMostersHand(t *testing.T) {
 			"4": 1,
 		}
 		assert.Equal(t, expected, scores)
+		assert.Equal(t, []string{"1", "2", "4"}, winnerIDs)
 		utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 	})
 
@@ -50,7 +52,7 @@ func TestScoreMostersHand(t *testing.T) {
 			"4": 10,
 			"5": 10,
 		}
-		scores := ScoreMostersHand(points)
+		scores, winnerIDs := ScoreMostersHand(points)
 		expected := map[string]int{
 			"1": 1,
 			"2": 1,
@@ -59,6 +61,7 @@ func TestScoreMostersHand(t *testing.T) {
 			"5": 1,
 		}
 		assert.Equal(t, expected, scores)
+		assert.Equal(t, []string{"1", "2", "4", "5"}, winnerIDs)
 		utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 	})
 
@@ -69,7 +72,7 @@ func TestScoreMostersHand(t *testing.T) {
 			"3": 40,
 			"4": 40,
 		}
-		scores := ScoreMostersHand(points)
+		scores, winnerIDs := ScoreMostersHand(points)
 		expected := map[string]int{
 			"1": 2,
 			"2": 2,
@@ -77,6 +80,7 @@ func TestScoreMostersHand(t *testing.T) {
 			"4": -2,
 		}
 		assert.Equal(t, expected, scores)
+		assert.Equal(t, []string{"1", "2"}, winnerIDs)
 		utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 	})
 
@@ -88,7 +92,7 @@ func TestScoreMostersHand(t *testing.T) {
 			"4": 45,
 			"5": 10,
 		}
-		scores := ScoreMostersHand(points)
+		scores, winnerIDs := ScoreMostersHand(points)
 		expected := map[string]int{
 			"1": 2,
 			"2": 2,
@@ -97,6 +101,7 @@ func TestScoreMostersHand(t *testing.T) {
 			"5": 2,
 		}
 		assert.Equal(t, expected, scores)
+		assert.Equal(t, []string{"1", "2", "5"}, winnerIDs)
 		utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 	})
 }
