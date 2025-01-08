@@ -128,6 +128,7 @@ func (h *Hand) PickOrPass(playerId string, pick bool) error {
 	} else if h.PickIndex == 0 {
 		if h.Settings.NoPickResolution == NoPickResolution.Doublers {
 			// Hand is restarted with the stakes doubled
+			// TODO: better handling of this
 			h = NewHand(h.Settings, h.HandOrder, h.Doubled+1)
 		} else {
 			// Play the hand with no picker (leasters or mosters)
