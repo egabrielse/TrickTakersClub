@@ -5,7 +5,6 @@ const (
 	PointsNone      = 0
 	PointsSchneider = 30
 	PointsHalf      = 60
-	PointsFischer   = 90
 	PointsAll       = 120
 )
 
