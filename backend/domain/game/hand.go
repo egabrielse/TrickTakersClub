@@ -23,9 +23,8 @@ type Hand struct {
 	Doubled     int                `json:"doubled"`     // Number of times the hand has been doubled (for doubler no-pick resolution)
 }
 
-func NewHand(settings *GameSettings, handOrder []string, doubled int) (hand *Hand) {
+func NewHand(handOrder []string, deck *deck.Deck, settings *GameSettings, doubled int) (hand *Hand) {
 	handSize, blindSize := settings.DeriveHandBlindSize()
-	deck := deck.NewDeck()
 	players := map[string]*Player{}
 	for _, playerID := range handOrder {
 		hand := deck.Draw(handSize)
@@ -129,7 +128,6 @@ func (h *Hand) PickOrPass(playerId string, pick bool) error {
 		if h.Settings.NoPickResolution == NoPickResolution.Doublers {
 			// Hand is restarted with the stakes doubled
 			// TODO: better handling of this
-			h = NewHand(h.Settings, h.HandOrder, h.Doubled+1)
 		} else {
 			// Play the hand with no picker (leasters or mosters)
 			h.NoPick = true
@@ -153,7 +151,12 @@ func (h *Hand) Bury(playerId string, cards []*deck.Card) error {
 		return fmt.Errorf("%s not the picker", picker.PlayerID)
 	} else {
 		picker.BuryCards(cards)
-		h.Phase = HandPhase.Call
+		if h.Settings.CallingMethod == CallingMethod.Alone {
+			h.Phase = HandPhase.Play
+			h.StartNextTrick()
+		} else {
+			h.Phase = HandPhase.Call
+		}
 		return nil
 	}
 }

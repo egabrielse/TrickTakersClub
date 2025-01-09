@@ -39,14 +39,20 @@ func (p *Player) TakeCards(cards []*deck.Card) {
 }
 
 func (p *Player) RemoveCard(card *deck.Card) error {
+	cardFound := false
+	newHand := []*deck.Card{}
 	// Check if the card is in the hand
-	for index, c := range p.Hand {
+	for _, c := range p.Hand {
 		// Compare values of the cards
-		if *c == *card {
-			// If found, remove the card from the hand
-			p.Hand = append(p.Hand[:index], p.Hand[index+1:]...)
-			return nil
+		if *c != *card {
+			newHand = append(newHand, c)
+		} else {
+			cardFound = true
 		}
+	}
+	if cardFound {
+		p.Hand = newHand
+		return nil
 	}
 	return fmt.Errorf("card %s of %s not found in hand", card.Rank, card.Suit)
 }

@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"main/domain/game/deck"
 	"main/utils"
 )
 
@@ -28,19 +29,20 @@ func NewGame(playerIDs []string, settings *GameSettings) *Game {
 func (g *Game) SitDown(playerID string) error {
 	if g.HandInProgress() || len(g.PlayerOrder) == g.Settings.PlayerCount {
 		return fmt.Errorf("hand in progress")
-	} else {
-		for _, id := range g.PlayerOrder {
-			if id == playerID {
-				return fmt.Errorf("player already seated")
-			}
-		}
-		g.PlayerOrder = append(g.PlayerOrder, playerID)
-		// Game automatically starts when all seats are filled
-		if len(g.PlayerOrder) == g.Settings.PlayerCount {
-			g.StartGame()
-		}
-		return nil
 	}
+	for _, id := range g.PlayerOrder {
+		if id == playerID {
+			return fmt.Errorf("player already seated")
+		}
+	}
+	g.PlayerOrder = append(g.PlayerOrder, playerID)
+	// Game automatically starts when all seats are filled
+	if len(g.PlayerOrder) == g.Settings.PlayerCount {
+		if err := g.StartGame(); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (g *Game) StandUp(playerID string) error {
@@ -57,15 +59,20 @@ func (g *Game) StandUp(playerID string) error {
 	}
 }
 
-func (g *Game) StartGame() {
-	g.Scoreboard = NewScoreboard(g.PlayerOrder)
-	g.StartNewHand()
+func (g *Game) StartGame() error {
+	if len(g.PlayerOrder) != g.Settings.PlayerCount {
+		return fmt.Errorf("not enough players")
+	} else {
+		g.Scoreboard = NewScoreboard(g.PlayerOrder)
+		g.StartNewHand()
+		return nil
+	}
 }
 
 func (g *Game) StartNewHand() {
 	g.DealerIndex = (g.DealerIndex + 1) % len(g.PlayerOrder)
 	playerOrder := utils.RelistStartingWith(g.PlayerOrder, g.PlayerOrder[g.DealerIndex])
-	g.Hand = NewHand(g.Settings, playerOrder, 0)
+	g.Hand = NewHand(playerOrder, deck.NewDeck(), g.Settings, 0)
 }
 
 func (g *Game) HandInProgress() bool {

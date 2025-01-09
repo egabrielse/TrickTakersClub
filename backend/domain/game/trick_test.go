@@ -2,19 +2,14 @@ package game
 
 import (
 	"main/domain/game/deck"
+	"main/domain/game/test"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-const Player1 = "player1"
-const Player2 = "player2"
-const Player3 = "player3"
-
-var Players = []string{Player1, Player2, Player3}
-
 func TestCountPoints(t *testing.T) {
-	trick := NewTrick(Players)
+	trick := NewTrick([]string{test.Player1, test.Player2, test.Player3})
 
 	t.Run("no cards", func(t *testing.T) {
 		points := deck.CountPoints(trick.Cards)
@@ -36,22 +31,22 @@ func TestCountPoints(t *testing.T) {
 }
 
 func TestWhoIsNext(t *testing.T) {
-	trick := NewTrick(Players)
+	trick := NewTrick([]string{test.Player1, test.Player2, test.Player3})
 
 	t.Run("no card played", func(t *testing.T) {
-		playerID := trick.WhoIsNext()
-		assert.Equal(t, Player1, playerID, "expected Player1")
+		PlayerID := trick.WhoIsNext()
+		assert.Equal(t, test.Player1, PlayerID, "expected test.Player1")
 	})
 
 	t.Run("one card played", func(t *testing.T) {
 		trick.PlayCard(deck.NewCard(deck.CardSuit.Heart, deck.CardRank.Ten))
-		playerID := trick.WhoIsNext()
-		assert.Equal(t, Player2, playerID, "expected Player2")
+		PlayerID := trick.WhoIsNext()
+		assert.Equal(t, test.Player2, PlayerID, "expected test.Player2")
 	})
 }
 
 func TestGetLeadingCard(t *testing.T) {
-	trick := NewTrick(Players)
+	trick := NewTrick([]string{test.Player1, test.Player2, test.Player3})
 
 	t.Run("no cards played", func(t *testing.T) {
 		leadingCard := trick.GetLeadingCard()
@@ -67,7 +62,7 @@ func TestGetLeadingCard(t *testing.T) {
 }
 
 func TestGetLeadingSuit(t *testing.T) {
-	trick := NewTrick(Players)
+	trick := NewTrick([]string{test.Player1, test.Player2, test.Player3})
 
 	t.Run("no cards played", func(t *testing.T) {
 		leadingSuit := trick.GetLeadingSuit()
@@ -83,7 +78,7 @@ func TestGetLeadingSuit(t *testing.T) {
 }
 
 func TestGetTakerID(t *testing.T) {
-	trick := NewTrick(Players)
+	trick := NewTrick([]string{test.Player1, test.Player2, test.Player3})
 
 	t.Run("no cards played", func(t *testing.T) {
 		takerID := trick.GetTakerID()
@@ -93,24 +88,24 @@ func TestGetTakerID(t *testing.T) {
 	t.Run("one card played", func(t *testing.T) {
 		trick.PlayCard(deck.NewCard(deck.CardSuit.Heart, deck.CardRank.Ten))
 		takerID := trick.GetTakerID()
-		assert.Equal(t, Player1, takerID, "expected Player1")
+		assert.Equal(t, test.Player1, takerID, "expected test.Player1")
 	})
 
 	t.Run("better card played", func(t *testing.T) {
 		trick.PlayCard(deck.NewCard(deck.CardSuit.Spade, deck.CardRank.Jack))
 		takerID := trick.GetTakerID()
-		assert.Equal(t, Player2, takerID, "expected Player2")
+		assert.Equal(t, test.Player2, takerID, "expected test.Player2")
 	})
 
 	t.Run("worse card played", func(t *testing.T) {
 		trick.PlayCard(deck.NewCard(deck.CardSuit.Club, deck.CardRank.Nine))
 		takerID := trick.GetTakerID()
-		assert.Equal(t, Player2, takerID, "expected Player2")
+		assert.Equal(t, test.Player2, takerID, "expected test.Player2")
 	})
 }
 
 func TestIsComplete(t *testing.T) {
-	trick := NewTrick(Players)
+	trick := NewTrick([]string{test.Player1, test.Player2, test.Player3})
 
 	t.Run("no cards played", func(t *testing.T) {
 		assert.False(t, trick.IsComplete(), "expected trick to be incomplete")
@@ -125,7 +120,7 @@ func TestIsComplete(t *testing.T) {
 }
 
 func TestPlayCard(t *testing.T) {
-	trick := NewTrick(Players)
+	trick := NewTrick([]string{test.Player1, test.Player2, test.Player3})
 	card1 := deck.NewCard(deck.CardSuit.Heart, deck.CardRank.Ten)
 	card2 := deck.NewCard(deck.CardSuit.Spade, deck.CardRank.Jack)
 	card3 := deck.NewCard(deck.CardSuit.Diamond, deck.CardRank.Queen)

@@ -8,13 +8,24 @@ type GameSettings struct {
 	DoubleOnTheBump  bool   `json:"doubleOnTheBump"`
 }
 
-func NewGameSettings() *GameSettings {
-	return &GameSettings{
+func NewGameSettings(playerCount int) *GameSettings {
+	settings := &GameSettings{
 		AutoDeal:         GameDefaults.AutoDeal,
-		PlayerCount:      GameDefaults.PlayerCount,
+		PlayerCount:      playerCount,
 		CallingMethod:    GameDefaults.CallingMethod,
 		NoPickResolution: GameDefaults.NoPickResolution,
 		DoubleOnTheBump:  GameDefaults.DoubleOnTheBump,
+	}
+	if playerCount == 3 || playerCount == 4 {
+		settings.CallingMethod = CallingMethod.Alone
+		settings.NoPickResolution = NoPickResolution.ScrewTheDealer
+		return settings
+	} else if playerCount == 5 {
+		settings.CallingMethod = CallingMethod.JackOfDiamonds
+		settings.NoPickResolution = NoPickResolution.Leasters
+		return settings
+	} else {
+		return nil // unsupported player count
 	}
 }
 
@@ -26,10 +37,6 @@ func (gs *GameSettings) DeriveHandBlindSize() (handSize int, blindSize int) {
 		return 7, 4
 	case 5:
 		return 6, 2
-	case 6:
-		return 5, 2
-	case 7:
-		return 4, 4
 	default:
 		return 0, 0
 	}
