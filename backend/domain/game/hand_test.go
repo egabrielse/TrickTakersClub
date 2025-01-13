@@ -10,7 +10,7 @@ import (
 func TestThreeHandedGame(t *testing.T) {
 	settings := NewGameSettings(3)
 	players := []string{test.Player1, test.Player2, test.Player3}
-	hand := NewHand(players, test.MockNewDeck(), settings, 0)
+	hand := NewHand(players, test.MockNewDeck(), settings)
 
 	t.Run("NewHand", func(t *testing.T) {
 		// No tricks have been played yet
@@ -25,7 +25,7 @@ func TestThreeHandedGame(t *testing.T) {
 	t.Run("PickPhase", func(t *testing.T) {
 		t.Run("Player attempts to pick out of turn", func(t *testing.T) {
 			// Player 1 tries to pick out of turn
-			err := hand.PickOrPass(test.Player1, true)
+			_, err := hand.PickOrPass(test.Player1, true)
 			assert.NotNil(t, err)
 		})
 
@@ -53,7 +53,7 @@ func TestThreeHandedGame(t *testing.T) {
 	t.Run("BuryPhase", func(t *testing.T) {
 		t.Run("Non-picker attempts to bury", func(t *testing.T) {
 			// Player 2 tries to bury
-			err := hand.Bury(test.Player2, hand.Players[test.Player2].Hand[:2])
+			_, err := hand.Bury(test.Player2, hand.Players[test.Player2].Hand[:2])
 			assert.NotNil(t, err)
 		})
 		t.Run("Player 3 buries", func(t *testing.T) {
@@ -70,13 +70,13 @@ func TestThreeHandedGame(t *testing.T) {
 	t.Run("PlayPhase", func(t *testing.T) {
 		t.Run("Player attempts to play out of turn", func(t *testing.T) {
 			// Player 1 tries to play out of turn
-			err := hand.Play(test.Player1, hand.Players[test.Player1].Hand[0])
+			_, err := hand.Play(test.Player1, hand.Players[test.Player1].Hand[0])
 			assert.NotNil(t, err)
 		})
 
 		t.Run("Player 2 plays", func(t *testing.T) {
 			// Player 2 plays a card
-			err := hand.Play(test.Player2, hand.Players[test.Player2].Hand[0])
+			_, err := hand.Play(test.Player2, hand.Players[test.Player2].Hand[0])
 			assert.Nil(t, err)
 			// Should now be player 3's turn
 			assert.Equal(t, test.Player3, hand.WhoIsNext())
@@ -84,7 +84,7 @@ func TestThreeHandedGame(t *testing.T) {
 
 		t.Run("Player 3 plays", func(t *testing.T) {
 			// Player 3 plays a card
-			err := hand.Play(test.Player3, hand.Players[test.Player3].Hand[0])
+			_, err := hand.Play(test.Player3, hand.Players[test.Player3].Hand[0])
 			assert.Nil(t, err)
 			// Should now be player 1's turn
 			assert.Equal(t, test.Player1, hand.WhoIsNext())
@@ -92,7 +92,7 @@ func TestThreeHandedGame(t *testing.T) {
 
 		t.Run("Player 1 plays", func(t *testing.T) {
 			// Player 1 plays a card
-			err := hand.Play(test.Player1, hand.Players[test.Player1].Hand[0])
+			_, err := hand.Play(test.Player1, hand.Players[test.Player1].Hand[0])
 			assert.Nil(t, err)
 			// The trick should be complete
 			assert.Equal(t, 1, hand.CountPlayedTricks())
@@ -102,7 +102,7 @@ func TestThreeHandedGame(t *testing.T) {
 			// Play the rest of the hand
 			for !hand.IsComplete() {
 				playerID := hand.WhoIsNext()
-				err := hand.Play(playerID, hand.Players[playerID].Hand[0])
+				_, err := hand.Play(playerID, hand.Players[playerID].Hand[0])
 				assert.Nil(t, err)
 			}
 			// The hand should be complete

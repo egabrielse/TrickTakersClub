@@ -8,22 +8,22 @@ import (
 )
 
 type Hand struct {
-	Blind       []*deck.Card       `json:"blind"`       // Blind cards
-	CalledCard  *deck.Card         `json:"calledCard"`  // Card called by the picker
-	HandOrder   []string           `json:"handOrder"`   // Order of players starting with the dealer
-	PartnerID   string             `json:"partnerId"`   // Partner of the picker
-	Phase       string             `json:"phase"`       // Phase of the hand
-	PickIndex   int                `json:"PickIndex"`   // Index of the player who's turn it is to pick or pass
-	PickerID    string             `json:"pickerId"`    // Player who picked the blind
-	Players     map[string]*Player `json:"players"`     // Player hands
-	Settings    *GameSettings      `json:"settings"`    // Game settings
-	TotalTricks int                `json:"totalTricks"` // Total number of tricks in the hand
-	Tricks      []*Trick           `json:"tricks"`      // Tricks played in the hand
-	NoPick      bool               `json:"noPick"`      // True if no-pick scenario has occurred (doublers, leasters, mosters)
-	Doubled     int                `json:"doubled"`     // Number of times the hand has been doubled (for doubler no-pick resolution)
+	Blind           []*deck.Card       `json:"blind"`           // Blind cards
+	CalledCard      *deck.Card         `json:"calledCard"`      // Card called by the picker
+	HandOrder       []string           `json:"handOrder"`       // Order of players starting with the dealer
+	PartnerID       string             `json:"partnerId"`       // Partner of the picker
+	Phase           string             `json:"phase"`           // Phase of the hand
+	PickIndex       int                `json:"PickIndex"`       // Index of the player who's turn it is to pick or pass
+	PickerID        string             `json:"pickerId"`        // Player who picked the blind
+	Players         map[string]*Player `json:"players"`         // Player hands
+	Settings        *GameSettings      `json:"settings"`        // Game settings
+	TotalTricks     int                `json:"totalTricks"`     // Total number of tricks in the hand
+	Tricks          []*Trick           `json:"tricks"`          // Tricks played in the hand
+	ScoringMethod   string             `json:"scoringMethod"`   // Method to use for scoring the hand
+	ScoreMultiplier int                `json:"scoreMultiplier"` // TODO: Multiplier to apply to the hand score
 }
 
-func NewHand(handOrder []string, deck *deck.Deck, settings *GameSettings, doubled int) (hand *Hand) {
+func NewHand(handOrder []string, deck *deck.Deck, settings *GameSettings) (hand *Hand) {
 	handSize, blindSize := settings.DeriveHandBlindSize()
 	players := map[string]*Player{}
 	for _, playerID := range handOrder {
@@ -31,16 +31,16 @@ func NewHand(handOrder []string, deck *deck.Deck, settings *GameSettings, double
 		players[playerID] = NewPlayer(playerID, hand)
 	}
 	return &Hand{
-		Blind:       deck.Draw(blindSize),
-		Phase:       HandPhase.Pick,
-		Players:     players,
-		PickIndex:   1, // Picking starts with the player to the left of the dealer (index 1)
-		HandOrder:   handOrder,
-		TotalTricks: handSize,
-		Tricks:      []*Trick{},
-		Settings:    settings,
-		NoPick:      false,
-		Doubled:     doubled,
+		Blind:           deck.Draw(blindSize),
+		Phase:           HandPhase.Pick,
+		Players:         players,
+		PickIndex:       1, // Picking starts with the player to the left of the dealer (index 1)
+		HandOrder:       handOrder,
+		TotalTricks:     handSize,
+		Tricks:          []*Trick{},
+		Settings:        settings,
+		ScoringMethod:   "default",
+		ScoreMultiplier: 1,
 	}
 }
 
@@ -113,105 +113,6 @@ func (h *Hand) StartNextTrick() {
 	}
 }
 
-func (h *Hand) PickOrPass(playerId string, pick bool) error {
-	if h.Phase != HandPhase.Pick {
-		return fmt.Errorf("not in pick phase")
-	} else if player, err := h.ValidateUpNext(playerId); err != nil {
-		return err
-	} else if pick {
-		player.TakeCards(h.Blind)
-		player.SetRole(PlayerRole.Picker)
-		h.PickerID = player.PlayerID
-		h.Blind = []*deck.Card{}
-		h.Phase = HandPhase.Bury
-	} else if h.PickIndex == 0 {
-		if h.Settings.NoPickResolution == NoPickResolution.Doublers {
-			// Hand is restarted with the stakes doubled
-			// TODO: better handling of this
-		} else {
-			// Play the hand with no picker (leasters or mosters)
-			h.NoPick = true
-		}
-	} else if h.PickIndex == len(h.HandOrder)-1 && h.Settings.NoPickResolution == NoPickResolution.ScrewTheDealer {
-		// Everyone but dealer has passed, dealer must pick. Move to the bury phase.
-		h.Phase = HandPhase.Bury
-	} else {
-		// Move to the next person
-		h.PickIndex = (h.PickIndex + 1) % len(h.HandOrder)
-	}
-	return nil
-}
-
-func (h *Hand) Bury(playerId string, cards []*deck.Card) error {
-	if h.Phase != HandPhase.Bury {
-		return fmt.Errorf("not in bury phase")
-	} else if picker, err := h.ValidateUpNext(playerId); err != nil {
-		return err
-	} else if picker.Role != PlayerRole.Picker {
-		return fmt.Errorf("%s not the picker", picker.PlayerID)
-	} else {
-		picker.BuryCards(cards)
-		if h.Settings.CallingMethod == CallingMethod.Alone {
-			h.Phase = HandPhase.Play
-			h.StartNextTrick()
-		} else {
-			h.Phase = HandPhase.Call
-		}
-		return nil
-	}
-}
-
-func (h *Hand) Call(playerId string, card *deck.Card) error {
-	if h.Phase != HandPhase.Call {
-		return fmt.Errorf("not in bury phase")
-	} else if _, err := h.ValidateUpNext(playerId); err != nil {
-		return err
-	} else {
-		h.CalledCard = card
-		for _, player := range h.Players {
-			if player.Role == PlayerRole.Picker {
-				continue
-			} else if player.HasCard(card) {
-				player.SetRole(PlayerRole.Partner)
-				h.PartnerID = player.PlayerID
-			} else {
-				player.SetRole(PlayerRole.Opponent)
-			}
-		}
-		// Set the phase to play and start next trick
-		// TODO: Handle cracking and blitzing
-		h.Phase = HandPhase.Play
-		h.StartNextTrick()
-		return nil
-	}
-}
-
-func (h *Hand) Play(playerId string, card *deck.Card) error {
-	if h.Phase != HandPhase.Play {
-		return fmt.Errorf("not in play phase")
-	} else if trick := h.GetCurrentTrick(); trick == nil {
-		return fmt.Errorf("trick not started")
-	} else if trick.IsComplete() {
-		return fmt.Errorf("trick already complete")
-	} else if player, err := h.ValidateUpNext(playerId); err != nil {
-		return err
-	} else if err := player.RemoveCard(card); err != nil {
-		return err
-	} else {
-		trick.PlayCard(card)
-		if trick.IsComplete() {
-			if h.IsComplete() {
-				// Hand is complete, move to scoring phase
-				h.Phase = HandPhase.Score
-			} else {
-				// Start the next trick
-				h.StartNextTrick()
-			}
-		}
-		return nil
-	}
-}
-
 func (h *Hand) SummarizeHand() *HandSummary {
 	sum := NewHandSummary(h.HandOrder)
 	points := map[string]int{}
@@ -223,41 +124,158 @@ func (h *Hand) SummarizeHand() *HandSummary {
 
 	// Count up the points in the tricks
 	for _, trick := range h.Tricks {
-		takerID := trick.GetTakerID()
-		tricks[takerID] += 1
-		points[takerID] += deck.CountPoints(trick.Cards)
-		sum.TrickSums = append(sum.TrickSums, TrickSummary{
-			TakerID: takerID,
-			Cards:   trick.Cards,
-			Points:  points[takerID],
-		})
+		trickSum := trick.SummarizeTrick()
+		tricks[trickSum.TakerID] += 1
+		points[trickSum.TakerID] += trickSum.Points
+		sum.TrickSums = append(sum.TrickSums, trickSum)
 	}
 
-	if h.PickerID == "" && h.Settings.NoPickResolution == NoPickResolution.Leasters {
+	// Calculate the hand summary
+	switch h.ScoringMethod {
+	case NoPickResolution.Leasters:
 		// Leasters Hand (No Picker)
 		sum.PointsWon = points
 		sum.TricksWon = tricks
 		sum.Scores, sum.Winners = scoring.ScoreLeastersHand(points, tricks)
-	} else if h.PickerID == "" && h.Settings.NoPickResolution == NoPickResolution.Mosters {
+	case NoPickResolution.Mosters:
 		// Mosters Hand (No Picker)
 		sum.PointsWon = points
 		sum.TricksWon = tricks
 		sum.Scores, sum.Winners = scoring.ScoreMostersHand(points)
-	} else {
-		// Normal Hand (Someone picked)
+	default:
+		// Someone picked, score hand normally
 		sum.PickerID = h.PickerID
 		player := h.Players[h.PickerID]
 
 		// Count up the points in the bury and add to the picker's points
 		points[h.PickerID] += deck.CountPoints(player.Bury)
-		sum.BurySummary = BurySummary{
-			Cards:  player.Bury,
-			Points: points[h.PickerID],
-		}
+		sum.BurySummary = BurySummary{Cards: player.Bury, Points: points[h.PickerID]}
 
 		sum.PointsWon = points
 		sum.TricksWon = tricks
 		sum.Scores, sum.Winners = scoring.ScoreHand(h.PickerID, h.PartnerID, points, tricks, h.Settings.DoubleOnTheBump)
 	}
 	return sum
+}
+
+func (h *Hand) PickOrPass(playerId string, pick bool) (*PickOrPassResult, error) {
+	result := &PickOrPassResult{}
+	if h.Phase != HandPhase.Pick {
+		return nil, fmt.Errorf("not in pick phase")
+	} else if player, err := h.ValidateUpNext(playerId); err != nil {
+		return nil, err
+	} else if pick {
+		// Player picked the blind
+		result.PickedCards = h.Blind
+		result.PickerID = player.PlayerID
+		player.TakeCards(h.Blind)
+		player.SetRole(PlayerRole.Picker)
+		h.PickerID = player.PlayerID
+		h.Blind = []*deck.Card{}
+		h.Phase = HandPhase.Bury
+	} else if h.PickIndex == len(h.HandOrder)-1 && h.Settings.NoPickResolution == NoPickResolution.ScrewTheDealer {
+		// Dealer is forced to pick (Screw the Dealer)
+		dealer := h.Players[h.HandOrder[0]]
+		result.PickedCards = h.Blind
+		result.PickerID = dealer.PlayerID
+		dealer.TakeCards(h.Blind)
+		dealer.SetRole(PlayerRole.Picker)
+		h.PickerID = dealer.PlayerID
+		h.Blind = []*deck.Card{}
+		h.Phase = HandPhase.Bury
+	} else if h.PickIndex == 0 {
+		// Dealer passed, move onto no-pick resolutions
+		if h.Settings.NoPickResolution == NoPickResolution.Doublers {
+			// Hand is restarted with the stakes doubled
+			return nil, fmt.Errorf("re-deal hand and double the stakes")
+		} else {
+			// Play the hand with no picker (leasters or mosters)
+			h.ScoringMethod = h.Settings.NoPickResolution
+		}
+	} else {
+		// Move to the next person
+		h.PickIndex = (h.PickIndex + 1) % len(h.HandOrder)
+	}
+
+	return result, nil
+}
+
+func (h *Hand) Bury(playerId string, cards []*deck.Card) (*BuryResult, error) {
+	result := &BuryResult{}
+	if h.Phase != HandPhase.Bury {
+		return nil, fmt.Errorf("not in bury phase")
+	} else if picker, err := h.ValidateUpNext(playerId); err != nil {
+		return nil, err
+	} else if picker.Role != PlayerRole.Picker {
+		return nil, fmt.Errorf("%s not the picker", picker.PlayerID)
+	} else {
+		picker.BuryCards(cards)
+		result.BuriedCards = cards
+		if h.Settings.CallingMethod == CallingMethod.Alone {
+			h.Phase = HandPhase.Play
+			h.StartNextTrick()
+		} else {
+			h.Phase = HandPhase.Call
+		}
+		return result, nil
+	}
+}
+
+func (h *Hand) Call(playerId string, card *deck.Card) (*CallResult, error) {
+	result := &CallResult{}
+	if h.Phase != HandPhase.Call {
+		return nil, fmt.Errorf("not in bury phase")
+	} else if _, err := h.ValidateUpNext(playerId); err != nil {
+		return nil, err
+	} else {
+		h.CalledCard = card
+		result.CalledCard = card
+		for _, player := range h.Players {
+			if player.Role == PlayerRole.Picker {
+				continue
+			} else if player.HasCard(card) {
+				result.CalledID = player.PlayerID
+				player.SetRole(PlayerRole.Partner)
+				h.PartnerID = player.PlayerID
+			} else {
+				player.SetRole(PlayerRole.Opponent)
+			}
+		}
+		// Set the phase to play and start next trick
+		h.Phase = HandPhase.Play
+		h.StartNextTrick()
+		return result, nil
+	}
+}
+
+func (h *Hand) Play(playerId string, card *deck.Card) (*PlayCardResult, error) {
+	result := &PlayCardResult{}
+	if h.Phase != HandPhase.Play {
+		return nil, fmt.Errorf("not in play phase")
+	} else if trick := h.GetCurrentTrick(); trick == nil {
+		return nil, fmt.Errorf("trick not started")
+	} else if trick.IsComplete() {
+		return nil, fmt.Errorf("trick already complete")
+	} else if player, err := h.ValidateUpNext(playerId); err != nil {
+		return nil, err
+	} else if err := player.RemoveCard(card); err != nil {
+		return nil, err
+	} else if err := trick.PlayCard(card); err != nil {
+		return nil, err
+	} else {
+		result.PlayedCard = card
+		if trick.IsComplete() {
+			// Summarize the completed trick
+			result.TrickSummary = trick.SummarizeTrick()
+			if h.IsComplete() {
+				// Summarize the completed hand
+				result.HandSummary = h.SummarizeHand()
+				h.Phase = HandPhase.Done
+			} else {
+				// Start the next trick
+				h.StartNextTrick()
+			}
+		}
+		return result, nil
+	}
 }

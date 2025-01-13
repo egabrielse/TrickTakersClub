@@ -51,10 +51,7 @@ func HandleSitDownCommand(t *TableService, clientID string, data interface{}) {
 					Cards:    t.Game.Hand.Players[playerID].Hand,
 				})
 			}
-			t.Broadcast(MessageType.UpNext, &UpNextPayload{
-				PlayerID: t.Game.Hand.WhoIsNext(),
-				Phase:    t.Game.Hand.Phase,
-			})
+			t.Broadcast(MessageType.UpNext, t.Game.GetUpNext())
 		}
 	}
 }

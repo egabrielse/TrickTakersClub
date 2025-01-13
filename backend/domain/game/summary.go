@@ -4,14 +4,14 @@ import (
 	"main/domain/game/deck"
 )
 
-func NewHandSummary(playerID []string) *HandSummary {
+func NewHandSummary(playerIDs []string) *HandSummary {
 	scores := map[string]int{}
-	for _, id := range playerID {
+	for _, id := range playerIDs {
 		scores[id] = 0
 	}
 	return &HandSummary{
 		Scores:      scores,
-		TrickSums:   []TrickSummary{},
+		TrickSums:   []*TrickSummary{},
 		BurySummary: BurySummary{},
 	}
 }
@@ -28,11 +28,11 @@ type TrickSummary struct {
 }
 
 type HandSummary struct {
-	Winners     []string       `json:"winners"`     // IDs of the players who won the hand
-	Scores      map[string]int `json:"scores"`      // Map of player IDs to scores
-	PointsWon   map[string]int `json:"pointsWon"`   // Map of player IDs to points won
-	TricksWon   map[string]int `json:"tricksWon"`   // Map of player IDs to tricks won
-	PickerID    string         `json:"pickerID"`    // ID of the player who picked
-	BurySummary BurySummary    `json:"burySummary"` // Summary of the picker's bury
-	TrickSums   []TrickSummary `json:"trickSums"`   // Summaries of tricks
+	Winners     []string        `json:"winners"`     // IDs of the players who won the hand
+	Scores      map[string]int  `json:"scores"`      // Map of player IDs to scores
+	PointsWon   map[string]int  `json:"pointsWon"`   // Map of player IDs to points won
+	TricksWon   map[string]int  `json:"tricksWon"`   // Map of player IDs to tricks won
+	PickerID    string          `json:"pickerID"`    // ID of the player who picked
+	BurySummary BurySummary     `json:"burySummary"` // Summary of the picker's bury
+	TrickSums   []*TrickSummary `json:"trickSums"`   // Summaries of tricks
 }

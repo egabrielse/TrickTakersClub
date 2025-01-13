@@ -50,17 +50,17 @@ var PlayerRole = struct {
 }
 
 var HandPhase = struct {
-	Pick  string
-	Bury  string
-	Call  string
-	Play  string
-	Score string
+	Pick string
+	Bury string
+	Call string
+	Play string
+	Done string
 }{
-	Pick:  "pick",
-	Bury:  "bury",
-	Call:  "call",
-	Play:  "play",
-	Score: "score",
+	Pick: "pick",
+	Bury: "bury",
+	Call: "call",
+	Play: "play",
+	Done: "done",
 }
 
 const DeckSize = 32

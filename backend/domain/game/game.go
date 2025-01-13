@@ -72,127 +72,19 @@ func (g *Game) StartGame() error {
 func (g *Game) StartNewHand() {
 	g.DealerIndex = (g.DealerIndex + 1) % len(g.PlayerOrder)
 	playerOrder := utils.RelistStartingWith(g.PlayerOrder, g.PlayerOrder[g.DealerIndex])
-	g.Hand = NewHand(playerOrder, deck.NewDeck(), g.Settings, 0)
+	g.Hand = NewHand(playerOrder, deck.NewDeck(), g.Settings)
 }
 
 func (g *Game) HandInProgress() bool {
 	return g.Hand != nil
 }
 
-// func (g *Game) GetNextTurn() *NextTurn {
-// 	if g.Hand == nil {
-// 		return nil
-// 	} else if upNextID := g.Hand.WhoIsNext(); upNextID == "" {
-// 		return nil
-// 	} else if player, err := g.Hand.ValidateUpNext(upNextID); err != nil {
-// 		return nil
-// 	} else {
-// 		nextTurn := NewNextTurn()
-// 		nextTurn.PlayerID = upNextID
-// 		nextTurn.TurnType = g.Hand.Phase
-// 		switch g.Hand.Phase {
-// 		case HandPhase.Pick:
-// 			nextTurn.TurnType = TurnTypePick
-// 			// nextTurn.BlindSize = g.Settings.BlindSize
-// 		case HandPhase.Call:
-// 			nextTurn.TurnType = TurnTypeCall
-// 			// TODO: Get list of cards to call
-// 			// TODO: Determine if blitz is possible
-// 		case HandPhase.Bury:
-// 			nextTurn.TurnType = TurnTypeBury
-// 			// TODO: Get list of cards to bury
-// 			nextTurn.Cards = player.Hand
-// 			// nextTurn.BlindSize = g.Settings.BlindSize
-// 		case HandPhase.Play:
-// 			nextTurn.TurnType = TurnTypePlay
-// 			trick := g.Hand.GetCurrentTrick()
-// 			leadCard := trick.GetLeadingCard()
-// 			playableCards := deck.FilterForPlayableCards(player.Hand, leadCard)
-// 			deck.OrderCards(playableCards)
-// 			nextTurn.Cards = playableCards
-// 		}
-// 		return nextTurn
-// 	}
-// }
-
-// func (g *Game) UpdateScores(summary *HandSummary) {
-// 	for _, player := range g.Players {
-// 		row := g.Scoreboard[player.PlayerID]
-// 		row.Score += summary.Scores[player.PlayerID]
-// 		row.TotalPoints += summary.PointsWon[player.PlayerID]
-// 		row.TotalTricks += summary.TricksWon[player.PlayerID]
-// 	}
-// }
-
-// func (g *Game) TakeTurn(turn *Turn) error {
-// 	if g.Hand == nil {
-// 		return fmt.Errorf("no hand in progress")
-// 	} else if g.Hand.WhoIsNext() != turn.PlayerID {
-// 		return fmt.Errorf("not %s's turn", turn.PlayerID)
-// 	} else if player, ok := g.Players[turn.PlayerID]; !ok {
-// 		return fmt.Errorf("player not found")
-// 	} else {
-// 		result := NewTurnResult()
-// 		playedTricksCount := g.Hand.CountPlayedTricks()
-// 		switch turn.TurnType {
-// 		case TurnTypePick:
-// 			if turn.Args.Pick {
-// 				result.PickedCards = make([]*deck.Card, len(g.Hand.Blind))
-// 				copy(result.PickedCards, g.Hand.Blind)
-// 			}
-// 			if err := g.Hand.PickOrPass(player, turn.Args.Pick); err != nil {
-// 				return err
-// 			}
-
-// 		case TurnTypeCall:
-// 			var card *deck.Card
-// 			if len(turn.Args.Cards) > 1 {
-// 				return fmt.Errorf("can only call one card")
-// 			} else if len(turn.Args.Cards) == 1 {
-// 				card = turn.Args.Cards[0]
-// 			}
-// 			if err := g.Hand.Call(player, g.Players, card); err != nil {
-// 				return err
-// 			}
-
-// 		case TurnTypeBury:
-// 			result.BuriedCards = make([]*deck.Card, len(turn.Args.Cards))
-// 			copy(result.BuriedCards, turn.Args.Cards)
-// 			if err := g.Hand.Bury(player, turn.Args.Cards); err != nil {
-// 				return err
-// 			}
-// 			result.NextTrick = g.Hand.GetThisTrick()
-
-// 		case TurnTypePlay:
-// 			if len(turn.Args.Cards) != 1 {
-// 				return fmt.Errorf("must play one card")
-// 			}
-// 			card := turn.Args.Cards[0]
-// 			result.PlayedCard = card
-// 			if err := g.Hand.Play(player, card); err != nil {
-// 				return err
-// 			}
-// 			// Check if the trick is completed
-// 			result.TrickCompleted = playedTricksCount < g.Hand.CountPlayedTricks()
-// 			if result.TrickCompleted {
-// 				lastTrick := g.Hand.GetLastTrick()
-// 				result.TrickSummary = &TrickSummary{
-// 					TakerID: lastTrick.GetTakerID(),
-// 					Cards:   lastTrick.Cards,
-// 					Points:  lastTrick.CountPoints(),
-// 				}
-// 				// Check if the hand is completed
-// 				if g.Hand.IsComplete() {
-// 					result.HandCompleted = true
-// 					result.HandSummary = g.Hand.SummarizeHand(g.Players)
-// 					g.UpdateScores(result.HandSummary)
-// 				} else {
-// 					result.NextTrick = g.Hand.GetThisTrick()
-// 				}
-// 			}
-// 		}
-// 		turn.Result = result
-// 		turn.NextTurn = g.GetNextTurn()
-// 		return nil
-// 	}
-// }
+func (g *Game) GetUpNext() *UpNext {
+	if g.Hand == nil {
+		return nil
+	}
+	return &UpNext{
+		PlayerID: g.Hand.WhoIsNext(),
+		Phase:    g.Hand.Phase,
+	}
+}

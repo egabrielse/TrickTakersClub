@@ -72,3 +72,11 @@ func (t *Trick) PlayCard(card *deck.Card) error {
 		return nil
 	}
 }
+
+func (t *Trick) SummarizeTrick() *TrickSummary {
+	return &TrickSummary{
+		TakerID: t.GetTakerID(),
+		Cards:   t.Cards,
+		Points:  deck.CountPoints(t.Cards),
+	}
+}
