@@ -1,4 +1,4 @@
-package service
+package state
 
 import (
 	"main/domain/game"

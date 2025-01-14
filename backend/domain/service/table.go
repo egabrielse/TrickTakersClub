@@ -5,6 +5,8 @@ import (
 	"main/domain/entity"
 	"main/domain/game"
 	"main/domain/repository"
+	"main/domain/service/msg"
+	"main/domain/service/state"
 	"main/utils"
 	"time"
 
@@ -47,14 +49,14 @@ func NewTableService(table *entity.TableEntity) (*TableService, error) {
 }
 
 // GetState returns the current state of the table
-func (t *TableService) GetRefreshPayload(clientID string) *RefreshPayload {
-	payload := &RefreshPayload{
+func (t *TableService) GetRefreshPayload(clientID string) *msg.RefreshPayload {
+	payload := &msg.RefreshPayload{
 		TableID: t.Table.ID,
 		HostID:  t.Table.HostID,
 	}
 	// A game, send the state of the game
 	if t.Game != nil {
-		payload.GameState = &GameState{
+		payload.GameState = &state.GameState{
 			DealerID:    t.Game.PlayerOrder[t.Game.DealerIndex],
 			Scoreboard:  t.Game.Scoreboard,
 			PlayerOrder: t.Game.PlayerOrder,
@@ -63,7 +65,7 @@ func (t *TableService) GetRefreshPayload(clientID string) *RefreshPayload {
 		}
 		// Hand is in progress, send the state of the current hand
 		if t.Game.HandInProgress() {
-			payload.HandState = &HandState{
+			payload.HandState = &state.HandState{
 				CalledCard: t.Game.Hand.CalledCard,
 				BlindSize:  len(t.Game.Hand.Blind),
 				Phase:      t.Game.Hand.Phase,
@@ -74,7 +76,7 @@ func (t *TableService) GetRefreshPayload(clientID string) *RefreshPayload {
 			}
 			// Client is a player in the current game, send their hand and bury
 			if player, ok := t.Game.Hand.Players[clientID]; ok {
-				payload.PlayerHandState = &PlayerHandState{
+				payload.PlayerHandState = &state.PlayerHandState{
 					Hand: player.Hand,
 					Bury: player.Bury,
 				}
@@ -99,28 +101,28 @@ func (t *TableService) DirectMessage(clientID string, name string, data interfac
 }
 
 // HandleMessage handles messages received from the public channel
-func (t *TableService) HandleMessages(msg *ably.Message) {
+func (t *TableService) HandleMessages(message *ably.Message) {
 	// Reset the ticker if any activity is detected
 	t.LastUpdate = time.Now()
-	logrus.Infof("Received public message: %s", msg.Data)
+	logrus.Infof("Received public message: %s", message.Data)
 }
 
 // HandlePrivateMessage handles messages sent to the table service via the user's private channel
-func (t *TableService) HandleCommands(msg *ably.Message) {
+func (t *TableService) HandleCommands(message *ably.Message) {
 	// Reset the ticker if any activity is detected
 	t.LastUpdate = time.Now()
-	logrus.Infof("Received private message: %s", msg.Data)
-	switch msg.Name {
-	case CommandType.CreateGame:
-		HandleCreateGameCommand(t, msg.ClientID, msg.Data)
-	case CommandType.SitDown:
-		HandleSitDownCommand(t, msg.ClientID, msg.Data)
-	case CommandType.StandUp:
-		HandleStandUpCommand(t, msg.ClientID, msg.Data)
-	case CommandType.EndGameCommand:
-		HandleEndGameCommand(t, msg.ClientID, msg.Data)
+	logrus.Infof("Received private message: %s", message.Data)
+	switch message.Name {
+	case msg.CommandType.CreateGame:
+		HandleCreateGameCommand(t, message.ClientID, message.Data)
+	case msg.CommandType.SitDown:
+		HandleSitDownCommand(t, message.ClientID, message.Data)
+	case msg.CommandType.StandUp:
+		HandleStandUpCommand(t, message.ClientID, message.Data)
+	case msg.CommandType.EndGame:
+		HandleEndGameCommand(t, message.ClientID, message.Data)
 	default:
-		logrus.Warnf("Unknown message type: %s", msg.Name)
+		logrus.Warnf("Unknown message type: %s", message.Name)
 	}
 }
 
@@ -135,7 +137,7 @@ func (t *TableService) RegisterClient(clientID string, connectionID string) {
 		user.Enter(t.Ctx, connectionID, t.HandleCommands)
 	}
 	// Send the current state of the table/game to the newly registered user
-	t.DirectMessage(clientID, MessageType.Refresh, t.GetRefreshPayload(clientID))
+	t.DirectMessage(clientID, msg.DirectType.Refresh, t.GetRefreshPayload(clientID))
 }
 
 // UnregisterClient unregisters a client from the table service
@@ -197,7 +199,7 @@ func (t *TableService) StartService() {
 					// Stop the service if no activity is detected for a certain duration
 					logrus.Infof("Service for table %s timed out", t.Table.ID)
 					// Inform any clients that the service has timed out
-					t.Broadcast(MessageType.Timeout, nil)
+					t.Broadcast(msg.BroadcastType.Timeout, nil)
 					return
 				}
 			case <-t.Ctx.Done():
