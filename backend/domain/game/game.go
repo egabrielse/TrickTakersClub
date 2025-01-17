@@ -10,19 +10,18 @@ import (
 )
 
 type Game struct {
-	DealerIndex int           `json:"dealerIndex"` // Index of the dealer in the Players array
-	Scoreboard  Scoreboard    `json:"scoreboard"`  // Scoreboard
-	HandsPlayed int           `json:"handsPlayed"` // Number of hands played
-	PlayerOrder []string      `json:"playerOrder"` // Order of players at the table
-	Settings    *GameSettings `json:"settings"`    // Game settings
-	// Hand State
-	Players       *Players    `json:"players"`       // Players
-	Phase         string      `json:"phase"`         // Phase of the hand
-	Blind         *hand.Blind `json:"blind"`         // Blind Phase
-	Bury          *hand.Bury  `json:"bury"`          // Bury Phase
-	Call          *hand.Call  `json:"call"`          // Call Phase
-	Play          *hand.Play  `json:"play"`          // Play Phase
-	ScoringMethod string      `json:"scoringMethod"` // Method to use for scoring the hand
+	DealerIndex   int           `json:"dealerIndex"`   // Index of the dealer in the Players array
+	Scoreboard    Scoreboard    `json:"scoreboard"`    // Scoreboard
+	HandsPlayed   int           `json:"handsPlayed"`   // Number of hands played
+	PlayerOrder   []string      `json:"playerOrder"`   // Order of players at the table
+	Settings      *GameSettings `json:"settings"`      // Game settings
+	Players       *Players      `json:"players"`       // Players
+	Phase         string        `json:"phase"`         // Phase of the hand
+	Blind         *hand.Blind   `json:"blind"`         // Blind Phase
+	Bury          *hand.Bury    `json:"bury"`          // Bury Phase
+	Call          *hand.Call    `json:"call"`          // Call Phase
+	Play          *hand.Play    `json:"play"`          // Play Phase
+	ScoringMethod string        `json:"scoringMethod"` // Method to use for scoring the hand
 }
 
 func NewGame(playerIDs []string, settings *GameSettings) *Game {
