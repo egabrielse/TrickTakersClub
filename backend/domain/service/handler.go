@@ -48,8 +48,8 @@ func HandleSitDownCommand(t *TableService, clientID string, data interface{}) {
 			})
 			for _, playerID := range t.Game.PlayerOrder {
 				t.DirectMessage(playerID, msg.DirectType.DealHand, &msg.DealHandPayload{
-					DealerID: t.Game.PlayerOrder[t.Game.DealerIndex],
-					Cards:    t.Game.Hand.Players[playerID].Hand,
+					DealerID: t.Game.WhoIsDealer(),
+					Cards:    t.Game.Players.GetHand(playerID),
 				})
 			}
 			t.Broadcast(msg.BroadcastType.UpNext, t.Game.GetUpNext())
@@ -68,36 +68,89 @@ func HandleStandUpCommand(t *TableService, clientID string, data interface{}) {
 }
 
 func HandlePickCommand(t *TableService, clientID string, data interface{}) {
-	// TODO: Implement
+	if !t.Game.HandInProgress() {
+		t.DirectMessage(clientID, msg.DirectType.Error, "hand not in progress")
+	} else if result, err := t.Game.Pick(clientID); utils.LogOnError(err) {
+		t.DirectMessage(clientID, msg.DirectType.Error, err.Error())
+	} else {
+		t.Broadcast(msg.BroadcastType.BlindPicked, &msg.BlindPickedPayload{PlayerID: result.PickerID})
+		t.DirectMessage(result.PickerID, msg.DirectType.Blind, &msg.BlindPayload{Blind: result.Blind})
+		t.Broadcast(msg.BroadcastType.UpNext, t.Game.GetUpNext())
+	}
 }
 
 func HandlePassCommand(t *TableService, clientID string, data interface{}) {
-	// TODO: Implement
+	if !t.Game.HandInProgress() {
+		t.DirectMessage(clientID, msg.DirectType.Error, "hand not in progress")
+	} else if result, err := t.Game.Pass(clientID); utils.LogOnError(err) {
+		t.DirectMessage(clientID, msg.DirectType.Error, err.Error())
+	} else {
+		if result != nil {
+			t.Broadcast(msg.BroadcastType.BlindPicked, &msg.BlindPickedPayload{PlayerID: result.PickerID})
+			t.DirectMessage(result.PickerID, msg.DirectType.Blind, &msg.BlindPayload{Blind: result.Blind})
+		}
+		t.Broadcast(msg.BroadcastType.UpNext, t.Game.GetUpNext())
+	}
 }
 
 func HandleBuryCommand(t *TableService, clientID string, data interface{}) {
 	payload := &msg.BuryCommandParams{}
-	if err := json.Unmarshal([]byte(data.(string)), &payload); utils.LogOnError(err) {
+	if !t.Game.HandInProgress() {
+		t.DirectMessage(clientID, msg.DirectType.Error, "hand not in progress")
+	} else if err := json.Unmarshal([]byte(data.(string)), &payload); utils.LogOnError(err) {
 		t.DirectMessage(clientID, msg.DirectType.Error, "invalid settings payload")
+	} else if result, err := t.Game.BuryCards(clientID, payload.Cards); utils.LogOnError(err) {
+		t.DirectMessage(clientID, msg.DirectType.Error, err.Error())
 	} else {
-		// TODO: Implement
+		t.DirectMessage(clientID, msg.DirectType.Bury, &msg.BuryPayload{Bury: result.Bury})
+		t.Broadcast(msg.BroadcastType.UpNext, t.Game.GetUpNext())
 	}
 }
 
 func HandleCallCommand(t *TableService, clientID string, data interface{}) {
 	payload := &msg.CallCommandParams{}
-	if err := json.Unmarshal([]byte(data.(string)), &payload); utils.LogOnError(err) {
+	if !t.Game.HandInProgress() {
+		t.DirectMessage(clientID, msg.DirectType.Error, "hand not in progress")
+	} else if err := json.Unmarshal([]byte(data.(string)), &payload); utils.LogOnError(err) {
 		t.DirectMessage(clientID, msg.DirectType.Error, "invalid settings payload")
+	} else if result, err := t.Game.CallPartner(clientID, payload.Card); utils.LogOnError(err) {
+		t.DirectMessage(clientID, msg.DirectType.Error, err.Error())
 	} else {
-		// TODO: Implement
+		t.Broadcast(msg.BroadcastType.CalledCard, &msg.CalledCardPayload{Card: result.CalledCard})
+		t.Broadcast(msg.BroadcastType.UpNext, t.Game.GetUpNext())
+	}
+}
+
+func HandleGoAloneCommand(t *TableService, clientID string, data interface{}) {
+	payload := &msg.CallCommandParams{}
+	if !t.Game.HandInProgress() {
+		t.DirectMessage(clientID, msg.DirectType.Error, "hand not in progress")
+	} else if err := json.Unmarshal([]byte(data.(string)), &payload); utils.LogOnError(err) {
+		t.DirectMessage(clientID, msg.DirectType.Error, "invalid settings payload")
+	} else if _, err := t.Game.GoAlone(clientID); utils.LogOnError(err) {
+		t.DirectMessage(clientID, msg.DirectType.Error, err.Error())
+	} else {
+		t.Broadcast(msg.BroadcastType.GoAlone, nil)
+		t.Broadcast(msg.BroadcastType.UpNext, t.Game.GetUpNext())
 	}
 }
 
 func HandlePlayCardCommand(t *TableService, clientID string, data interface{}) {
 	payload := &msg.PlayCardCommandParams{}
-	if err := json.Unmarshal([]byte(data.(string)), &payload); utils.LogOnError(err) {
+	if !t.Game.HandInProgress() {
+		t.DirectMessage(clientID, msg.DirectType.Error, "hand not in progress")
+	} else if err := json.Unmarshal([]byte(data.(string)), &payload); utils.LogOnError(err) {
 		t.DirectMessage(clientID, msg.DirectType.Error, "invalid settings payload")
+	} else if result, err := t.Game.PlayCard(clientID, payload.Card); utils.LogOnError(err) {
+		t.DirectMessage(clientID, msg.DirectType.Error, err.Error())
 	} else {
-		// TODO: Implement
+		t.Broadcast(msg.BroadcastType.CardPlayed, &msg.CardPlayedPayload{Card: result.PlayedCard})
+		t.Broadcast(msg.BroadcastType.UpNext, t.Game.GetUpNext())
+		if result.TrickSummary != nil {
+			t.Broadcast(msg.BroadcastType.TrickDone, result.TrickSummary)
+			if result.HandSummary != nil {
+				t.Broadcast(msg.BroadcastType.HandDone, result.HandSummary)
+			}
+		}
 	}
 }

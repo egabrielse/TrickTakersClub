@@ -4,6 +4,7 @@ import (
 	"context"
 	"main/domain/entity"
 	"main/domain/game"
+	"main/domain/game/deck"
 	"main/domain/repository"
 	"main/domain/service/msg"
 	"main/domain/service/state"
@@ -57,7 +58,7 @@ func (t *TableService) GetRefreshPayload(clientID string) *msg.RefreshPayload {
 	// A game, send the state of the game
 	if t.Game != nil {
 		payload.GameState = &state.GameState{
-			DealerID:    t.Game.PlayerOrder[t.Game.DealerIndex],
+			DealerID:    t.Game.WhoIsDealer(),
 			Scoreboard:  t.Game.Scoreboard,
 			PlayerOrder: t.Game.PlayerOrder,
 			HandsPlayed: t.Game.HandsPlayed,
@@ -66,20 +67,21 @@ func (t *TableService) GetRefreshPayload(clientID string) *msg.RefreshPayload {
 		// Hand is in progress, send the state of the current hand
 		if t.Game.HandInProgress() {
 			payload.HandState = &state.HandState{
-				CalledCard: t.Game.Hand.CalledCard,
-				BlindSize:  len(t.Game.Hand.Blind),
-				Phase:      t.Game.Hand.Phase,
-				PickerID:   t.Game.Hand.PickerID,
-				PartnerID:  t.Game.Hand.PartnerID,
-				Tricks:     t.Game.Hand.Tricks,
-				UpNextID:   t.Game.Hand.WhoIsNext(),
+				CalledCard: t.Game.Call.CalledCard,
+				BlindSize:  len(t.Game.Blind.Cards),
+				Phase:      t.Game.Phase,
+				UpNextID:   t.Game.WhoIsNext(),
+				PickerID:   t.Game.Blind.PickerID,
+				PartnerID:  t.Game.Call.GetPartnerIfRevealed(),
+				Tricks:     t.Game.Play.Tricks,
 			}
 			// Client is a player in the current game, send their hand and bury
-			if player, ok := t.Game.Hand.Players[clientID]; ok {
-				payload.PlayerHandState = &state.PlayerHandState{
-					Hand: player.Hand,
-					Bury: player.Bury,
+			if hand := t.Game.Players.GetHand(clientID); hand != nil {
+				bury := []*deck.Card{}
+				if t.Game.Blind.PickerID == clientID {
+					bury = t.Game.Blind.Cards
 				}
+				payload.PlayerHandState = &state.PlayerHandState{Hand: hand, Bury: bury}
 			}
 		}
 	}

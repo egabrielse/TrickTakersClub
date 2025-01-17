@@ -1,8 +1,8 @@
-package game
+package hand
 
 import (
-	"fmt"
 	"main/domain/game/deck"
+	"main/domain/game/summary"
 )
 
 type Trick struct {
@@ -60,23 +60,21 @@ func (t *Trick) IsComplete() (isComplete bool) {
 }
 
 // Plays a card in the trick
-func (t *Trick) PlayCard(card *deck.Card) error {
-	if t.IsComplete() {
-		return fmt.Errorf("trick is already complete")
-	} else {
+func (t *Trick) PlayCard(card *deck.Card) {
+	if !t.IsComplete() {
 		t.Cards = append(t.Cards, card)
 		if t.TakerIndex == -1 || card.Compare(t.Cards[t.TakerIndex], t.GetLeadingSuit()) {
 			t.TakerIndex = t.UpNextIndex
 		}
 		t.UpNextIndex++
-		return nil
 	}
 }
 
-func (t *Trick) SummarizeTrick() *TrickSummary {
-	return &TrickSummary{
-		TakerID: t.GetTakerID(),
-		Cards:   t.Cards,
-		Points:  deck.CountPoints(t.Cards),
+func (t *Trick) SummarizeTrick() *summary.TrickSummary {
+	return &summary.TrickSummary{
+		TakerID:  t.GetTakerID(),
+		Cards:    t.Cards,
+		Points:   deck.CountPoints(t.Cards),
+		Complete: t.IsComplete(),
 	}
 }

@@ -19,3 +19,10 @@ func NewScoreboard(playerIDs []string) Scoreboard {
 	}
 	return scoreboard
 }
+
+func (s *Scoreboard) UpdateScore(playerID string, score int, points int, tricks int) {
+	row := (*s)[playerID]
+	row.TotalPoints += points
+	row.TotalTricks += tricks
+	(*s)[playerID] = row
+}

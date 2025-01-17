@@ -1,6 +1,9 @@
 package game
 
-import "main/domain/game/deck"
+import (
+	"main/domain/game/deck"
+	"main/domain/game/summary"
+)
 
 type UpNext struct {
 	PlayerID string `json:"playerId"`
@@ -8,21 +11,24 @@ type UpNext struct {
 }
 
 type PickOrPassResult struct {
-	PickerID    string       `json:"pickerId"`
-	PickedCards []*deck.Card `json:"pickedCards"`
+	PickerID string       `json:"pickerId"`
+	Blind    []*deck.Card `json:"blind"`
 }
 
 type BuryResult struct {
-	BuriedCards []*deck.Card `json:"buriedCards"`
+	Bury []*deck.Card `json:"bury"`
 }
 
 type CallResult struct {
 	CalledCard *deck.Card `json:"calledCard"`
-	CalledID   string     `json:"calledId"`
+	PartnerID  string     `json:"partnerId"`
 }
 
+type GoAloneResult struct{}
+
 type PlayCardResult struct {
-	PlayedCard   *deck.Card    `json:"playedCard"`
-	TrickSummary *TrickSummary `json:"trickSummary"`
-	HandSummary  *HandSummary  `json:"handSummary"`
+	PartnerID    string                `json:"partnerId"`    // Partner ID (if partner is revealed)
+	PlayedCard   *deck.Card            `json:"playedCard"`   // Card played by the player
+	TrickSummary *summary.TrickSummary `json:"trickSummary"` // Summary of the trick (if done)
+	HandSummary  *summary.HandSummary  `json:"handSummary"`  // Summary of the hand (if done)
 }

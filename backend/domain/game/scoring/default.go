@@ -5,7 +5,7 @@ import (
 	"math"
 )
 
-// DefaultScoringFunc is the default scoring function for a hand of Sheepshead
+// DefaultScoringFunc is the default scoring function for a hand of Game
 func ScoreHand(
 	pickerID string,
 	partnerID string,

@@ -1,4 +1,4 @@
-package game
+package hand
 
 import (
 	"main/domain/game/deck"
@@ -13,20 +13,20 @@ func TestCountPoints(t *testing.T) {
 
 	t.Run("no cards", func(t *testing.T) {
 		points := deck.CountPoints(trick.Cards)
-		assert.Equal(t, 0, points, "expected 0 points")
+		assert.Equal(t, 0, points)
 	})
 
 	t.Run("one card", func(t *testing.T) {
 		trick.PlayCard(deck.NewCard(deck.CardSuit.Heart, deck.CardRank.Ten)) // 10 points
 		points := deck.CountPoints(trick.Cards)
-		assert.Equal(t, 10, points, "expected 10 points")
+		assert.Equal(t, 10, points)
 	})
 
 	t.Run("multiple cards", func(t *testing.T) {
 		trick.PlayCard(deck.NewCard(deck.CardSuit.Spade, deck.CardRank.Jack))    // 2 points
 		trick.PlayCard(deck.NewCard(deck.CardSuit.Diamond, deck.CardRank.Queen)) // 3 points
 		points := deck.CountPoints(trick.Cards)
-		assert.Equal(t, 15, points, "expected 15 points")
+		assert.Equal(t, 15, points)
 	})
 }
 
@@ -35,13 +35,13 @@ func TestWhoIsNext(t *testing.T) {
 
 	t.Run("no card played", func(t *testing.T) {
 		PlayerID := trick.WhoIsNext()
-		assert.Equal(t, test.Player1, PlayerID, "expected test.Player1")
+		assert.Equal(t, test.Player1, PlayerID)
 	})
 
 	t.Run("one card played", func(t *testing.T) {
 		trick.PlayCard(deck.NewCard(deck.CardSuit.Heart, deck.CardRank.Ten))
 		PlayerID := trick.WhoIsNext()
-		assert.Equal(t, test.Player2, PlayerID, "expected test.Player2")
+		assert.Equal(t, test.Player2, PlayerID)
 	})
 }
 
@@ -50,14 +50,14 @@ func TestGetLeadingCard(t *testing.T) {
 
 	t.Run("no cards played", func(t *testing.T) {
 		leadingCard := trick.GetLeadingCard()
-		assert.Nil(t, leadingCard, "expected nil")
+		assert.Nil(t, leadingCard)
 	})
 
 	t.Run("card played", func(t *testing.T) {
 		card := deck.NewCard(deck.CardSuit.Heart, deck.CardRank.Ten)
 		trick.PlayCard(card)
 		leadingCard := trick.GetLeadingCard()
-		assert.Equal(t, card, leadingCard, "expected ten of hearts to take lead")
+		assert.Equal(t, card, leadingCard)
 	})
 }
 
@@ -66,14 +66,14 @@ func TestGetLeadingSuit(t *testing.T) {
 
 	t.Run("no cards played", func(t *testing.T) {
 		leadingSuit := trick.GetLeadingSuit()
-		assert.Equal(t, "", leadingSuit, "expected empty string")
+		assert.Equal(t, "", leadingSuit)
 	})
 
 	t.Run("card played", func(t *testing.T) {
 		card := deck.NewCard(deck.CardSuit.Heart, deck.CardRank.Ten)
 		trick.PlayCard(card)
 		leadingSuit := trick.GetLeadingSuit()
-		assert.Equal(t, deck.CardSuit.Heart, leadingSuit, "expected leading suit to be Heart")
+		assert.Equal(t, deck.CardSuit.Heart, leadingSuit)
 	})
 }
 
@@ -82,25 +82,25 @@ func TestGetTakerID(t *testing.T) {
 
 	t.Run("no cards played", func(t *testing.T) {
 		takerID := trick.GetTakerID()
-		assert.Equal(t, "", takerID, "expected empty string")
+		assert.Equal(t, "", takerID)
 	})
 
 	t.Run("one card played", func(t *testing.T) {
 		trick.PlayCard(deck.NewCard(deck.CardSuit.Heart, deck.CardRank.Ten))
 		takerID := trick.GetTakerID()
-		assert.Equal(t, test.Player1, takerID, "expected test.Player1")
+		assert.Equal(t, test.Player1, takerID)
 	})
 
 	t.Run("better card played", func(t *testing.T) {
 		trick.PlayCard(deck.NewCard(deck.CardSuit.Spade, deck.CardRank.Jack))
 		takerID := trick.GetTakerID()
-		assert.Equal(t, test.Player2, takerID, "expected test.Player2")
+		assert.Equal(t, test.Player2, takerID)
 	})
 
 	t.Run("worse card played", func(t *testing.T) {
 		trick.PlayCard(deck.NewCard(deck.CardSuit.Club, deck.CardRank.Nine))
 		takerID := trick.GetTakerID()
-		assert.Equal(t, test.Player2, takerID, "expected test.Player2")
+		assert.Equal(t, test.Player2, takerID)
 	})
 }
 
@@ -108,14 +108,14 @@ func TestIsComplete(t *testing.T) {
 	trick := NewTrick([]string{test.Player1, test.Player2, test.Player3})
 
 	t.Run("no cards played", func(t *testing.T) {
-		assert.False(t, trick.IsComplete(), "expected trick to be incomplete")
+		assert.False(t, trick.IsComplete())
 	})
 
 	t.Run("all cards played", func(t *testing.T) {
 		trick.PlayCard(deck.NewCard(deck.CardSuit.Heart, deck.CardRank.Ten))
 		trick.PlayCard(deck.NewCard(deck.CardSuit.Spade, deck.CardRank.Jack))
 		trick.PlayCard(deck.NewCard(deck.CardSuit.Diamond, deck.CardRank.Queen))
-		assert.True(t, trick.IsComplete(), "expected trick to be complete")
+		assert.True(t, trick.IsComplete())
 	})
 }
 
@@ -129,7 +129,6 @@ func TestPlayCard(t *testing.T) {
 		trick.PlayCard(card1)
 		trick.PlayCard(card2)
 		trick.PlayCard(card3)
-		err := trick.PlayCard(deck.NewCard(deck.CardSuit.Club, deck.CardRank.Seven))
-		assert.NotNil(t, err, "expected error, got nil")
+		trick.PlayCard(deck.NewCard(deck.CardSuit.Club, deck.CardRank.Seven))
 	})
 }

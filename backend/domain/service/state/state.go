@@ -3,6 +3,7 @@ package state
 import (
 	"main/domain/game"
 	"main/domain/game/deck"
+	"main/domain/game/hand"
 )
 
 type PlayerHandState struct {
@@ -16,7 +17,7 @@ type HandState struct {
 	Phase      string        `json:"phase"`      // Phase of the hand
 	PickerID   string        `json:"pickerId"`   // Player who picked the blind
 	PartnerID  string        `json:"partnerId"`  // Partner of the picker (only used when partner is revealed)
-	Tricks     []*game.Trick `json:"tricks"`     // Tricks played in the hand
+	Tricks     []*hand.Trick `json:"tricks"`     // Tricks played in the hand
 	UpNextID   string        `json:"upNextId"`   // ID of the player who is up next
 }
 

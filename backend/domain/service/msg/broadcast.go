@@ -1,6 +1,10 @@
 package msg
 
-import "main/domain/game"
+import (
+	"main/domain/game"
+	"main/domain/game/deck"
+	"main/domain/game/summary"
+)
 
 var BroadcastType = struct {
 	// Service timed out due to inactivity
@@ -21,6 +25,18 @@ var BroadcastType = struct {
 	GameOver string
 	// Sent to player who's turn it is
 	UpNext string
+	// When a player picks up the blind
+	BlindPicked string
+	// Card called by picker to select a partner
+	CalledCard string
+	// Card played by a player
+	CardPlayed string
+	// Picker chose to go it alone
+	GoAlone string
+	// Trick has been won
+	TrickDone string
+	// Hand has been won
+	HandDone string
 }{
 	Timeout:     "timeout",
 	Chat:        "chat",
@@ -31,6 +47,12 @@ var BroadcastType = struct {
 	GameStarted: "game-started",
 	GameOver:    "game-over",
 	UpNext:      "up-next",
+	BlindPicked: "blind-picked",
+	CalledCard:  "called-card",
+	CardPlayed:  "card-played",
+	GoAlone:     "go-alone",
+	TrickDone:   "trick-done",
+	HandDone:    "hand-done",
 }
 
 // Payload for a new game
@@ -49,4 +71,25 @@ type GameStartedPayload struct {
 type UpNextPayload struct {
 	PlayerID string `json:"playerId"`
 	Phase    string `json:"phase"`
+}
+
+type BlindPickedPayload struct {
+	PlayerID string `json:"playerId"`
+}
+
+type CalledCardPayload struct {
+	Alone bool       `json:"alone"`
+	Card  *deck.Card `json:"card"`
+}
+
+type CardPlayedPayload struct {
+	Card *deck.Card `json:"card"`
+}
+
+type TrickDonePayload struct {
+	TrickSummary *summary.TrickSummary `json:"trickSummary"`
+}
+
+type HandDonePayload struct {
+	HandSummary *summary.HandSummary `json:"handSummary"`
 }

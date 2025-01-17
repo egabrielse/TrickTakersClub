@@ -38,3 +38,13 @@ func SumValues(m []int) (sum int) {
 	}
 	return sum
 }
+
+func Filter[T any](list []T, filter func(T) bool) []T {
+	var filtered []T
+	for _, v := range list {
+		if filter(v) {
+			filtered = append(filtered, v)
+		}
+	}
+	return filtered
+}
