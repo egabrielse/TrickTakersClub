@@ -250,6 +250,7 @@ func (g *Game) PlayCard(playerID string, card *deck.Card) (*PlayCardResult, erro
 		// Check if partner has been revealed
 		if *card == *g.Call.GetCalledCard() {
 			g.Call.Reveal()
+			result.PartnerID = g.Call.GetPartnerID()
 		}
 		// Check if the trick is complete
 		if trickSummary != nil {

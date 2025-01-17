@@ -74,7 +74,7 @@ func HandlePickCommand(t *TableWorker, clientID string, data interface{}) {
 		t.DirectMessage(clientID, msg.DirectType.Error, err.Error())
 	} else {
 		t.Broadcast(msg.BroadcastType.BlindPicked, &msg.BlindPickedPayload{PlayerID: result.PickerID})
-		t.DirectMessage(result.PickerID, msg.DirectType.Blind, &msg.BlindPayload{Blind: result.Blind})
+		t.DirectMessage(result.PickerID, msg.DirectType.PickedCards, &msg.PickedCardsPayload{Cards: result.Blind})
 		t.Broadcast(msg.BroadcastType.UpNext, t.Game.GetUpNext())
 	}
 }
@@ -87,7 +87,7 @@ func HandlePassCommand(t *TableWorker, clientID string, data interface{}) {
 	} else {
 		if result != nil {
 			t.Broadcast(msg.BroadcastType.BlindPicked, &msg.BlindPickedPayload{PlayerID: result.PickerID})
-			t.DirectMessage(result.PickerID, msg.DirectType.Blind, &msg.BlindPayload{Blind: result.Blind})
+			t.DirectMessage(result.PickerID, msg.DirectType.PickedCards, &msg.PickedCardsPayload{Cards: result.Blind})
 		}
 		t.Broadcast(msg.BroadcastType.UpNext, t.Game.GetUpNext())
 	}
@@ -102,7 +102,7 @@ func HandleBuryCommand(t *TableWorker, clientID string, data interface{}) {
 	} else if result, err := t.Game.BuryCards(clientID, payload.Cards); utils.LogOnError(err) {
 		t.DirectMessage(clientID, msg.DirectType.Error, err.Error())
 	} else {
-		t.DirectMessage(clientID, msg.DirectType.Bury, &msg.BuryPayload{Bury: result.Bury})
+		t.DirectMessage(clientID, msg.DirectType.BuriedCards, &msg.BuriedCardsPayload{Cards: result.Bury})
 		t.Broadcast(msg.BroadcastType.UpNext, t.Game.GetUpNext())
 	}
 }
@@ -146,6 +146,9 @@ func HandlePlayCardCommand(t *TableWorker, clientID string, data interface{}) {
 	} else {
 		t.Broadcast(msg.BroadcastType.CardPlayed, &msg.CardPlayedPayload{Card: result.PlayedCard})
 		t.Broadcast(msg.BroadcastType.UpNext, t.Game.GetUpNext())
+		if result.PartnerID != "" {
+			t.Broadcast(msg.BroadcastType.PartnerRevealed, &msg.PartnerRevealedPayload{PartnerID: result.PartnerID})
+		}
 		if result.TrickSummary != nil {
 			t.Broadcast(msg.BroadcastType.TrickDone, result.TrickSummary)
 			if result.HandSummary != nil {

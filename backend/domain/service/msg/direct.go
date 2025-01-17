@@ -13,15 +13,15 @@ var DirectType = struct {
 	// Cards dealt to a player
 	DealHand string
 	// Cards picked up from the blind
-	Blind string
+	PickedCards string
 	// Cards buried by the picker
-	Bury string
+	BuriedCards string
 }{
-	Error:    "error",
-	Refresh:  "refresh",
-	DealHand: "deal-hand",
-	Blind:    "blind",
-	Bury:     "bury",
+	Error:       "error",
+	Refresh:     "refresh",
+	DealHand:    "deal-hand",
+	PickedCards: "picked-cards",
+	BuriedCards: "buried-cards",
 }
 
 // Contains the full details of the current state of the table and game
@@ -39,10 +39,10 @@ type DealHandPayload struct {
 	Cards    []*deck.Card `json:"cards"`
 }
 
-type BlindPayload struct {
-	Blind []*deck.Card `json:"cards"`
+type PickedCardsPayload struct {
+	Cards []*deck.Card `json:"cards"`
 }
 
-type BuryPayload struct {
-	Bury []*deck.Card `json:"cards"`
+type BuriedCardsPayload struct {
+	Cards []*deck.Card `json:"cards"`
 }

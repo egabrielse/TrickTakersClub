@@ -31,6 +31,8 @@ var BroadcastType = struct {
 	CalledCard string
 	// Card played by a player
 	CardPlayed string
+	// Partner has been revealed
+	PartnerRevealed string
 	// Picker chose to go it alone
 	GoAlone string
 	// Trick has been won
@@ -38,21 +40,22 @@ var BroadcastType = struct {
 	// Hand has been won
 	HandDone string
 }{
-	Timeout:     "timeout",
-	Chat:        "chat",
-	Error:       "error",
-	SatDown:     "sat-down",
-	StoodUp:     "stood-up",
-	NewGame:     "new-game",
-	GameStarted: "game-started",
-	GameOver:    "game-over",
-	UpNext:      "up-next",
-	BlindPicked: "blind-picked",
-	CalledCard:  "called-card",
-	CardPlayed:  "card-played",
-	GoAlone:     "go-alone",
-	TrickDone:   "trick-done",
-	HandDone:    "hand-done",
+	Timeout:         "timeout",
+	Chat:            "chat",
+	Error:           "error",
+	SatDown:         "sat-down",
+	StoodUp:         "stood-up",
+	NewGame:         "new-game",
+	GameStarted:     "game-started",
+	GameOver:        "game-over",
+	UpNext:          "up-next",
+	BlindPicked:     "blind-picked",
+	CalledCard:      "called-card",
+	CardPlayed:      "card-played",
+	PartnerRevealed: "partner-revealed",
+	GoAlone:         "go-alone",
+	TrickDone:       "trick-done",
+	HandDone:        "hand-done",
 }
 
 // Payload for a new game
@@ -84,6 +87,10 @@ type CalledCardPayload struct {
 
 type CardPlayedPayload struct {
 	Card *deck.Card `json:"card"`
+}
+
+type PartnerRevealedPayload struct {
+	PartnerID string `json:"partnerId"`
 }
 
 type TrickDonePayload struct {
