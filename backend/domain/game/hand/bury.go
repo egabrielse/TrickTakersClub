@@ -3,14 +3,12 @@ package hand
 import "main/domain/game/deck"
 
 type Bury struct {
-	BlindSize int          `json:"blindSize"` // Number of cards to bury
-	Cards     []*deck.Card `json:"cards"`     // Cards in the bury
+	Cards []*deck.Card `json:"cards"` // Cards in the bury
 }
 
-func NewBury(blindSize int) *Bury {
+func NewBury() *Bury {
 	return &Bury{
-		BlindSize: blindSize,
-		Cards:     []*deck.Card{},
+		Cards: []*deck.Card{},
 	}
 }
 

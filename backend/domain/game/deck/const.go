@@ -35,3 +35,5 @@ var CardRank = struct {
 }
 
 var CardRanks = []string{CardRank.Seven, CardRank.Eight, CardRank.Nine, CardRank.King, CardRank.Ten, CardRank.Ace, CardRank.Jack, CardRank.Queen}
+
+const DeckSize = 32

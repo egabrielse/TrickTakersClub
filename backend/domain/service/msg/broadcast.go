@@ -17,6 +17,8 @@ var BroadcastType = struct {
 	SatDown string
 	// User leaves the game
 	StoodUp string
+	// Settings Updated
+	SettingsUpdated string
 	// New game created
 	NewGame string
 	// Game has started
@@ -45,6 +47,7 @@ var BroadcastType = struct {
 	Error:           "error",
 	SatDown:         "sat-down",
 	StoodUp:         "stood-up",
+	SettingsUpdated: "settings-updated",
 	NewGame:         "new-game",
 	GameStarted:     "game-started",
 	GameOver:        "game-over",
@@ -56,6 +59,10 @@ var BroadcastType = struct {
 	GoAlone:         "go-alone",
 	TrickDone:       "trick-done",
 	HandDone:        "hand-done",
+}
+
+type UpdatedSettingsPayload struct {
+	Settings *game.GameSettings `json:"settings"`
 }
 
 // Payload for a new game

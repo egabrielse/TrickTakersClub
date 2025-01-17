@@ -17,13 +17,15 @@ import (
 
 // TableWorker represents the service for controlling the table
 type TableWorker struct {
-	Table      *entity.TableEntity    `json:"table"`
-	Game       *game.Game             `json:"game"`
-	LastUpdate time.Time              `json:"lastUpdate"`
-	Users      map[string]*UserClient `json:"users"`
-	AblyClient *ably.Realtime         `json:"-"`
-	Channel    *ably.RealtimeChannel  `json:"-"`
-	Ctx        context.Context        `json:"-"`
+	Table         *entity.TableEntity
+	Game          *game.Game
+	SeatedPlayers []string
+	GameSettings  *game.GameSettings
+	LastUpdate    time.Time
+	Users         map[string]*UserClient
+	AblyClient    *ably.Realtime
+	Channel       *ably.RealtimeChannel
+	Ctx           context.Context
 }
 
 func NewTableWorker(table *entity.TableEntity) (*TableWorker, error) {
@@ -39,12 +41,14 @@ func NewTableWorker(table *entity.TableEntity) (*TableWorker, error) {
 		return nil, err
 	} else {
 		return &TableWorker{
-			Table:      table,
-			LastUpdate: time.Now(),
-			Users:      make(map[string]*UserClient),
-			AblyClient: ablyClient,
-			Channel:    ablyClient.Channels.Get(table.ID),
-			Ctx:        ctx,
+			Table:         table,
+			LastUpdate:    time.Now(),
+			GameSettings:  game.NewGameSettings(),
+			SeatedPlayers: []string{table.HostID},
+			Users:         make(map[string]*UserClient),
+			AblyClient:    ablyClient,
+			Channel:       ablyClient.Channels.Get(table.ID),
+			Ctx:           ctx,
 		}, nil
 	}
 }
@@ -115,12 +119,14 @@ func (t *TableWorker) HandleCommands(message *ably.Message) {
 	t.LastUpdate = time.Now()
 	logrus.Infof("Received private message: %s", message.Data)
 	switch message.Name {
-	case msg.CommandType.CreateGame:
-		HandleCreateGameCommand(t, message.ClientID, message.Data)
+	case msg.CommandType.UpdateSettings:
+		HandleUpdateSettingsCommand(t, message.ClientID, message.Data)
 	case msg.CommandType.SitDown:
 		HandleSitDownCommand(t, message.ClientID, message.Data)
 	case msg.CommandType.StandUp:
 		HandleStandUpCommand(t, message.ClientID, message.Data)
+	case msg.CommandType.StartGame:
+		HandleStartGameCommand(t, message.ClientID, message.Data)
 	case msg.CommandType.EndGame:
 		HandleEndGameCommand(t, message.ClientID, message.Data)
 	case msg.CommandType.Pick:

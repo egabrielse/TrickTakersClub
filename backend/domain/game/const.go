@@ -1,11 +1,11 @@
 package game
 
 var CallingMethod = struct {
-	Alone          string
+	CutThroat      string
 	JackOfDiamonds string
 	CallAnAce      string
 }{
-	Alone:          "alone",
+	CutThroat:      "cut-throat", // picker plays alone
 	JackOfDiamonds: "jack-of-diamonds",
 	CallAnAce:      "call-an-ace",
 }
@@ -25,12 +25,14 @@ var GameDefaults = struct {
 	CallingMethod    string
 	NoPickResolution string
 	DoubleOnTheBump  bool
+	HandSize         int
 }{
 	AutoDeal:         true,
 	PlayerCount:      5,
 	CallingMethod:    CallingMethod.JackOfDiamonds,
 	NoPickResolution: NoPickResolution.ScrewTheDealer,
 	DoubleOnTheBump:  false,
+	HandSize:         6,
 }
 
 var PlayerRole = struct {
@@ -49,17 +51,15 @@ var HandPhase = struct {
 	Bury  string
 	Call  string
 	Play  string
-	Done  string
+	Score string
 }{
 	Setup: "setup",
 	Pick:  "pick",
 	Bury:  "bury",
 	Call:  "call",
 	Play:  "play",
-	Done:  "done",
+	Score: "score",
 }
-
-const DeckSize = 32
 
 var ScoringMethod = struct {
 	Default  string

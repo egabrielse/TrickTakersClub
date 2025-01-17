@@ -9,14 +9,13 @@ import (
 
 func TestBury(t *testing.T) {
 	t.Run("New Blind", func(t *testing.T) {
-		bury := NewBury(2)
+		bury := NewBury()
 
-		assert.Equal(t, bury.BlindSize, 2)
 		assert.Equal(t, len(bury.Cards), 0)
 	})
 
 	t.Run("Bury Cards", func(t *testing.T) {
-		bury := NewBury(2)
+		bury := NewBury()
 		cards := []*deck.Card{
 			deck.NewCard(deck.CardSuit.Club, deck.CardRank.Ace),
 			deck.NewCard(deck.CardSuit.Diamond, deck.CardRank.Eight),

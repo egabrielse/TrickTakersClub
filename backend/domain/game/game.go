@@ -24,68 +24,19 @@ type Game struct {
 	ScoringMethod string        `json:"scoringMethod"` // Method to use for scoring the hand
 }
 
-func NewGame(playerIDs []string, settings *GameSettings) *Game {
-	game := &Game{
+func NewGame(players []string, settings *GameSettings) *Game {
+	return &Game{
 		DealerIndex: -1,
 		HandsPlayed: 0,
-		Scoreboard:  nil,
-		PlayerOrder: playerIDs,
+		Scoreboard:  NewScoreboard(players),
+		PlayerOrder: players,
 		Settings:    settings,
 		Phase:       HandPhase.Setup,
-	}
-	return game
-}
-
-func (g *Game) SitDown(playerID string) error {
-	if g.Phase != HandPhase.Setup {
-		return fmt.Errorf("hand in progress")
-	} else if len(g.PlayerOrder) == g.Settings.PlayerCount {
-		return fmt.Errorf("all seats are taken")
-	} else {
-		for _, id := range g.PlayerOrder {
-			if id == playerID {
-				return fmt.Errorf("player already seated")
-			}
-		}
-		g.PlayerOrder = append(g.PlayerOrder, playerID)
-		// Game automatically starts when all seats are filled
-		if len(g.PlayerOrder) == g.Settings.PlayerCount {
-			if err := g.StartGame(); err != nil {
-				return err
-			}
-		}
-		return nil
-	}
-}
-
-func (g *Game) StandUp(playerID string) error {
-	if g.Phase != HandPhase.Setup {
-		return fmt.Errorf("hand in progress")
-	} else {
-		for index, id := range g.PlayerOrder {
-			if id == playerID {
-				g.PlayerOrder = append(g.PlayerOrder[:index], g.PlayerOrder[index+1:]...)
-				return nil
-			}
-		}
-		return fmt.Errorf("player not seated")
-	}
-}
-
-func (g *Game) StartGame() error {
-	if len(g.PlayerOrder) != g.Settings.PlayerCount {
-		return fmt.Errorf("not enough players")
-	} else if err := g.StartNewHand(); err != nil {
-		return err
-	} else {
-		g.HandsPlayed = 0
-		g.Scoreboard = NewScoreboard(g.PlayerOrder)
-		return nil
 	}
 }
 
 func (g *Game) StartNewHand() error {
-	if g.Phase != HandPhase.Setup && g.Phase != HandPhase.Done {
+	if g.Phase != HandPhase.Setup && g.Phase != HandPhase.Score {
 		return fmt.Errorf("hand in progress")
 	} else {
 		g.Phase = HandPhase.Pick
@@ -94,23 +45,23 @@ func (g *Game) StartNewHand() error {
 		leftOfDealer := g.PlayerOrder[(g.DealerIndex+1)%len(g.PlayerOrder)]
 		turnOrder := utils.RelistStartingWith(g.PlayerOrder, leftOfDealer)
 		deck := deck.NewDeck()
-		handSize, blindSize := g.Settings.DeriveHandBlindSize()
+		blindSize := g.Settings.GetBlindSize()
 		players := NewPlayers(turnOrder)
 		g.Blind = hand.NewBlind(turnOrder, deck.Draw(blindSize))
 		for index := range g.PlayerOrder {
 			playerID := turnOrder[index]
-			players.SetHand(playerID, deck.Draw(handSize))
+			players.SetHand(playerID, deck.Draw(g.Settings.HandSize))
 		}
-		g.Bury = hand.NewBury(blindSize)
+		g.Bury = hand.NewBury()
 		g.Call = hand.NewCall()
-		g.Play = hand.NewPlay(turnOrder, handSize)
+		g.Play = hand.NewPlay(turnOrder, g.Settings.HandSize)
 		g.ScoringMethod = ScoringMethod.Default
 		return nil
 	}
 }
 
 func (g *Game) HandInProgress() bool {
-	return g.Phase != HandPhase.Setup && g.Phase != HandPhase.Done
+	return g.Phase != HandPhase.Setup && g.Phase != HandPhase.Score
 }
 
 func (g *Game) WhoIsDealer() string {
@@ -188,8 +139,8 @@ func (g *Game) BuryCards(playerID string, cards []*deck.Card) (*BuryResult, erro
 		return nil, fmt.Errorf("bury phase is already complete")
 	} else if ok := g.Players.HandContains(playerID, cards); !ok {
 		return nil, fmt.Errorf("player does not possess all the cards")
-	} else if len(cards) != g.Bury.BlindSize {
-		return nil, fmt.Errorf("expected %d cards, got %d", g.Bury.BlindSize, len(cards))
+	} else if len(cards) != g.Settings.GetBlindSize() {
+		return nil, fmt.Errorf("expected %d cards, got %d", g.Settings.GetBlindSize(), len(cards))
 	} else {
 		// Remove the cards from the player's hand
 		for index := range cards {
@@ -264,7 +215,7 @@ func (g *Game) PlayCard(playerID string, card *deck.Card) (*PlayCardResult, erro
 					g.Scoreboard.UpdateScore(playerID, summary.Score, summary.Points, summary.Tricks)
 				}
 				// Move onto the done phase
-				g.Phase = HandPhase.Done
+				g.Phase = HandPhase.Score
 				if g.Settings.AutoDeal {
 					// Automatically start the next hand
 					g.StartNewHand()
