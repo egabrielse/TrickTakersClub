@@ -25,16 +25,12 @@ var GameDefaults = struct {
 	CallingMethod    string
 	NoPickResolution string
 	DoubleOnTheBump  bool
-	Blitzing         bool
-	Cracking         bool
 }{
 	AutoDeal:         true,
 	PlayerCount:      5,
 	CallingMethod:    CallingMethod.JackOfDiamonds,
 	NoPickResolution: NoPickResolution.ScrewTheDealer,
 	DoubleOnTheBump:  false,
-	Blitzing:         false,
-	Cracking:         false,
 }
 
 var PlayerRole = struct {

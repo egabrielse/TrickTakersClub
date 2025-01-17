@@ -24,6 +24,10 @@ func NewGameSettings(playerCount int) *GameSettings {
 		settings.CallingMethod = CallingMethod.JackOfDiamonds
 		settings.NoPickResolution = NoPickResolution.Leasters
 		return settings
+	} else if playerCount == 6 {
+		settings.CallingMethod = CallingMethod.JackOfDiamonds
+		settings.NoPickResolution = NoPickResolution.Leasters
+		return settings
 	} else {
 		return nil // unsupported player count
 	}
@@ -37,6 +41,8 @@ func (gs *GameSettings) DeriveHandBlindSize() (handSize int, blindSize int) {
 		return 7, 4
 	case 5:
 		return 6, 2
+	case 6:
+		return 5, 2
 	default:
 		return 0, 0
 	}
