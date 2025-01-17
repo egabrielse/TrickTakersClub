@@ -15,8 +15,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// TableService represents the service for controlling the table
-type TableService struct {
+// TableWorker represents the service for controlling the table
+type TableWorker struct {
 	Table      *entity.TableEntity    `json:"table"`
 	Game       *game.Game             `json:"game"`
 	LastUpdate time.Time              `json:"lastUpdate"`
@@ -26,7 +26,7 @@ type TableService struct {
 	Ctx        context.Context        `json:"-"`
 }
 
-func NewTableService(table *entity.TableEntity) (*TableService, error) {
+func NewTableWorker(table *entity.TableEntity) (*TableWorker, error) {
 	ctx := context.Background()
 	key := utils.GetEnvironmentVariable("ABLY_API_KEY")
 
@@ -38,7 +38,7 @@ func NewTableService(table *entity.TableEntity) (*TableService, error) {
 	if ablyClient, err := ably.NewRealtime(options...); utils.LogOnError(err) {
 		return nil, err
 	} else {
-		return &TableService{
+		return &TableWorker{
 			Table:      table,
 			LastUpdate: time.Now(),
 			Users:      make(map[string]*UserClient),
@@ -50,7 +50,7 @@ func NewTableService(table *entity.TableEntity) (*TableService, error) {
 }
 
 // GetState returns the current state of the table
-func (t *TableService) GetRefreshPayload(clientID string) *msg.RefreshPayload {
+func (t *TableWorker) GetRefreshPayload(clientID string) *msg.RefreshPayload {
 	payload := &msg.RefreshPayload{
 		TableID: t.Table.ID,
 		HostID:  t.Table.HostID,
@@ -89,12 +89,12 @@ func (t *TableService) GetRefreshPayload(clientID string) *msg.RefreshPayload {
 }
 
 // Broadcast sends a message to all clients connected to the table via the public channel
-func (t *TableService) Broadcast(name string, data interface{}) {
+func (t *TableWorker) Broadcast(name string, data interface{}) {
 	t.Channel.Publish(t.Ctx, name, data)
 }
 
 // DirectMessage sends a message to a specific client via their private channel
-func (t *TableService) DirectMessage(clientID string, name string, data interface{}) {
+func (t *TableWorker) DirectMessage(clientID string, name string, data interface{}) {
 	if user, ok := t.Users[clientID]; ok {
 		user.Publish(t.Ctx, name, data)
 	} else {
@@ -103,14 +103,14 @@ func (t *TableService) DirectMessage(clientID string, name string, data interfac
 }
 
 // HandleMessage handles messages received from the public channel
-func (t *TableService) HandleMessages(message *ably.Message) {
+func (t *TableWorker) HandleMessages(message *ably.Message) {
 	// Reset the ticker if any activity is detected
 	t.LastUpdate = time.Now()
 	logrus.Infof("Received public message: %s", message.Data)
 }
 
 // HandlePrivateMessage handles messages sent to the table service via the user's private channel
-func (t *TableService) HandleCommands(message *ably.Message) {
+func (t *TableWorker) HandleCommands(message *ably.Message) {
 	// Reset the ticker if any activity is detected
 	t.LastUpdate = time.Now()
 	logrus.Infof("Received private message: %s", message.Data)
@@ -123,13 +123,25 @@ func (t *TableService) HandleCommands(message *ably.Message) {
 		HandleStandUpCommand(t, message.ClientID, message.Data)
 	case msg.CommandType.EndGame:
 		HandleEndGameCommand(t, message.ClientID, message.Data)
+	case msg.CommandType.Pick:
+		HandlePickCommand(t, message.ClientID, message.Data)
+	case msg.CommandType.Pass:
+		HandlePassCommand(t, message.ClientID, message.Data)
+	case msg.CommandType.Bury:
+		HandleBuryCommand(t, message.ClientID, message.Data)
+	case msg.CommandType.Call:
+		HandleCallCommand(t, message.ClientID, message.Data)
+	case msg.CommandType.GoAlone:
+		HandleGoAloneCommand(t, message.ClientID, message.Data)
+	case msg.CommandType.PlayCard:
+		HandlePlayCardCommand(t, message.ClientID, message.Data)
 	default:
 		logrus.Warnf("Unknown message type: %s", message.Name)
 	}
 }
 
 // RegisterClient registers a new client to the table service
-func (t *TableService) RegisterClient(clientID string, connectionID string) {
+func (t *TableWorker) RegisterClient(clientID string, connectionID string) {
 	logrus.Infof("User %s entered the table", clientID)
 	if user, ok := t.Users[clientID]; ok {
 		user.Enter(t.Ctx, connectionID, t.HandleCommands)
@@ -143,7 +155,7 @@ func (t *TableService) RegisterClient(clientID string, connectionID string) {
 }
 
 // UnregisterClient unregisters a client from the table service
-func (t *TableService) UnregisterClient(clientID string, connectionID string) {
+func (t *TableWorker) UnregisterClient(clientID string, connectionID string) {
 	logrus.Infof("User %s left the table", clientID)
 	if _, ok := t.Users[clientID]; ok {
 		t.Users[clientID].Leave(t.Ctx, connectionID)
@@ -152,7 +164,7 @@ func (t *TableService) UnregisterClient(clientID string, connectionID string) {
 }
 
 // StartService starts a goroutine for the table service and begins listening for messages
-func (t *TableService) StartService() {
+func (t *TableWorker) StartService() {
 	go func() {
 		logrus.Infof("Starting service for table %s", t.Table.ID)
 		ticker := time.NewTicker(TickerDuration)

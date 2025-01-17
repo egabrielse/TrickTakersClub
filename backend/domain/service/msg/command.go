@@ -19,8 +19,10 @@ var CommandType = struct {
 	Pass string
 	// Player buries cards
 	Bury string
-	// Player calls a card
+	// Picker calls a card (and partner)
 	Call string
+	// Picker chooses to go alone
+	GoAlone string
 	// Player plays a card
 	PlayCard string
 }{

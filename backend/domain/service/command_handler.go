@@ -7,7 +7,7 @@ import (
 	"main/utils"
 )
 
-func HandleCreateGameCommand(t *TableService, clientID string, data interface{}) {
+func HandleCreateGameCommand(t *TableWorker, clientID string, data interface{}) {
 	payload := &game.GameSettings{}
 	if clientID != t.Table.HostID {
 		t.DirectMessage(clientID, msg.DirectType.Error, "only the host can create a game")
@@ -23,7 +23,7 @@ func HandleCreateGameCommand(t *TableService, clientID string, data interface{})
 	}
 }
 
-func HandleEndGameCommand(t *TableService, clientID string, data interface{}) {
+func HandleEndGameCommand(t *TableWorker, clientID string, data interface{}) {
 	if clientID != t.Table.HostID {
 		t.DirectMessage(clientID, msg.DirectType.Error, "only the host can end the game")
 	} else if t.Game == nil {
@@ -34,7 +34,7 @@ func HandleEndGameCommand(t *TableService, clientID string, data interface{}) {
 	}
 }
 
-func HandleSitDownCommand(t *TableService, clientID string, data interface{}) {
+func HandleSitDownCommand(t *TableWorker, clientID string, data interface{}) {
 	if t.Game == nil {
 		t.DirectMessage(clientID, msg.DirectType.Error, "game has not been initialized")
 	} else if err := t.Game.SitDown(clientID); utils.LogOnError(err) {
@@ -57,7 +57,7 @@ func HandleSitDownCommand(t *TableService, clientID string, data interface{}) {
 	}
 }
 
-func HandleStandUpCommand(t *TableService, clientID string, data interface{}) {
+func HandleStandUpCommand(t *TableWorker, clientID string, data interface{}) {
 	if t.Game == nil {
 		t.DirectMessage(clientID, msg.DirectType.Error, "game has not been initialized")
 	} else if err := t.Game.StandUp(clientID); utils.LogOnError(err) {
@@ -67,7 +67,7 @@ func HandleStandUpCommand(t *TableService, clientID string, data interface{}) {
 	}
 }
 
-func HandlePickCommand(t *TableService, clientID string, data interface{}) {
+func HandlePickCommand(t *TableWorker, clientID string, data interface{}) {
 	if !t.Game.HandInProgress() {
 		t.DirectMessage(clientID, msg.DirectType.Error, "hand not in progress")
 	} else if result, err := t.Game.Pick(clientID); utils.LogOnError(err) {
@@ -79,7 +79,7 @@ func HandlePickCommand(t *TableService, clientID string, data interface{}) {
 	}
 }
 
-func HandlePassCommand(t *TableService, clientID string, data interface{}) {
+func HandlePassCommand(t *TableWorker, clientID string, data interface{}) {
 	if !t.Game.HandInProgress() {
 		t.DirectMessage(clientID, msg.DirectType.Error, "hand not in progress")
 	} else if result, err := t.Game.Pass(clientID); utils.LogOnError(err) {
@@ -93,7 +93,7 @@ func HandlePassCommand(t *TableService, clientID string, data interface{}) {
 	}
 }
 
-func HandleBuryCommand(t *TableService, clientID string, data interface{}) {
+func HandleBuryCommand(t *TableWorker, clientID string, data interface{}) {
 	payload := &msg.BuryCommandParams{}
 	if !t.Game.HandInProgress() {
 		t.DirectMessage(clientID, msg.DirectType.Error, "hand not in progress")
@@ -107,7 +107,7 @@ func HandleBuryCommand(t *TableService, clientID string, data interface{}) {
 	}
 }
 
-func HandleCallCommand(t *TableService, clientID string, data interface{}) {
+func HandleCallCommand(t *TableWorker, clientID string, data interface{}) {
 	payload := &msg.CallCommandParams{}
 	if !t.Game.HandInProgress() {
 		t.DirectMessage(clientID, msg.DirectType.Error, "hand not in progress")
@@ -121,7 +121,7 @@ func HandleCallCommand(t *TableService, clientID string, data interface{}) {
 	}
 }
 
-func HandleGoAloneCommand(t *TableService, clientID string, data interface{}) {
+func HandleGoAloneCommand(t *TableWorker, clientID string, data interface{}) {
 	payload := &msg.CallCommandParams{}
 	if !t.Game.HandInProgress() {
 		t.DirectMessage(clientID, msg.DirectType.Error, "hand not in progress")
@@ -135,7 +135,7 @@ func HandleGoAloneCommand(t *TableService, clientID string, data interface{}) {
 	}
 }
 
-func HandlePlayCardCommand(t *TableService, clientID string, data interface{}) {
+func HandlePlayCardCommand(t *TableWorker, clientID string, data interface{}) {
 	payload := &msg.PlayCardCommandParams{}
 	if !t.Game.HandInProgress() {
 		t.DirectMessage(clientID, msg.DirectType.Error, "hand not in progress")

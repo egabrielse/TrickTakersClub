@@ -21,7 +21,7 @@ func CreateTable(r *http.Request, p httprouter.Params) (code int, body any) {
 		return http.StatusInternalServerError, nil
 	} else if err := tableRepo.Save(r.Context(), tableEntity); err != nil {
 		return http.StatusInternalServerError, nil
-	} else if tableService, err := service.NewTableService(tableEntity); utils.LogOnError(err) {
+	} else if tableService, err := service.NewTableWorker(tableEntity); utils.LogOnError(err) {
 		return http.StatusInternalServerError, nil
 	} else {
 		tableService.StartService()
