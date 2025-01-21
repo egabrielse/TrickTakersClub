@@ -36,7 +36,7 @@ var BroadcastType = struct {
 	// Partner has been revealed
 	PartnerRevealed string
 	// Picker chose to go it alone
-	GoAlone string
+	GoneAlone string
 	// Trick has been won
 	TrickDone string
 	// Hand has been won
@@ -56,7 +56,7 @@ var BroadcastType = struct {
 	CalledCard:      "called-card",
 	CardPlayed:      "card-played",
 	PartnerRevealed: "partner-revealed",
-	GoAlone:         "go-alone",
+	GoneAlone:       "gone-alone",
 	TrickDone:       "trick-done",
 	HandDone:        "hand-done",
 }

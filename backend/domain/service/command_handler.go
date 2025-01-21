@@ -198,7 +198,7 @@ func HandleGoAloneCommand(t *TableWorker, clientID string, data interface{}) {
 	} else if _, err := t.Game.GoAlone(clientID); utils.LogOnError(err) {
 		t.DirectMessage(clientID, msg.DirectType.Error, err.Error())
 	} else {
-		t.Broadcast(msg.BroadcastType.GoAlone, nil)
+		t.Broadcast(msg.BroadcastType.GoneAlone, nil)
 		t.Broadcast(msg.BroadcastType.UpNext, t.Game.GetUpNext())
 	}
 }
