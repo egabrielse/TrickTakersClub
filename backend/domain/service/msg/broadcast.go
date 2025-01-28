@@ -7,103 +7,176 @@ import (
 )
 
 var BroadcastType = struct {
-	// Service timed out due to inactivity
-	Timeout string
-	// Text messages between users
-	Chat string
-	// Errors
-	Error string
-	// User becomes a player in the game
-	SatDown string
-	// User leaves the game
-	StoodUp string
-	// Settings Updated
-	SettingsUpdated string
-	// New game created
-	NewGame string
-	// Game has started
-	GameStarted string
-	// Game has ended
-	GameOver string
-	// Sent to player who's turn it is
-	UpNext string
 	// When a player picks up the blind
 	BlindPicked string
 	// Card called by picker to select a partner
 	CalledCard string
 	// Card played by a player
 	CardPlayed string
-	// Partner has been revealed
-	PartnerRevealed string
+	// Text messages between users
+	Chat string
+	// Errors
+	Error string
 	// Picker chose to go it alone
 	GoneAlone string
-	// Trick has been won
-	TrickDone string
 	// Hand has been won
 	HandDone string
+	// Partner has been revealed
+	PartnerRevealed string
+	// Settings Updated
+	SettingsUpdated string
+	// User becomes a player in the game
+	SatDown string
+	// User leaves the game
+	StoodUp string
+	// Game has started
+	GameStarted string
+	// Game has ended
+	GameOver string
+	// Trick has been won
+	TrickDone string
+	// Service timed out due to inactivity
+	Timeout string
+	// Sent to player who's turn it is
+	UpNext string
 }{
-	Timeout:         "timeout",
-	Chat:            "chat",
-	Error:           "error",
-	SatDown:         "sat-down",
-	StoodUp:         "stood-up",
-	SettingsUpdated: "settings-updated",
-	NewGame:         "new-game",
-	GameStarted:     "game-started",
-	GameOver:        "game-over",
-	UpNext:          "up-next",
 	BlindPicked:     "blind-picked",
 	CalledCard:      "called-card",
 	CardPlayed:      "card-played",
-	PartnerRevealed: "partner-revealed",
+	Chat:            "chat",
+	Error:           "error",
 	GoneAlone:       "gone-alone",
-	TrickDone:       "trick-done",
 	HandDone:        "hand-done",
+	PartnerRevealed: "partner-revealed",
+	SettingsUpdated: "settings-updated",
+	SatDown:         "sat-down",
+	StoodUp:         "stood-up",
+	GameStarted:     "game-started",
+	GameOver:        "game-over",
+	TrickDone:       "trick-done",
+	Timeout:         "timeout",
+	UpNext:          "up-next",
 }
 
-type UpdatedSettingsPayload struct {
+type BlindPickedData struct {
+	PlayerID string `json:"playerId"`
+}
+
+func BlindPickedMessage(playerID string) (name string, data *BlindPickedData) {
+	return BroadcastType.BlindPicked, &BlindPickedData{PlayerID: playerID}
+}
+
+type CalledCardData struct {
+	Card *deck.Card `json:"card"`
+}
+
+func CalledCardMessage(card *deck.Card) (name string, data *CalledCardData) {
+	return BroadcastType.CalledCard, &CalledCardData{Card: card}
+}
+
+type CardPlayedData struct {
+	Card *deck.Card `json:"card"`
+}
+
+func CardPlayedMessage(card *deck.Card) (name string, data *CardPlayedData) {
+	return BroadcastType.CardPlayed, &CardPlayedData{Card: card}
+}
+
+type ChatData struct {
+	Message string `json:"message"`
+}
+
+func ChatMessage(message string) (name string, data *ChatData) {
+	return BroadcastType.Chat, &ChatData{Message: message}
+}
+
+type GameOverData struct {
+	Scoreboard  game.Scoreboard `json:"scoreboard"`
+	HandsPlayed int             `json:"handsPlayed"`
+}
+
+func GameOverMessage(scoreboard game.Scoreboard, handsPlayed int) (name string, data *GameOverData) {
+	return BroadcastType.GameOver, &GameOverData{Scoreboard: scoreboard, HandsPlayed: handsPlayed}
+}
+
+type GameStartedData struct {
+	Scoreboard  game.Scoreboard `json:"scoreboard"`
+	PlayerOrder []string        `json:"playerOrder"`
+}
+
+func GameStartedMessage(scoreboard game.Scoreboard, playerOrder []string) (name string, data *GameStartedData) {
+	return BroadcastType.GameStarted, &GameStartedData{Scoreboard: scoreboard, PlayerOrder: playerOrder}
+}
+
+type GoneAlonePayload struct{}
+
+func GoneAloneMessage() (name string, data *GoneAlonePayload) {
+	return BroadcastType.GoneAlone, &GoneAlonePayload{}
+}
+
+type HandDoneData struct {
+	HandSummary *summary.HandSummary `json:"handSummary"`
+}
+
+func HandDoneMessage(handSummary *summary.HandSummary) (name string, data *HandDoneData) {
+	return BroadcastType.HandDone, &HandDoneData{HandSummary: handSummary}
+}
+
+type PartnerRevealedData struct {
+	PlayerID string `json:"playerId"`
+}
+
+func PartnerRevealedMessage(playerID string) (name string, data *PartnerRevealedData) {
+	return BroadcastType.PartnerRevealed, &PartnerRevealedData{PlayerID: playerID}
+}
+
+type SatDownData struct {
+	PlayerID string `json:"playerId"`
+}
+
+func SatDownMessage(playerID string) (name string, data *SatDownData) {
+	return BroadcastType.SatDown, &SatDownData{PlayerID: playerID}
+}
+
+type SettingsUpdatedData struct {
 	Settings *game.GameSettings `json:"settings"`
+	Seating  []string           `json:"seating"`
 }
 
-// Payload for a new game
-type NewGamePayload struct {
-	PlayerOrder []string           `json:"playerOrder"` // Order of players at the table
-	Settings    *game.GameSettings `json:"settings"`    // Game settings
+func SettingsUpdatedMessage(settings *game.GameSettings, seating []string) (name string, data *SettingsUpdatedData) {
+	return BroadcastType.SettingsUpdated, &SettingsUpdatedData{Settings: settings, Seating: seating}
 }
 
-// Payload for when a game has started
-type GameStartedPayload struct {
-	Scoreboard  game.Scoreboard `json:"scoreboard"`  // Scoreboard
-	PlayerOrder []string        `json:"playerOrder"` // Order of players at the table
+type StoodUpData struct {
+	PlayerID string `json:"playerId"`
+}
+
+func StoodUpMessage(playerID string) (name string, data *StoodUpData) {
+	return BroadcastType.StoodUp, &StoodUpData{PlayerID: playerID}
+}
+
+type TimeoutData struct {
+	Message string `json:"message"`
+}
+
+func TimeoutMessage(message string) (name string, data *TimeoutData) {
+	return BroadcastType.Timeout, &TimeoutData{Message: message}
+}
+
+type TrickDoneData struct {
+	TrickSummary *summary.TrickSummary `json:"trickSummary"`
+}
+
+func TrickDoneMessage(trickSummary *summary.TrickSummary) (name string, data *TrickDoneData) {
+	return BroadcastType.TrickDone, &TrickDoneData{TrickSummary: trickSummary}
 }
 
 // Who's turn is it and what phase are we in
-type UpNextPayload struct {
+type UpNextData struct {
 	PlayerID string `json:"playerId"`
 	Phase    string `json:"phase"`
 }
 
-type BlindPickedPayload struct {
-	PlayerID string `json:"playerId"`
-}
-
-type CalledCardPayload struct {
-	Alone bool       `json:"alone"`
-	Card  *deck.Card `json:"card"`
-}
-
-type CardPlayedPayload struct {
-	Card *deck.Card `json:"card"`
-}
-
-type PartnerRevealedPayload struct {
-	PartnerID string `json:"partnerId"`
-}
-
-type TrickDonePayload struct {
-	TrickSummary *summary.TrickSummary `json:"trickSummary"`
-}
-
-type HandDonePayload struct {
-	HandSummary *summary.HandSummary `json:"handSummary"`
+func UpNextMessage(playerID, phase string) (name string, data *UpNextData) {
+	return BroadcastType.UpNext, &UpNextData{PlayerID: playerID, Phase: phase}
 }

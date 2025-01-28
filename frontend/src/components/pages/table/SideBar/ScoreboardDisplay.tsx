@@ -1,7 +1,7 @@
 import { Paper } from "@mui/material";
 import { useContext } from "react";
 import ProfileSnapshot from "../../../common/ProfileSnapshot";
-import { TableState } from "../TablePage";
+import { TableState } from "../TableStateProvider";
 import "./ScoreboardDisplay.scss";
 
 export default function ScoreboardDisplay() {

@@ -1,21 +1,20 @@
-export const CALLING_METHOD = {
-    ALONE: 'alone',
+export const CALLING_METHODS = {
+    CUT_THROAT: 'cut-throat',
     JACK_OF_DIAMONDS: 'jack-of-diamonds',
     CALL_AN_ACE: 'call-an-ace',
 } as const;
 
-export const NO_PICK_RESOLUTION = {
+export const NO_PICK_RESOLUTIONS = {
     SCREW_THE_DEALER: 'screw-the-dealer',
     LEASTERS: 'leasters',
     MOSTERS: 'mosters',
-    DOUBLERS: 'doublers',
 } as const;
 
 export const GAME_SETTINGS_DEFAULTS = {
     AUTO_DEAL: false,
     PLAYER_COUNT: 5,
-    CALLING_METHOD: CALLING_METHOD.JACK_OF_DIAMONDS,
-    NO_PICK_RESOLUTION: NO_PICK_RESOLUTION.SCREW_THE_DEALER,
+    CALLING_METHODS: CALLING_METHODS.JACK_OF_DIAMONDS,
+    NO_PICK_RESOLUTIONS: NO_PICK_RESOLUTIONS.SCREW_THE_DEALER,
     DOUBLE_ON_THE_BUMP: false,
     BLITZING: false,
     CRACKING: false,

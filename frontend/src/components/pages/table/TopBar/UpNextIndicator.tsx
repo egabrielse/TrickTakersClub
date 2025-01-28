@@ -2,7 +2,7 @@ import { Paper, Typography } from "@mui/material";
 import { useContext } from "react";
 import ProfileSnapshot from "../../../common/ProfileSnapshot";
 import { AuthContext } from "../../auth/AuthContextProvider";
-import { TableState } from "../TablePage";
+import { TableState } from "../TableStateProvider";
 import "./UpNextIndicator.scss";
 
 export default function UpNextIndicator() {

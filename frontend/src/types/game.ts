@@ -1,8 +1,8 @@
-import { CALLING_METHOD, CARD_SIZE, CARD_SUIT, CARD_RANK, HAND_PHASE, NO_PICK_RESOLUTION } from "../constants/game";
+import { CALLING_METHODS, CARD_SIZE, CARD_SUIT, CARD_RANK, HAND_PHASE, NO_PICK_RESOLUTIONS } from "../constants/game";
 
-export type CallingMethod = typeof CALLING_METHOD[keyof typeof CALLING_METHOD];
+export type CallingMethod = typeof CALLING_METHODS[keyof typeof CALLING_METHODS];
 
-export type NoPickResolution = typeof NO_PICK_RESOLUTION[keyof typeof NO_PICK_RESOLUTION];
+export type NoPickResolution = typeof NO_PICK_RESOLUTIONS[keyof typeof NO_PICK_RESOLUTIONS];
 
 export type GameSettings = {
     autoDeal: boolean;
@@ -32,30 +32,13 @@ export type PlayerHandState = {
     bury: PlayingCard[];
 }
 
-export type TrickState = {
+export type Trick = {
     upNextIndex: number;
     takerIndex: number;
     turnOrder: string[];
     cards: PlayingCard[];
 }
 
-export type HandState = {
-    calledCard: PlayingCard | null;
-    blindSize: number;
-    phase: HandPhase;
-    pickerId: string;
-    partnerId: string;
-    tricks: TrickState[];
-    upNextId: string;
-}
-
-export type GameState = {
-    dealerId: string;
-    scoreboard: Scoreboard;
-    playerOrder: string[];
-    handsPlayed: number;
-    settings: GameSettings;
-}
 
 export type CardSize = typeof CARD_SIZE[keyof typeof CARD_SIZE];
 

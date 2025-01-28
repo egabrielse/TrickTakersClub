@@ -1,21 +1,21 @@
 import CancelIcon from "@mui/icons-material/Cancel";
 import { useContext } from "react";
-import { COMMAND_TYPES } from "../../../../constants/commands";
+import { COMMAND_TYPES } from "../../../../constants/message";
 import PaperButton from "../../../common/PaperButton";
 import { AuthContext } from "../../auth/AuthContextProvider";
 import { ChannelContext } from "../ChannelContextProvider";
-import { TableState } from "../TablePage";
+import { TableState } from "../TableStateProvider";
 
 export default function EndGameButton() {
   const { hostId } = useContext(ChannelContext);
-  const { sendCommand, handInProgress } = useContext(TableState);
+  const { sendCommand, inProgress } = useContext(TableState);
   const { user } = useContext(AuthContext);
 
   const onClick = () => {
     sendCommand({ name: COMMAND_TYPES.END_GAME, data: undefined });
   };
 
-  if (user?.uid !== hostId || !handInProgress) {
+  if (user?.uid !== hostId || !inProgress) {
     // Empty div to maintain layout consistency
     return <div></div>;
   } else {

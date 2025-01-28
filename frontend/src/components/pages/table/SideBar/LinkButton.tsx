@@ -1,13 +1,12 @@
 import CheckIcon from "@mui/icons-material/Check";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { Tooltip } from "@mui/material";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import PaperButton from "../../../common/PaperButton";
+import { ChannelContext } from "../ChannelContextProvider";
 
-type LinkButtonProps = {
-  tableId: string;
-};
-export default function LinkButton({ tableId }: LinkButtonProps) {
+export default function LinkButton() {
+  const { tableId } = useContext(ChannelContext);
   const [copied, setCopied] = useState(false);
 
   const copyLink = () => {

@@ -39,20 +39,14 @@ func (gs *GameSettings) SetPlayerCount(playerCount int) error {
 	// Update other settings based on the player count
 	switch playerCount {
 	case 3:
-		gs.NoPickResolution = NoPickResolution.Leasters
 		gs.CallingMethod = CallingMethod.CutThroat
 		gs.HandSize = 10
 	case 4:
-		gs.NoPickResolution = NoPickResolution.Leasters
 		gs.CallingMethod = CallingMethod.CutThroat
 		gs.HandSize = 7
 	case 5:
-		gs.NoPickResolution = NoPickResolution.ScrewTheDealer
-		gs.CallingMethod = CallingMethod.JackOfDiamonds
 		gs.HandSize = 6
 	case 6:
-		gs.NoPickResolution = NoPickResolution.ScrewTheDealer
-		gs.CallingMethod = CallingMethod.JackOfDiamonds
 		gs.HandSize = 5
 	}
 	return nil

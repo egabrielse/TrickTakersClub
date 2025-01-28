@@ -17,6 +17,7 @@ var NoPickResolution = struct {
 }{
 	ScrewTheDealer: "screw-the-dealer",
 	Leasters:       "leasters",
+	Mosters:        "mosters",
 }
 
 var GameDefaults = struct {

@@ -1,6 +1,6 @@
 import { Button, Typography } from "@mui/material";
 import { useContext } from "react";
-import { COMMAND_TYPES } from "../../../../../constants/commands";
+import { COMMAND_TYPES } from "../../../../../constants/message/commands";
 import { CardSize } from "../../../../../types/game";
 import CardList from "../../../../common/CardList";
 import { AuthContext } from "../../../auth/AuthContextProvider";

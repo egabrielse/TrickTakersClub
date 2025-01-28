@@ -1,70 +1,80 @@
 import {
-  Button,
   InputLabel,
+  MenuItem,
+  Select,
   Slider,
-  ToggleButton,
-  ToggleButtonGroup,
   Typography,
 } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
-import { COMMAND_TYPES } from "../../../../constants/commands";
+import { useContext } from "react";
 import {
-  CALLING_METHOD,
-  GAME_SETTINGS_DEFAULTS,
+  CALLING_METHODS,
   GAME_SETTINGS_PARAMS,
-  NO_PICK_RESOLUTION,
+  NO_PICK_RESOLUTIONS,
 } from "../../../../constants/game";
-import { GameSettings } from "../../../../types/game";
+import { COMMAND_TYPES } from "../../../../constants/message";
 import { AuthContext } from "../../auth/AuthContextProvider";
 import { ChannelContext } from "../ChannelContextProvider";
-import { TableState } from "../TablePage";
+import { TableState } from "../TableStateProvider";
 import "./GameSettingsForm.scss";
 
-const DefaultGameSettings: GameSettings = {
-  autoDeal: GAME_SETTINGS_DEFAULTS.AUTO_DEAL,
-  playerCount: GAME_SETTINGS_DEFAULTS.PLAYER_COUNT,
-  callingMethod: GAME_SETTINGS_DEFAULTS.CALLING_METHOD,
-  noPickResolution: GAME_SETTINGS_DEFAULTS.NO_PICK_RESOLUTION,
-  doubleOnTheBump: GAME_SETTINGS_DEFAULTS.DOUBLE_ON_THE_BUMP,
-};
+const CallingMethodOptions = [
+  {
+    value: CALLING_METHODS.CALL_AN_ACE,
+    label: "Call an Ace",
+  },
+  {
+    value: CALLING_METHODS.JACK_OF_DIAMONDS,
+    label: "Jack of Diamonds",
+  },
+  {
+    value: CALLING_METHODS.CUT_THROAT,
+    label: "Cut Throat",
+  },
+];
+
+const NoPickResolutionOptions = [
+  {
+    value: NO_PICK_RESOLUTIONS.SCREW_THE_DEALER,
+    label: "Screw the Dealer",
+  },
+  {
+    value: NO_PICK_RESOLUTIONS.LEASTERS,
+    label: "Leasters",
+  },
+  {
+    value: NO_PICK_RESOLUTIONS.MOSTERS,
+    label: "Mosters",
+  },
+];
 
 export default function GameSettingsForm() {
   const { user } = useContext(AuthContext);
   const { hostId } = useContext(ChannelContext);
-  const { sendCommand, gameInProgress, gameSettings } = useContext(TableState);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [values, setValues] = useState<GameSettings>(DefaultGameSettings);
+  const { sendCommand, settingsPending, settings, inProgress } =
+    useContext(TableState);
   const isHost = user?.uid === hostId;
-  const inputDisabled = !isHost || isSubmitting || gameInProgress;
+  const inputDisabled = !isHost || settingsPending || inProgress;
 
-  const onChange = (
-    name: string,
-    value: number | number[] | string | boolean,
-  ) => {
-    setValues((prev) => ({ ...prev!, [name]: value }));
-  };
-
-  const handleSubmit = () => {
-    setIsSubmitting(true);
+  const updatePlayerCount = (value: number) => {
     sendCommand({
-      name: COMMAND_TYPES.CREATE_GAME,
-      data: values,
+      name: COMMAND_TYPES.UPDATE_PLAYER_COUNT,
+      data: { playerCount: value },
     });
   };
 
-  const handleCancel = () => {
+  const updateCallingMethod = (value: string) => {
     sendCommand({
-      name: COMMAND_TYPES.END_GAME,
-      data: undefined,
+      name: COMMAND_TYPES.UPDATE_CALLING_METHOD,
+      data: { callingMethod: value },
     });
   };
 
-  useEffect(() => {
-    setIsSubmitting(false);
-    if (gameSettings) {
-      setValues(gameSettings);
-    }
-  }, [gameSettings]);
+  const updateNoPickResolution = (value: string) => {
+    sendCommand({
+      name: COMMAND_TYPES.UPDATE_NO_PICK_RESOLUTION,
+      data: { noPickResolution: value },
+    });
+  };
 
   return (
     <div className="GameSettingsForm">
@@ -74,9 +84,9 @@ export default function GameSettingsForm() {
           <InputLabel margin="dense">Player Count</InputLabel>
           <Slider
             id="playerCount"
-            value={values.playerCount}
+            value={settings.playerCount}
             disabled={inputDisabled}
-            onChange={(_, value) => onChange("playerCount", value)}
+            onChange={(_, value) => updatePlayerCount(value as number)}
             valueLabelDisplay="auto"
             min={GAME_SETTINGS_PARAMS.MIN_PLAYERS}
             max={GAME_SETTINGS_PARAMS.MAX_PLAYERS}
@@ -88,49 +98,38 @@ export default function GameSettingsForm() {
 
         <div className="LabeledInput">
           <InputLabel margin="dense">Calling Method</InputLabel>
-          <ToggleButtonGroup
+          <Select
             id="callingMethod"
-            exclusive
+            value={settings.callingMethod}
+            fullWidth
             disabled={inputDisabled}
-            value={values.callingMethod}
-            onChange={(_, value) => onChange("callingMethod", value)}
+            onChange={(event) => updateCallingMethod(event.target.value)}
           >
-            {Object.values(CALLING_METHOD).map((callingMethod) => (
-              <ToggleButton key={callingMethod} value={callingMethod}>
-                {callingMethod}
-              </ToggleButton>
+            {CallingMethodOptions.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
             ))}
-          </ToggleButtonGroup>
+          </Select>
         </div>
 
         <div className="LabeledInput">
           <InputLabel margin="dense">No-Pick Resolution</InputLabel>
-          <ToggleButtonGroup
+          <Select
             id="noPickResolution"
-            exclusive
+            value={settings.noPickResolution}
+            fullWidth
             disabled={inputDisabled}
-            value={values.noPickResolution}
-            onChange={(_, value) => onChange("noPickResolution", value)}
+            onChange={(event) => updateNoPickResolution(event.target.value)}
           >
-            {Object.values(NO_PICK_RESOLUTION).map((noPickResolution) => (
-              <ToggleButton key={noPickResolution} value={noPickResolution}>
-                {noPickResolution}
-              </ToggleButton>
+            {NoPickResolutionOptions.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
             ))}
-          </ToggleButtonGroup>
+          </Select>
         </div>
       </div>
-      {isHost && (
-        <div className="GameSettingsForm-Footer">
-          {gameInProgress ? (
-            <Button color="secondary" onClick={handleCancel}>
-              Cancel
-            </Button>
-          ) : (
-            <Button onClick={handleSubmit}>Create Game</Button>
-          )}
-        </div>
-      )}
     </div>
   );
 }

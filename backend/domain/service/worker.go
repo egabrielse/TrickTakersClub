@@ -4,10 +4,8 @@ import (
 	"context"
 	"main/domain/entity"
 	"main/domain/game"
-	"main/domain/game/deck"
 	"main/domain/repository"
 	"main/domain/service/msg"
-	"main/domain/service/state"
 	"main/utils"
 	"time"
 
@@ -53,47 +51,8 @@ func NewTableWorker(table *entity.TableEntity) (*TableWorker, error) {
 	}
 }
 
-// GetState returns the current state of the table
-func (t *TableWorker) GetRefreshPayload(clientID string) *msg.RefreshPayload {
-	payload := &msg.RefreshPayload{
-		TableID: t.Table.ID,
-		HostID:  t.Table.HostID,
-	}
-	// A game, send the state of the game
-	if t.Game != nil {
-		payload.GameState = &state.GameState{
-			DealerID:    t.Game.WhoIsDealer(),
-			Scoreboard:  t.Game.Scoreboard,
-			PlayerOrder: t.Game.PlayerOrder,
-			HandsPlayed: t.Game.HandsPlayed,
-			Settings:    t.Game.Settings,
-		}
-		// Hand is in progress, send the state of the current hand
-		if t.Game.HandInProgress() {
-			payload.HandState = &state.HandState{
-				CalledCard: t.Game.Call.CalledCard,
-				BlindSize:  len(t.Game.Blind.Cards),
-				Phase:      t.Game.Phase,
-				UpNextID:   t.Game.WhoIsNext(),
-				PickerID:   t.Game.Blind.PickerID,
-				PartnerID:  t.Game.Call.GetPartnerIfRevealed(),
-				Tricks:     t.Game.Play.Tricks,
-			}
-			// Client is a player in the current game, send their hand and bury
-			if hand := t.Game.Players.GetHand(clientID); hand != nil {
-				bury := []*deck.Card{}
-				if t.Game.Blind.PickerID == clientID {
-					bury = t.Game.Blind.Cards
-				}
-				payload.PlayerHandState = &state.PlayerHandState{Hand: hand, Bury: bury}
-			}
-		}
-	}
-	return payload
-}
-
 // Broadcast sends a message to all clients connected to the table via the public channel
-func (t *TableWorker) Broadcast(name string, data interface{}) {
+func (t *TableWorker) BroadcastMessage(name string, data interface{}) {
 	t.Channel.Publish(t.Ctx, name, data)
 }
 
@@ -119,8 +78,16 @@ func (t *TableWorker) HandleCommands(message *ably.Message) {
 	t.LastUpdate = time.Now()
 	logrus.Infof("Received private message: %s", message.Data)
 	switch message.Name {
-	case msg.CommandType.UpdateSettings:
-		HandleUpdateSettingsCommand(t, message.ClientID, message.Data)
+	case msg.CommandType.UpdateAutoDeal:
+		HandleUpdateAutoDeal(t, message.ClientID, message.Data)
+	case msg.CommandType.UpdateCallingMethod:
+		HandleUpdateCallingMethod(t, message.ClientID, message.Data)
+	case msg.CommandType.UpdateDoubleOnTheBump:
+		HandleUpdateDoubleOnTheBump(t, message.ClientID, message.Data)
+	case msg.CommandType.UpdateNoPickResolution:
+		HandleUpdateNoPickResolution(t, message.ClientID, message.Data)
+	case msg.CommandType.UpdatePlayerCount:
+		HandleUpdatePlayerCount(t, message.ClientID, message.Data)
 	case msg.CommandType.SitDown:
 		HandleSitDownCommand(t, message.ClientID, message.Data)
 	case msg.CommandType.StandUp:
@@ -157,7 +124,7 @@ func (t *TableWorker) RegisterClient(clientID string, connectionID string) {
 		user.Enter(t.Ctx, connectionID, t.HandleCommands)
 	}
 	// Send the current state of the table/game to the newly registered user
-	t.DirectMessage(clientID, msg.DirectType.Refresh, t.GetRefreshPayload(clientID))
+	t.DirectMessage(msg.RefreshMessage(clientID, t.SeatedPlayers, t.GameSettings, t.Game))
 }
 
 // UnregisterClient unregisters a client from the table service
@@ -219,7 +186,7 @@ func (t *TableWorker) StartService() {
 					// Stop the service if no activity is detected for a certain duration
 					logrus.Infof("Service for table %s timed out", t.Table.ID)
 					// Inform any clients that the service has timed out
-					t.Broadcast(msg.BroadcastType.Timeout, nil)
+					t.BroadcastMessage(msg.BroadcastType.Timeout, nil)
 					return
 				}
 			case <-t.Ctx.Done():

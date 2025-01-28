@@ -83,13 +83,6 @@ func (g *Game) WhoIsNext() string {
 	}
 }
 
-func (g *Game) GetUpNext() *UpNext {
-	return &UpNext{
-		PlayerID: g.WhoIsNext(),
-		Phase:    g.Phase,
-	}
-}
-
 func (g *Game) Pick(playerID string) (*PickOrPassResult, error) {
 	if g.Phase != HandPhase.Pick {
 		return nil, fmt.Errorf("not in the pick phase")

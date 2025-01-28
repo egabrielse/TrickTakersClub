@@ -13,6 +13,7 @@ import PrivateRoutes from "./pages/auth/PrivateRoutes";
 import HomePage from "./pages/home/HomePage";
 import ChannelContextProvider from "./pages/table/ChannelContextProvider";
 import TablePage from "./pages/table/TablePage";
+import TableStateProvider from "./pages/table/TableStateProvider";
 import MuiThemeProvider from "./providers/MuiThemeProvider";
 import UserStoreProvider from "./providers/UserStoreProvider";
 import RootLayout from "./root/RootLayout";
@@ -29,7 +30,9 @@ const router = createBrowserRouter(
           path={PATHS.TABLE}
           element={
             <ChannelContextProvider>
-              <TablePage />
+              <TableStateProvider>
+                <TablePage />
+              </TableStateProvider>
             </ChannelContextProvider>
           }
         />

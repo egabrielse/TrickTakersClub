@@ -5,11 +5,6 @@ import (
 	"main/domain/game/summary"
 )
 
-type UpNext struct {
-	PlayerID string `json:"playerId"`
-	Phase    string `json:"phase"`
-}
-
 type PickOrPassResult struct {
 	PickerID string       `json:"pickerId"`
 	Blind    []*deck.Card `json:"blind"`

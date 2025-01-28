@@ -1,15 +1,15 @@
 import SendIcon from "@mui/icons-material/Send";
 import { IconButton, InputAdornment, Paper, TextField } from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
-import { TableState } from "../../TablePage";
+import { TableState } from "../../TableStateProvider";
 import "./Chat.scss";
 import ChatMessage from "./ChatMessage";
 
 export default function Chat() {
   const bottomRef = useRef<HTMLDivElement>(null);
-  const { chatMessages, sendChatMessage } = useContext(TableState);
+  const { chat, sendChatMsg } = useContext(TableState);
   const [value, setValue] = useState("");
-  const chatLength = chatMessages.length;
+  const chatLength = chat.length;
 
   useEffect(() => {
     if (bottomRef.current) {
@@ -18,14 +18,14 @@ export default function Chat() {
   }, [chatLength]);
 
   const onSubmit = () => {
-    sendChatMessage(value);
+    sendChatMsg(value);
     setValue("");
   };
 
   return (
     <Paper className="Chat">
       <div className="Chat-Messages">
-        {chatMessages.map((msg, i) => (
+        {chat.map((msg, i) => (
           <ChatMessage key={i} message={msg} />
         ))}
         <div ref={bottomRef} />
