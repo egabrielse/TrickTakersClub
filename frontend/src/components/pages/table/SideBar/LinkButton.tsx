@@ -3,10 +3,10 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { Tooltip } from "@mui/material";
 import { useContext, useState } from "react";
 import PaperButton from "../../../common/PaperButton";
-import { ChannelContext } from "../ChannelContextProvider";
+import { ConnectionContext } from "../ConnectionProvider";
 
 export default function LinkButton() {
-  const { tableId } = useContext(ChannelContext);
+  const { tableId } = useContext(ConnectionContext);
   const [copied, setCopied] = useState(false);
 
   const copyLink = () => {

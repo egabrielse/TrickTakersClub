@@ -3,11 +3,11 @@ import { useContext } from "react";
 import { COMMAND_TYPES } from "../../../../constants/message";
 import PaperButton from "../../../common/PaperButton";
 import { AuthContext } from "../../auth/AuthContextProvider";
-import { ChannelContext } from "../ChannelContextProvider";
+import { ConnectionContext } from "../ConnectionProvider";
 import { TableState } from "../TableStateProvider";
 
 export default function EndGameButton() {
-  const { hostId } = useContext(ChannelContext);
+  const { hostId } = useContext(ConnectionContext);
   const { sendCommand, inProgress } = useContext(TableState);
   const { user } = useContext(AuthContext);
 

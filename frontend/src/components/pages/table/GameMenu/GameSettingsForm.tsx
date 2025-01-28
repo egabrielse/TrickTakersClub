@@ -13,7 +13,7 @@ import {
 } from "../../../../constants/game";
 import { COMMAND_TYPES } from "../../../../constants/message";
 import { AuthContext } from "../../auth/AuthContextProvider";
-import { ChannelContext } from "../ChannelContextProvider";
+import { ConnectionContext } from "../ConnectionProvider";
 import { TableState } from "../TableStateProvider";
 import "./GameSettingsForm.scss";
 
@@ -49,7 +49,7 @@ const NoPickResolutionOptions = [
 
 export default function GameSettingsForm() {
   const { user } = useContext(AuthContext);
-  const { hostId } = useContext(ChannelContext);
+  const { hostId } = useContext(ConnectionContext);
   const { sendCommand, settingsPending, settings, inProgress } =
     useContext(TableState);
   const isHost = user?.uid === hostId;

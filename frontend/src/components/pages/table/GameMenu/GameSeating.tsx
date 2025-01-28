@@ -6,13 +6,13 @@ import { useContext } from "react";
 import { COMMAND_TYPES } from "../../../../constants/message";
 import ProfileSnapshot from "../../../common/ProfileSnapshot";
 import { AuthContext } from "../../auth/AuthContextProvider";
-import { ChannelContext } from "../ChannelContextProvider";
+import { ConnectionContext } from "../ConnectionProvider";
 import { TableState } from "../TableStateProvider";
 import EmptySeat from "./EmptySeat";
 import "./GameSeating.scss";
 
 export default function GameSeating() {
-  const { hostId } = useContext(ChannelContext);
+  const { hostId } = useContext(ConnectionContext);
   const { seating, settings, sendCommand } = useContext(TableState);
   const { user } = useContext(AuthContext);
   const isHost = user?.uid === hostId;

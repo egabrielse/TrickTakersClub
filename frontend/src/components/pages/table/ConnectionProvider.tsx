@@ -12,7 +12,7 @@ import { AuthContext } from "../auth/AuthContextProvider";
 import ErrorPage from "../error/ErrorPage";
 import LoadingPage from "../loading/LoadingPage";
 
-export const ChannelContext = createContext<{
+export const ConnectionContext = createContext<{
   tableId: string;
   hostId: string;
   broadcastChannelName: string;
@@ -24,16 +24,16 @@ export const ChannelContext = createContext<{
   directMessageChannelName: "",
 });
 
-type ChannelContextProviderProps = {
+type ConnectionProviderProps = {
   children: ReactNode;
 };
 
 /**
  * Fetches the table data and provides the tableId and hostId to the children
  */
-export default function ChannelContextProvider({
+export default function ConnectionProvider({
   children,
-}: ChannelContextProviderProps) {
+}: ConnectionProviderProps) {
   const params = useParams();
   const paramTableId = String(params.tableId);
   const { user } = useContext(AuthContext);
@@ -63,7 +63,7 @@ export default function ChannelContextProvider({
   ) : error ? (
     <ErrorPage error={error} />
   ) : (
-    <ChannelContext.Provider
+    <ConnectionContext.Provider
       value={{
         tableId,
         hostId,
@@ -76,6 +76,6 @@ export default function ChannelContextProvider({
           {children}
         </ChannelProvider>
       </ChannelProvider>
-    </ChannelContext.Provider>
+    </ConnectionContext.Provider>
   );
 }

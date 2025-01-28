@@ -14,7 +14,7 @@ import {
 } from "../../../types/message/broadcast";
 import { CommandMessage } from "../../../types/message/command";
 import { DirectMessage } from "../../../types/message/direct";
-import { ChannelContext } from "./ChannelContextProvider";
+import { ConnectionContext } from "./ConnectionProvider";
 
 const DefaultGameSettings: GameSettings = {
   autoDeal: GAME_SETTINGS_DEFAULTS.AUTO_DEAL,
@@ -58,7 +58,7 @@ export default function TableStateProvider({
   children,
 }: TableStateProviderProps) {
   const { broadcastChannelName, directMessageChannelName } =
-    useContext(ChannelContext);
+    useContext(ConnectionContext);
 
   // ~~~ Table Variables ~~~
   // True if the state of the table/game is fetched from the server, otherwise false
