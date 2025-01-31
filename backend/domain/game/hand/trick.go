@@ -3,21 +3,22 @@ package hand
 import (
 	"main/domain/game/deck"
 	"main/domain/game/summary"
+	"main/utils"
 )
 
 type Trick struct {
-	UpNextIndex int          `json:"upNextIndex"`
-	TakerIndex  int          `json:"takerIndex"`
-	TurnOrder   []string     `json:"turnOrder"`
-	Cards       []*deck.Card `json:"cards"`
+	UpNextIndex int                   `json:"upNextIndex"`
+	TakerID     string                `json:"takerId"`
+	TurnOrder   []string              `json:"turnOrder"`
+	Cards       map[string]*deck.Card `json:"cards"`
 }
 
 func NewTrick(turnOrder []string) *Trick {
 	return &Trick{
 		UpNextIndex: 0,
-		TakerIndex:  -1,
+		TakerID:     "",
 		TurnOrder:   turnOrder,
-		Cards:       []*deck.Card{},
+		Cards:       map[string]*deck.Card{},
 	}
 }
 
@@ -31,10 +32,7 @@ func (t *Trick) WhoIsNext() (playerID string) {
 
 // Returns the card that was played first in the trick
 func (t *Trick) GetLeadingCard() (card *deck.Card) {
-	if len(t.Cards) == 0 {
-		return nil
-	}
-	return t.Cards[0]
+	return t.Cards[t.TurnOrder[0]]
 }
 
 // Returns the suit of the card that was played first in the trick
@@ -48,10 +46,7 @@ func (t *Trick) GetLeadingSuit() (suit string) {
 
 // Returns the player ID of the player who is taking the trick
 func (t *Trick) GetTakerID() (playerID string) {
-	if t.TakerIndex != -1 {
-		return t.TurnOrder[t.TakerIndex]
-	}
-	return ""
+	return t.TakerID
 }
 
 // Returns true if the trick is complete
@@ -59,12 +54,18 @@ func (t *Trick) IsComplete() (isComplete bool) {
 	return len(t.Cards) == len(t.TurnOrder)
 }
 
+func (t *Trick) ListCards() []*deck.Card {
+	return utils.MapValues(t.Cards)
+}
+
 // Plays a card in the trick
 func (t *Trick) PlayCard(card *deck.Card) {
 	if !t.IsComplete() {
-		t.Cards = append(t.Cards, card)
-		if t.TakerIndex == -1 || card.Compare(t.Cards[t.TakerIndex], t.GetLeadingSuit()) {
-			t.TakerIndex = t.UpNextIndex
+		upNextID := t.WhoIsNext()
+		t.Cards[upNextID] = card
+		// Get the player ID of the player who is taking the trick
+		if t.TakerID == "" || card.Compare(t.Cards[t.TakerID], t.GetLeadingSuit()) {
+			t.TakerID = upNextID
 		}
 		t.UpNextIndex++
 	}
@@ -74,7 +75,7 @@ func (t *Trick) SummarizeTrick() *summary.TrickSummary {
 	return &summary.TrickSummary{
 		TakerID:  t.GetTakerID(),
 		Cards:    t.Cards,
-		Points:   deck.CountPoints(t.Cards),
+		Points:   deck.CountPoints(t.ListCards()),
 		Complete: t.IsComplete(),
 	}
 }

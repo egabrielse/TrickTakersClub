@@ -87,7 +87,7 @@ func HandleSitDownCommand(t *TableWorker, clientID string, data interface{}) {
 		t.DirectMessage(msg.ErrorMessage(clientID, "table is full"))
 	} else {
 		t.SeatedPlayers = append(t.SeatedPlayers, clientID)
-		t.BroadcastMessage(msg.BroadcastType.SatDown, clientID)
+		t.BroadcastMessage(msg.SatDownMessage(clientID))
 	}
 }
 
@@ -96,15 +96,13 @@ func HandleStandUpCommand(t *TableWorker, clientID string, data interface{}) {
 		t.DirectMessage(msg.ErrorMessage(clientID, "host cannot stand up"))
 	} else if t.Game != nil {
 		t.DirectMessage(msg.ErrorMessage(clientID, "game already in progress"))
-	} else if t.GameSettings.PlayerCount == len(t.SeatedPlayers) {
-		t.DirectMessage(msg.ErrorMessage(clientID, "table is full"))
 	} else if !utils.Contains(t.SeatedPlayers, clientID) {
 		t.DirectMessage(msg.ErrorMessage(clientID, "not a player"))
 	} else {
 		t.SeatedPlayers = utils.Filter(t.SeatedPlayers, func(v string) bool {
 			return v != clientID
 		})
-		t.BroadcastMessage(msg.BroadcastType.StoodUp, clientID)
+		t.BroadcastMessage(msg.StoodUpMessage(clientID))
 	}
 }
 
@@ -118,12 +116,12 @@ func HandleStartGameCommand(t *TableWorker, clientID string, data interface{}) {
 	} else {
 		// Start a new game
 		t.Game = game.NewGame(t.SeatedPlayers, t.GameSettings)
+		// Start the first hand
+		t.Game.StartNewHand()
 		// Reset Players for the next game
 		t.SeatedPlayers = []string{t.Table.HostID}
-		// Start a new hand
-		t.Game.StartNewHand()
 		// Announce the start of the game
-		t.BroadcastMessage(msg.GameStartedMessage(t.Game.Scoreboard, t.Game.PlayerOrder))
+		t.BroadcastMessage(msg.GameStartedMessage(t.Game.PlayerOrder))
 		for _, playerID := range t.Game.PlayerOrder {
 			t.DirectMessage(msg.DealHandMessage(
 				playerID,
@@ -141,7 +139,7 @@ func HandleEndGameCommand(t *TableWorker, clientID string, data interface{}) {
 	} else if t.Game == nil {
 		t.DirectMessage(msg.ErrorMessage(clientID, "game has not been initialized"))
 	} else {
-		t.BroadcastMessage(msg.GameOverMessage(t.Game.Scoreboard, t.Game.HandsPlayed))
+		t.BroadcastMessage(msg.GameOverMessage())
 		t.Game = nil
 	}
 }
@@ -204,7 +202,7 @@ func HandleGoAloneCommand(t *TableWorker, clientID string, data interface{}) {
 	} else if _, err := t.Game.GoAlone(clientID); utils.LogOnError(err) {
 		t.DirectMessage(msg.ErrorMessage(clientID, err.Error()))
 	} else {
-		t.BroadcastMessage(msg.BroadcastType.GoneAlone, nil)
+		t.BroadcastMessage(msg.GoneAloneMessage())
 		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext()))
 	}
 }
@@ -223,10 +221,7 @@ func HandlePlayCardCommand(t *TableWorker, clientID string, data interface{}) {
 			t.BroadcastMessage(msg.PartnerRevealedMessage(result.PartnerID))
 		}
 		if result.TrickSummary != nil {
-			t.BroadcastMessage(msg.BroadcastType.TrickDone, result.TrickSummary)
-			if result.HandSummary != nil {
-				t.BroadcastMessage(msg.BroadcastType.HandDone, result.HandSummary)
-			}
+			t.BroadcastMessage(msg.TrickDoneMessage(result.TrickSummary, result.HandSummary))
 		}
 	}
 }

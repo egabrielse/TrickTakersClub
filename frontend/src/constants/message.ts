@@ -7,7 +7,6 @@ export const DIRECT_TYPES = {
     DEAL_HAND: "deal-hand",
     PICKED_CARDS: "picked-cards",
     BURIED_CARDS: "buried-cards",
-    SEATING: "seating",
 } as const;
 
 /**
@@ -37,12 +36,12 @@ export const COMMAND_TYPES = {
 export const BROADCAST_TYPES = {
     BLIND_PICKED: "blind-picked",
     CALLED_CARD: "called-card",
+    CARD_PLAYED: "card-played",
     CHAT: "chat",
     ERROR: "error",
     GAME_OVER: "game-over",
     GAME_STARTED: "game-started",
-    GO_ALONE: "go-alone",
-    HAND_DONE: "hand-done",
+    GONE_ALONE: "gone-alone",
     PARTNER_REVEALED: "partner-revealed",
     SAT_DOWN: "sat-down",
     SETTINGS_UPDATED: "settings-updated",

@@ -1,19 +1,29 @@
 import { Message } from "ably";
 import { useChannel, usePresence } from "ably/react";
 import { ReactNode, createContext, useContext, useState } from "react";
-import { GAME_SETTINGS_DEFAULTS } from "../../../constants/game";
+import { GAME_SETTINGS_DEFAULTS, HAND_PHASE } from "../../../constants/game";
 import {
   BROADCAST_TYPES,
   COMMAND_TYPES,
   DIRECT_TYPES,
 } from "../../../constants/message";
-import { GameSettings, Scoreboard } from "../../../types/game";
+import {
+  GameSettings,
+  HandPhase,
+  HandSummary,
+  PlayingCard,
+  Scoreboard,
+  Trick,
+  newTrick,
+} from "../../../types/game";
 import {
   BroadcastMessage,
   ChatMessage,
 } from "../../../types/message/broadcast";
 import { CommandMessage } from "../../../types/message/command";
 import { DirectMessage } from "../../../types/message/direct";
+import { createNewScoreboard, tallyTricks } from "../../../utils/game";
+import { AuthContext } from "../auth/AuthContextProvider";
 import { ConnectionContext } from "./ConnectionProvider";
 
 const DefaultGameSettings: GameSettings = {
@@ -35,7 +45,20 @@ export const TableState = createContext<{
   handsPlayed: number;
   inProgress: boolean;
   seating: string[];
+  dealerId: string;
   upNextId: string;
+  playerOrder: string[];
+  phase: HandPhase;
+  hand: PlayingCard[];
+  blindSize: number;
+  bury: PlayingCard[];
+  calledCard: PlayingCard | null;
+  pickerId: string;
+  partnerId: string;
+  tricks: Trick[];
+  tricksWon: Record<string, number>;
+  handSummary: HandSummary | null;
+  getCurrentTrick: () => Trick | null;
 }>({
   loaded: false,
   chat: [],
@@ -47,7 +70,20 @@ export const TableState = createContext<{
   handsPlayed: 0,
   inProgress: false,
   seating: [],
+  dealerId: "",
   upNextId: "",
+  playerOrder: [],
+  phase: HAND_PHASE.SETUP,
+  hand: [],
+  blindSize: 0,
+  bury: [],
+  calledCard: null,
+  pickerId: "",
+  partnerId: "",
+  tricks: [],
+  tricksWon: {},
+  handSummary: null,
+  getCurrentTrick: () => null,
 });
 
 type TableStateProviderProps = {
@@ -59,6 +95,7 @@ export default function TableStateProvider({
 }: TableStateProviderProps) {
   const { broadcastChannelName, directMessageChannelName } =
     useContext(ConnectionContext);
+  const { user } = useContext(AuthContext);
 
   // ~~~ Table Variables ~~~
   // True if the state of the table/game is fetched from the server, otherwise false
@@ -79,9 +116,34 @@ export default function TableStateProvider({
   const [handsPlayed, setHandsPlayed] = useState<number>(0);
   // Players seated at the table
   const [seating, setSeating] = useState<string[]>([]);
+  // Summary of the current hand (populated after the hand is complete)
+  const [handSummary, setHandSummary] = useState<HandSummary | null>(null);
 
   // ~~~ Hand Variables ~~~
+  // Id of the dealer for the current hand
+  const [dealerId, setDealerId] = useState<string>("");
+  // Id of the player who is up next
   const [upNextId, setUpNextId] = useState<string>("");
+  // Order of players in the current hand
+  const [playerOrder, setPlayerOrder] = useState<string[]>([]);
+  // Phase of the current hand
+  const [phase, setPhase] = useState<HandPhase>(HAND_PHASE.SETUP);
+  // Cards in the player's hand
+  const [hand, setHand] = useState<PlayingCard[]>([]);
+  // Count of cards in the blind
+  const [blindSize, setBlindSize] = useState<number>(0);
+  // Cards buried by the player (if they are the picker)
+  const [bury, setBury] = useState<PlayingCard[]>([]);
+  // The card that was called by the picker
+  const [calledCard, setCalledCard] = useState<PlayingCard | null>(null);
+  // Id of the player who is the picker
+  const [pickerId, setPickerId] = useState<string>("");
+  // Id of the partner of the picker (once partner is revealed)
+  const [partnerId, setPartnerId] = useState<string>("");
+  // Tricks played in the current hand
+  const [tricks, setTricks] = useState<Trick[]>([]);
+  // Count of tricks won by each player in the current hand
+  const [tricksWon, setTricksWon] = useState<Record<string, number>>({});
 
   /**
    * Enter the public channel presence
@@ -89,10 +151,10 @@ export default function TableStateProvider({
   usePresence(broadcastChannelName);
 
   /**
-   * TODO
+   * Message handler for broadcast messages
    */
   const broadcast = useChannel(broadcastChannelName, (message: Message) => {
-    console.debug("Broadcast Message Received", message);
+    console.log("Broadcast Message Received", message);
     const msg = message as BroadcastMessage;
     switch (msg.name) {
       case BROADCAST_TYPES.CHAT:
@@ -103,8 +165,72 @@ export default function TableStateProvider({
         setSettings(msg.data.settings);
         setSeating(msg.data.seating);
         break;
-      case BROADCAST_TYPES.GAME_STARTED:
+      case BROADCAST_TYPES.GAME_STARTED: {
         setInProgress(true);
+        setScoreboard(createNewScoreboard(msg.data.playerOrder));
+        break;
+      }
+      case BROADCAST_TYPES.UP_NEXT:
+        setUpNextId(msg.data.playerId);
+        setPhase(msg.data.phase);
+        break;
+      case BROADCAST_TYPES.CALLED_CARD:
+        setCalledCard(msg.data.card);
+        break;
+      case BROADCAST_TYPES.GONE_ALONE:
+        // TODO: popup message saying picker went alone
+        break;
+      case BROADCAST_TYPES.PARTNER_REVEALED:
+        // TODO: popup message saying pointing out the partner
+        setPartnerId(msg.data.playerId);
+        break;
+      case BROADCAST_TYPES.TRICK_DONE: {
+        if (msg.data.trickSummary) {
+          setTricksWon((prev) => ({
+            ...prev,
+            [msg.data.trickSummary.takerId]:
+              prev[msg.data.trickSummary.takerId] + 1,
+          }));
+        }
+        if (msg.data.handSummary) {
+          // Hand is over, update the hand summary
+          setHandSummary(msg.data.handSummary);
+          // TODO: popup message with hand summary
+        } else {
+          // Otherwise move onto the next trick
+          setTricks((prev) => [...prev, newTrick()]);
+        }
+        break;
+      }
+      case BROADCAST_TYPES.BLIND_PICKED:
+        // TODO: popup message
+        setPickerId(msg.data.playerId);
+        break;
+      case BROADCAST_TYPES.CARD_PLAYED: {
+        setTricks((prev) => {
+          const trick = prev[prev.length - 1];
+          trick.cards[msg.data.playerId] = msg.data.card;
+          return prev;
+        });
+        break;
+      }
+      case BROADCAST_TYPES.GAME_OVER:
+        // Reset the state EXCEPT for the hands played and scoreboard
+        setInProgress(false);
+        setDealerId("");
+        setSeating([]);
+        setHand([]);
+        setBury([]);
+        setCalledCard(null);
+        setPickerId("");
+        setPartnerId("");
+        setPhase(HAND_PHASE.SETUP);
+        setUpNextId("");
+        setPlayerOrder([]);
+        setTricks([]);
+        setTricksWon({});
+        setBlindSize(0);
+        // TODO: display scoreboard as popup
         break;
       case BROADCAST_TYPES.SAT_DOWN:
         setSeating((prev) => [...prev, msg.data.playerId]);
@@ -115,13 +241,15 @@ export default function TableStateProvider({
         );
         break;
       default:
-        console.warn("Unhandled message type", msg.name);
+        if (msg.clientId !== user?.uid) {
+          console.warn("Unhandled broadcast message type", msg.name);
+        }
         break;
     }
   });
 
   /**
-   * TODO
+   * Send a chat message to the table
    * @param message
    */
   const sendChatMsg = (message: string) => {
@@ -129,33 +257,56 @@ export default function TableStateProvider({
   };
 
   /**
-   * TODO
+   * Message handler for direct messages
    */
   const direct = useChannel(directMessageChannelName, (message: Message) => {
-    console.debug("Direct Message Received", message);
+    console.log("Direct Message Received", message);
     const msg = message as DirectMessage;
     switch (msg.name) {
       case DIRECT_TYPES.REFRESH:
         setLoaded(true);
-        setSeating(msg.data.seating);
-        setSettings(msg.data.settings);
-        setInProgress(msg.data.gameInProgress);
-        setScoreboard(msg.data.scoreboard);
-        setHandsPlayed(msg.data.handsPlayed);
-        setUpNextId(msg.data.upNextId);
+        setSeating(msg.data.seating || []);
+        setSettings(msg.data.settings || DefaultGameSettings);
+        setInProgress(msg.data.inProgress || false);
+        setScoreboard(msg.data.scoreboard || {});
+        setHandsPlayed(msg.data.handsPlayed || 0);
+        setUpNextId(msg.data.upNextId || "");
+        setPlayerOrder(msg.data.playerOrder || []);
+        setDealerId(msg.data.dealerId || "");
+        setTricks(msg.data.tricks || []);
+        setTricksWon(tallyTricks(msg.data.tricks || []));
+        setPhase(msg.data.phase || HAND_PHASE.SETUP);
+        setHand(msg.data.hand || []);
+        setBlindSize(msg.data.blindSize || 0);
+        setBury(msg.data.bury || []);
+        setCalledCard(msg.data.calledCard || null);
+        setPickerId(msg.data.pickerId || "");
+        setPartnerId(msg.data.partnerId || "");
+        break;
+      case DIRECT_TYPES.DEAL_HAND:
+        setHand(msg.data.cards);
+        setDealerId(msg.data.dealerId);
+        break;
+      case DIRECT_TYPES.PICKED_CARDS:
+        // TODO: implement
+        break;
+      case DIRECT_TYPES.BURIED_CARDS:
+        // TODO: implement
         break;
       default:
-        console.warn("Unhandled message type", msg.name);
+        if (msg.clientId !== user?.uid) {
+          console.warn("Unhandled direct message type", msg.name);
+        }
         break;
     }
   });
 
   /**
-   * TODO
+   * Send a command to the table
    * @param command
    */
   const sendCommand = (command: CommandMessage) => {
-    console.debug("Command Sent", command);
+    console.log("Command Sent", command);
     // Make any local changes to the state
     switch (command.name) {
       case COMMAND_TYPES.UPDATE_AUTO_DEAL:
@@ -174,6 +325,13 @@ export default function TableStateProvider({
     direct.publish(command.name, command.data);
   };
 
+  const getCurrentTrick = () => {
+    if (tricks.length === 0) {
+      return null;
+    }
+    return tricks[tricks.length - 1];
+  };
+
   const value = {
     loaded,
     chat,
@@ -185,7 +343,20 @@ export default function TableStateProvider({
     handsPlayed,
     inProgress,
     seating,
+    dealerId,
     upNextId,
+    playerOrder,
+    phase,
+    hand,
+    blindSize,
+    bury,
+    calledCard,
+    pickerId,
+    partnerId,
+    tricks,
+    tricksWon,
+    handSummary,
+    getCurrentTrick,
   };
 
   return <TableState.Provider value={value}>{children}</TableState.Provider>;

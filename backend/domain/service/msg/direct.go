@@ -59,8 +59,8 @@ func PickedCardsMessage(clientID string, cards []*deck.Card) (string, string, *P
 }
 
 type RefreshData struct {
-	Seating        []string `json:"seating"`
-	GameInProgress bool     `json:"gameInProgress"`
+	Seating    []string `json:"seating"`
+	InProgress bool     `json:"inProgress"`
 	// Game state
 	DealerID    string             `json:"dealerId"`
 	Scoreboard  game.Scoreboard    `json:"scoreboard"`
@@ -87,7 +87,7 @@ func RefreshMessage(clientID string, seating []string, settings *game.GameSettin
 	data.Settings = settings
 	if game != nil {
 		// Game is in progress, include game state
-		data.GameInProgress = true
+		data.InProgress = true
 		data.DealerID = game.WhoIsDealer()
 		data.Scoreboard = game.Scoreboard
 		data.PlayerOrder = game.PlayerOrder

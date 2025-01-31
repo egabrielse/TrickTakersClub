@@ -19,8 +19,6 @@ var BroadcastType = struct {
 	Error string
 	// Picker chose to go it alone
 	GoneAlone string
-	// Hand has been won
-	HandDone string
 	// Partner has been revealed
 	PartnerRevealed string
 	// Settings Updated
@@ -46,7 +44,6 @@ var BroadcastType = struct {
 	Chat:            "chat",
 	Error:           "error",
 	GoneAlone:       "gone-alone",
-	HandDone:        "hand-done",
 	PartnerRevealed: "partner-revealed",
 	SettingsUpdated: "settings-updated",
 	SatDown:         "sat-down",
@@ -90,36 +87,24 @@ func ChatMessage(message string) (name string, data *ChatData) {
 	return BroadcastType.Chat, &ChatData{Message: message}
 }
 
-type GameOverData struct {
-	Scoreboard  game.Scoreboard `json:"scoreboard"`
-	HandsPlayed int             `json:"handsPlayed"`
-}
+type GameOverData struct{}
 
-func GameOverMessage(scoreboard game.Scoreboard, handsPlayed int) (name string, data *GameOverData) {
-	return BroadcastType.GameOver, &GameOverData{Scoreboard: scoreboard, HandsPlayed: handsPlayed}
+func GameOverMessage() (name string, data *GameOverData) {
+	return BroadcastType.GameOver, &GameOverData{}
 }
 
 type GameStartedData struct {
-	Scoreboard  game.Scoreboard `json:"scoreboard"`
-	PlayerOrder []string        `json:"playerOrder"`
+	PlayerOrder []string `json:"playerOrder"`
 }
 
-func GameStartedMessage(scoreboard game.Scoreboard, playerOrder []string) (name string, data *GameStartedData) {
-	return BroadcastType.GameStarted, &GameStartedData{Scoreboard: scoreboard, PlayerOrder: playerOrder}
+func GameStartedMessage(playerOrder []string) (name string, data *GameStartedData) {
+	return BroadcastType.GameStarted, &GameStartedData{PlayerOrder: playerOrder}
 }
 
 type GoneAlonePayload struct{}
 
 func GoneAloneMessage() (name string, data *GoneAlonePayload) {
 	return BroadcastType.GoneAlone, &GoneAlonePayload{}
-}
-
-type HandDoneData struct {
-	HandSummary *summary.HandSummary `json:"handSummary"`
-}
-
-func HandDoneMessage(handSummary *summary.HandSummary) (name string, data *HandDoneData) {
-	return BroadcastType.HandDone, &HandDoneData{HandSummary: handSummary}
 }
 
 type PartnerRevealedData struct {
@@ -155,20 +140,19 @@ func StoodUpMessage(playerID string) (name string, data *StoodUpData) {
 	return BroadcastType.StoodUp, &StoodUpData{PlayerID: playerID}
 }
 
-type TimeoutData struct {
-	Message string `json:"message"`
-}
+type TimeoutData struct{}
 
-func TimeoutMessage(message string) (name string, data *TimeoutData) {
-	return BroadcastType.Timeout, &TimeoutData{Message: message}
+func TimeoutMessage() (name string, data *TimeoutData) {
+	return BroadcastType.Timeout, &TimeoutData{}
 }
 
 type TrickDoneData struct {
 	TrickSummary *summary.TrickSummary `json:"trickSummary"`
+	HandSummary  *summary.HandSummary  `json:"handSummary"`
 }
 
-func TrickDoneMessage(trickSummary *summary.TrickSummary) (name string, data *TrickDoneData) {
-	return BroadcastType.TrickDone, &TrickDoneData{TrickSummary: trickSummary}
+func TrickDoneMessage(trickSum *summary.TrickSummary, handSum *summary.HandSummary) (name string, data *TrickDoneData) {
+	return BroadcastType.TrickDone, &TrickDoneData{TrickSummary: trickSum, HandSummary: handSum}
 }
 
 // Who's turn is it and what phase are we in

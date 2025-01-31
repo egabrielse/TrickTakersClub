@@ -45,13 +45,14 @@ func (g *Game) StartNewHand() error {
 		leftOfDealer := g.PlayerOrder[(g.DealerIndex+1)%len(g.PlayerOrder)]
 		turnOrder := utils.RelistStartingWith(g.PlayerOrder, leftOfDealer)
 		deck := deck.NewDeck()
-		blindSize := g.Settings.GetBlindSize()
 		players := NewPlayers(turnOrder)
-		g.Blind = hand.NewBlind(turnOrder, deck.Draw(blindSize))
 		for index := range g.PlayerOrder {
 			playerID := turnOrder[index]
 			players.SetHand(playerID, deck.Draw(g.Settings.HandSize))
 		}
+		g.Players = players
+		blindSize := g.Settings.GetBlindSize()
+		g.Blind = hand.NewBlind(turnOrder, deck.Draw(blindSize))
 		g.Bury = hand.NewBury()
 		g.Call = hand.NewCall()
 		g.Play = hand.NewPlay(turnOrder, g.Settings.HandSize)
@@ -81,6 +82,13 @@ func (g *Game) WhoIsNext() string {
 	default:
 		return ""
 	}
+}
+
+func (g *Game) GetTurnOrder() []string {
+	if g.Phase == HandPhase.Play {
+		return g.Play.GetCurrentTrick().TurnOrder
+	}
+	return nil
 }
 
 func (g *Game) Pick(playerID string) (*PickOrPassResult, error) {
@@ -120,7 +128,6 @@ func (g *Game) Pass(playerID string) (*PickOrPassResult, error) {
 		}
 		return nil, nil
 	}
-
 }
 
 func (g *Game) BuryCards(playerID string, cards []*deck.Card) (*BuryResult, error) {

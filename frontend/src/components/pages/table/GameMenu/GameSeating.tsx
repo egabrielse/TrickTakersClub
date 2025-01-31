@@ -52,7 +52,9 @@ export default function GameSeating() {
         id="seat-button"
         startIcon={isSeated ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
         onClick={isSeated ? standUp : sitDown}
-        disabled={isHost || (isSeated && tableFull)}
+        disabled={isHost}
+        color={isSeated ? "secondary" : "primary"}
+        variant={isSeated ? "outlined" : "contained"}
       >
         {isSeated ? "Stand Up" : "Sit Down"}
       </Button>

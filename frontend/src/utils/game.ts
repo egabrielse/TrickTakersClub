@@ -1,5 +1,5 @@
 import { CARD_RANK, CARD_SUIT } from "../constants/game";
-import { CardSize, PlayingCard } from "../types/game";
+import { CardSize, PlayingCard, Trick } from "../types/game";
 
 /**
  * Arrange points on an ellipse given its width and height.
@@ -179,4 +179,31 @@ export const cardSizeToPixels = (size: CardSize | undefined) => {
         ratio = 1.2
     }
     return { width: 63 * ratio, height: 88 * ratio };
+}
+
+/**
+ * Summarize the tricks won by each player.
+ * @param tricks 
+ */
+export const tallyTricks = (tricks: Trick[]) => {
+    const summary: Record<string, number> = {};
+    for (const trick of tricks) {
+        const trickComplete = Object.entries(trick.cards).length === trick.turnOrder.length;
+        if (trickComplete) {
+            if (trick.takerId in summary) {
+                summary[trick.takerId] += 1;
+            } else {
+                summary[trick.takerId] = 1;
+            }
+        }
+    }
+    return summary;
+}
+
+export const createNewScoreboard = (playerOrder: string[]) => {
+    const scoreboard: Record<string, { score: number, totalPoints: number, totalTricks: number }> = {};
+    playerOrder.forEach((playerId) => {
+        scoreboard[playerId] = { score: 0, totalPoints: 0, totalTricks: 0 };
+    });
+    return scoreboard;
 }

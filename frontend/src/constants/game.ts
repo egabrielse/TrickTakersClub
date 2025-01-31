@@ -27,6 +27,7 @@ export const GAME_SETTINGS_PARAMS = {
 } as const;
 
 export const HAND_PHASE = {
+    SETUP: 'setup',
     PICK: 'pick',
     CALL: 'call',
     BURY: 'bury',

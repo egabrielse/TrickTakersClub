@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { useResizeDetector } from "react-resize-detector";
 import { MIN_GAME_HEIGHT, MIN_GAME_WIDTH } from "../../../../constants/game";
 import { arrangePointsOnEllipse } from "../../../../utils/game";
-import { TableState } from "../TablePage";
+import { TableState } from "../TableStateProvider";
 import Center from "./Center/Center";
 import "./Game.scss";
 import Seat from "./Seat";
@@ -36,7 +36,7 @@ export default function Game() {
     <div ref={ref} id="game-context" className="Game">
       <Center />
       {playerOrder.map((playerId) => (
-        <Seat playerId={playerId} />
+        <Seat key={playerId} playerId={playerId} />
       ))}
     </div>
   );

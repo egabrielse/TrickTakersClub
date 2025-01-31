@@ -1,6 +1,6 @@
 import { Message } from "ably";
 import { DIRECT_TYPES } from "../../constants/message";
-import { GameSettings, PlayingCard, Scoreboard, Trick } from "../game";
+import { GameSettings, HandPhase, PlayingCard, Scoreboard, Trick } from "../game";
 
 export interface ErrorMessage extends Message {
     name: typeof DIRECT_TYPES.ERROR;
@@ -11,7 +11,7 @@ export interface RefreshMessage extends Message {
     name: typeof DIRECT_TYPES.REFRESH;
     data: {
         seating: string[];
-        gameInProgress: boolean;
+        inProgress: boolean;
         dealerId: string;
         scoreboard: Scoreboard;
         playerOrder: string[];
@@ -19,7 +19,7 @@ export interface RefreshMessage extends Message {
         settings: GameSettings;
         calledCard: PlayingCard;
         blindSize: number;
-        phase: string;
+        phase: HandPhase;
         upNextId: string;
         pickerId: string;
         partnerId: string;

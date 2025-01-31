@@ -1,10 +1,10 @@
 import { Button, Typography } from "@mui/material";
 import { useContext } from "react";
-import { COMMAND_TYPES } from "../../../../../constants/message/commands";
+import { COMMAND_TYPES } from "../../../../../constants/message";
 import { CardSize } from "../../../../../types/game";
 import CardList from "../../../../common/CardList";
 import { AuthContext } from "../../../auth/AuthContextProvider";
-import { TableState } from "../../TablePage";
+import { TableState } from "../../TableStateProvider";
 import "./Blind.scss";
 
 type BlindProps = {
@@ -17,9 +17,12 @@ export default function Blind({ blindSize, cardSize }: BlindProps) {
   const { upNextId, sendCommand } = useContext(TableState);
   const userIsUpNext = user?.uid === upNextId;
 
-  const handlePick = (pick: boolean) => {
-    console.log("Picking", pick);
-    sendCommand({ name: COMMAND_TYPES.PICK, data: pick });
+  const handlePick = () => {
+    sendCommand({ name: COMMAND_TYPES.PICK, data: undefined });
+  };
+
+  const handlePass = () => {
+    sendCommand({ name: COMMAND_TYPES.PASS, data: undefined });
   };
 
   return (
@@ -29,7 +32,7 @@ export default function Blind({ blindSize, cardSize }: BlindProps) {
           color="primary"
           variant="contained"
           className="Blind-VerticalButton"
-          onClick={() => handlePick(true)}
+          onClick={handlePick}
           children={<Typography variant="overline">Pick</Typography>}
         />
       )}
@@ -43,7 +46,7 @@ export default function Blind({ blindSize, cardSize }: BlindProps) {
           color="secondary"
           variant="contained"
           className="Blind-VerticalButton"
-          onClick={() => handlePick(false)}
+          onClick={handlePass}
           children={<Typography variant="overline">Pass</Typography>}
         />
       )}

@@ -5,6 +5,7 @@ import { TableState } from "../../TableStateProvider";
 import "./Chat.scss";
 import ChatMessage from "./ChatMessage";
 
+// TODO: consolidate chat messages if they are from the same user and within a certain time frame
 export default function Chat() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const { chat, sendChatMsg } = useContext(TableState);

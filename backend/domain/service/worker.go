@@ -186,7 +186,7 @@ func (t *TableWorker) StartService() {
 					// Stop the service if no activity is detected for a certain duration
 					logrus.Infof("Service for table %s timed out", t.Table.ID)
 					// Inform any clients that the service has timed out
-					t.BroadcastMessage(msg.BroadcastType.Timeout, nil)
+					t.BroadcastMessage(msg.TimeoutMessage())
 					return
 				}
 			case <-t.Ctx.Done():

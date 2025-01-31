@@ -27,18 +27,45 @@ export type ScoreboardRow = {
 
 export type Scoreboard = Record<string, ScoreboardRow>;
 
-export type PlayerHandState = {
-    hand: PlayingCard[];
-    bury: PlayingCard[];
+export type TrickSummary = {
+    takerId: string;
+    cards: PlayingCard[];
+    points: number;
+    complete: boolean;
+}
+
+export type BurySummary = {
+    cards: PlayingCard[];
+    complete: boolean;
+}
+
+export type PlayerSummary = {
+    score: number;
+    points: number;
+    tricks: number;
+}
+
+export type HandSummary = {
+    winners: string[];
+    playerSummaries: Record<string, PlayerSummary>;
+    pickerId: string;
+    burySummary: BurySummary;
+    trickSummaries: TrickSummary[];
 }
 
 export type Trick = {
-    upNextIndex: number;
-    takerIndex: number;
+    takerId: string;
     turnOrder: string[];
-    cards: PlayingCard[];
+    cards: Record<string, PlayingCard>;
 }
 
+export function newTrick(): Trick {
+    return {
+        turnOrder: [],
+        takerId: "",
+        cards: {},
+    };
+}
 
 export type CardSize = typeof CARD_SIZE[keyof typeof CARD_SIZE];
 

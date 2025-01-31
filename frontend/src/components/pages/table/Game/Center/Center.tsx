@@ -3,19 +3,19 @@ import { useCallback, useContext, useEffect } from "react";
 import { useResizeDetector } from "react-resize-detector";
 import { HAND_PHASE } from "../../../../../constants/game";
 import { AuthContext } from "../../../auth/AuthContextProvider";
-import { TableState } from "../../TablePage";
+import { TableState } from "../../TableStateProvider";
 import Blind from "./Blind";
 import "./Center.scss";
 import Trick from "./Trick";
 
 export default function Center() {
   const { user } = useContext(AuthContext);
-  const { upNextId, handInProgress, phase, blindSize, playerOrder } =
+  const { upNextId, blindSize, inProgress, phase, playerOrder } =
     useContext(TableState);
   const isPlayerTurn = user?.uid === upNextId;
 
   const renderCenterNode = () => {
-    if (!handInProgress) {
+    if (!inProgress) {
       return "Game not started";
     } else if (!isPlayerTurn) {
       return "Waiting for turn";

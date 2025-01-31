@@ -3,8 +3,9 @@ import { BROADCAST_TYPES } from "../../constants/message";
 import {
     GameSettings,
     HandPhase,
+    HandSummary,
     PlayingCard,
-    Scoreboard
+    TrickSummary,
 } from "../game";
 
 export interface BlindPickedMessage extends Message {
@@ -14,7 +15,12 @@ export interface BlindPickedMessage extends Message {
 
 export interface CalledCardMessage extends Message {
     name: typeof BROADCAST_TYPES.CALLED_CARD;
-    data: { alone: boolean, card: PlayingCard };
+    data: { card: PlayingCard };
+}
+
+export interface CardPlayedMessage extends Message {
+    name: typeof BROADCAST_TYPES.CARD_PLAYED;
+    data: { playerId: string, card: PlayingCard };
 }
 
 export interface ChatMessage extends Message {
@@ -36,19 +42,13 @@ export interface GameOverMessage extends Message {
 export interface GameStartedMessage extends Message {
     name: typeof BROADCAST_TYPES.GAME_STARTED;
     data: {
-        scoreboard: Scoreboard;
         playerOrder: string[];
     };
 }
 
-export interface GoAloneMessage extends Message {
-    name: typeof BROADCAST_TYPES.GO_ALONE;
+export interface GoneAloneMessage extends Message {
+    name: typeof BROADCAST_TYPES.GONE_ALONE;
     data: undefined;
-}
-
-export interface HandDoneMessage extends Message {
-    name: typeof BROADCAST_TYPES.HAND_DONE;
-    data: undefined; // TODO: HandSummary
 }
 
 export interface PartnerRevealedMessage extends Message {
@@ -78,7 +78,10 @@ export interface TimeoutMessage extends Message {
 
 export interface TrickDoneMessage extends Message {
     name: typeof BROADCAST_TYPES.TRICK_DONE;
-    data: undefined; // TODO: TrickSummary
+    data: {
+        trickSummary: TrickSummary;
+        handSummary: HandSummary;
+    }
 }
 
 export interface UpNextMessage extends Message {
@@ -92,12 +95,12 @@ export interface UpNextMessage extends Message {
 export type BroadcastMessage = (
     BlindPickedMessage |
     CalledCardMessage |
+    CardPlayedMessage |
     ChatMessage |
     ErrorMessage |
     GameOverMessage |
     GameStartedMessage |
-    GoAloneMessage |
-    HandDoneMessage |
+    GoneAloneMessage |
     PartnerRevealedMessage |
     SatDownMessage |
     SettingsUpdatedMessage |

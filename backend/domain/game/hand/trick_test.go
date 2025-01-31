@@ -12,20 +12,20 @@ func TestCountPoints(t *testing.T) {
 	trick := NewTrick([]string{test.Player1, test.Player2, test.Player3})
 
 	t.Run("no cards", func(t *testing.T) {
-		points := deck.CountPoints(trick.Cards)
+		points := deck.CountPoints(trick.ListCards())
 		assert.Equal(t, 0, points)
 	})
 
 	t.Run("one card", func(t *testing.T) {
 		trick.PlayCard(deck.NewCard(deck.CardSuit.Heart, deck.CardRank.Ten)) // 10 points
-		points := deck.CountPoints(trick.Cards)
+		points := deck.CountPoints(trick.ListCards())
 		assert.Equal(t, 10, points)
 	})
 
 	t.Run("multiple cards", func(t *testing.T) {
 		trick.PlayCard(deck.NewCard(deck.CardSuit.Spade, deck.CardRank.Jack))    // 2 points
 		trick.PlayCard(deck.NewCard(deck.CardSuit.Diamond, deck.CardRank.Queen)) // 3 points
-		points := deck.CountPoints(trick.Cards)
+		points := deck.CountPoints(trick.ListCards())
 		assert.Equal(t, 15, points)
 	})
 }

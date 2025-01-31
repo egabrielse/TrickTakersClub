@@ -2,11 +2,12 @@ import { useCallback, useContext } from "react";
 import { ResizePayload, useResizeDetector } from "react-resize-detector";
 import { PlayingCard } from "../../../../../types/game";
 import Card from "../../../../common/Card";
-import { TableState } from "../../TablePage";
+import { TableState } from "../../TableStateProvider";
 import "./Trick.scss";
 
 export default function Trick() {
-  const { playerOrder, latestTrick } = useContext(TableState);
+  const { playerOrder, getCurrentTrick } = useContext(TableState);
+  const currentTrick = getCurrentTrick();
 
   /**
    * Layout players around the table
@@ -51,10 +52,10 @@ export default function Trick() {
     <div className="Trick" ref={ref}>
       {playerOrder.map((playerId) => {
         let card: PlayingCard | undefined = undefined;
-        if (latestTrick) {
-          const index = latestTrick.turnOrder.indexOf(playerId);
-          if (index > -1 && index < latestTrick.cards.length) {
-            card = latestTrick.cards[index];
+        if (currentTrick) {
+          const index = currentTrick.turnOrder.indexOf(playerId);
+          if (index > -1 && index < Object.entries(currentTrick.cards).length) {
+            card = currentTrick.cards[index];
           }
         }
         return (
