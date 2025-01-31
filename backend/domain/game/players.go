@@ -46,6 +46,12 @@ func (p *Players) RemoveCard(playerID string, card *deck.Card) {
 	p.Hands[playerID] = filtered
 }
 
+func (p *Players) RemoveCards(playerID string, cards []*deck.Card) {
+	for _, card := range cards {
+		p.RemoveCard(playerID, card)
+	}
+}
+
 func (p *Players) HandContains(playerID string, cards []*deck.Card) bool {
 	hand := p.Hands[playerID]
 	for _, card := range cards {

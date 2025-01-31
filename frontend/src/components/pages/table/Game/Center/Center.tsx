@@ -5,6 +5,7 @@ import { HAND_PHASE } from "../../../../../constants/game";
 import { AuthContext } from "../../../auth/AuthContextProvider";
 import { TableState } from "../../TableStateProvider";
 import Blind from "./Blind";
+import Call from "./Call";
 import "./Center.scss";
 import Trick from "./Trick";
 
@@ -17,26 +18,24 @@ export default function Center() {
   const renderCenterNode = () => {
     if (!inProgress) {
       return "Game not started";
-    } else if (!isPlayerTurn) {
-      return "Waiting for turn";
     }
     switch (phase) {
       case HAND_PHASE.PICK:
-        return <Blind blindSize={blindSize} />;
+        return <Blind />;
       case HAND_PHASE.CALL:
         if (isPlayerTurn) {
-          return "TODO"; // TODO: Implement call phase
+          return <Call />;
         }
-        return `Waiting for picker to call...`;
+        return <span className="loading-text">Waiting for picker to call</span>;
       case HAND_PHASE.BURY:
         if (isPlayerTurn) {
           return `Bury ${blindSize} cards`;
         }
-        return `Waiting for picker to bury...`;
+        return <span className="loading-text">Waiting for picker to bury</span>;
       case HAND_PHASE.PLAY:
         return <Trick />;
       default:
-        return "Waiting...";
+        return <span className="loading-text">Waiting</span>;
     }
   };
 
@@ -68,7 +67,7 @@ export default function Center() {
   return (
     <div ref={ref} className="Center" style={{ width: 300, height: 300 }}>
       {renderCenterNode()}
-      {upNextId && (
+      {upNextId && playerOrder && (
         <div id="up-next-pointer" className="Center-UpNextPointer">
           <EastIcon fontSize="large" htmlColor="white" />
         </div>

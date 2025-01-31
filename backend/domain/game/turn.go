@@ -11,12 +11,13 @@ type PickOrPassResult struct {
 }
 
 type BuryResult struct {
-	Bury []*deck.Card `json:"bury"`
+	Bury       []*deck.Card `json:"bury"`
+	CallResult *CallResult  `json:"callResult"`
+	GoneAlone  bool         `json:"goneAlone"`
 }
 
 type CallResult struct {
 	CalledCard *deck.Card `json:"calledCard"`
-	PartnerID  string     `json:"partnerId"`
 }
 
 type GoAloneResult struct{}

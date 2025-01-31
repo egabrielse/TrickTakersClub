@@ -1,20 +1,14 @@
 import { Button, Typography } from "@mui/material";
 import { useContext } from "react";
 import { COMMAND_TYPES } from "../../../../../constants/message";
-import { CardSize } from "../../../../../types/game";
 import CardList from "../../../../common/CardList";
 import { AuthContext } from "../../../auth/AuthContextProvider";
 import { TableState } from "../../TableStateProvider";
 import "./Blind.scss";
 
-type BlindProps = {
-  blindSize: number;
-  cardSize?: CardSize;
-};
-
-export default function Blind({ blindSize, cardSize }: BlindProps) {
+export default function Blind() {
   const { user } = useContext(AuthContext);
-  const { upNextId, sendCommand } = useContext(TableState);
+  const { upNextId, sendCommand, blindSize } = useContext(TableState);
   const userIsUpNext = user?.uid === upNextId;
 
   const handlePick = () => {
@@ -38,7 +32,6 @@ export default function Blind({ blindSize, cardSize }: BlindProps) {
       )}
       <CardList
         cards={Array.from({ length: blindSize }, () => undefined)}
-        cardSize={cardSize}
         overlap
       />
       {userIsUpNext && (

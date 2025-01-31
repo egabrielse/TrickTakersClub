@@ -142,12 +142,38 @@ func (g *Game) BuryCards(playerID string, cards []*deck.Card) (*BuryResult, erro
 	} else if len(cards) != g.Settings.GetBlindSize() {
 		return nil, fmt.Errorf("expected %d cards, got %d", g.Settings.GetBlindSize(), len(cards))
 	} else {
-		// Remove the cards from the player's hand
-		for index := range cards {
-			g.Players.RemoveCard(playerID, cards[index])
-		}
+		// Remove the buried cards from the player's hand
+		g.Players.RemoveCards(playerID, cards)
 		// Put the cards in the bury
 		g.Bury.BuryCards(cards)
+		// Move onto the call phase
+		g.Phase = HandPhase.Call
+
+		if g.Settings.CallingMethod == CallingMethod.CutThroat {
+			// Picker does not get to choose a partner in cut throat
+			g.Phase = HandPhase.Play
+		} else if g.Settings.CallingMethod == CallingMethod.JackOfDiamonds {
+			// Partner is automatically the player holding the jack of diamonds
+			g.Phase = HandPhase.Call
+			jod := &deck.Card{Suit: deck.CardSuit.Diamond, Rank: deck.CardRank.Jack}
+			if partnerID := g.Players.WhoHas(jod); partnerID == playerID {
+				// Picker has the jack of diamonds and must therefore go alone
+				g.GoAlone(playerID)
+				return &BuryResult{
+					Bury:      cards,
+					GoneAlone: true,
+				}, nil
+			} else {
+				result, _ := g.CallPartner(playerID, jod)
+				return &BuryResult{
+					Bury:       cards,
+					CallResult: result,
+				}, nil
+			}
+		} else {
+			// Move onto the call phase
+			g.Phase = HandPhase.Call
+		}
 		return &BuryResult{
 			Bury: cards,
 		}, nil
@@ -168,7 +194,7 @@ func (g *Game) CallPartner(playerID string, card *deck.Card) (*CallResult, error
 		partnerID := g.Players.WhoHas(card)
 		// Record the called card and partner
 		g.Call.CallPartner(card, partnerID)
-		return &CallResult{PartnerID: partnerID, CalledCard: card}, nil
+		return &CallResult{CalledCard: card}, nil
 	}
 }
 

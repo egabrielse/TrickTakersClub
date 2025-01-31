@@ -35,6 +35,7 @@ export interface DealHandMessage extends Message {
     data: {
         dealerId: string;
         cards: PlayingCard[];
+        blindSize: number;
     };
 }
 

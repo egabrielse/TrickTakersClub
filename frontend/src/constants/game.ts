@@ -69,4 +69,3 @@ export const PLAYER_ROLE = {
     OPPONENT: "opponent",
 } as const;
 
-export const DEFAULT_CARD_BACK = 1;

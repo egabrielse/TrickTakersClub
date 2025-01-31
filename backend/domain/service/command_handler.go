@@ -127,6 +127,7 @@ func HandleStartGameCommand(t *TableWorker, clientID string, data interface{}) {
 				playerID,
 				t.Game.WhoIsDealer(),
 				t.Game.Players.GetHand(playerID),
+				t.Game.Settings.GetBlindSize(),
 			))
 		}
 		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext()))
@@ -179,6 +180,11 @@ func HandleBuryCommand(t *TableWorker, clientID string, data interface{}) {
 		t.DirectMessage(msg.ErrorMessage(clientID, err.Error()))
 	} else {
 		t.DirectMessage(msg.BuriedCardsMessage(clientID, result.Bury))
+		if result.GoneAlone {
+			t.BroadcastMessage(msg.GoneAloneMessage())
+		} else if result.CallResult != nil {
+			t.BroadcastMessage(msg.CalledCardMessage(result.CallResult.CalledCard))
+		}
 		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext()))
 	}
 }

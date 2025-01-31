@@ -23,6 +23,7 @@ import {
 import { CommandMessage } from "../../../types/message/command";
 import { DirectMessage } from "../../../types/message/direct";
 import { createNewScoreboard, tallyTricks } from "../../../utils/game";
+import { relistStartingWith } from "../../../utils/list";
 import { AuthContext } from "../auth/AuthContextProvider";
 import { ConnectionContext } from "./ConnectionProvider";
 
@@ -93,7 +94,7 @@ type TableStateProviderProps = {
 export default function TableStateProvider({
   children,
 }: TableStateProviderProps) {
-  const { broadcastChannelName, directMessageChannelName } =
+  const { hostId, broadcastChannelName, directMessageChannelName } =
     useContext(ConnectionContext);
   const { user } = useContext(AuthContext);
 
@@ -115,7 +116,7 @@ export default function TableStateProvider({
   // Number of hands played this game
   const [handsPlayed, setHandsPlayed] = useState<number>(0);
   // Players seated at the table
-  const [seating, setSeating] = useState<string[]>([]);
+  const [seating, setSeating] = useState<string[]>([hostId]);
   // Summary of the current hand (populated after the hand is complete)
   const [handSummary, setHandSummary] = useState<HandSummary | null>(null);
 
@@ -168,6 +169,9 @@ export default function TableStateProvider({
       case BROADCAST_TYPES.GAME_STARTED: {
         setInProgress(true);
         setScoreboard(createNewScoreboard(msg.data.playerOrder));
+        setPlayerOrder(
+          relistStartingWith(msg.data.playerOrder, user?.uid || ""),
+        );
         break;
       }
       case BROADCAST_TYPES.UP_NEXT:
@@ -265,13 +269,15 @@ export default function TableStateProvider({
     switch (msg.name) {
       case DIRECT_TYPES.REFRESH:
         setLoaded(true);
-        setSeating(msg.data.seating || []);
+        setSeating(msg.data.seating || [hostId]);
         setSettings(msg.data.settings || DefaultGameSettings);
         setInProgress(msg.data.inProgress || false);
         setScoreboard(msg.data.scoreboard || {});
         setHandsPlayed(msg.data.handsPlayed || 0);
         setUpNextId(msg.data.upNextId || "");
-        setPlayerOrder(msg.data.playerOrder || []);
+        setPlayerOrder(
+          relistStartingWith(msg.data.playerOrder || [], user?.uid || ""),
+        );
         setDealerId(msg.data.dealerId || "");
         setTricks(msg.data.tricks || []);
         setTricksWon(tallyTricks(msg.data.tricks || []));
@@ -286,6 +292,7 @@ export default function TableStateProvider({
       case DIRECT_TYPES.DEAL_HAND:
         setHand(msg.data.cards);
         setDealerId(msg.data.dealerId);
+        setBlindSize(msg.data.blindSize);
         break;
       case DIRECT_TYPES.PICKED_CARDS:
         // TODO: implement

@@ -1,5 +1,4 @@
 import { Box } from "@mui/material";
-import { DEFAULT_CARD_BACK } from "../../constants/game";
 import { CardSize, PlayingCard } from "../../types/game";
 import { cardSizeToPixels, getCardBack, getCardFace } from "../../utils/game";
 import "./Card.scss";
@@ -46,9 +45,9 @@ export default function Card(props: CardProps) {
     >
       <Box
         className="Card"
-        component={card === undefined ? "div" : "img"}
+        component={card ? "div" : "img"}
         sx={{ height, width }}
-        src={card ? getCardFace(card) : getCardBack(DEFAULT_CARD_BACK)}
+        src={card ? getCardFace(card) : getCardBack()}
       />
       {overlayText && (
         <div

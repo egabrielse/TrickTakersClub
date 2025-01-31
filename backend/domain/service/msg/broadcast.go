@@ -161,6 +161,6 @@ type UpNextData struct {
 	Phase    string `json:"phase"`
 }
 
-func UpNextMessage(playerID, phase string) (name string, data *UpNextData) {
+func UpNextMessage(phase, playerID string) (name string, data *UpNextData) {
 	return BroadcastType.UpNext, &UpNextData{PlayerID: playerID, Phase: phase}
 }

@@ -1,5 +1,5 @@
 import { CARD_RANK, CARD_SUIT } from "../constants/game";
-import { CardSize, PlayingCard, Trick } from "../types/game";
+import { CardSize, CardSuit, PlayingCard, Trick } from "../types/game";
 
 /**
  * Arrange points on an ellipse given its width and height.
@@ -127,8 +127,6 @@ export const getCardPoints = (card: PlayingCard) => {
     }
 }
 
-
-
 /**
  * Comparison function used for sorting playing cards by rank and suit.
  * @param a Card
@@ -206,4 +204,40 @@ export const createNewScoreboard = (playerOrder: string[]) => {
         scoreboard[playerId] = { score: 0, totalPoints: 0, totalTricks: 0 };
     });
     return scoreboard;
+}
+
+/**
+ * Returns a list of callable aces given a picker's hand.
+ * The picker can call an ace so long as they don't have it in their hand
+ * and they have a fail suit of that ace in their hand.
+ * @param hand - list of cards in picker's hand
+ * @returns list of callable aces
+ */
+export const findCallableAces = (hand: PlayingCard[]) => {
+    const failSuit: Record<CardSuit, boolean> = {
+        [CARD_SUIT.CLUB]: false,
+        [CARD_SUIT.HEART]: false,
+        [CARD_SUIT.SPADE]: false,
+        [CARD_SUIT.DIAMOND]: false
+    }
+
+    const aces: Record<CardSuit, boolean> = {
+        [CARD_SUIT.CLUB]: false,
+        [CARD_SUIT.HEART]: false,
+        [CARD_SUIT.SPADE]: false,
+        [CARD_SUIT.DIAMOND]: false
+    }
+
+    hand.forEach((card) => {
+        if (card.rank === CARD_RANK.ACE) {
+            aces[card.suit] = true
+        } else if (!isTrump(card)) {
+            failSuit[card.suit] = true
+        }
+    })
+
+    return Object.entries(aces).filter(([suit, hasAce]) => {
+        const hasFailSuit = failSuit[suit as CardSuit];
+        return !hasAce && hasFailSuit
+    }).map(([suit]) => ({ suit, rank: CARD_RANK.ACE } as PlayingCard));
 }
