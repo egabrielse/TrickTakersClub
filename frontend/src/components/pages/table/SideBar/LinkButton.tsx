@@ -10,8 +10,7 @@ export default function LinkButton() {
   const [copied, setCopied] = useState(false);
 
   const copyLink = () => {
-    const link = `${window.location.origin}/table/${tableId}`;
-    navigator.clipboard.writeText(link);
+    navigator.clipboard.writeText(tableId);
     setCopied(true);
     // reset the copied state after 3 seconds
     setTimeout(() => setCopied(false), 3000);
