@@ -139,6 +139,7 @@ export default function LoginDialog() {
             onClick={openResetPassDialog}
             style={{ paddingBottom: "1rem" }}
             underline="hover"
+            type="button"
           >
             Forgot your password?
           </Link>

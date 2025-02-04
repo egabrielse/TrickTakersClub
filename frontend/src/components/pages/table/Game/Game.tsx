@@ -1,26 +1,22 @@
 import { useContext, useEffect, useState } from "react";
 import { useResizeDetector } from "react-resize-detector";
 import { MIN_GAME_HEIGHT, MIN_GAME_WIDTH } from "../../../../constants/game";
-import { arrangePointsOnEllipse } from "../../../../utils/game";
+import { arrangeSeats } from "../../../../utils/game";
+import { AuthContext } from "../../auth/AuthContextProvider";
 import { TableState } from "../TableStateProvider";
 import Center from "./Center/Center";
 import "./Game.scss";
-import Seat from "./Seat";
+import PlayerSeat from "./Seating/PlayerSeat";
+import Seat from "./Seating/Seat";
 
 export default function Game() {
+  const { user } = useContext(AuthContext);
   const { playerOrder } = useContext(TableState);
   const [height, setHeight] = useState(MIN_GAME_HEIGHT);
   const [width, setWidth] = useState(MIN_GAME_WIDTH);
 
   useEffect(() => {
-    const coords = arrangePointsOnEllipse(width, height, playerOrder.length);
-    playerOrder.forEach((playerId, i) => {
-      const seat = document.getElementById(`seat-${playerId}`);
-      if (seat) {
-        seat.style.left = `${coords[i].x}px`;
-        seat.style.top = `${coords[i].y}px`;
-      }
-    });
+    arrangeSeats(width, height, playerOrder);
   }, [height, playerOrder, width]);
 
   const { ref } = useResizeDetector({
@@ -35,9 +31,13 @@ export default function Game() {
   return (
     <div ref={ref} id="game-context" className="Game">
       <Center />
-      {playerOrder.map((playerId) => (
-        <Seat key={playerId} playerId={playerId} />
-      ))}
+      {playerOrder.map((playerId) =>
+        user?.uid === playerId ? (
+          <PlayerSeat key={playerId} playerId={playerId} />
+        ) : (
+          <Seat key={playerId} playerId={playerId} />
+        ),
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useCallback, useContext } from "react";
 import { ResizePayload, useResizeDetector } from "react-resize-detector";
-import { PlayingCard } from "../../../../../types/game";
+import { PlayingCard } from "../../../../../types/card";
 import Card from "../../../../common/Card";
 import { TableState } from "../../TableStateProvider";
 import "./Trick.scss";

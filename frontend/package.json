@@ -18,6 +18,7 @@
     "@mui/material": "^6.1.8",
     "ably": "^2.5.0",
     "axios": "^1.7.2",
+    "classnames": "^2.5.1",
     "firebase": "^10.12.2",
     "formik": "^2.4.6",
     "random-word-slugs": "^0.1.7",

@@ -1,11 +1,12 @@
 import { Box } from "@mui/material";
-import { CardSize, PlayingCard } from "../../types/game";
-import { cardSizeToPixels, getCardBack, getCardFace } from "../../utils/game";
+import classNames from "classnames";
+import { CardSize, PlayingCard } from "../../types/card";
+import { cardSizeToPixels, getCardBack, getCardFace } from "../../utils/card";
 import "./Card.scss";
 
 type CardProps = {
   id: string;
-  card?: PlayingCard;
+  card: PlayingCard | "back" | "empty";
   size?: CardSize;
   selected?: boolean;
   onClick?: () => void;
@@ -29,14 +30,24 @@ export default function Card(props: CardProps) {
   const overlayWidth = width / 1.25;
   const overlayTextSize =
     size === "large" ? "2rem" : size === "small" ? "1.25rem" : "1.5rem";
-  const selectable = onClick !== undefined;
+
+  const getCardImage = (card: PlayingCard | "back" | "empty") => {
+    if (card === "empty") {
+      return undefined;
+    } else if (card === "back") {
+      return getCardBack();
+    } else {
+      return getCardFace(card);
+    }
+  };
 
   return (
     <div
       id={id}
-      className={`CardContainer ${
-        selected ? "selected" : selectable ? "selectable" : ""
-      }`}
+      className={classNames("CardContainer", {
+        selected: selected,
+        selectable: onClick !== undefined,
+      })}
       onClick={onClick}
       style={{
         height: yOverlap ? height / 3 : height,
@@ -45,9 +56,9 @@ export default function Card(props: CardProps) {
     >
       <Box
         className="Card"
-        component={card ? "div" : "img"}
+        component={card === "empty" ? "div" : "img"}
         sx={{ height, width }}
-        src={card ? getCardFace(card) : getCardBack()}
+        src={getCardImage(card)}
       />
       {overlayText && (
         <div

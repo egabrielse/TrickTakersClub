@@ -52,8 +52,8 @@ export default function ResetPassDialog() {
     },
   });
 
-  const openRegisterDialog = () => {
-    openDialog({ type: DIALOG_TYPES.REGISTER, closeable: params?.closeable });
+  const openLoginDialog = () => {
+    openDialog({ type: DIALOG_TYPES.LOGIN, closeable: params?.closeable });
   };
 
   const handleClearError = () => {
@@ -104,7 +104,7 @@ export default function ResetPassDialog() {
             Reset
           </LoadingButton>
           <Button
-            onClick={openRegisterDialog}
+            onClick={openLoginDialog}
             variant="outlined"
             style={{ alignSelf: "start" }}
           >

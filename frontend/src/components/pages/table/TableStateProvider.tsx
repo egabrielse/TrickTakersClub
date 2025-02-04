@@ -7,11 +7,11 @@ import {
   COMMAND_TYPES,
   DIRECT_TYPES,
 } from "../../../constants/message";
+import { PlayingCard } from "../../../types/card";
 import {
   GameSettings,
   HandPhase,
   HandSummary,
-  PlayingCard,
   Scoreboard,
   Trick,
   newTrick,

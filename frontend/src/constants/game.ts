@@ -23,7 +23,7 @@ export const GAME_SETTINGS_DEFAULTS = {
 export const GAME_SETTINGS_PARAMS = {
     SUPPORTED_PLAYER_COUNTS: [3, 4, 5, 6, 7],
     MIN_PLAYERS: 3,
-    MAX_PLAYERS: 7,
+    MAX_PLAYERS: 6,
 } as const;
 
 export const HAND_PHASE = {
@@ -38,29 +38,6 @@ export const HAND_PHASE = {
 export const MIN_GAME_WIDTH = 500;
 export const MIN_GAME_HEIGHT = 500;
 
-export const CARD_SUIT = {
-    SPADE: "spade",
-    HEART: "heart",
-    DIAMOND: "diamond",
-    CLUB: "club",
-} as const;
-
-export const CARD_RANK = {
-    SEVEN: 'seven',
-    EIGHT: 'eight',
-    NINE: 'nine',
-    KING: 'king',
-    TEN: 'ten',
-    ACE: 'ace',
-    JACK: 'jack',
-    QUEEN: 'queen',
-} as const;
-
-export const CARD_SIZE = {
-    SMALL: 'small',
-    MEDIUM: 'medium',
-    LARGE: 'large',
-} as const;
 
 
 export const PLAYER_ROLE = {

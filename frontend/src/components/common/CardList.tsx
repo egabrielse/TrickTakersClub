@@ -1,15 +1,15 @@
 import { useMemo } from "react";
-import { PlayingCard } from "../../types/game";
+import { PlayingCard } from "../../types/card";
 import {
   cardSizeToPixels,
   compareCards,
   getCardPoints,
-} from "../../utils/game";
+} from "../../utils/card";
 import Card from "./Card";
 import "./CardList.scss";
 
 type CardListProps = {
-  cards: (PlayingCard | undefined)[];
+  cards: PlayingCard[];
   cardSize?: "small" | "medium" | "large";
   displayPoints?: boolean;
   overlap?: boolean;

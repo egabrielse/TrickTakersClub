@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { COMMAND_TYPES } from "../../../../../constants/message";
-import { PlayingCard } from "../../../../../types/game";
+import { PlayingCard } from "../../../../../types/card";
 import { findCallableAces } from "../../../../../utils/game";
 import Card from "../../../../common/Card";
 import PaperButton from "../../../../common/PaperButton";

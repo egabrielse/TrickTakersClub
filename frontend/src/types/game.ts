@@ -1,4 +1,5 @@
-import { CALLING_METHODS, CARD_SIZE, CARD_SUIT, CARD_RANK, HAND_PHASE, NO_PICK_RESOLUTIONS } from "../constants/game";
+import { CALLING_METHODS, HAND_PHASE, NO_PICK_RESOLUTIONS } from "../constants/game";
+import { PlayingCard } from "./card";
 
 export type CallingMethod = typeof CALLING_METHODS[keyof typeof CALLING_METHODS];
 
@@ -10,11 +11,6 @@ export type GameSettings = {
     callingMethod: CallingMethod;
     noPickResolution: NoPickResolution;
     doubleOnTheBump: boolean;
-}
-
-export type PlayingCard = {
-    suit: CardSuit;
-    rank: CardRank;
 }
 
 export type HandPhase = typeof HAND_PHASE[keyof typeof HAND_PHASE];
@@ -66,8 +62,3 @@ export function newTrick(): Trick {
         cards: {},
     };
 }
-
-export type CardSize = typeof CARD_SIZE[keyof typeof CARD_SIZE];
-
-export type CardRank = typeof CARD_RANK[keyof typeof CARD_RANK];
-export type CardSuit = typeof CARD_SUIT[keyof typeof CARD_SUIT];

@@ -1,0 +1,41 @@
+.PlayerSeat {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    gap: 2rem;
+
+    >div {
+        width: 100%;
+        height: 100%;
+    }
+
+    &-Left {
+        flex: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+
+    &-Center {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        flex: 3;
+
+        &-Bottom {
+            height: 2rem;
+            width: 100%;
+        }
+    }
+
+
+    &-Right {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}

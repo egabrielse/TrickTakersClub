@@ -1,7 +1,7 @@
 import { Button, Typography } from "@mui/material";
 import { useContext } from "react";
 import { COMMAND_TYPES } from "../../../../../constants/message";
-import CardList from "../../../../common/CardList";
+import CardBackList from "../../../../common/CardBackList";
 import { AuthContext } from "../../../auth/AuthContextProvider";
 import { TableState } from "../../TableStateProvider";
 import "./Blind.scss";
@@ -30,10 +30,7 @@ export default function Blind() {
           children={<Typography variant="overline">Pick</Typography>}
         />
       )}
-      <CardList
-        cards={Array.from({ length: blindSize }, () => undefined)}
-        overlap
-      />
+      <CardBackList count={blindSize} cardSize="large" />
       {userIsUpNext && (
         <Button
           color="secondary"

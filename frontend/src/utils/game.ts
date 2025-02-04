@@ -1,5 +1,7 @@
-import { CARD_RANK, CARD_SUIT } from "../constants/game";
-import { CardSize, CardSuit, PlayingCard, Trick } from "../types/game";
+import { CARD_RANK, CARD_SUIT } from "../constants/card";
+import { CardSuit, PlayingCard } from "../types/card";
+import { Trick } from "../types/game";
+import { isTrump } from "./card";
 
 /**
  * Arrange points on an ellipse given its width and height.
@@ -30,153 +32,89 @@ export const arrangePointsOnEllipse = (
     return points;
 }
 
-/**
- * Return the path to the face of the playing card.
- */
-export const getCardFace = (card: PlayingCard) => {
-    return `/cards/${card.rank}-${card.suit}.svg`
-}
-
-/**
- * Returns the path to the back of the playing card.
- */
-export const getCardBack = (variant: number = 1) => {
-    return `/cards/back-${variant}.svg`
-}
-
-/**
- * Determines if a given card is of the trump suit.
- * @param card to evaluate
- * @returns true if trump, false otherwise
- */
-export const isTrump = (card: PlayingCard) => {
-    return card.suit === CARD_SUIT.DIAMOND || card.rank === CARD_RANK.JACK || card.rank === CARD_RANK.QUEEN
-}
-
-/**
- * Get the cardinal rank of a playing card
- * @param card to evaluate
- * @returns number between 1 and 14 representing the card's rank
- */
-export const getCardinalRank = (card: PlayingCard) => {
-    switch (card.rank) {
-        case CARD_RANK.SEVEN:
-            return 1
-        case CARD_RANK.EIGHT:
-            return 2
-        case CARD_RANK.NINE:
-            return 3
-        case CARD_RANK.KING:
-            return 4
-        case CARD_RANK.TEN:
-            return 5
-        case CARD_RANK.ACE:
-            return 6
-        case CARD_RANK.JACK: {
-            switch (card.suit) {
-                case CARD_SUIT.DIAMOND:
-                    return 7
-                case CARD_SUIT.HEART:
-                    return 8
-                case CARD_SUIT.SPADE:
-                    return 9
-                case CARD_SUIT.CLUB:
-                    return 10
-                default:
-                    return 0
-            }
+export const arrangeSeats = (
+    width: number,
+    height: number,
+    playerOrder: string[],
+) => {
+    const ZERO = "0px";
+    const seats: HTMLElement[] = [];
+    playerOrder.forEach((playerId) => {
+        const seat = document.getElementById(`seat-${playerId}`);
+        if (seat) {
+            seats.push(seat);
         }
-        case CARD_RANK.QUEEN: {
-            switch (card.suit) {
-                case CARD_SUIT.DIAMOND:
-                    return 11
-                case CARD_SUIT.HEART:
-                    return 12
-                case CARD_SUIT.SPADE:
-                    return 13
-                case CARD_SUIT.CLUB:
-                    return 14
-                default:
-                    return 0
-            }
+    });
+    switch (seats.length) {
+        case 3: {
+            // Player 1 (bottom center)
+            seats[0].style.left = `${width / 2 - seats[0].clientWidth / 2}px`;
+            seats[0].style.bottom = ZERO;
+            // Player 2 (top left corner)
+            seats[1].style.left = ZERO;
+            seats[1].style.top = ZERO;
+            // Player 3 (top right corner)
+            seats[2].style.right = ZERO;
+            seats[2].style.top = ZERO;
+            break;
+        }
+        case 4: {
+            // Player 1 (bottom center)
+            seats[0].style.left = `${width / 2 - seats[0].clientWidth / 2}px`;
+            seats[0].style.bottom = ZERO;
+            // Player 2 ( left center)
+            seats[1].style.left = ZERO;
+            seats[1].style.top = `${height / 2 - seats[1].clientHeight / 2}px`;
+            // Player 3 (top center)
+            seats[2].style.left = `${width / 2 - seats[2].clientWidth / 2}px`;
+            seats[2].style.top = ZERO;
+            // Player 4 (right center)
+            seats[3].style.right = ZERO;
+            seats[3].style.top = `${height / 2 - seats[3].clientHeight / 2}px`;
+            break;
+        }
+        case 5: {
+            // Player 1 (bottom center)
+            seats[0].style.left = `${width / 2 - seats[0].clientWidth / 2}px`;
+            seats[0].style.bottom = ZERO;
+            // Player 2 (left center)
+            seats[1].style.left = ZERO;
+            seats[1].style.top = `${height / 2 - seats[1].clientHeight / 2}px`;
+            // Player 3 (top quarter from left)
+            seats[2].style.left = `${width / 4 - seats[2].clientWidth / 2}px`;
+            seats[2].style.top = `${height / 2 - seats[2].clientHeight / 2}px`;
+            // Player 4 (top quarter from right)
+            seats[3].style.right = `${width / 4 - seats[3].clientWidth / 2}px`;
+            seats[3].style.top = `${height / 2 - seats[3].clientHeight / 2}px`;
+            // Player 5 (right center)
+            seats[4].style.right = ZERO;
+            seats[4].style.top = `${height / 2 - seats[4].clientHeight / 2}px`;
+            break;
+        }
+        case 6: {
+            // Player 1 (bottom center)
+            seats[0].style.left = `${width / 2 - seats[0].clientWidth / 2}px`;
+            seats[0].style.bottom = ZERO;
+            // Player 2 (left quarter from bottom)
+            seats[1].style.left = `${width / 4 - seats[1].clientWidth / 2}px`;
+            seats[1].style.bottom = ZERO;
+            // Player 3 (left quarter from top)
+            seats[2].style.left = `${width / 4 - seats[2].clientWidth / 2}px`;
+            seats[2].style.top = ZERO;
+            // Player 4 (top center)
+            seats[3].style.left = `${width / 2 - seats[3].clientWidth / 2}px`;
+            seats[3].style.top = ZERO;
+            // Player 5 (right quarter from top)
+            seats[4].style.right = `${width / 4 - seats[4].clientWidth / 2}px`;
+            seats[4].style.top = ZERO;
+            // Player 6 (right quarter from bottom) 
+            seats[5].style.right = `${width / 4 - seats[5].clientWidth / 2}px`;
+            seats[5].style.bottom = ZERO;
+            break
         }
         default:
-            return 0
+            console.warn("Unsupported number of seats");
     }
-}
-
-/**
- * Get the point value of a playing card.
- * @param card to evaluate
- * @returns point value of the card
- */
-export const getCardPoints = (card: PlayingCard) => {
-    switch (card.rank) {
-        case CARD_RANK.QUEEN:
-            return 3
-        case CARD_RANK.JACK:
-            return 2
-        case CARD_RANK.ACE:
-            return 11
-        case CARD_RANK.TEN:
-            return 10
-        case CARD_RANK.KING:
-            return 4
-        default:
-            return 0;
-    }
-}
-
-/**
- * Comparison function used for sorting playing cards by rank and suit.
- * @param a Card
- * @param b Card
- * @returns -1 if a < b, 0 if a == b, 1 if a > b
- */
-export const compareCards = ((a: PlayingCard | undefined, b: PlayingCard | undefined) => {
-    if (!a || !b) {
-        // One of the cards is undefined
-        if (a && !b) {
-            return 1 // a is undefined, b is not
-        } else if (!a && b) {
-            return -1 // b is undefined, a is not
-        } else {
-            return 0 // Both are undefined
-        }
-    } else if (isTrump(a) && !isTrump(b)) {
-        // Trump before non-trump
-        return 1
-    } else if (!isTrump(a) && isTrump(b)) {
-        // Trump before non-trump
-        return -1
-    } else if (isTrump(a) && isTrump(b) || a.suit === b.suit) {
-        // Both trump or same suit, compare values
-        return getCardinalRank(a) - getCardinalRank(b)
-    } else if (a.suit === CARD_SUIT.CLUB) {
-        // Clubs before other fail suits
-        return 1
-    } else if (a.suit === CARD_SUIT.HEART && !(b.suit === CARD_SUIT.SPADE)) {
-        // Hearts before spades
-        return 1
-    } else {
-        // Spades last
-        return -1
-    }
-})
-
-/**
- * Convert a CardSize to pixel dimensions.
- * @param size CardSize
- * @returns width and height in pixels
- */
-export const cardSizeToPixels = (size: CardSize | undefined) => {
-    let ratio = 1;
-    if (size === "small") {
-        ratio = 0.8
-    } else if (size === "large") {
-        ratio = 1.2
-    }
-    return { width: 63 * ratio, height: 88 * ratio };
 }
 
 /**
