@@ -1,0 +1,12 @@
+.CardFan {
+    display: flex;
+    position: absolute;
+    height: 100%;
+
+    >.CardContainer {
+        position: absolute;
+        transition: transform 1s ease-out;
+        left: 50%;
+        top: 50%;
+    }
+}

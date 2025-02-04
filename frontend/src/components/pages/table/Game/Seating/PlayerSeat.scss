@@ -2,14 +2,9 @@
     position: absolute;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: stretch;
     border-radius: 10px;
     gap: 2rem;
-
-    >div {
-        width: 100%;
-        height: 100%;
-    }
 
     &-Left {
         flex: 2;
@@ -20,15 +15,8 @@
 
 
     &-Center {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
         flex: 3;
-
-        &-Bottom {
-            height: 2rem;
-            width: 100%;
-        }
+        position: relative;
     }
 
 

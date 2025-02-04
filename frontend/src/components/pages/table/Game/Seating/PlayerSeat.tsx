@@ -1,6 +1,11 @@
 import { useContext } from "react";
-import { handContainsCard } from "../../../../../utils/card";
-import CardList from "../../../../common/CardList";
+import {
+  cardSizeToPixels,
+  compareCards,
+  handContainsCard,
+} from "../../../../../utils/card";
+import Card from "../../../../common/Card";
+import CardFan from "../../../../common/CardFan";
 import { TableState } from "../../TableStateProvider";
 import Bury from "./Bury";
 import "./PlayerSeat.scss";
@@ -15,6 +20,9 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
   const isPartner =
     partnerId === playerId ||
     (calledCard && handContainsCard(hand, calledCard));
+  const { width } = cardSizeToPixels("large");
+  const handWidth = Math.min((hand.length * width) / 2, 300);
+  const sortedHand = [...hand].sort(compareCards);
 
   return (
     <div id={`seat-${playerId}`} className="PlayerSeat">
@@ -27,8 +35,17 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
         )}
         <TrickPile playerId={playerId} />
       </div>
-      <div className="PlayerSeat-Center">
-        <CardList cardSize="large" overlap cards={hand} />
+      <div className="PlayerSeat-Center" style={{ minWidth: handWidth }}>
+        <CardFan width={handWidth}>
+          {sortedHand.map((card, index) => (
+            <Card
+              id={`${playerId}-${card.rank}-${card.suit}`}
+              key={index}
+              card={card}
+              size="large"
+            />
+          ))}
+        </CardFan>
       </div>
       <div className="PlayerSeat-Right">
         {isPicker ? (
