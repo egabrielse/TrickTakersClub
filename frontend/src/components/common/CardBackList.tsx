@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { cardSizeToPixels } from "../../utils/card";
 import Card from "./Card";
-import "./CardList.scss";
+import "./CardBackList.scss";
 
 type CardBackListProps = {
   count: number;
@@ -20,7 +20,7 @@ export default function CardBackList({
   }, [cardSize, count, overlap]);
 
   return (
-    <div className="CardList" style={{ width: calculatedWidth }}>
+    <div className="CardBackList" style={{ width: calculatedWidth }}>
       {Array.from({ length: count }).map((_, index) => (
         <Card
           id={`card-list-${index}`}
