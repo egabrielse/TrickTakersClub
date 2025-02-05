@@ -1,34 +1,45 @@
 package deck
 
+import "main/utils"
+
 func FilterForSuit(cards []*Card, suit string) (filtered []*Card) {
-	filtered = []*Card{}
-	for _, card := range cards {
-		if card.Suit == suit && !card.IsTrump() {
-			filtered = append(filtered, card)
-		}
+	if suit == CardSuit.Diamond {
+		// Diamonds are trump, therefore filter for trump cards
+		return FilterForTrump(cards)
 	}
-	return filtered
+	return utils.Filter(cards, func(c *Card) bool { return c.Suit == suit && !c.IsTrump() })
+}
+
+func FilterAgainstSuit(cards []*Card, suit string) (filtered []*Card) {
+	if suit == CardSuit.Diamond {
+		// Diamonds are trump, therefore filter against trump cards
+		return FilterAgainstTrump(cards)
+	}
+	return utils.Filter(cards, func(c *Card) bool { return c.Suit != suit || c.IsTrump() })
 }
 
 func FilterForTrump(cards []*Card) (filtered []*Card) {
-	filtered = []*Card{}
-	for _, card := range cards {
-		if card.IsTrump() {
-			filtered = append(filtered, card)
-		}
-	}
-	return filtered
+	return utils.Filter(cards, func(c *Card) bool { return c.IsTrump() })
 }
 
-func FilterForPlayableCards(cards []*Card, leadCard *Card) (filtered []*Card) {
+func FilterAgainstTrump(cards []*Card) (filtered []*Card) {
+	return utils.Filter(cards, func(c *Card) bool { return !c.IsTrump() })
+}
+
+func FilterForCard(cards []*Card, card *Card) (filtered []*Card) {
+	return utils.Filter(cards, func(c *Card) bool { return c == card })
+}
+
+func FilterAgainstCard(cards []*Card, card *Card) (filtered []*Card) {
+	return utils.Filter(cards, func(c *Card) bool { return c != card })
+}
+
+func FilterByLeadingCard(hand []*Card, leadCard *Card) (filtered []*Card) {
+	if leadCard == nil {
+		return []*Card{}
+	}
 	if leadCard.IsTrump() {
-		filtered = FilterForTrump(cards)
-	} else {
-		filtered = FilterForSuit(cards, leadCard.Suit)
+		return FilterForTrump(hand)
 	}
-	// leadCard is nil or all cards were filtered out
-	if len(filtered) == 0 {
-		filtered = cards
-	}
-	return filtered
+	return FilterForSuit(hand, leadCard.Suit)
 }

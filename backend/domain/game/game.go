@@ -227,7 +227,7 @@ func (g *Game) PlayCard(playerID string, card *deck.Card) (*PlayCardResult, erro
 		// Check if partner has been revealed
 		if *card == *g.Call.GetCalledCard() {
 			g.Call.Reveal()
-			result.PartnerID = g.Call.GetPartnerID()
+			result.PartnerID = g.Call.PartnerID
 		}
 		// Check if the trick is complete
 		if trickSummary != nil {
@@ -284,7 +284,7 @@ func (g *Game) SummarizeHand() *summary.HandSummary {
 	default:
 		// Someone picked, score hand normally
 		pickerID := g.Blind.PickerID
-		partnerID := g.Call.GetPartnerID()
+		partnerID := g.Call.PartnerID
 		sum.PickerID = pickerID
 		buriedPoints := deck.CountPoints(g.Bury.Cards)
 		// Count up the points in the bury and add to the picker's points

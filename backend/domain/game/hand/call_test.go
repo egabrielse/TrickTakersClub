@@ -15,14 +15,14 @@ func TestCall(t *testing.T) {
 		assert.False(t, call.IsComplete())
 		assert.Empty(t, call.GetPartnerIfRevealed())
 		assert.Nil(t, call.GetCalledCard())
-		assert.Empty(t, call.GetPartnerID())
+		assert.Empty(t, call.PartnerID)
 	})
 
 	t.Run("Call a Partner", func(t *testing.T) {
 		call := NewCall()
 		call.CallPartner(card, test.Player1)
 		assert.True(t, call.IsComplete())
-		assert.Equal(t, test.Player1, call.GetPartnerID())
+		assert.Equal(t, test.Player1, call.PartnerID)
 		assert.Equal(t, card, call.GetCalledCard())
 	})
 

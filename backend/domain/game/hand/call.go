@@ -34,10 +34,6 @@ func (c *Call) GetCalledCard() (card *deck.Card) {
 	return c.CalledCard
 }
 
-func (c *Call) GetPartnerID() (partnerID string) {
-	return c.PartnerID
-}
-
 func (c *Call) Reveal() {
 	c.Revealed = true
 }
