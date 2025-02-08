@@ -16,12 +16,13 @@ export type GameSettings = {
 export type HandPhase = typeof HAND_PHASE[keyof typeof HAND_PHASE];
 
 export type ScoreboardRow = {
+    playerId: string;
     score: number;
     totalPoints: number;
     totalTricks: number;
 };
 
-export type Scoreboard = Record<string, ScoreboardRow>;
+export type Scoreboard = Array<ScoreboardRow>;
 
 export type TrickSummary = {
     takerId: string;
@@ -50,15 +51,6 @@ export type HandSummary = {
 }
 
 export type Trick = {
-    takerId: string;
     turnOrder: string[];
     cards: Record<string, PlayingCard>;
-}
-
-export function newTrick(): Trick {
-    return {
-        turnOrder: [],
-        takerId: "",
-        cards: {},
-    };
 }

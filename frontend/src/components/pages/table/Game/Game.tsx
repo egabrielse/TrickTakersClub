@@ -1,17 +1,18 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useResizeDetector } from "react-resize-detector";
 import { MIN_GAME_HEIGHT, MIN_GAME_WIDTH } from "../../../../constants/game";
+import selectors from "../../../../store/selectors";
+import authSlice from "../../../../store/slices/auth.slice";
+import { useAppSelector } from "../../../../store/store";
 import { arrangeSeats } from "../../../../utils/game";
-import { AuthContext } from "../../auth/AuthContextProvider";
-import { TableState } from "../TableStateProvider";
 import Center from "./Center/Center";
 import "./Game.scss";
 import PlayerSeat from "./Seating/PlayerSeat";
 import Seat from "./Seating/Seat";
 
 export default function Game() {
-  const { user } = useContext(AuthContext);
-  const { playerOrder } = useContext(TableState);
+  const uid = useAppSelector(authSlice.selectors.uid);
+  const playerOrder = useAppSelector(selectors.playerOrderStartingWithUser);
   const [height, setHeight] = useState(MIN_GAME_HEIGHT);
   const [width, setWidth] = useState(MIN_GAME_WIDTH);
 
@@ -32,7 +33,7 @@ export default function Game() {
     <div ref={ref} id="game-context" className="Game">
       <Center />
       {playerOrder.map((playerId) =>
-        user?.uid === playerId ? (
+        uid === playerId ? (
           <PlayerSeat key={playerId} playerId={playerId} />
         ) : (
           <Seat key={playerId} playerId={playerId} />

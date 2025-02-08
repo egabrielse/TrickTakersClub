@@ -1,7 +1,8 @@
 import { Typography } from "@mui/material";
-import { useContext, useMemo } from "react";
+import { useMemo } from "react";
+import handSlice from "../../../../../store/slices/hand.slice";
+import { useAppSelector } from "../../../../../store/store";
 import Card from "../../../../common/Card";
-import { TableState } from "../../TableStateProvider";
 import "./TrickPile.scss";
 
 type TrickPileProps = {
@@ -9,7 +10,7 @@ type TrickPileProps = {
 };
 
 export default function TrickPile({ playerId }: TrickPileProps) {
-  const { tricks } = useContext(TableState);
+  const tricks = useAppSelector(handSlice.selectors.tricks);
   const tricksWon = useMemo(() => {
     return tricks.filter((trick) => {
       const isTrickTaker = trick.takerId === playerId;

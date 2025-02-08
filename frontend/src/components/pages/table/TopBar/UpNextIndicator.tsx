@@ -1,21 +1,22 @@
 import { Paper, Typography } from "@mui/material";
-import { useContext } from "react";
 import { HAND_PHASE } from "../../../../constants/game";
+import selectors from "../../../../store/selectors";
+import handSlice from "../../../../store/slices/hand.slice";
+import { useAppSelector } from "../../../../store/store";
 import ProfileSnapshot from "../../../common/ProfileSnapshot";
-import { AuthContext } from "../../auth/AuthContextProvider";
-import { TableState } from "../TableStateProvider";
 import "./UpNextIndicator.scss";
 
 export default function UpNextIndicator() {
-  const { upNextId, phase } = useContext(TableState);
-  const { user } = useContext(AuthContext);
+  const upNextId = useAppSelector(handSlice.selectors.upNextId);
+  const phase = useAppSelector(handSlice.selectors.phase);
+  const isUpNext = useAppSelector(selectors.isUpNext);
 
   if (!upNextId) {
     return null;
   } else {
     return (
       <Paper className="UpNextIndicator">
-        {user?.uid === upNextId ? (
+        {isUpNext ? (
           <Typography variant="body1">Your Turn!</Typography>
         ) : (
           <>

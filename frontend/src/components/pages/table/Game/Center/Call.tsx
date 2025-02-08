@@ -1,15 +1,16 @@
 import { useContext } from "react";
 import { COMMAND_TYPES } from "../../../../../constants/message";
+import handSlice from "../../../../../store/slices/hand.slice";
+import { useAppSelector } from "../../../../../store/store";
 import { PlayingCard } from "../../../../../types/card";
-import { findCallableAces } from "../../../../../utils/game";
 import Card from "../../../../common/Card";
 import PaperButton from "../../../../common/PaperButton";
-import { TableState } from "../../TableStateProvider";
+import ConnectionContext from "../../ConnectionContext";
 import "./Call.scss";
 
 export default function Call() {
-  const { hand, sendCommand } = useContext(TableState);
-  const callableAces = findCallableAces(hand);
+  const { sendCommand } = useContext(ConnectionContext);
+  const callableAces = useAppSelector(handSlice.selectors.callableAces);
 
   const handleCallCard = (card: PlayingCard) => {
     sendCommand({ name: COMMAND_TYPES.CALL, data: { card } });

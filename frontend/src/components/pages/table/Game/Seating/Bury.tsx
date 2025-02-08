@@ -1,13 +1,12 @@
 import { Typography } from "@mui/material";
-import { useContext } from "react";
-
+import handSlice from "../../../../../store/slices/hand.slice";
+import { useAppSelector } from "../../../../../store/store";
 import { cardSizeToPixels } from "../../../../../utils/card";
 import Card from "../../../../common/Card";
-import { TableState } from "../../TableStateProvider";
 import "./Bury.scss";
 
 export default function Bury() {
-  const { bury } = useContext(TableState);
+  const bury = useAppSelector(handSlice.selectors.bury);
   const { width, height } = cardSizeToPixels("medium");
   const calcHeight = height + (width / 4) * bury.length;
   return (

@@ -1,14 +1,18 @@
 import SendIcon from "@mui/icons-material/Send";
 import { IconButton, InputAdornment, Paper, TextField } from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
-import { TableState } from "../../TableStateProvider";
+import tableSlice from "../../../../../store/slices/table.slice";
+import { useAppSelector } from "../../../../../store/store";
+import ConnectionContext from "../../ConnectionContext";
 import "./Chat.scss";
-import ChatMessage from "./ChatMessage";
+import MessageBubble from "./MessageBubble";
 
 // TODO: consolidate chat messages if they are from the same user and within a certain time frame
 export default function Chat() {
   const bottomRef = useRef<HTMLDivElement>(null);
-  const { chat, sendChatMsg } = useContext(TableState);
+  const chat = useAppSelector(tableSlice.selectors.chat);
+  const { sendChatMsg } = useContext(ConnectionContext);
+
   const [value, setValue] = useState("");
   const chatLength = chat.length;
 
@@ -27,7 +31,7 @@ export default function Chat() {
     <Paper className="Chat">
       <div className="Chat-Messages">
         {chat.map((msg, i) => (
-          <ChatMessage key={i} message={msg} />
+          <MessageBubble key={i} message={msg} />
         ))}
         <div ref={bottomRef} />
       </div>

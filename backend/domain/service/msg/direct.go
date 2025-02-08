@@ -4,6 +4,7 @@ import (
 	"main/domain/game"
 	"main/domain/game/deck"
 	"main/domain/game/hand"
+	"main/domain/game/summary"
 )
 
 var DirectType = struct {
@@ -60,6 +61,9 @@ func PickedCardsMessage(clientID string, cards []*deck.Card) (string, string, *P
 }
 
 type RefreshData struct {
+	PlayerID   string   `json:"playerId"`
+	HostID     string   `json:"hostId"`
+	TableID    string   `json:"tableId"`
 	Seating    []string `json:"seating"`
 	InProgress bool     `json:"inProgress"`
 	// Game state
@@ -69,23 +73,27 @@ type RefreshData struct {
 	HandsPlayed int                `json:"handsPlayed"`
 	Settings    *game.GameSettings `json:"settings"`
 	// Hand state
-	CalledCard *deck.Card    `json:"calledCard"`
-	BlindSize  int           `json:"blindSize"`
-	Phase      string        `json:"phase"`
-	UpNextID   string        `json:"upNextId"`
-	PickerID   string        `json:"pickerId"`
-	PartnerID  string        `json:"partnerId"`
-	Tricks     []*hand.Trick `json:"tricks"`
+	CalledCard   *deck.Card              `json:"calledCard"`
+	BlindSize    int                     `json:"blindSize"`
+	Phase        string                  `json:"phase"`
+	UpNextID     string                  `json:"upNextId"`
+	PickerID     string                  `json:"pickerId"`
+	PartnerID    string                  `json:"partnerId"`
+	Summaries    []*summary.TrickSummary `json:"summaries"`
+	CurrentTrick *hand.Trick             `json:"currentTrick"`
 	// Player's hand state
-	ClientIsPlayer bool         `json:"clientIsPlayer"`
-	Hand           []*deck.Card `json:"hand"`
-	Bury           []*deck.Card `json:"bury"`
+	Hand []*deck.Card `json:"hand"`
+	Bury []*deck.Card `json:"bury"`
 }
 
-func RefreshMessage(clientID string, seating []string, settings *game.GameSettings, game *game.Game) (string, string, *RefreshData) {
+func RefreshMessage(tableID, hostID, clientID string, seating []string, settings *game.GameSettings, game *game.Game) (string, string, *RefreshData) {
 	data := &RefreshData{}
+	data.PlayerID = clientID
+	data.HostID = hostID
+	data.TableID = tableID
 	data.Seating = seating
 	data.Settings = settings
+	data.InProgress = false
 	if game != nil {
 		// Game is in progress, include game state
 		data.InProgress = true
@@ -102,7 +110,8 @@ func RefreshMessage(clientID string, seating []string, settings *game.GameSettin
 			data.UpNextID = game.WhoIsNext()
 			data.PickerID = game.Blind.PickerID
 			data.PartnerID = game.Call.GetPartnerIfRevealed()
-			data.Tricks = game.Play.Tricks
+			data.CurrentTrick = game.Play.GetCurrentTrick()
+			data.Summaries = game.Play.SummarizeTricks()
 
 			// Client is a player in the current game, include their hand and bury
 			if hand := game.Players.GetHand(clientID); hand != nil {

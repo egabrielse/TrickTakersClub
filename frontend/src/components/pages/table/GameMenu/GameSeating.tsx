@@ -4,19 +4,20 @@ import PlayIcon from "@mui/icons-material/PlayArrow";
 import { Button, Typography } from "@mui/material";
 import { useContext } from "react";
 import { COMMAND_TYPES } from "../../../../constants/message";
+import selectors from "../../../../store/selectors";
+import tableSlice from "../../../../store/slices/table.slice";
+import { useAppSelector } from "../../../../store/store";
 import ProfileSnapshot from "../../../common/ProfileSnapshot";
-import { AuthContext } from "../../auth/AuthContextProvider";
-import { ConnectionContext } from "../ConnectionProvider";
-import { TableState } from "../TableStateProvider";
+import ConnectionContext from "../ConnectionContext";
 import EmptySeat from "./EmptySeat";
 import "./GameSeating.scss";
 
 export default function GameSeating() {
-  const { hostId } = useContext(ConnectionContext);
-  const { seating, settings, sendCommand } = useContext(TableState);
-  const { user } = useContext(AuthContext);
-  const isHost = user?.uid === hostId;
-  const isSeated = seating.includes(user!.uid);
+  const { sendCommand } = useContext(ConnectionContext);
+  const seating = useAppSelector(tableSlice.selectors.seating);
+  const settings = useAppSelector(tableSlice.selectors.settings);
+  const isHost = useAppSelector(selectors.isHost);
+  const isSeated = useAppSelector(selectors.isSeated);
   const tableFull = seating.length >= settings!.playerCount;
 
   const renderSeats = () => {

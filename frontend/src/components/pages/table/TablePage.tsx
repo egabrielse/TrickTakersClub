@@ -1,20 +1,19 @@
-import { useContext } from "react";
-import LoadingPage from "../loading/LoadingPage";
+import gameSlice from "../../../store/slices/game.slice";
+import { useAppSelector } from "../../../store/store";
 import Game from "./Game/Game";
 import GameMenu from "./GameMenu/GameMenu";
 import Chat from "./SideBar/Chat/Chat";
 import LinkButton from "./SideBar/LinkButton";
 import ScoreboardDisplay from "./SideBar/ScoreboardDisplay";
 import "./TablePage.scss";
-import { TableState } from "./TableStateProvider";
 import EndGameButton from "./TopBar/EndGameButton";
 import ExitButton from "./TopBar/ExitButton";
 import UpNextIndicator from "./TopBar/UpNextIndicator";
 
 export default function TablePage() {
-  const { loaded, inProgress } = useContext(TableState);
+  const inProgress = useAppSelector(gameSlice.selectors.inProgress);
 
-  return loaded ? (
+  return (
     <div className="TablePage">
       <div className="TablePage-TopBar">
         <ExitButton />
@@ -30,7 +29,5 @@ export default function TablePage() {
         <Chat />
       </div>
     </div>
-  ) : (
-    <LoadingPage />
   );
 }

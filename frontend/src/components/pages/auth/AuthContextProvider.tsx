@@ -5,7 +5,8 @@ import auth from "../../../firebase/auth";
 
 import { AblyProvider } from "ably/react";
 import { fetchAblyToken } from "../../../api/ably.api";
-import { UserEntity } from "../../../types/user";
+import authSlice from "../../../store/slices/auth.slice";
+import { useAppDispatch } from "../../../store/store";
 
 type AuthContextProviderProps = {
   children: ReactNode;
@@ -13,22 +14,15 @@ type AuthContextProviderProps = {
 
 export const AuthContext = createContext<{
   initialized: boolean;
-  token: string | null;
-  user: UserEntity | null;
-  ably: Ably.Realtime | null;
 }>({
   initialized: false,
-  token: null,
-  user: null,
-  ably: null,
 });
 
 export default function AuthContextProvider({
   children,
 }: AuthContextProviderProps) {
+  const dispatch = useAppDispatch();
   const [initialized, setInitialized] = useState<boolean>(false);
-  const [token, setToken] = useState<string | null>(null);
-  const [user, setUser] = useState<UserEntity | null>(null);
   const [ably, setAbly] = useState<Ably.Realtime | null>(null);
 
   useEffect(() => {
@@ -37,12 +31,14 @@ export default function AuthContextProvider({
         setInitialized(true);
       }
       if (user) {
-        setUser({
-          uid: user.uid,
-          email: user.email || "",
-          displayName: user.displayName || "",
-        });
-        setToken(await user.getIdToken());
+        dispatch(authSlice.actions.setToken(await user.getIdToken()));
+        dispatch(
+          authSlice.actions.setUser({
+            uid: user.uid,
+            email: user.email || "",
+            displayName: user.displayName || "",
+          }),
+        );
         const newAblyClient = new Ably.Realtime({
           authCallback: async (_, callback) => {
             try {
@@ -57,8 +53,7 @@ export default function AuthContextProvider({
         });
         setAbly(newAblyClient);
       } else {
-        setUser(null);
-        setToken(null);
+        dispatch(authSlice.actions.reset());
         ably?.close();
         setAbly(null);
       }
@@ -66,6 +61,7 @@ export default function AuthContextProvider({
     return () => {
       unsubscribe();
       if (ably) {
+        console.log("Closing Ably connection");
         ably.close();
       }
     };
@@ -73,7 +69,7 @@ export default function AuthContextProvider({
   }, []);
 
   return (
-    <AuthContext.Provider value={{ initialized, token, user, ably }}>
+    <AuthContext.Provider value={{ initialized }}>
       {ably === null ? (
         children
       ) : (

@@ -35,6 +35,8 @@ var BroadcastType = struct {
 	TrickDone string
 	// Service timed out due to inactivity
 	Timeout string
+	// New trick has started
+	NewTrick string
 	// Sent to player who's turn it is
 	UpNext string
 }{
@@ -52,6 +54,7 @@ var BroadcastType = struct {
 	GameOver:        "game-over",
 	TrickDone:       "trick-done",
 	Timeout:         "timeout",
+	NewTrick:        "new-trick",
 	UpNext:          "up-next",
 }
 
@@ -157,10 +160,11 @@ func TrickDoneMessage(trickSum *summary.TrickSummary, handSum *summary.HandSumma
 
 // Who's turn is it and what phase are we in
 type UpNextData struct {
-	PlayerID string `json:"playerId"`
-	Phase    string `json:"phase"`
+	PlayerID       string   `json:"playerId"`
+	Phase          string   `json:"phase"`
+	NextTrickOrder []string `json:"nextTrickOrder"`
 }
 
-func UpNextMessage(phase, playerID string) (name string, data *UpNextData) {
-	return BroadcastType.UpNext, &UpNextData{PlayerID: playerID, Phase: phase}
+func UpNextMessage(phase, playerID string, nextTrickOrder []string) (name string, data *UpNextData) {
+	return BroadcastType.UpNext, &UpNextData{PlayerID: playerID, Phase: phase, NextTrickOrder: nextTrickOrder}
 }

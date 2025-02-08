@@ -48,5 +48,6 @@ export const BROADCAST_TYPES = {
     STOOD_UP: "stood-up",
     TIMEOUT: "timeout",
     TRICK_DONE: "trick-done",
+    HAND_DONE: "hand-done",
     UP_NEXT: "up-next",
 } as const;

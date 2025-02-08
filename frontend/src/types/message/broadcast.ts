@@ -4,9 +4,9 @@ import {
     GameSettings,
     HandPhase,
     HandSummary,
-    PlayingCard,
     TrickSummary,
 } from "../game";
+import { PlayingCard } from "../card";
 
 export interface BlindPickedMessage extends Message {
     name: typeof BROADCAST_TYPES.BLIND_PICKED;
@@ -24,6 +24,8 @@ export interface CardPlayedMessage extends Message {
 }
 
 export interface ChatMessage extends Message {
+    clientId: string | undefined;
+    timestamp: number | undefined;
     name: typeof BROADCAST_TYPES.CHAT;
     data: { message: string };
 }
@@ -89,6 +91,7 @@ export interface UpNextMessage extends Message {
     data: {
         playerId: string;
         phase: HandPhase;
+        nextTrickOrder?: string[];
     };
 }
 

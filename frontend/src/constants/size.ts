@@ -9,7 +9,7 @@ export const NAMED_SIZES = {
 } as const;
 
 export const SIZE_SCALE = {
-  [NAMED_SIZES.XXLARGE]: 2.5,
+  [NAMED_SIZES.XXLARGE]: 2,
   [NAMED_SIZES.XLARGE]: 1.5,
   [NAMED_SIZES.LARGE]: 1.25,
   [NAMED_SIZES.MEDIUM]: 1,

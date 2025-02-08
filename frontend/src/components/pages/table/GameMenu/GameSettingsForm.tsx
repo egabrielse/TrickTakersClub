@@ -5,16 +5,17 @@ import {
   Slider,
   Typography,
 } from "@mui/material";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   CALLING_METHODS,
   GAME_SETTINGS_PARAMS,
   NO_PICK_RESOLUTIONS,
 } from "../../../../constants/game";
 import { COMMAND_TYPES } from "../../../../constants/message";
-import { AuthContext } from "../../auth/AuthContextProvider";
-import { ConnectionContext } from "../ConnectionProvider";
-import { TableState } from "../TableStateProvider";
+import selectors from "../../../../store/selectors";
+import tableSlice from "../../../../store/slices/table.slice";
+import { useAppSelector } from "../../../../store/store";
+import ConnectionContext from "../ConnectionContext";
 import "./GameSettingsForm.scss";
 
 const CallingMethodOptions = [
@@ -48,14 +49,21 @@ const NoPickResolutionOptions = [
 ];
 
 export default function GameSettingsForm() {
-  const { user } = useContext(AuthContext);
-  const { hostId } = useContext(ConnectionContext);
-  const { sendCommand, settingsPending, settings, inProgress } =
-    useContext(TableState);
-  const isHost = user?.uid === hostId;
-  const inputDisabled = !isHost || settingsPending || inProgress;
+  const isHost = useAppSelector(selectors.isHost);
+  const { sendCommand } = useContext(ConnectionContext);
+  const settings = useAppSelector(tableSlice.selectors.settings);
+  const [pending, setPending] = useState(false);
+  const inputDisabled = !isHost || pending;
+
+  // Set pending state and reset it after 1000ms
+  // Used to temporarily disable inputs while waiting for server response
+  const setPendingWithTimeout = () => {
+    setPending(true);
+    setTimeout(() => setPending(false), 1000);
+  };
 
   const updatePlayerCount = (value: number) => {
+    setPendingWithTimeout();
     sendCommand({
       name: COMMAND_TYPES.UPDATE_PLAYER_COUNT,
       data: { playerCount: value },
@@ -63,6 +71,7 @@ export default function GameSettingsForm() {
   };
 
   const updateCallingMethod = (value: string) => {
+    setPendingWithTimeout();
     sendCommand({
       name: COMMAND_TYPES.UPDATE_CALLING_METHOD,
       data: { callingMethod: value },
@@ -70,11 +79,19 @@ export default function GameSettingsForm() {
   };
 
   const updateNoPickResolution = (value: string) => {
+    setPendingWithTimeout();
     sendCommand({
       name: COMMAND_TYPES.UPDATE_NO_PICK_RESOLUTION,
       data: { noPickResolution: value },
     });
   };
+
+  useEffect(() => {
+    // Set pending state to false when settings are loaded
+    if (settings) {
+      setPending(false);
+    }
+  }, [settings]);
 
   return (
     <div className="GameSettingsForm">

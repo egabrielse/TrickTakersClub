@@ -1,11 +1,11 @@
 import { Paper } from "@mui/material";
-import { useContext } from "react";
+import gameSlice from "../../../../store/slices/game.slice";
+import { useAppSelector } from "../../../../store/store";
 import ProfileSnapshot from "../../../common/ProfileSnapshot";
-import { TableState } from "../TableStateProvider";
 import "./ScoreboardDisplay.scss";
 
 export default function ScoreboardDisplay() {
-  const { scoreboard } = useContext(TableState);
+  const scoreboard = useAppSelector(gameSlice.selectors.scoreboard);
   if (scoreboard !== null && Object.entries(scoreboard).length > 0) {
     return (
       <Paper className="ScoreboardDisplay">
@@ -19,11 +19,9 @@ export default function ScoreboardDisplay() {
             </tr>
           </thead>
           <tbody>
-            {Object.entries(scoreboard)
-              .sort((a, b) => {
-                return b[1].score - a[1].score;
-              })
-              .map(([playerId, row]) => (
+            {[...scoreboard]
+              .sort((a, b) => b.score - a.score)
+              .map(({ playerId, score, totalPoints, totalTricks }) => (
                 <tr key={`scoreboard-row-${playerId}`}>
                   <td>
                     <ProfileSnapshot
@@ -32,9 +30,9 @@ export default function ScoreboardDisplay() {
                       uid={playerId}
                     />
                   </td>
-                  <td>{row.score}</td>
-                  <td>{row.totalPoints}</td>
-                  <td>{row.totalTricks}</td>
+                  <td>{score}</td>
+                  <td>{totalPoints}</td>
+                  <td>{totalTricks}</td>
                 </tr>
               ))}
           </tbody>

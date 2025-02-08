@@ -7,11 +7,12 @@ import { createTable } from "../../../api/table.api";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { VALIDATION_ERRORS } from "../../../constants/error";
 import { PATHS } from "../../../constants/url";
+import authSlice from "../../../store/slices/auth.slice";
+import { useAppSelector } from "../../../store/store";
 import ActionButton from "../../common/ActionButton";
 import AppLogo from "../../common/AppLogo";
 import { DialogContext } from "../../dialog/DialogProvider";
 import AccountToolbar from "../../layout/AccountToolbar";
-import { AuthContext } from "../auth/AuthContextProvider";
 import "./HomePage.scss";
 
 const validationSchema = yup.object({
@@ -25,7 +26,7 @@ const validationSchema = yup.object({
 export default function HomePage() {
   const { openDialog } = useContext(DialogContext);
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const isAuthenticated = useAppSelector(authSlice.selectors.isAuthenticated);
   const [loading, setLoading] = useState(false);
 
   const navigateToTable = (tableId: string) => {
@@ -40,7 +41,7 @@ export default function HomePage() {
 
   const handlePlay = () => {
     setLoading(true);
-    if (user === null) {
+    if (!isAuthenticated) {
       openDialog({ type: DIALOG_TYPES.LOGIN });
       setLoading(false);
     } else {
@@ -65,7 +66,7 @@ export default function HomePage() {
   return (
     <Paper className="HomePage">
       <AccountToolbar />
-      <AppLogo size="xlarge" color="white" />
+      <AppLogo size="xxlarge" color="white" />
       <Typography variant="h2" color="white">
         Trick Takers Club
       </Typography>

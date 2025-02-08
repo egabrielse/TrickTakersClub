@@ -8,6 +8,8 @@ import { useNavigate } from "react-router";
 import { DIALOG_TYPES } from "../../constants/dialog";
 import { PATHS } from "../../constants/url";
 import auth from "../../firebase/auth";
+import authSlice from "../../store/slices/auth.slice";
+import { useAppSelector } from "../../store/store";
 import PaperButton from "../common/PaperButton";
 import ProfileSnapshot from "../common/ProfileSnapshot";
 import { DialogContext } from "../dialog/DialogProvider";
@@ -16,7 +18,9 @@ import "./AccountToolbar.scss";
 
 export default function AccountToolbar() {
   const { openDialog } = useContext(DialogContext);
-  const { initialized, user } = useContext(AuthContext);
+  const { initialized } = useContext(AuthContext);
+  const isAuthenticated = useAppSelector(authSlice.selectors.isAuthenticated);
+  const uid = useAppSelector(authSlice.selectors.uid);
   const navigate = useNavigate();
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
@@ -47,7 +51,7 @@ export default function AccountToolbar() {
   } else {
     return (
       <div className="AccountToolbar">
-        {user === null ? (
+        {!isAuthenticated ? (
           <PaperButton
             id="login-button"
             name="login-button"
@@ -63,11 +67,7 @@ export default function AccountToolbar() {
               name="profile-button"
               onClick={handleOpenUserMenu}
             >
-              <ProfileSnapshot
-                uid={user.uid}
-                variant="name-row"
-                size="medium"
-              />
+              <ProfileSnapshot uid={uid} variant="name-row" size="medium" />
             </PaperButton>
             <Menu
               anchorEl={anchorElUser}

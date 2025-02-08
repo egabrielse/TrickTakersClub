@@ -9,6 +9,7 @@ type CardProps = {
   card: PlayingCard | "back" | "empty";
   size?: CardSize;
   selected?: boolean;
+  disabled?: boolean;
   onClick?: () => void;
   xOverlap?: boolean;
   yOverlap?: boolean;
@@ -21,6 +22,7 @@ export default function Card(props: CardProps) {
     card,
     size = "medium",
     selected = false,
+    disabled = false,
     onClick,
     xOverlap = false,
     yOverlap = false,
@@ -47,6 +49,7 @@ export default function Card(props: CardProps) {
       className={classNames("CardContainer", {
         selected: selected,
         selectable: onClick !== undefined,
+        unselectable: disabled,
       })}
       onClick={onClick}
       style={{

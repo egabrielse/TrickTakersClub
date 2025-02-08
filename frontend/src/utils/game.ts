@@ -1,6 +1,6 @@
 import { CARD_RANK, CARD_SUIT } from "../constants/card";
 import { CardSuit, PlayingCard } from "../types/card";
-import { Trick } from "../types/game";
+import { Scoreboard, Trick } from "../types/game";
 import { isTrump } from "./card";
 
 /**
@@ -137,9 +137,9 @@ export const tallyTricks = (tricks: Trick[]) => {
 }
 
 export const createNewScoreboard = (playerOrder: string[]) => {
-    const scoreboard: Record<string, { score: number, totalPoints: number, totalTricks: number }> = {};
+    const scoreboard: Scoreboard = [];
     playerOrder.forEach((playerId) => {
-        scoreboard[playerId] = { score: 0, totalPoints: 0, totalTricks: 0 };
+        scoreboard.push({ playerId, score: 0, totalPoints: 0, totalTricks: 0 });
     });
     return scoreboard;
 }

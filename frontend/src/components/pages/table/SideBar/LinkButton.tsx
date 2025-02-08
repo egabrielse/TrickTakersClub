@@ -1,12 +1,13 @@
 import CheckIcon from "@mui/icons-material/Check";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { Tooltip } from "@mui/material";
-import { useContext, useState } from "react";
+import { useState } from "react";
+import tableSlice from "../../../../store/slices/table.slice";
+import { useAppSelector } from "../../../../store/store";
 import PaperButton from "../../../common/PaperButton";
-import { ConnectionContext } from "../ConnectionProvider";
 
 export default function LinkButton() {
-  const { tableId } = useContext(ConnectionContext);
+  const tableId = useAppSelector(tableSlice.selectors.tableId);
   const [copied, setCopied] = useState(false);
 
   const copyLink = () => {

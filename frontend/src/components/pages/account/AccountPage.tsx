@@ -1,21 +1,16 @@
-import { useContext } from "react";
-import { UserStoreContext } from "../../providers/UserStoreProvider";
-import { AuthContext } from "../auth/AuthContextProvider";
+import authSlice from "../../../store/slices/auth.slice";
+import { useAppSelector } from "../../../store/store";
+import ProfileSnapshot from "../../common/ProfileSnapshot";
 import "./AccountPage.scss";
 
 export default function AccountPage() {
-  const { user } = useContext(AuthContext);
-  const { useCachedUser } = useContext(UserStoreContext);
-  const record = useCachedUser(user!.uid);
+  const uid = useAppSelector(authSlice.selectors.uid);
+  const email = useAppSelector(authSlice.selectors.email);
+
   return (
     <div className="AccountPage">
-      <div>{record.status}</div>
-      {record.status === "loaded" && (
-        <div>
-          <div>{record.user?.displayName}</div>
-          <div>{record.user?.email}</div>
-        </div>
-      )}
+      <ProfileSnapshot uid={uid} variant="name-column" size="xlarge" />
+      <div>{email}</div>
     </div>
   );
 }

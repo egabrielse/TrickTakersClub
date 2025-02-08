@@ -1,15 +1,17 @@
 import { Button, Typography } from "@mui/material";
 import { useContext } from "react";
 import { COMMAND_TYPES } from "../../../../../constants/message";
+import selectors from "../../../../../store/selectors";
+import handSlice from "../../../../../store/slices/hand.slice";
+import { useAppSelector } from "../../../../../store/store";
 import CardBackList from "../../../../common/CardBackList";
-import { AuthContext } from "../../../auth/AuthContextProvider";
-import { TableState } from "../../TableStateProvider";
+import ConnectionContext from "../../ConnectionContext";
 import "./Blind.scss";
 
 export default function Blind() {
-  const { user } = useContext(AuthContext);
-  const { upNextId, sendCommand, blindSize } = useContext(TableState);
-  const userIsUpNext = user?.uid === upNextId;
+  const { sendCommand } = useContext(ConnectionContext);
+  const isUpNext = useAppSelector(selectors.isUpNext);
+  const blindSize = useAppSelector(handSlice.selectors.blindSize);
 
   const handlePick = () => {
     sendCommand({ name: COMMAND_TYPES.PICK, data: undefined });
@@ -21,7 +23,7 @@ export default function Blind() {
 
   return (
     <div className="Blind">
-      {userIsUpNext && (
+      {isUpNext && (
         <Button
           color="primary"
           variant="contained"
@@ -31,7 +33,7 @@ export default function Blind() {
         />
       )}
       <CardBackList count={blindSize} cardSize="large" />
-      {userIsUpNext && (
+      {isUpNext && (
         <Button
           color="secondary"
           variant="contained"

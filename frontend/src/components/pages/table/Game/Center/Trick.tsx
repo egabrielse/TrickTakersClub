@@ -1,13 +1,15 @@
-import { useCallback, useContext } from "react";
+import { useCallback } from "react";
 import { ResizePayload, useResizeDetector } from "react-resize-detector";
+import selectors from "../../../../../store/selectors";
+import handSlice from "../../../../../store/slices/hand.slice";
+import { useAppSelector } from "../../../../../store/store";
 import { PlayingCard } from "../../../../../types/card";
 import Card from "../../../../common/Card";
-import { TableState } from "../../TableStateProvider";
 import "./Trick.scss";
 
 export default function Trick() {
-  const { playerOrder, getCurrentTrick } = useContext(TableState);
-  const currentTrick = getCurrentTrick();
+  const playerOrder = useAppSelector(selectors.playerOrderStartingWithUser);
+  const currentTrick = useAppSelector(handSlice.selectors.currentTrick);
 
   /**
    * Layout players around the table
@@ -51,12 +53,9 @@ export default function Trick() {
   return (
     <div className="Trick" ref={ref}>
       {playerOrder.map((playerId) => {
-        let card: PlayingCard | undefined = undefined;
+        let card: PlayingCard | "empty" = "empty";
         if (currentTrick) {
-          const index = currentTrick.turnOrder.indexOf(playerId);
-          if (index > -1 && index < Object.entries(currentTrick.cards).length) {
-            card = currentTrick.cards[index];
-          }
+          card = currentTrick.cards[playerId];
         }
         return (
           <Card id={`trick-card-${playerId}`} key={playerId} card={card} />
