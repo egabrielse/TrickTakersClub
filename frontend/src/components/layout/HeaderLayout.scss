@@ -1,0 +1,17 @@
+.HeaderLayout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+
+    &-Content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: stretch;
+        margin: auto;
+        min-width: 300px;
+        overflow: hidden;
+    }
+}

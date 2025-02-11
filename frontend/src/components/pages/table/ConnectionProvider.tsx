@@ -182,7 +182,7 @@ export default function ConnectionProvider({
       .finally(() => setLoading(false));
 
     return () => {
-      // Reset the state
+      // Reset the state when leaving the page
       dispatch(tableSlice.actions.reset());
       dispatch(gameSlice.actions.reset());
       dispatch(handSlice.actions.reset());

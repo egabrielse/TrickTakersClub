@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import "./ScrollableSection.scss";
 
 type ScrollableSectionProps = {
@@ -17,7 +18,7 @@ export default function ScrollableSection({
     <section key={title} className="ScrollableSection">
       <div id={id} className="ScrollableSection-Header">
         {icon && icon}
-        <h2>{title}</h2>
+        <Typography variant="h4">{title}</Typography>
       </div>
       <div className="ScrollableSection-Body">{children}</div>
     </section>

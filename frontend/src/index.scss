@@ -12,9 +12,8 @@ $paper-color: #94bc81;
 $paper-color-light: #A9C99A;
 $paper-color-dark: #67835A;
 // Highlight
-$highlight-color: #e5bd46;
-$highlight-color-light: #f7db77;
-$highlight-color-dark: #bfaa3f;
+$highlight-color: #f7db77;
+$highlight-color-dark: #deb230;
 // Text
 $font-family: Courier, monospace;
 
@@ -35,10 +34,11 @@ a {
   font-weight: 500;
   color: $highlight-color;
   text-decoration: inherit;
+  text-shadow: 0 0 1px lightgray;
 }
 
 a:hover {
-  color: $highlight-color-light;
+  color: $highlight-color-dark;
 }
 
 body {

@@ -12,7 +12,7 @@ export default function AppLogo({
   color = "white",
   onClick,
 }: AppLogoProps) {
-  const pixelSize = scaleBySize(size, 48);
+  const pixelSize = scaleBySize(size, 36);
   const cursor = onClick ? "pointer" : "default";
   return (
     <svg

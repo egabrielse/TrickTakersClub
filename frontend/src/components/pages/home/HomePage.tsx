@@ -12,7 +12,6 @@ import { useAppSelector } from "../../../store/store";
 import ActionButton from "../../common/ActionButton";
 import AppLogo from "../../common/AppLogo";
 import { DialogContext } from "../../dialog/DialogProvider";
-import AccountToolbar from "../../layout/AccountToolbar";
 import "./HomePage.scss";
 
 const validationSchema = yup.object({
@@ -65,7 +64,6 @@ export default function HomePage() {
 
   return (
     <Paper className="HomePage">
-      <AccountToolbar />
       <AppLogo size="xxlarge" color="white" />
       <Typography variant="h2" color="white">
         Trick Takers Club

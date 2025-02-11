@@ -155,6 +155,15 @@ const theme = createTheme({
         variant: "outlined",
       },
     },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          "&.Mui-selected": {
+            backgroundColor: "rgba(4, 72, 133, 0.25)",
+          },
+        },
+      },
+    },
   },
 });
 
