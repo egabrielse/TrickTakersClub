@@ -10,14 +10,14 @@ import NavigationTabs from "./NavigationTabs";
 
 export default function HeaderBar() {
   return (
-    <AppBar position="static">
+    <AppBar position="static" style={{ border: "none" }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: "flex", sm: "none" } }}>
             <NavigationDropdown />
           </Box>
 
-          <Box sx={{ flexGrow: { xs: 1, md: 0 }, display: "flex" }}>
+          <Box sx={{ flexGrow: { xs: 1, sm: 0 }, display: "flex" }}>
             <AppLogo size="large" />
             <Typography variant="h6" color="white" sx={{ lineHeight: 0.75 }}>
               &nbsp;TRICK
@@ -28,7 +28,7 @@ export default function HeaderBar() {
             </Typography>
           </Box>
 
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: "none", sm: "flex" } }}>
             <NavigationTabs />
           </Box>
 
