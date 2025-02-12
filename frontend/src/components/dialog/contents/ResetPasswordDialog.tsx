@@ -1,4 +1,3 @@
-import { LoadingButton } from "@mui/lab";
 import { Button, TextField } from "@mui/material";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { useFormik } from "formik";
@@ -94,7 +93,7 @@ export default function ResetPassDialog() {
           <DialogErrorMessage error={error} clearError={handleClearError} />
         </DialogBody>
         <DialogFooter>
-          <LoadingButton
+          <Button
             color="primary"
             loading={loading}
             type="submit"
@@ -102,7 +101,7 @@ export default function ResetPassDialog() {
             disabled={!formik.isValid || sent}
           >
             Reset
-          </LoadingButton>
+          </Button>
           <Button
             onClick={openLoginDialog}
             variant="outlined"

@@ -24,7 +24,7 @@ export default function Trick() {
 
       // Position each player around the table
       playerOrder.forEach((playerId) => {
-        const player = document.getElementById(`trick-card-${playerId}`);
+        const player = document.getElementById(`played-card-${playerId}`);
         if (player) {
           // Update position of player's seat
           const x = Math.round(
@@ -54,11 +54,11 @@ export default function Trick() {
     <div className="Trick" ref={ref}>
       {playerOrder.map((playerId) => {
         let card: PlayingCard | "empty" = "empty";
-        if (currentTrick) {
+        if (currentTrick && currentTrick.cards[playerId]) {
           card = currentTrick.cards[playerId];
         }
         return (
-          <Card id={`trick-card-${playerId}`} key={playerId} card={card} />
+          <Card id={`played-card-${playerId}`} key={playerId} card={card} />
         );
       })}
     </div>

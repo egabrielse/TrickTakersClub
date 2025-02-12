@@ -65,12 +65,16 @@ const handSlice = createSlice({
             }
         },
         pickedCards: (state, action: PayloadAction<MessageData<PickedCardsMessage>>) => {
-            state.bury = action.payload.cards;
+            state.hand = [...state.hand, ...action.payload.cards].sort(compareCards);
         },
         buriedCards: (state, action: PayloadAction<MessageData<BuriedCardsMessage>>) => {
-            state.bury = action.payload.cards;
+            const { cards } = action.payload;
             // Remove the buried cards from the player's hand
-            state.hand = state.hand.filter((card) => !state.bury.includes(card));
+            state.hand = state.hand.filter((card) => {
+                return !cards.some((buried) => buried.rank === card.rank && buried.suit === card.suit);
+            });
+            // Add the buried cards to the bury pile
+            state.bury = cards;
         },
         calledCard: (state, action: PayloadAction<MessageData<CalledCardMessage>>) => {
             state.calledCard = action.payload.card;
@@ -105,12 +109,6 @@ const handSlice = createSlice({
         leadingCard: (state: HandState) => state.currentTrick && state.currentTrick.cards[state.currentTrick.turnOrder[0]],
         currentTrick: (state: HandState) => state.currentTrick,
         summaries: (state: HandState) => state.summaries,
-        tricksWon: (state: HandState) => state.summaries.reduce((prev: Record<string, number>, curr) => {
-            if (curr.takerId) {
-                prev[curr.takerId] = (prev[curr.takerId] || 0) + 1;
-            }
-            return prev;
-        }, {}),
     }
 });
 

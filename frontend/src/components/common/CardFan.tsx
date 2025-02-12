@@ -1,5 +1,5 @@
 import { CardProps } from "@mui/material";
-import { ReactElement, useCallback } from "react";
+import { ReactElement, useCallback, useEffect } from "react";
 import { useResizeDetector } from "react-resize-detector";
 import "./CardFan.scss";
 
@@ -10,7 +10,7 @@ type CardFanProps = {
 
 export default function CardFan({ children, width }: CardFanProps) {
   const reLayout = useCallback(() => {
-    const angle = 60; // Example angle, you can adjust as needed
+    const angle = 65; // Example angle, you can adjust as needed
     const count = children.length;
     const offset = angle / 2;
 
@@ -31,6 +31,12 @@ export default function CardFan({ children, width }: CardFanProps) {
     refreshRate: 250,
     onResize: reLayout,
   });
+
+  useEffect(() => {
+    // Relayout the fan whenever the number of cards changes
+    reLayout();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [children.length]);
 
   return (
     <div ref={ref} className="CardFan" style={{ width }}>

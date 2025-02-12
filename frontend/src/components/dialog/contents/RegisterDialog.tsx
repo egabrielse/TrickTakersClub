@@ -1,5 +1,4 @@
 import LoopIcon from "@mui/icons-material/Loop";
-import { LoadingButton } from "@mui/lab";
 import { Box, Button, MenuItem, TextField } from "@mui/material";
 import { FirebaseError } from "firebase/app";
 import {
@@ -253,7 +252,7 @@ export default function RegisterDialog() {
         </DialogBody>
 
         <DialogFooter>
-          <LoadingButton
+          <Button
             color="primary"
             loading={loading}
             type="submit"
@@ -261,7 +260,7 @@ export default function RegisterDialog() {
             disabled={!formik.isValid}
           >
             Sign Up!
-          </LoadingButton>
+          </Button>
           <Button
             onClick={openLoginDialog}
             variant="outlined"

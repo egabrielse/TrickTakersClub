@@ -27,7 +27,6 @@ export default function CardBackList({
           key={index}
           card="back"
           size={cardSize}
-          xOverlap={overlap}
         />
       ))}
     </div>

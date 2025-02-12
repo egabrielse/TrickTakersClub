@@ -54,8 +54,15 @@ func (p *Players) RemoveCards(playerID string, cards []*deck.Card) {
 
 func (p *Players) HandContains(playerID string, cards []*deck.Card) bool {
 	hand := p.Hands[playerID]
-	for _, card := range cards {
-		if !utils.Contains(hand, card) {
+	for _, cardToFind := range cards {
+		found := false
+		for _, cardInHand := range hand {
+			if *cardToFind == *cardInHand {
+				found = true
+				break
+			}
+		}
+		if !found {
 			return false
 		}
 	}

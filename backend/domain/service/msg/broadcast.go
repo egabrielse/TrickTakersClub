@@ -75,11 +75,12 @@ func CalledCardMessage(card *deck.Card) (name string, data *CalledCardData) {
 }
 
 type CardPlayedData struct {
-	Card *deck.Card `json:"card"`
+	PlayerID string     `json:"playerId"`
+	Card     *deck.Card `json:"card"`
 }
 
-func CardPlayedMessage(card *deck.Card) (name string, data *CardPlayedData) {
-	return BroadcastType.CardPlayed, &CardPlayedData{Card: card}
+func CardPlayedMessage(playerId string, card *deck.Card) (name string, data *CardPlayedData) {
+	return BroadcastType.CardPlayed, &CardPlayedData{PlayerID: playerId, Card: card}
 }
 
 type ChatData struct {

@@ -39,7 +39,6 @@ function ConnectionApiProvider({
   // Listen for incoming broadcast messages from the server worker
   const broadcast = useChannel(broadcastName, (message) => {
     const msg: BroadcastMessage = message as BroadcastMessage;
-    console.log("Received broadcast message", msg);
     switch (msg.name) {
       case BROADCAST_TYPES.CHAT: {
         const chatMsg: ChatMessage = { ...msg, clientId: msg.clientId };
@@ -139,7 +138,6 @@ function ConnectionApiProvider({
    * @param command
    */
   const sendCommand = (command: CommandMessage) => {
-    console.log("Sending command", command);
     // Then send the command to the server
     direct?.publish(command.name, command.data);
   };

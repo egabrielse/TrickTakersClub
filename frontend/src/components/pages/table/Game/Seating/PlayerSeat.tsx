@@ -1,27 +1,35 @@
-import { useCallback, useState } from "react";
+import { Button } from "@mui/material";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { HAND_PHASE } from "../../../../../constants/game";
+import { COMMAND_TYPES } from "../../../../../constants/message";
 import selectors from "../../../../../store/selectors";
 import handSlice from "../../../../../store/slices/hand.slice";
 import { useAppSelector } from "../../../../../store/store";
 import { PlayingCard } from "../../../../../types/card";
-import { cardSizeToPixels } from "../../../../../utils/card";
 import Card from "../../../../common/Card";
-import CardFan from "../../../../common/CardFan";
+import CardList from "../../../../common/CardList";
+import ConnectionContext from "../../ConnectionContext";
 import Bury from "./Bury";
 import "./PlayerSeat.scss";
 import RoleChip from "./RoleChip";
 import TrickPile from "./TrickPile";
-// TODO: Finish this component
+
 export default function PlayerSeat({ playerId }: { playerId: string }) {
+  const { sendCommand } = useContext(ConnectionContext);
   const isUpNext = useAppSelector(selectors.isUpNext);
   const isDealer = useAppSelector(selectors.isDealer);
   const isPicker = useAppSelector(selectors.isPicker);
   const isPartner = useAppSelector(selectors.isPartner);
+  const phase = useAppSelector(handSlice.selectors.phase);
   const playableCards = useAppSelector(selectors.playableCards);
   const blindSize = useAppSelector(handSlice.selectors.blindSize);
   const hand = useAppSelector(handSlice.selectors.hand);
-  const { width } = cardSizeToPixels("large");
-  const handWidth = Math.min((hand.length * width) / 2, 300);
   const [selected, setSelected] = useState<PlayingCard[]>([]);
+
+  useEffect(() => {
+    // Clear selected cards when the phase changes
+    setSelected([]);
+  }, [isUpNext, phase]);
 
   /**
    * Click a card to select or deselect it.
@@ -41,27 +49,39 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
    * Check if the card can be clicked.
    */
   const canClickCard = useCallback(
-    (card: PlayingCard) =>
-      (isUpNext && // Player's turn
-        selected.includes(card)) || // Card is already selected (and can be deselected)
-      (playableCards.includes(card) && selected.length < blindSize), // Or the card is playable
-    [isUpNext, blindSize, playableCards, selected],
+    (card: PlayingCard) => {
+      if (!isUpNext) {
+        return false;
+      } else if (phase === HAND_PHASE.BURY) {
+        return selected.includes(card) || selected.length < blindSize;
+      } else if (phase === HAND_PHASE.PLAY) {
+        return (
+          selected.includes(card) ||
+          (playableCards.includes(card) && selected.length < 1)
+        );
+      }
+      return false;
+    },
+    [isUpNext, phase, selected, blindSize, playableCards],
   );
 
-  //   /**
-  //  * Confirm the selected cards and send the turn message.
-  //  */
-  //   const confirm = useCallback(() => {
-  //     if (!isUpNext || selected.length !== blindSize) {
-  //       return;
-  //     } else if (nextTurn?.turnType === TURN_TYPE.BURY) {
-  //       const payload = createBuryPayload(playerId, selected);
-  //       dispatch(connSlice.actions.sendMessage(createTurnMessage(playerId, payload)));
-  //     } else if (nextTurn?.turnType === TURN_TYPE.PLAY) {
-  //       const payload = createPlayPayload(playerId, selected[0]);
-  //       dispatch(connSlice.actions.sendMessage(createTurnMessage(playerId, payload)));
-  //     }
-  //   }, [dispatch, isUpNext, blindSize, nextTurn?.turnType, playerId, selected]);
+  /**
+   * Bury the selected cards.
+   */
+  const buryCards = () => {
+    if (phase === HAND_PHASE.BURY && selected.length === blindSize) {
+      sendCommand({ name: COMMAND_TYPES.BURY, data: { cards: selected } });
+    }
+  };
+
+  const playCard = () => {
+    if (phase === HAND_PHASE.PLAY && selected.length === 1) {
+      sendCommand({
+        name: COMMAND_TYPES.PLAY_CARD,
+        data: { card: selected[0] },
+      });
+    }
+  };
 
   return (
     <div id={`seat-${playerId}`} className="PlayerSeat">
@@ -74,20 +94,44 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
         )}
         <TrickPile playerId={playerId} />
       </div>
-      <div className="PlayerSeat-Center" style={{ minWidth: handWidth }}>
-        <CardFan width={handWidth}>
-          {hand.map((card, index) => (
-            <Card
-              id={`hand-${card.suit}-${card.rank}`}
-              key={index}
-              card={card}
-              size="large"
-              selected={selected.includes(card)}
-              disabled={isUpNext ? canClickCard(card) : false}
-              onClick={canClickCard(card) ? () => clickCard(card) : undefined}
-            />
-          ))}
-        </CardFan>
+      <div className="PlayerSeat-Center">
+        <div className="PlayerSeat-Center-Top">
+          <CardList>
+            {hand.map((card, index) => (
+              <Card
+                id={`hand-${card.suit}-${card.rank}`}
+                key={index}
+                card={card}
+                size="large"
+                highlighted={selected.includes(card)}
+                disabled={isUpNext && !canClickCard(card)}
+                onClick={canClickCard(card) ? () => clickCard(card) : undefined}
+              />
+            ))}
+          </CardList>
+        </div>
+        <div className="PlayerSeat-Center-Bottom">
+          {isUpNext && phase === HAND_PHASE.BURY && (
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={selected.length !== blindSize}
+              onClick={buryCards}
+            >
+              Bury Cards
+            </Button>
+          )}
+          {isUpNext && phase === HAND_PHASE.PLAY && (
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={selected.length !== 1}
+              onClick={playCard}
+            >
+              Play Card
+            </Button>
+          )}
+        </div>
       </div>
       <div className="PlayerSeat-Right">
         {isPicker ? (
@@ -98,7 +142,6 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
           // Placeholder for picker/partner chip
           <div style={{ height: 44 }} />
         )}
-        {}
         <Bury />
       </div>
     </div>

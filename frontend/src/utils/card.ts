@@ -20,7 +20,7 @@ export const getCardBack = (variant: number = 1) => {
  * @param card to evaluate
  * @returns true if trump, false otherwise
  */
-export const isTrump = (card: PlayingCard) => {
+export const isTrumpCard = (card: PlayingCard) => {
     return (
         card.suit === CARD_SUIT.DIAMOND ||
         card.rank === CARD_RANK.JACK ||
@@ -109,13 +109,15 @@ export const getCardPoints = (card: PlayingCard) => {
  * @returns -1 if a < b, 0 if a == b, 1 if a > b
  */
 export const compareCards = (a: PlayingCard, b: PlayingCard) => {
-    if (isTrump(a) && !isTrump(b)) {
+    if (a.rank === b.rank && a.suit === b.suit) {
+        return 0;
+    } else if (isTrumpCard(a) && !isTrumpCard(b)) {
         // Trump before non-trump
         return 1;
-    } else if (!isTrump(a) && isTrump(b)) {
+    } else if (!isTrumpCard(a) && isTrumpCard(b)) {
         // Trump before non-trump
         return -1;
-    } else if ((isTrump(a) && isTrump(b)) || a.suit === b.suit) {
+    } else if ((isTrumpCard(a) && isTrumpCard(b)) || a.suit === b.suit) {
         // Both trump or same suit, compare values
         return getCardinalRank(a) - getCardinalRank(b);
     } else if (a.suit === CARD_SUIT.CLUB) {

@@ -61,6 +61,9 @@ const theme = createTheme({
     button: {
       lineHeight: 1.5,
     },
+    overline: {
+      lineHeight: 1,
+    },
   },
   shape: {
     borderRadius: 4,

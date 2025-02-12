@@ -221,16 +221,21 @@ func HandlePlayCardCommand(t *TableWorker, clientID string, data interface{}) {
 	} else if result, err := t.Game.PlayCard(clientID, params.Card); utils.LogOnError(err) {
 		t.DirectMessage(msg.ErrorMessage(clientID, err.Error()))
 	} else {
-		t.BroadcastMessage(msg.CardPlayedMessage(result.PlayedCard))
+		t.BroadcastMessage(msg.CardPlayedMessage(clientID, result.PlayedCard))
 		if result.PartnerID != "" {
+			// Partner has been revealed, let all players know
 			t.BroadcastMessage(msg.PartnerRevealedMessage(result.PartnerID))
 		}
-		if result.TrickSummary != nil {
+		if result.TrickSummary == nil {
+			// Trick is not over, continue to the next player
+			t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext(), nil))
+		} else {
 			t.BroadcastMessage(msg.TrickDoneMessage(result.TrickSummary, result.HandSummary))
-		}
-		if result.HandSummary == nil {
-			// Hand is not over, continue to the next player
-			t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext(), t.Game.GetTurnOrder()))
+			if result.HandSummary == nil {
+				// Trick is over, but the hand is not, continue to the next player
+				// and send along the turn order for the next trick
+				t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext(), t.Game.GetTurnOrder()))
+			}
 		}
 	}
 }

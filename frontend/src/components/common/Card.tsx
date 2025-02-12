@@ -4,15 +4,13 @@ import { CardSize, PlayingCard } from "../../types/card";
 import { cardSizeToPixels, getCardBack, getCardFace } from "../../utils/card";
 import "./Card.scss";
 
-type CardProps = {
+export type CardProps = {
   id: string;
   card: PlayingCard | "back" | "empty";
   size?: CardSize;
-  selected?: boolean;
+  highlighted?: boolean;
   disabled?: boolean;
   onClick?: () => void;
-  xOverlap?: boolean;
-  yOverlap?: boolean;
   overlayText?: string;
 };
 
@@ -21,11 +19,9 @@ export default function Card(props: CardProps) {
     id,
     card,
     size = "medium",
-    selected = false,
+    highlighted = false,
     disabled = false,
     onClick,
-    xOverlap = false,
-    yOverlap = false,
     overlayText,
   } = props;
   const { width, height } = cardSizeToPixels(size);
@@ -46,16 +42,13 @@ export default function Card(props: CardProps) {
   return (
     <div
       id={id}
-      className={classNames("CardContainer", {
-        selected: selected,
-        selectable: onClick !== undefined,
-        unselectable: disabled,
-      })}
       onClick={onClick}
-      style={{
-        height: yOverlap ? height / 3 : height,
-        width: xOverlap ? width / 2 : width,
-      }}
+      style={{ height, width }}
+      className={classNames("CardContainer", {
+        interactive: onClick !== undefined,
+        highlighted: highlighted,
+        disabled: disabled,
+      })}
     >
       <Box
         className="Card"

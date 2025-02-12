@@ -5,12 +5,13 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import AppLogo from "../../common/AppLogo";
 import AccountToolbar from "./AccountToolbar";
+import "./HeaderBar.scss";
 import NavigationDropdown from "./NavigationDropdown";
 import NavigationTabs from "./NavigationTabs";
 
 export default function HeaderBar() {
   return (
-    <AppBar position="static" style={{ border: "none" }}>
+    <AppBar className="HeaderBar" position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Box sx={{ flexGrow: 1, display: { xs: "flex", sm: "none" } }}>

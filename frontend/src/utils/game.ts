@@ -1,7 +1,7 @@
 import { CARD_RANK, CARD_SUIT } from "../constants/card";
 import { CardSuit, PlayingCard } from "../types/card";
-import { Scoreboard, Trick } from "../types/game";
-import { isTrump } from "./card";
+import { Scoreboard } from "../types/game";
+import { isTrumpCard } from "./card";
 
 /**
  * Arrange points on an ellipse given its width and height.
@@ -117,25 +117,6 @@ export const arrangeSeats = (
     }
 }
 
-/**
- * Summarize the tricks won by each player.
- * @param tricks 
- */
-export const tallyTricks = (tricks: Trick[]) => {
-    const summary: Record<string, number> = {};
-    for (const trick of tricks) {
-        const trickComplete = Object.entries(trick.cards).length === trick.turnOrder.length;
-        if (trickComplete) {
-            if (trick.takerId in summary) {
-                summary[trick.takerId] += 1;
-            } else {
-                summary[trick.takerId] = 1;
-            }
-        }
-    }
-    return summary;
-}
-
 export const createNewScoreboard = (playerOrder: string[]) => {
     const scoreboard: Scoreboard = [];
     playerOrder.forEach((playerId) => {
@@ -169,7 +150,7 @@ export const findCallableAces = (hand: PlayingCard[]) => {
     hand.forEach((card) => {
         if (card.rank === CARD_RANK.ACE) {
             aces[card.suit] = true
-        } else if (!isTrump(card)) {
+        } else if (!isTrumpCard(card)) {
             failSuit[card.suit] = true
         }
     })

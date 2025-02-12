@@ -4,7 +4,8 @@ import { COMMAND_TYPES } from "../../../../../constants/message";
 import selectors from "../../../../../store/selectors";
 import handSlice from "../../../../../store/slices/hand.slice";
 import { useAppSelector } from "../../../../../store/store";
-import CardBackList from "../../../../common/CardBackList";
+import Card from "../../../../common/Card";
+import CardList from "../../../../common/CardList";
 import ConnectionContext from "../../ConnectionContext";
 import "./Blind.scss";
 
@@ -32,7 +33,15 @@ export default function Blind() {
           children={<Typography variant="overline">Pick</Typography>}
         />
       )}
-      <CardBackList count={blindSize} cardSize="large" />
+      <CardList>
+        {Array.from({ length: blindSize }).map((_, index) => (
+          <Card
+            id={`blind-card-${index}`}
+            key={`blind-card-${index}`}
+            card="back"
+          />
+        ))}
+      </CardList>
       {isUpNext && (
         <Button
           color="secondary"

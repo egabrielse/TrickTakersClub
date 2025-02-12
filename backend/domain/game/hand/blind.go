@@ -12,7 +12,7 @@ type Blind struct {
 func NewBlind(pickOrder []string, cards []*deck.Card) *Blind {
 	return &Blind{
 		Index:     0,
-		Cards:     []*deck.Card{},
+		Cards:     cards,
 		PickOrder: pickOrder,
 		PickerID:  "",
 	}
@@ -39,7 +39,9 @@ func (b *Blind) Pick() []*deck.Card {
 		return nil
 	}
 	b.PickerID = b.WhoIsNext()
-	return b.Cards
+	blind := b.Cards
+	b.Cards = nil
+	return blind
 }
 
 func (b *Blind) Pass() {

@@ -16,7 +16,7 @@ export default function EndGameButton() {
     sendCommand({ name: COMMAND_TYPES.END_GAME, data: undefined });
   };
 
-  if (isHost || !inProgress) {
+  if (!isHost || !inProgress) {
     // Empty div to maintain layout consistency
     return <div></div>;
   } else {

@@ -1,6 +1,5 @@
 import { Typography } from "@mui/material";
-import { useMemo } from "react";
-import handSlice from "../../../../../store/slices/hand.slice";
+import selectors from "../../../../../store/selectors";
 import { useAppSelector } from "../../../../../store/store";
 import Card from "../../../../common/Card";
 import "./TrickPile.scss";
@@ -10,15 +9,8 @@ type TrickPileProps = {
 };
 
 export default function TrickPile({ playerId }: TrickPileProps) {
-  const tricks = useAppSelector(handSlice.selectors.tricks);
-  const tricksWon = useMemo(() => {
-    return tricks.filter((trick) => {
-      const isTrickTaker = trick.takerId === playerId;
-      const isTrickComplete =
-        Object(trick.cards).length === trick.turnOrder.length;
-      return isTrickTaker && isTrickComplete;
-    });
-  }, [playerId, tricks]);
+  const tricksWon = useAppSelector(selectors.tricksWon);
+  const countOfTricksWon = tricksWon[playerId] || 0;
 
   return (
     <div className="TrickPile">
@@ -26,13 +18,13 @@ export default function TrickPile({ playerId }: TrickPileProps) {
         Tricks Won
       </Typography>
       <div className="TrickPile-Cards">
-        {tricksWon.length === 0 ? (
-          <Card id={`empty-bury`} card="empty" />
+        {countOfTricksWon === 0 ? (
+          <Card id="empty-trick-pile" card="empty" />
         ) : (
           <Card
-            id={`empty-bury`}
+            id={`non-empty-trick-pile`}
             card="back"
-            overlayText={`x${tricksWon.length}`}
+            overlayText={`x${countOfTricksWon}`}
           />
         )}
       </div>

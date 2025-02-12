@@ -34,12 +34,16 @@ func (c *Call) GetCalledCard() (card *deck.Card) {
 	return c.CalledCard
 }
 
-func (c *Call) Reveal() {
-	c.Revealed = true
-}
-
 func (c *Call) GetPartnerIfRevealed() (partnerID string) {
 	if c.Revealed {
+		return c.PartnerID
+	}
+	return ""
+}
+
+func (c *Call) ConditionallyRevealPartner(card *deck.Card) (partnerID string) {
+	if c.CalledCard != nil && *c.CalledCard == *card {
+		c.Revealed = true
 		return c.PartnerID
 	}
 	return ""

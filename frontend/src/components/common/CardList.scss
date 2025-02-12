@@ -1,0 +1,8 @@
+.CardList {
+    position: relative;
+    transition: transform 500ms ease-out;
+
+    >.CardContainer {
+        position: absolute;
+    }
+}

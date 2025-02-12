@@ -37,7 +37,8 @@ func TestCall(t *testing.T) {
 	t.Run("Reveal", func(t *testing.T) {
 		call := NewCall()
 		call.CallPartner(card, test.Player1)
-		call.Reveal()
+		partnerId := call.ConditionallyRevealPartner(card)
+		assert.Equal(t, test.Player1, partnerId)
 		assert.Equal(t, test.Player1, call.GetPartnerIfRevealed())
 	})
 }

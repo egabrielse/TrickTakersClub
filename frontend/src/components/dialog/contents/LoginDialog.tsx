@@ -1,4 +1,3 @@
-import { LoadingButton } from "@mui/lab";
 import { Button, Link, TextField } from "@mui/material";
 import { FirebaseError } from "firebase/app";
 import { AuthErrorCodes, signInWithEmailAndPassword } from "firebase/auth";
@@ -146,7 +145,7 @@ export default function LoginDialog() {
           <DialogErrorMessage error={errMsg} clearError={handleClearError} />
         </DialogBody>
         <DialogFooter>
-          <LoadingButton
+          <Button
             color="primary"
             loading={loading}
             type="submit"
@@ -154,7 +153,7 @@ export default function LoginDialog() {
             disabled={!formik.isValid}
           >
             Sign In!
-          </LoadingButton>
+          </Button>
           <Button
             onClick={openRegisterDialog}
             variant="outlined"
