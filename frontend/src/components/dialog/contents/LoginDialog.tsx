@@ -2,13 +2,15 @@ import { Button, Link, TextField } from "@mui/material";
 import { FirebaseError } from "firebase/app";
 import { AuthErrorCodes, signInWithEmailAndPassword } from "firebase/auth";
 import { useFormik } from "formik";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { ERROR_MESSAGES, VALIDATION_ERRORS } from "../../../constants/error";
 import auth from "../../../firebase/auth";
+import { useAppDispatch } from "../../../store/hooks";
+import dialogSlice from "../../../store/slices/dialog.slice";
+import { LoginDialogParams } from "../../../types/dialog";
 import Logo from "../../common/AppLogo";
-import { DialogContext } from "../DialogProvider";
 import CloseDialogButton from "../components/CloseDialogButton";
 import DialogBody from "../components/DialogBody";
 import DialogErrorMessage from "../components/DialogErrorMessage";
@@ -34,8 +36,8 @@ const initialValues = {
   password: "",
 };
 
-export default function LoginDialog() {
-  const { closeDialog, openDialog, params } = useContext(DialogContext);
+export default function LoginDialog({ closeable }: LoginDialogParams) {
+  const dispatch = useAppDispatch();
   const [errMsg, setErrMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -46,7 +48,7 @@ export default function LoginDialog() {
       setLoading(true);
       const { email, password } = values;
       signInWithEmailAndPassword(auth, email, password)
-        .then(() => closeDialog())
+        .then(() => dispatch(dialogSlice.actions.closeDialog()))
         .catch((error) => {
           if (error instanceof FirebaseError) {
             switch (error.code) {
@@ -71,17 +73,23 @@ export default function LoginDialog() {
   });
 
   const openRegisterDialog = () => {
-    openDialog({
-      type: DIALOG_TYPES.REGISTER,
-      closeable: params?.closeable,
-    });
+    dispatch(dialogSlice.actions.closeDialog());
+    dispatch(
+      dialogSlice.actions.openDialog({
+        type: DIALOG_TYPES.REGISTER,
+        closeable,
+      }),
+    );
   };
 
   const openResetPassDialog = () => {
-    openDialog({
-      type: DIALOG_TYPES.RESET,
-      closeable: params?.closeable,
-    });
+    dispatch(dialogSlice.actions.closeDialog());
+    dispatch(
+      dialogSlice.actions.openDialog({
+        type: DIALOG_TYPES.RESET,
+        closeable,
+      }),
+    );
   };
 
   const handleClearError = () => {
@@ -90,7 +98,7 @@ export default function LoginDialog() {
 
   return (
     <>
-      {params?.closeable && <CloseDialogButton />}
+      {closeable && <CloseDialogButton />}
       <DialogHeader>
         <Logo size="large" />
         <h2>LOGIN TO ACCOUNT</h2>

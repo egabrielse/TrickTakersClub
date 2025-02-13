@@ -5,6 +5,7 @@ import gameSlice from './slices/game.slice';
 import handSlice from './slices/hand.slice';
 import authSlice from './slices/auth.slice';
 import userSlice from './slices/user.slice';
+import dialogSlice from './slices/dialog.slice';
 
 const additionalMiddleware: Middleware[] = [];
 
@@ -15,6 +16,7 @@ if (import.meta.env.DEV) {
 export const store = configureStore({
     reducer: {
         auth: authSlice.reducer,
+        dialog: dialogSlice.reducer,
         hand: handSlice.reducer,
         game: gameSlice.reducer,
         table: tableSlice.reducer,

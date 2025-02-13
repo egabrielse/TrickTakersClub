@@ -1,12 +1,8 @@
 import { Dialog } from "@mui/material";
-import {
-  ReactNode,
-  createContext,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { ReactNode, useCallback, useEffect } from "react";
 import { DIALOG_TYPES } from "../../constants/dialog";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import dialogSlice from "../../store/slices/dialog.slice";
 import { DialogParams } from "../../types/dialog";
 import SlideTransition from "../common/SlideTransition";
 import ErrorDialog from "./contents/ErrorDialog";
@@ -14,76 +10,64 @@ import LoginDialog from "./contents/LoginDialog";
 import RegisterDialog from "./contents/RegisterDialog";
 import ResetPassDialog from "./contents/ResetPasswordDialog";
 
-type DialogContextProviderProps = {
+type DialogProviderProps = {
   children: ReactNode;
 };
 
-export const DialogContext = createContext<{
-  isOpen: boolean;
-  params: DialogParams | null;
-  openDialog: (params: DialogParams) => void;
-  closeDialog: () => void;
-}>({
-  isOpen: false,
-  params: null,
-  openDialog: () => {},
-  closeDialog: () => {},
-});
+export default function DialogProvider({ children }: DialogProviderProps) {
+  const dispatch = useAppDispatch();
+  const isOpen = useAppSelector(dialogSlice.selectors.isOpen);
+  const dialogs = useAppSelector(dialogSlice.selectors.dialogs);
 
-export default function DialogProvider({
-  children,
-}: DialogContextProviderProps) {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [params, setParams] = useState<DialogParams | null>(null);
-
-  const openDialog = useCallback((params: DialogParams) => {
-    setParams(params);
-    setIsOpen(true);
-  }, []);
-
-  const closeDialog = useCallback(() => {
-    setParams(null);
-    setIsOpen(false);
-  }, []);
-
-  const renderDialogContent = () => {
-    if (!isOpen || params === null) return null;
-    switch (params?.type) {
+  const renderDialogContent = (dialog: DialogParams) => {
+    if (!isOpen || dialog === null) return null;
+    switch (dialog?.type) {
       case DIALOG_TYPES.LOGIN:
-        return <LoginDialog />;
+        return <LoginDialog {...dialog} />;
       case DIALOG_TYPES.REGISTER:
-        return <RegisterDialog />;
+        return <RegisterDialog {...dialog} />;
       case DIALOG_TYPES.RESET:
-        return <ResetPassDialog />;
+        return <ResetPassDialog {...dialog} />;
       case DIALOG_TYPES.ERROR:
-        return <ErrorDialog {...params.props} />;
+        return <ErrorDialog {...dialog} />;
       default:
-        console.error("Unknown dialog parameters", params);
+        console.error("Unknown dialog parameters", dialog);
         return null;
     }
   };
 
+  const resetDialogs = useCallback(() => {
+    dispatch(dialogSlice.actions.reset());
+  }, [dispatch]);
+
+  const closeDialog = useCallback(() => {
+    dispatch(dialogSlice.actions.closeDialog());
+  }, [dispatch]);
+
   useEffect(() => {
     // Close dialog when user navigates back
-    window.addEventListener("popstate", closeDialog);
+    window.addEventListener("popstate", resetDialogs);
     return () => {
-      window.removeEventListener("popstate", closeDialog);
+      window.removeEventListener("popstate", resetDialogs);
     };
-  }, [closeDialog]);
+  }, [resetDialogs]);
 
   return (
-    <DialogContext.Provider value={{ isOpen, params, openDialog, closeDialog }}>
-      <Dialog
-        closeAfterTransition
-        component={"div"}
-        keepMounted
-        onClose={params?.closeable ? closeDialog : undefined}
-        open={isOpen}
-        slots={{ transition: SlideTransition }}
-      >
-        {renderDialogContent()}
-      </Dialog>
+    <>
+      {dialogs.map((dialog, index) => (
+        <Dialog
+          key={`${dialog.type}-${index}`}
+          closeAfterTransition
+          component={"div"}
+          keepMounted
+          onClose={dialog?.closeable ? closeDialog : undefined}
+          open={isOpen}
+          slots={{ transition: SlideTransition }}
+        >
+          {renderDialogContent(dialog)}
+        </Dialog>
+      ))}
       {children}
-    </DialogContext.Provider>
+    </>
   );
 }

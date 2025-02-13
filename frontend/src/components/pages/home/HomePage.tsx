@@ -1,17 +1,17 @@
 import { Divider, Paper, TextField, Typography } from "@mui/material";
 import { useFormik } from "formik";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import * as yup from "yup";
 import { createTable } from "../../../api/table.api";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { VALIDATION_ERRORS } from "../../../constants/error";
 import { PATHS } from "../../../constants/url";
-import { useAppSelector } from "../../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
+import dialogSlice from "../../../store/slices/dialog.slice";
 import ActionButton from "../../common/ActionButton";
 import AppLogo from "../../common/AppLogo";
-import { DialogContext } from "../../dialog/DialogProvider";
 import "./HomePage.scss";
 
 const validationSchema = yup.object({
@@ -23,7 +23,8 @@ const validationSchema = yup.object({
 });
 
 export default function HomePage() {
-  const { openDialog } = useContext(DialogContext);
+  const dispatch = useAppDispatch();
+
   const navigate = useNavigate();
   const isAuthenticated = useAppSelector(authSlice.selectors.isAuthenticated);
   const [loading, setLoading] = useState(false);
@@ -41,20 +42,27 @@ export default function HomePage() {
   const handlePlay = () => {
     setLoading(true);
     if (!isAuthenticated) {
-      openDialog({ type: DIALOG_TYPES.LOGIN, closeable: true });
+      dispatch(
+        dialogSlice.actions.openDialog({
+          type: DIALOG_TYPES.LOGIN,
+          closeable: true,
+        }),
+      );
       setLoading(false);
     } else {
       createTable()
         .then((table) => navigateToTable(table.id))
         .catch((error) => {
           console.error(error);
-          openDialog({
-            type: DIALOG_TYPES.ERROR,
-            props: {
-              title: "Error Creating Table",
-              message: "There was an error creating the table.",
-            },
-          });
+          dispatch(
+            dialogSlice.actions.openDialog({
+              type: DIALOG_TYPES.ERROR,
+              props: {
+                title: "Error Creating Table",
+                message: "There was an error creating the table.",
+              },
+            }),
+          );
         })
         .finally(() => {
           setLoading(false);

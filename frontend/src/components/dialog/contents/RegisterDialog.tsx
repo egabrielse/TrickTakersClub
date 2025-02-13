@@ -7,14 +7,16 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { useFormik } from "formik";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { ERROR_MESSAGES, VALIDATION_ERRORS } from "../../../constants/error";
 import auth from "../../../firebase/auth";
+import { useAppDispatch } from "../../../store/hooks";
+import dialogSlice from "../../../store/slices/dialog.slice";
+import { RegisterDialogParams } from "../../../types/dialog";
 import { generateDisplayName } from "../../../utils/user";
 import Logo from "../../common/AppLogo";
-import { DialogContext } from "../DialogProvider";
 import CloseDialogButton from "../components/CloseDialogButton";
 import DialogBody from "../components/DialogBody";
 import DialogErrorMessage from "../components/DialogErrorMessage";
@@ -47,8 +49,8 @@ const initialValues = {
   confirm: "",
 };
 
-export default function RegisterDialog() {
-  const { openDialog, closeDialog, params } = useContext(DialogContext);
+export default function RegisterDialog({ closeable }: RegisterDialogParams) {
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState<string | null>(null);
   const [displayNameOptions, setDisplayNameOptions] = useState<string[]>([]);
@@ -64,7 +66,7 @@ export default function RegisterDialog() {
           updateProfile(response.user, { displayName })
             .then(() => {
               response.user.reload();
-              closeDialog();
+              dispatch(dialogSlice.actions.closeDialog());
             })
             .catch(() => setErrMsg(ERROR_MESSAGES.INVALID_DISPLAY_NAME));
         })
@@ -92,10 +94,12 @@ export default function RegisterDialog() {
   });
 
   const openLoginDialog = () => {
-    openDialog({
-      type: DIALOG_TYPES.LOGIN,
-      closeable: params?.closeable,
-    });
+    dispatch(
+      dialogSlice.actions.openDialog({
+        type: DIALOG_TYPES.LOGIN,
+        closeable,
+      }),
+    );
   };
 
   // Generate new display name options
@@ -124,7 +128,7 @@ export default function RegisterDialog() {
 
   return (
     <>
-      {params?.closeable && <CloseDialogButton />}
+      {closeable && <CloseDialogButton />}
       <DialogHeader>
         <Logo size="large" />
         <h2>CREATE A NEW ACCOUNT</h2>

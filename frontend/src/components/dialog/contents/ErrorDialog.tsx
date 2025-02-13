@@ -1,24 +1,21 @@
 import HomeIcon from "@mui/icons-material/Home";
 import { Button } from "@mui/material";
-import { useContext } from "react";
 import { useNavigate } from "react-router";
 import { PATHS } from "../../../constants/url";
-import { DialogContext } from "../DialogProvider";
+import { useAppDispatch } from "../../../store/hooks";
+import dialogSlice from "../../../store/slices/dialog.slice";
+import { ErrorDialogParams } from "../../../types/dialog";
 import DialogBody from "../components/DialogBody";
 import DialogFooter from "../components/DialogFooter";
 import DialogHeader from "../components/DialogHeader";
 
-type ErrorDialogProps = {
-  title: string;
-  message: string;
-};
-
-export default function ErrorDialog({ title, message }: ErrorDialogProps) {
+export default function ErrorDialog({ props }: ErrorDialogParams) {
+  const { title, message } = props;
   const navigate = useNavigate();
-  const { closeDialog } = useContext(DialogContext);
+  const dispatch = useAppDispatch();
 
   const handleReturnHome = () => {
-    closeDialog();
+    dispatch(dialogSlice.actions.closeDialog());
     navigate(PATHS.ROOT);
   };
 

@@ -1,14 +1,16 @@
 import { Button, TextField } from "@mui/material";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { useFormik } from "formik";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { DISPLAY_MESSAGES } from "../../../constants/display";
 import { VALIDATION_ERRORS } from "../../../constants/error";
 import auth from "../../../firebase/auth";
+import { useAppDispatch } from "../../../store/hooks";
+import dialogSlice from "../../../store/slices/dialog.slice";
+import { ResetPasswordDialogParams } from "../../../types/dialog";
 import Logo from "../../common/AppLogo";
-import { DialogContext } from "../DialogProvider";
 import CloseDialogButton from "../components/CloseDialogButton";
 import DialogBody from "../components/DialogBody";
 import DialogErrorMessage from "../components/DialogErrorMessage";
@@ -28,8 +30,10 @@ const initialValues = {
   email: "",
 };
 
-export default function ResetPassDialog() {
-  const { openDialog, params } = useContext(DialogContext);
+export default function ResetPassDialog({
+  closeable,
+}: ResetPasswordDialogParams) {
+  const dispatch = useAppDispatch();
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -52,7 +56,9 @@ export default function ResetPassDialog() {
   });
 
   const openLoginDialog = () => {
-    openDialog({ type: DIALOG_TYPES.LOGIN, closeable: params?.closeable });
+    dispatch(
+      dialogSlice.actions.openDialog({ type: DIALOG_TYPES.LOGIN, closeable }),
+    );
   };
 
   const handleClearError = () => {
@@ -61,7 +67,7 @@ export default function ResetPassDialog() {
 
   return (
     <>
-      <CloseDialogButton />
+      {closeable && <CloseDialogButton />}
       <DialogHeader>
         <Logo size="large" />
         <h2>RESET PASSWORD</h2>

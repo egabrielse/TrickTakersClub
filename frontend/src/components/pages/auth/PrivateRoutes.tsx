@@ -1,22 +1,22 @@
 import { useContext, useEffect } from "react";
 import { Outlet } from "react-router";
 import { DIALOG_TYPES } from "../../../constants/dialog";
-import { useAppSelector } from "../../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
-import { DialogContext } from "../../dialog/DialogProvider";
+import dialogSlice from "../../../store/slices/dialog.slice";
 import LoadingPage from "../loading/LoadingPage";
 import { AuthContext } from "./AuthContextProvider";
 
 export default function PrivateRoutes() {
-  const { openDialog } = useContext(DialogContext);
+  const dispatch = useAppDispatch();
   const { initialized } = useContext(AuthContext);
   const isAuthenticated = useAppSelector(authSlice.selectors.isAuthenticated);
 
   useEffect(() => {
     if (initialized && !isAuthenticated) {
-      openDialog({ type: DIALOG_TYPES.LOGIN });
+      dispatch(dialogSlice.actions.openDialog({ type: DIALOG_TYPES.LOGIN }));
     }
-  }, [initialized, openDialog, isAuthenticated]);
+  }, [dispatch, initialized, isAuthenticated]);
 
   if (!initialized || !isAuthenticated) {
     return <LoadingPage />;

@@ -8,15 +8,15 @@ import { useNavigate } from "react-router";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { PATHS } from "../../../constants/url";
 import auth from "../../../firebase/auth";
-import { useAppSelector } from "../../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
+import dialogSlice from "../../../store/slices/dialog.slice";
 import ProfileSnapshot from "../../common/ProfileSnapshot";
-import { DialogContext } from "../../dialog/DialogProvider";
 import { AuthContext } from "../../pages/auth/AuthContextProvider";
 import "./AccountToolbar.scss";
 
 export default function AccountToolbar() {
-  const { openDialog } = useContext(DialogContext);
+  const dispatch = useAppDispatch();
   const { initialized } = useContext(AuthContext);
   const isAuthenticated = useAppSelector(authSlice.selectors.isAuthenticated);
   const uid = useAppSelector(authSlice.selectors.uid);
@@ -32,7 +32,12 @@ export default function AccountToolbar() {
   };
 
   const handleLogin = () => {
-    openDialog({ type: DIALOG_TYPES.LOGIN, closeable: true });
+    dispatch(
+      dialogSlice.actions.openDialog({
+        type: DIALOG_TYPES.LOGIN,
+        closeable: true,
+      }),
+    );
   };
 
   const handleLogout = () => {
