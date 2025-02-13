@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import { Provider } from "react-redux";
 import {
@@ -6,6 +7,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
 } from "react-router-dom";
+import { theme } from "../constants/mui";
 import { PATHS } from "../constants/url";
 import { store } from "../store";
 import HeaderLayout from "./layout/HeaderLayout";
@@ -17,7 +19,6 @@ import PrivateRoutes from "./pages/auth/PrivateRoutes";
 import HomePage from "./pages/home/HomePage";
 import ConnectionProvider from "./pages/table/ConnectionProvider";
 import TablePage from "./pages/table/TablePage";
-import MuiThemeProvider from "./providers/MuiThemeProvider";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -48,12 +49,12 @@ axios.defaults.baseURL = import.meta.env.VITE_BACKEND_HOST;
 
 export default function App() {
   return (
-    <MuiThemeProvider>
+    <ThemeProvider theme={theme}>
       <Provider store={store}>
         <AuthContextProvider>
           <RouterProvider router={router} />
         </AuthContextProvider>
       </Provider>
-    </MuiThemeProvider>
+    </ThemeProvider>
   );
 }
