@@ -79,7 +79,7 @@ export default function DialogProvider({
         keepMounted
         onClose={params?.closeable ? closeDialog : undefined}
         open={isOpen}
-        TransitionComponent={SlideTransition}
+        slots={{ transition: SlideTransition }}
       >
         {renderDialogContent()}
       </Dialog>
