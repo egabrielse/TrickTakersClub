@@ -7,7 +7,7 @@ import {
   createRoutesFromElements,
 } from "react-router-dom";
 import { PATHS } from "../constants/url";
-import { store } from "../store/store";
+import { store } from "../store";
 import HeaderLayout from "./layout/HeaderLayout";
 import RootLayout from "./layout/RootLayout";
 import RulesPage from "./pages//rules/RulesPage";
@@ -18,7 +18,6 @@ import HomePage from "./pages/home/HomePage";
 import ConnectionProvider from "./pages/table/ConnectionProvider";
 import TablePage from "./pages/table/TablePage";
 import MuiThemeProvider from "./providers/MuiThemeProvider";
-import UserStoreProvider from "./providers/UserStoreProvider";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -52,9 +51,7 @@ export default function App() {
     <MuiThemeProvider>
       <Provider store={store}>
         <AuthContextProvider>
-          <UserStoreProvider>
-            <RouterProvider router={router} />
-          </UserStoreProvider>
+          <RouterProvider router={router} />
         </AuthContextProvider>
       </Provider>
     </MuiThemeProvider>

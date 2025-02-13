@@ -12,9 +12,9 @@ import {
   NO_PICK_RESOLUTIONS,
 } from "../../../../constants/game";
 import { COMMAND_TYPES } from "../../../../constants/message";
+import { useAppSelector } from "../../../../store/hooks";
 import selectors from "../../../../store/selectors";
 import tableSlice from "../../../../store/slices/table.slice";
-import { useAppSelector } from "../../../../store/store";
 import ConnectionContext from "../ConnectionContext";
 import "./GameSettingsForm.scss";
 

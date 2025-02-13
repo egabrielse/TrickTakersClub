@@ -126,6 +126,7 @@ const tricksWon = createSelector(
         return prev;
     }, {})
 )
+
 const selectors = {
     isDealer,
     isPicker,

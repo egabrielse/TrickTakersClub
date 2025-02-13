@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useResizeDetector } from "react-resize-detector";
 import { MIN_GAME_HEIGHT, MIN_GAME_WIDTH } from "../../../../constants/game";
+import { useAppSelector } from "../../../../store/hooks";
 import selectors from "../../../../store/selectors";
 import authSlice from "../../../../store/slices/auth.slice";
-import { useAppSelector } from "../../../../store/store";
 import { arrangeSeats } from "../../../../utils/game";
 import Center from "./Center/Center";
 import "./Game.scss";

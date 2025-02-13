@@ -1,8 +1,8 @@
 import { Skeleton } from "@mui/material";
-import { FunctionComponent, useContext } from "react";
+import { FunctionComponent } from "react";
+import { useCachedUser } from "../../../../../store/hooks";
 import { ChatMessage } from "../../../../../types/message/broadcast";
 import UserAvatar from "../../../../common/UserAvatar";
-import { UserStoreContext } from "../../../../providers/UserStoreProvider";
 import "./MessageBubble.scss";
 
 type MessageProps = {
@@ -10,7 +10,6 @@ type MessageProps = {
 };
 
 const MessageBubble: FunctionComponent<MessageProps> = ({ message }) => {
-  const { useCachedUser } = useContext(UserStoreContext);
   const { data, clientId, timestamp } = message;
   const time = new Date(timestamp!).toLocaleTimeString();
   const { user, status } = useCachedUser(clientId!);

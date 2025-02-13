@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { COMMAND_TYPES } from "../../../../../constants/message";
+import { useAppSelector } from "../../../../../store/hooks";
 import handSlice from "../../../../../store/slices/hand.slice";
-import { useAppSelector } from "../../../../../store/store";
 import { PlayingCard } from "../../../../../types/card";
 import Card from "../../../../common/Card";
 import PaperButton from "../../../../common/PaperButton";

@@ -2,8 +2,8 @@ import CheckIcon from "@mui/icons-material/Check";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { Tooltip } from "@mui/material";
 import { useState } from "react";
+import { useAppSelector } from "../../../../store/hooks";
 import tableSlice from "../../../../store/slices/table.slice";
-import { useAppSelector } from "../../../../store/store";
 import PaperButton from "../../../common/PaperButton";
 
 export default function LinkButton() {

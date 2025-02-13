@@ -1,6 +1,6 @@
 import { Paper } from "@mui/material";
+import { useAppSelector } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
-import { useAppSelector } from "../../../store/store";
 import ProfileSnapshot from "../../common/ProfileSnapshot";
 import "./AccountPage.scss";
 

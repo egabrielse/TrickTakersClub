@@ -1,5 +1,5 @@
+import { useAppSelector } from "../../../store/hooks";
 import gameSlice from "../../../store/slices/game.slice";
-import { useAppSelector } from "../../../store/store";
 import Game from "./Game/Game";
 import GameMenu from "./GameMenu/GameMenu";
 import Chat from "./SideBar/Chat/Chat";

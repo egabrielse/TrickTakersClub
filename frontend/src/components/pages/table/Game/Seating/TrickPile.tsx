@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
+import { useAppSelector } from "../../../../../store/hooks";
 import selectors from "../../../../../store/selectors";
-import { useAppSelector } from "../../../../../store/store";
 import Card from "../../../../common/Card";
 import "./TrickPile.scss";
 

@@ -1,8 +1,8 @@
 import SendIcon from "@mui/icons-material/Send";
 import { IconButton, InputAdornment, Paper, TextField } from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
+import { useAppSelector } from "../../../../../store/hooks";
 import tableSlice from "../../../../../store/slices/table.slice";
-import { useAppSelector } from "../../../../../store/store";
 import ConnectionContext from "../../ConnectionContext";
 import "./Chat.scss";
 import MessageBubble from "./MessageBubble";

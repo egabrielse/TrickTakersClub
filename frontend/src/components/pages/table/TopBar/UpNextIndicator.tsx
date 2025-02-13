@@ -1,8 +1,8 @@
 import { Paper, Typography } from "@mui/material";
 import { HAND_PHASE } from "../../../../constants/game";
+import { useAppSelector } from "../../../../store/hooks";
 import selectors from "../../../../store/selectors";
 import handSlice from "../../../../store/slices/hand.slice";
-import { useAppSelector } from "../../../../store/store";
 import ProfileSnapshot from "../../../common/ProfileSnapshot";
 import "./UpNextIndicator.scss";
 

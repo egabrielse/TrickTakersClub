@@ -5,8 +5,8 @@ import auth from "../../../firebase/auth";
 
 import { AblyProvider } from "ably/react";
 import { fetchAblyToken } from "../../../api/ably.api";
+import { useAppDispatch } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
-import { useAppDispatch } from "../../../store/store";
 
 type AuthContextProviderProps = {
   children: ReactNode;

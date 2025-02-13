@@ -1,5 +1,5 @@
+import { useAppSelector } from "../../../../../store/hooks";
 import handSlice from "../../../../../store/slices/hand.slice";
-import { useAppSelector } from "../../../../../store/store";
 import ProfileSnapshot from "../../../../common/ProfileSnapshot";
 import RoleChip from "./RoleChip";
 import "./Seat.scss";

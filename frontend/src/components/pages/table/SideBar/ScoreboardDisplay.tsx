@@ -1,6 +1,6 @@
 import { Paper } from "@mui/material";
+import { useAppSelector } from "../../../../store/hooks";
 import gameSlice from "../../../../store/slices/game.slice";
-import { useAppSelector } from "../../../../store/store";
 import ProfileSnapshot from "../../../common/ProfileSnapshot";
 import "./ScoreboardDisplay.scss";
 

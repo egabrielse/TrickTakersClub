@@ -1,9 +1,9 @@
 import CancelIcon from "@mui/icons-material/Cancel";
 import { useContext } from "react";
 import { COMMAND_TYPES } from "../../../../constants/message";
+import { useAppSelector } from "../../../../store/hooks";
 import selectors from "../../../../store/selectors";
 import gameSlice from "../../../../store/slices/game.slice";
-import { useAppSelector } from "../../../../store/store";
 import PaperButton from "../../../common/PaperButton";
 import ConnectionContext from "../ConnectionContext";
 

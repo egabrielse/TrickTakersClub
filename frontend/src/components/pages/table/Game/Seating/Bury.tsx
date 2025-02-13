@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
+import { useAppSelector } from "../../../../../store/hooks";
 import handSlice from "../../../../../store/slices/hand.slice";
-import { useAppSelector } from "../../../../../store/store";
 import Card from "../../../../common/Card";
 import CardList from "../../../../common/CardList";
 import "./Bury.scss";

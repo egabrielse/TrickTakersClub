@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { ResizePayload, useResizeDetector } from "react-resize-detector";
+import { useAppSelector } from "../../../../../store/hooks";
 import selectors from "../../../../../store/selectors";
 import handSlice from "../../../../../store/slices/hand.slice";
-import { useAppSelector } from "../../../../../store/store";
 import { PlayingCard } from "../../../../../types/card";
 import Card from "../../../../common/Card";
 import "./Trick.scss";

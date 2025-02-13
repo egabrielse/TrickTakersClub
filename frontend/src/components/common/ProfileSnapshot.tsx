@@ -1,8 +1,8 @@
 import { Badge, Skeleton, Typography } from "@mui/material";
-import { ReactNode, useContext } from "react";
+import { ReactNode } from "react";
+import { useCachedUser } from "../../store/hooks";
 import { Size } from "../../types/size";
 import { getDisplayNameFontSize } from "../../utils/user";
-import { UserStoreContext } from "../providers/UserStoreProvider";
 import "./ProfileSnapshot.scss";
 import UserAvatar from "./UserAvatar";
 
@@ -39,7 +39,6 @@ export default function ProfileSnapshot({
   rightBadgeContent,
   rightBadgeColor,
 }: ProfileSnapshotProps) {
-  const { useCachedUser } = useContext(UserStoreContext);
   const { user, status } = useCachedUser(uid);
   const displayNameFontSize = getDisplayNameFontSize(size);
   const includeName = variant === "name-row" || variant === "name-column";

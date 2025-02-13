@@ -3,11 +3,11 @@ import { ReactNode, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { fetchTable } from "../../../api/table.api";
 import { BROADCAST_TYPES, DIRECT_TYPES } from "../../../constants/message";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
 import gameSlice from "../../../store/slices/game.slice";
 import handSlice from "../../../store/slices/hand.slice";
 import tableSlice from "../../../store/slices/table.slice";
-import { useAppDispatch, useAppSelector } from "../../../store/store";
 import {
   BroadcastMessage,
   ChatMessage,
