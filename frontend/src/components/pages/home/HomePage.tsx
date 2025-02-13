@@ -41,7 +41,7 @@ export default function HomePage() {
   const handlePlay = () => {
     setLoading(true);
     if (!isAuthenticated) {
-      openDialog({ type: DIALOG_TYPES.LOGIN });
+      openDialog({ type: DIALOG_TYPES.LOGIN, closeable: true });
       setLoading(false);
     } else {
       createTable()

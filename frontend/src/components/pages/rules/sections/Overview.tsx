@@ -9,10 +9,12 @@ export default function OverviewSection() {
         >
           point-trick-taking
         </a>{" "}
-        game, typically played with 5 players. The goal is of the game is to get
-        61 points by winning tricks. It's played with a Piquet pack, which is a
-        subset of a standard 52 card, French-suited deck. This pack consists of
-        32 cards: 7-10s, Jacks, Queens, Kings, and Aces.
+        game, typically played with 5 players. While there exist variations with
+        other numbers of players, these rules will assume a 5-handed game. The
+        goal is of the game is to get 61 points by winning tricks. It's played
+        with a Piquet pack, which is a subset of a standard 52 card,
+        French-suited deck. This pack consists of 32 cards: 7-10s, Jacks,
+        Queens, Kings, and Aces.
       </p>
       <p>
         The following rules are compiled from{" "}

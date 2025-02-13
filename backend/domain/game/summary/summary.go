@@ -24,7 +24,7 @@ type BurySummary struct {
 }
 
 type TrickSummary struct {
-	TakerID  string                `json:"takerID"`  // ID of the player who took the trick
+	TakerID  string                `json:"takerId"`  // ID of the player who took the trick
 	Cards    map[string]*deck.Card `json:"cards"`    // Cards played in the trick
 	Points   int                   `json:"points"`   // Total points in the trick
 	Complete bool                  `json:"complete"` // Whether the trick is complete
@@ -33,7 +33,7 @@ type TrickSummary struct {
 type HandSummary struct {
 	Winners         []string                  `json:"winners"`         // IDs of the players who won the hand
 	PlayerSummaries map[string]*PlayerSummary `json:"playerSummaries"` // Map of player IDs to summaries
-	PickerID        string                    `json:"pickerID"`        // ID of the player who picked
+	PickerID        string                    `json:"pickerId"`        // ID of the player who picked
 	BurySummary     BurySummary               `json:"burySummary"`     // Summary of the picker's bury
 	TrickSummaries  []*TrickSummary           `json:"trickSummaries"`  // Summaries of tricks
 }

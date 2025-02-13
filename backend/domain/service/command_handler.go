@@ -130,7 +130,7 @@ func HandleStartGameCommand(t *TableWorker, clientID string, data interface{}) {
 				t.Game.Settings.GetBlindSize(),
 			))
 		}
-		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext(), nil))
+		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext(), t.Game.GetTurnOrder()))
 	}
 }
 

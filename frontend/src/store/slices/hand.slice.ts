@@ -71,7 +71,7 @@ const handSlice = createSlice({
             const { cards } = action.payload;
             // Remove the buried cards from the player's hand
             state.hand = state.hand.filter((card) => {
-                return !cards.some((buried) => buried.rank === card.rank && buried.suit === card.suit);
+                return !cards.findIndex((c) => c.rank === card.rank && c.suit === card.suit);
             });
             // Add the buried cards to the bury pile
             state.bury = cards;
@@ -81,6 +81,7 @@ const handSlice = createSlice({
         },
         cardPlayed: (state, action: PayloadAction<MessageData<CardPlayedMessage>>) => {
             const { playerId, card } = action.payload;
+            state.hand = state.hand.filter((c) => !(c.rank === card.rank && c.suit === card.suit));
             if (state.currentTrick) {
                 state.currentTrick.cards[playerId] = card;
             }
