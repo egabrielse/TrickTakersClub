@@ -32,12 +32,10 @@ export const arrangePointsOnEllipse = (
     return points;
 }
 
-export const arrangeSeats = (
-    width: number,
-    height: number,
-    playerOrder: string[],
-) => {
+export const arrangeSeats = (playerOrder: string[]) => {
     const ZERO = "0px";
+    const HALF = "50%";
+    const QUARTER = "25%";
     const seats: HTMLElement[] = [];
     playerOrder.forEach((playerId) => {
         const seat = document.getElementById(`seat-${playerId}`);
@@ -45,10 +43,13 @@ export const arrangeSeats = (
             seats.push(seat);
         }
     });
+
     switch (seats.length) {
         case 3: {
             // Player 1 (bottom center)
-            seats[0].style.left = `${width / 2 - seats[0].clientWidth / 2}px`;
+            // seats[0].style.left = `${width / 2 - seats[0].clientWidth / 2}px`;
+            seats[0].style.left = HALF;
+            seats[0].style.transform = `translateX(-${HALF})`;
             seats[0].style.bottom = ZERO;
             // Player 2 (top left corner)
             seats[1].style.left = ZERO;
@@ -60,55 +61,72 @@ export const arrangeSeats = (
         }
         case 4: {
             // Player 1 (bottom center)
-            seats[0].style.left = `${width / 2 - seats[0].clientWidth / 2}px`;
+            seats[0].style.left = HALF;
+            seats[0].style.transform = `translateX(-${HALF})`;
             seats[0].style.bottom = ZERO;
             // Player 2 ( left center)
             seats[1].style.left = ZERO;
-            seats[1].style.top = `${height / 2 - seats[1].clientHeight / 2}px`;
+            seats[1].style.top = HALF;
+            seats[1].style.transform = `translateY(-${HALF})`;
             // Player 3 (top center)
-            seats[2].style.left = `${width / 2 - seats[2].clientWidth / 2}px`;
+            seats[2].style.left = HALF;
+            seats[2].style.transform = `translateX(-${HALF})`;
             seats[2].style.top = ZERO;
             // Player 4 (right center)
             seats[3].style.right = ZERO;
-            seats[3].style.top = `${height / 2 - seats[3].clientHeight / 2}px`;
+            seats[3].style.top = HALF;
+            seats[3].style.transform = `translateY(-${HALF})`;
             break;
         }
         case 5: {
             // Player 1 (bottom center)
-            seats[0].style.left = `${width / 2 - seats[0].clientWidth / 2}px`;
+            seats[0].style.left = HALF;
+            seats[0].style.transform = `translateX(-${HALF})`;
             seats[0].style.bottom = ZERO;
             // Player 2 (left center)
             seats[1].style.left = ZERO;
-            seats[1].style.top = `${height / 2 - seats[1].clientHeight / 2}px`;
+            seats[1].style.top = HALF;
+            seats[1].style.transform = `translateY(-${HALF})`;
             // Player 3 (top quarter from left)
-            seats[2].style.left = `${width / 4 - seats[2].clientWidth / 2}px`;
-            seats[2].style.top = `${height / 2 - seats[2].clientHeight / 2}px`;
+            seats[2].style.left = QUARTER;
+            seats[2].style.transform = `translateX(-${QUARTER})`;
+            seats[2].style.top = HALF;
+            seats[2].style.transform = `translateY(-${HALF})`;
             // Player 4 (top quarter from right)
-            seats[3].style.right = `${width / 4 - seats[3].clientWidth / 2}px`;
-            seats[3].style.top = `${height / 2 - seats[3].clientHeight / 2}px`;
+            seats[3].style.right = QUARTER;
+            seats[3].style.transform = `translateX(${QUARTER})`;
+            seats[3].style.top = HALF;
+            seats[3].style.transform = `translateY(-${HALF})`;
             // Player 5 (right center)
             seats[4].style.right = ZERO;
-            seats[4].style.top = `${height / 2 - seats[4].clientHeight / 2}px`;
+            seats[4].style.top = HALF;
+            seats[4].style.transform = `translateY(-${HALF})`;
             break;
         }
         case 6: {
             // Player 1 (bottom center)
-            seats[0].style.left = `${width / 2 - seats[0].clientWidth / 2}px`;
+            seats[0].style.left = HALF;
+            seats[0].style.transform = `translateX(-${HALF})`;
             seats[0].style.bottom = ZERO;
             // Player 2 (left quarter from bottom)
-            seats[1].style.left = `${width / 4 - seats[1].clientWidth / 2}px`;
+            seats[1].style.left = QUARTER;
+            seats[1].style.transform = `translateX(-${QUARTER})`;
             seats[1].style.bottom = ZERO;
             // Player 3 (left quarter from top)
-            seats[2].style.left = `${width / 4 - seats[2].clientWidth / 2}px`;
+            seats[2].style.left = QUARTER;
+            seats[2].style.transform = `translateX(-${QUARTER})`;
             seats[2].style.top = ZERO;
             // Player 4 (top center)
-            seats[3].style.left = `${width / 2 - seats[3].clientWidth / 2}px`;
+            seats[3].style.left = HALF;
+            seats[3].style.transform = `translateX(-${HALF})`;
             seats[3].style.top = ZERO;
             // Player 5 (right quarter from top)
-            seats[4].style.right = `${width / 4 - seats[4].clientWidth / 2}px`;
+            seats[4].style.right = QUARTER;
+            seats[4].style.transform = `translateX(${QUARTER})`;
             seats[4].style.top = ZERO;
             // Player 6 (right quarter from bottom) 
-            seats[5].style.right = `${width / 4 - seats[5].clientWidth / 2}px`;
+            seats[5].style.right = QUARTER;
+            seats[5].style.transform = `translateX(${QUARTER})`;
             seats[5].style.bottom = ZERO;
             break
         }

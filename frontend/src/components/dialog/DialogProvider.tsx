@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import dialogSlice from "../../store/slices/dialog.slice";
 import { DialogParams } from "../../types/dialog";
 import SlideTransition from "../common/SlideTransition";
+import ConfirmExitDialog from "./contents/ConfirmExitDialog";
 import ErrorDialog from "./contents/ErrorDialog";
 import LoginDialog from "./contents/LoginDialog";
 import RegisterDialog from "./contents/RegisterDialog";
@@ -30,6 +31,8 @@ export default function DialogProvider({ children }: DialogProviderProps) {
         return <ResetPassDialog {...dialog} />;
       case DIALOG_TYPES.ERROR:
         return <ErrorDialog {...dialog} />;
+      case DIALOG_TYPES.CONFIRM_EXIT:
+        return <ConfirmExitDialog {...dialog} />;
       default:
         console.error("Unknown dialog parameters", dialog);
         return null;

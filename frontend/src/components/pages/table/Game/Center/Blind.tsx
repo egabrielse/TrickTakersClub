@@ -40,6 +40,7 @@ export default function Blind() {
             key={`blind-card-${index}`}
             card="back"
             size="large"
+            disabled={!isUpNext}
           />
         ))}
       </CardList>

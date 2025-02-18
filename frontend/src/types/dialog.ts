@@ -24,4 +24,8 @@ export interface ErrorDialogParams extends BaseDialogParams {
     props: { title: string; message: string };
 }
 
-export type DialogParams = RegisterDialogParams | LoginDialogParams | ResetPasswordDialogParams | ErrorDialogParams;
+export interface ConfirmExitDialogParams extends BaseDialogParams {
+    type: typeof DIALOG_TYPES.CONFIRM_EXIT;
+}
+
+export type DialogParams = (RegisterDialogParams | LoginDialogParams | ResetPasswordDialogParams | ErrorDialogParams | ConfirmExitDialogParams);

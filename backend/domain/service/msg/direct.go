@@ -116,7 +116,10 @@ func RefreshMessage(tableID, hostID, clientID string, seating []string, settings
 			// Client is a player in the current game, include their hand and bury
 			if hand := game.Players.GetHand(clientID); hand != nil {
 				data.Hand = hand
-				data.Bury = game.Bury.Cards
+				if clientID == game.Blind.PickerID {
+					// Only send buried cards to the picker
+					data.Bury = game.Bury.Cards
+				}
 			}
 		}
 	}

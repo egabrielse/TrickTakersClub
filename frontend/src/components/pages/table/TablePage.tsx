@@ -8,7 +8,6 @@ import ScoreboardDisplay from "./SideBar/ScoreboardDisplay";
 import "./TablePage.scss";
 import EndGameButton from "./TopBar/EndGameButton";
 import ExitButton from "./TopBar/ExitButton";
-import UpNextIndicator from "./TopBar/UpNextIndicator";
 
 export default function TablePage() {
   const inProgress = useAppSelector(gameSlice.selectors.inProgress);
@@ -17,7 +16,6 @@ export default function TablePage() {
     <div className="TablePage">
       <div className="TablePage-TopBar">
         <ExitButton />
-        <UpNextIndicator />
         <EndGameButton />
       </div>
       <div className="TablePage-Main">

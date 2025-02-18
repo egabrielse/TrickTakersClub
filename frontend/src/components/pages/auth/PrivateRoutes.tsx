@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
 import dialogSlice from "../../../store/slices/dialog.slice";
 import LoadingPage from "../loading/LoadingPage";
-import { AuthContext } from "./AuthContextProvider";
+import AuthContext from "./AuthContext";
 
 export default function PrivateRoutes() {
   const dispatch = useAppDispatch();

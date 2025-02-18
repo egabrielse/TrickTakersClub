@@ -35,7 +35,7 @@ export default function Trick() {
           );
           player.style.left = `${x}px`;
           player.style.top = `${y}px`;
-          player.style.transform = `rotate(${angle + 380 / Math.PI}rad)`;
+          player.style.transform = `rotate(${angle - Math.PI / 2}rad)`;
           angle += step;
         }
       });

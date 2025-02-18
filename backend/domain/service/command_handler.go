@@ -130,7 +130,7 @@ func HandleStartGameCommand(t *TableWorker, clientID string, data interface{}) {
 				t.Game.Settings.GetBlindSize(),
 			))
 		}
-		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext(), t.Game.GetTurnOrder()))
+		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext()))
 	}
 }
 
@@ -151,9 +151,9 @@ func HandlePickCommand(t *TableWorker, clientID string, data interface{}) {
 	} else if result, err := t.Game.Pick(clientID); utils.LogOnError(err) {
 		t.DirectMessage(msg.ErrorMessage(clientID, err.Error()))
 	} else {
-		t.BroadcastMessage(msg.BlindPickedMessage(clientID))
+		t.BroadcastMessage(msg.BlindPickedMessage(clientID, false))
 		t.DirectMessage(msg.PickedCardsMessage(clientID, result.Blind))
-		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext(), t.Game.GetTurnOrder()))
+		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext()))
 	}
 }
 
@@ -164,10 +164,10 @@ func HandlePassCommand(t *TableWorker, clientID string, data interface{}) {
 		t.DirectMessage(msg.ErrorMessage(clientID, err.Error()))
 	} else {
 		if result != nil {
-			t.BroadcastMessage(msg.BlindPickedMessage(result.PickerID))
+			t.BroadcastMessage(msg.BlindPickedMessage(result.PickerID, true))
 			t.DirectMessage(msg.PickedCardsMessage(clientID, result.Blind))
 		}
-		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext(), t.Game.GetTurnOrder()))
+		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext()))
 	}
 }
 
@@ -185,7 +185,10 @@ func HandleBuryCommand(t *TableWorker, clientID string, data interface{}) {
 		} else if result.CallResult != nil {
 			t.BroadcastMessage(msg.CalledCardMessage(result.CallResult.CalledCard))
 		}
-		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext(), t.Game.GetTurnOrder()))
+		if t.Game.Phase == game.HandPhase.Play {
+			t.BroadcastMessage(msg.NewTrickMessage(t.Game.GetTurnOrder()))
+		}
+		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext()))
 	}
 }
 
@@ -198,7 +201,8 @@ func HandleCallCommand(t *TableWorker, clientID string, data interface{}) {
 		t.DirectMessage(msg.ErrorMessage(clientID, err.Error()))
 	} else {
 		t.BroadcastMessage(msg.CalledCardMessage(result.CalledCard))
-		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext(), t.Game.GetTurnOrder()))
+		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext()))
+		t.BroadcastMessage(msg.NewTrickMessage(t.Game.GetTurnOrder()))
 	}
 }
 
@@ -209,7 +213,7 @@ func HandleGoAloneCommand(t *TableWorker, clientID string, data interface{}) {
 		t.DirectMessage(msg.ErrorMessage(clientID, err.Error()))
 	} else {
 		t.BroadcastMessage(msg.GoneAloneMessage())
-		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext(), t.Game.GetTurnOrder()))
+		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext()))
 	}
 }
 
@@ -228,13 +232,14 @@ func HandlePlayCardCommand(t *TableWorker, clientID string, data interface{}) {
 		}
 		if result.TrickSummary == nil {
 			// Trick is not over, continue to the next player
-			t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext(), t.Game.GetTurnOrder()))
+			t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext()))
 		} else {
 			t.BroadcastMessage(msg.TrickDoneMessage(result.TrickSummary, result.HandSummary))
 			if result.HandSummary == nil {
 				// Trick is over, but the hand is not, continue to the next player
 				// and send along the turn order for the next trick
-				t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext(), t.Game.GetTurnOrder()))
+				t.BroadcastMessage(msg.NewTrickMessage(t.Game.GetTurnOrder()))
+				t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext()))
 			}
 		}
 	}

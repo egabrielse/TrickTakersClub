@@ -1,3 +1,4 @@
+import { capitalize } from "@mui/material";
 import { CARD_RANK, CARD_SUIT } from "../constants/card";
 import { CardSize, PlayingCard } from "../types/card";
 
@@ -159,3 +160,8 @@ export const cardSizeToPixels = (size: CardSize | undefined) => {
 export const handContainsCard = (hand: PlayingCard[], card: PlayingCard) => {
     return hand.some((c) => c.rank === card.rank && c.suit === card.suit);
 };
+
+
+export const prettyPrintCard = (card: PlayingCard) => {
+    return `${capitalize(card?.rank)} of ${capitalize(card?.suit)}`;
+}

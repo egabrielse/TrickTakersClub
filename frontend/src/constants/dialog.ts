@@ -3,4 +3,5 @@ export const DIALOG_TYPES = {
   REGISTER: "register",
   RESET: "reset-password",
   ERROR: "error",
+  CONFIRM_EXIT: "confirm-exit",
 } as const;

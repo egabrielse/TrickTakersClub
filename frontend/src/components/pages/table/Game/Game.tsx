@@ -7,6 +7,7 @@ import authSlice from "../../../../store/slices/auth.slice";
 import { arrangeSeats } from "../../../../utils/game";
 import Center from "./Center/Center";
 import "./Game.scss";
+import GameUpdates from "./GameUpdates";
 import PlayerSeat from "./Seating/PlayerSeat";
 import Seat from "./Seating/Seat";
 
@@ -17,7 +18,7 @@ export default function Game() {
   const [width, setWidth] = useState(MIN_GAME_WIDTH);
 
   useEffect(() => {
-    arrangeSeats(width, height, playerOrder);
+    arrangeSeats(playerOrder);
   }, [height, playerOrder, width]);
 
   const { ref } = useResizeDetector({
@@ -31,6 +32,7 @@ export default function Game() {
 
   return (
     <div ref={ref} id="game-context" className="Game">
+      <GameUpdates />
       <Center />
       {playerOrder.map((playerId) =>
         uid === playerId ? (

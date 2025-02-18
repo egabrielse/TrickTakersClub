@@ -1,26 +1,19 @@
 import * as Ably from "ably";
 import { User, onAuthStateChanged } from "firebase/auth";
-import { ReactNode, createContext, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import auth from "../../../firebase/auth";
 
 import { AblyProvider } from "ably/react";
 import { fetchAblyToken } from "../../../api/ably.api";
 import { useAppDispatch } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
+import AuthContext from "./AuthContext";
 
-type AuthContextProviderProps = {
+type AuthProviderProps = {
   children: ReactNode;
 };
 
-export const AuthContext = createContext<{
-  initialized: boolean;
-}>({
-  initialized: false,
-});
-
-export default function AuthContextProvider({
-  children,
-}: AuthContextProviderProps) {
+export default function AuthProvider({ children }: AuthProviderProps) {
   const dispatch = useAppDispatch();
   const [initialized, setInitialized] = useState<boolean>(false);
   const [ably, setAbly] = useState<Ably.Realtime | null>(null);

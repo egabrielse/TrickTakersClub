@@ -27,9 +27,9 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
   const [selected, setSelected] = useState<PlayingCard[]>([]);
 
   useEffect(() => {
-    // Clear selected cards when the phase changes
+    // Clear selected cards after every turn
     setSelected([]);
-  }, [isUpNext, phase]);
+  }, [isUpNext, phase, hand.length]);
 
   /**
    * Click a card to select or deselect it.
@@ -67,7 +67,9 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
 
   const isCardDisabled = useCallback(
     (card: PlayingCard) => {
-      if (
+      if (!isUpNext) {
+        return true;
+      } else if (
         isUpNext &&
         (phase === HAND_PHASE.BURY || phase === HAND_PHASE.PLAY)
       ) {

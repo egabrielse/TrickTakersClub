@@ -14,7 +14,7 @@ import HeaderLayout from "./layout/HeaderLayout";
 import RootLayout from "./layout/RootLayout";
 import RulesPage from "./pages//rules/RulesPage";
 import AccountPage from "./pages/account/AccountPage";
-import AuthContextProvider from "./pages/auth/AuthContextProvider";
+import AuthProvider from "./pages/auth/AuthProvider";
 import PrivateRoutes from "./pages/auth/PrivateRoutes";
 import HomePage from "./pages/home/HomePage";
 import ConnectionProvider from "./pages/table/ConnectionProvider";
@@ -51,9 +51,9 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <Provider store={store}>
-        <AuthContextProvider>
+        <AuthProvider>
           <RouterProvider router={router} />
-        </AuthContextProvider>
+        </AuthProvider>
       </Provider>
     </ThemeProvider>
   );

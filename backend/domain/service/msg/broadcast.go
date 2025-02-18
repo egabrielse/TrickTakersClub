@@ -59,11 +59,12 @@ var BroadcastType = struct {
 }
 
 type BlindPickedData struct {
-	PlayerID string `json:"playerId"`
+	PlayerID  string `json:"playerId"`
+	ForcePick bool   `json:"forcePick"`
 }
 
-func BlindPickedMessage(playerID string) (name string, data *BlindPickedData) {
-	return BroadcastType.BlindPicked, &BlindPickedData{PlayerID: playerID}
+func BlindPickedMessage(playerID string, forced bool) (name string, data *BlindPickedData) {
+	return BroadcastType.BlindPicked, &BlindPickedData{PlayerID: playerID, ForcePick: forced}
 }
 
 type CalledCardData struct {
@@ -160,12 +161,20 @@ func TrickDoneMessage(trickSum *summary.TrickSummary, handSum *summary.HandSumma
 }
 
 // Who's turn is it and what phase are we in
-type UpNextData struct {
-	PlayerID       string   `json:"playerId"`
-	Phase          string   `json:"phase"`
+type NewTrickData struct {
 	NextTrickOrder []string `json:"nextTrickOrder"`
 }
 
-func UpNextMessage(phase, playerID string, nextTrickOrder []string) (name string, data *UpNextData) {
-	return BroadcastType.UpNext, &UpNextData{PlayerID: playerID, Phase: phase, NextTrickOrder: nextTrickOrder}
+func NewTrickMessage(nextTrickOrder []string) (name string, data *NewTrickData) {
+	return BroadcastType.NewTrick, &NewTrickData{NextTrickOrder: nextTrickOrder}
+}
+
+// Who's turn is it and what phase are we in
+type UpNextData struct {
+	PlayerID string `json:"playerId"`
+	Phase    string `json:"phase"`
+}
+
+func UpNextMessage(phase, playerID string) (name string, data *UpNextData) {
+	return BroadcastType.UpNext, &UpNextData{PlayerID: playerID, Phase: phase}
 }

@@ -1,6 +1,6 @@
-import { PlayingCard } from "../game";
 import { COMMAND_TYPES } from "../../constants/message";
 import { Message } from "ably";
+import { PlayingCard } from "../card";
 
 export interface BuryCommand extends Message {
     name: typeof COMMAND_TYPES.BURY;

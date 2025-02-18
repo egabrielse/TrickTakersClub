@@ -10,7 +10,7 @@ import { PlayingCard } from "../card";
 
 export interface BlindPickedMessage extends Message {
     name: typeof BROADCAST_TYPES.BLIND_PICKED;
-    data: { playerId: string };
+    data: { playerId: string, forcePick: boolean };
 }
 
 export interface CalledCardMessage extends Message {
@@ -86,12 +86,18 @@ export interface TrickDoneMessage extends Message {
     }
 }
 
+export interface NewTrickMessage extends Message {
+    name: typeof BROADCAST_TYPES.NEW_TRICK;
+    data: {
+        nextTrickOrder: string[];
+    };
+}
+
 export interface UpNextMessage extends Message {
     name: typeof BROADCAST_TYPES.UP_NEXT;
     data: {
         playerId: string;
         phase: HandPhase;
-        nextTrickOrder?: string[];
     };
 }
 
@@ -110,5 +116,6 @@ export type BroadcastMessage = (
     StoodUpMessage |
     TimeoutMessage |
     TrickDoneMessage |
+    NewTrickMessage |
     UpNextMessage
 );

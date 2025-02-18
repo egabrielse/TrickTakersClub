@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
 import dialogSlice from "../../../store/slices/dialog.slice";
 import ProfileSnapshot from "../../common/ProfileSnapshot";
-import { AuthContext } from "../../pages/auth/AuthContextProvider";
+import AuthContext from "../../pages/auth/AuthContext";
 import "./AccountToolbar.scss";
 
 export default function AccountToolbar() {

@@ -194,6 +194,7 @@ func (g *Game) CallPartner(playerID string, card *deck.Card) (*CallResult, error
 		partnerID := g.Players.WhoHas(card)
 		// Record the called card and partner
 		g.Call.CallPartner(card, partnerID)
+		g.Phase = HandPhase.Play
 		return &CallResult{CalledCard: card}, nil
 	}
 }
@@ -207,6 +208,7 @@ func (g *Game) GoAlone(playerID string) (*GoAloneResult, error) {
 		return nil, fmt.Errorf("call phase is already complete")
 	} else {
 		g.Call.GoAlone()
+		g.Phase = HandPhase.Play
 		return &GoAloneResult{}, nil
 	}
 }
@@ -222,6 +224,8 @@ func (g *Game) PlayCard(playerID string, card *deck.Card) (*PlayCardResult, erro
 		return nil, fmt.Errorf("player does not possess the card")
 	} else {
 		result := &PlayCardResult{PlayedCard: card}
+		// Remove the card from the player's hand
+		g.Players.RemoveCards(playerID, []*deck.Card{card})
 		// Play the card in the trick
 		trickSummary := g.Play.PlayCard(card)
 		// Check if partner has been revealed

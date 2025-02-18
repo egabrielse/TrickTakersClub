@@ -52,31 +52,35 @@ function ConnectionApiProvider({
         dispatch(gameSlice.actions.gameStarted(msg.data));
         break;
       }
+      case BROADCAST_TYPES.NEW_TRICK:
+        dispatch(handSlice.actions.startNewTrick(msg.data));
+        break;
       case BROADCAST_TYPES.UP_NEXT:
         dispatch(handSlice.actions.upNext(msg.data));
         break;
       case BROADCAST_TYPES.CALLED_CARD:
-        // TODO: display event notification
         dispatch(handSlice.actions.calledCard(msg.data));
+        dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       case BROADCAST_TYPES.GONE_ALONE:
-        // TODO: display event notification
+        dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       case BROADCAST_TYPES.PARTNER_REVEALED:
-        // TODO: display event notification
         dispatch(handSlice.actions.partnerRevealed(msg.data));
+        dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       case BROADCAST_TYPES.TRICK_DONE: {
-        // TODO: display event notification
         dispatch(handSlice.actions.trickDone(msg.data));
         dispatch(gameSlice.actions.trickDone(msg.data));
+        dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       }
       case BROADCAST_TYPES.BLIND_PICKED:
-        // TODO: display event notification
+        dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       case BROADCAST_TYPES.CARD_PLAYED: {
         dispatch(handSlice.actions.cardPlayed(msg.data));
+        dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       }
       case BROADCAST_TYPES.GAME_OVER:
@@ -102,12 +106,13 @@ function ConnectionApiProvider({
   const direct = useChannel(directName, (message) => {
     const msg: DirectMessage = message as DirectMessage;
     switch (msg.name) {
-      case DIRECT_TYPES.REFRESH:
+      case DIRECT_TYPES.REFRESH: {
         setRefreshed(true);
         dispatch(tableSlice.actions.refreshed(msg.data));
         dispatch(gameSlice.actions.refreshed(msg.data));
         dispatch(handSlice.actions.refreshed(msg.data));
         break;
+      }
       case DIRECT_TYPES.DEAL_HAND:
         dispatch(handSlice.actions.dealHand(msg.data));
         break;

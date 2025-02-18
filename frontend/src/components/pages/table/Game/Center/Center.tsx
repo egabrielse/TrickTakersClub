@@ -9,7 +9,6 @@ import Trick from "./Trick";
 
 export default function Center() {
   const isUpNext = useAppSelector(selectors.isUpNext);
-  const blindSize = useAppSelector(handSlice.selectors.blindSize);
   const phase = useAppSelector(handSlice.selectors.phase);
 
   const renderCenterNode = () => {
@@ -20,22 +19,15 @@ export default function Center() {
         if (isUpNext) {
           return <Call />;
         }
-        return <span className="loading-text">Waiting for picker to call</span>;
+        return null;
       case HAND_PHASE.BURY:
-        if (isUpNext) {
-          return `Bury ${blindSize} cards`;
-        }
-        return <span className="loading-text">Waiting for picker to bury</span>;
+        return null;
       case HAND_PHASE.PLAY:
         return <Trick />;
       default:
-        return <span className="loading-text">Waiting</span>;
+        return null;
     }
   };
 
-  return (
-    <div className="Center" style={{ width: 300, height: 300 }}>
-      {renderCenterNode()}
-    </div>
-  );
+  return <div className="Center">{renderCenterNode()}</div>;
 }

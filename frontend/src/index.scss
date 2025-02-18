@@ -51,15 +51,15 @@ body {
 
 @keyframes ellipsis {
   25% {
-    content: "   ";
+    content: "\00a0\00a0\00a0";
   }
 
   50% {
-    content: ".  ";
+    content: ".\00a0\00a0";
   }
 
   75% {
-    content: ".. ";
+    content: "..\00a0";
   }
 
   100% {
