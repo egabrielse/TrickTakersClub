@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { DialogParams } from "../../types/dialog";
 
 
@@ -16,7 +16,7 @@ const dialogSlice = createSlice({
     initialState,
     reducers: {
         reset: () => initialState,
-        openDialog: (state, action) => {
+        openDialog: (state, action: PayloadAction<DialogParams>) => {
             state.dialogs.push(action.payload);
         },
         closeDialog: (state) => {

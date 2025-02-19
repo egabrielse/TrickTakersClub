@@ -1,6 +1,14 @@
-import { ChannelProvider, useChannel, usePresence } from "ably/react";
+import * as Ably from "ably";
+import {
+  AblyProvider,
+  ChannelProvider,
+  useChannel,
+  useConnectionStateListener,
+  usePresence,
+} from "ably/react";
 import { ReactNode, useEffect, useState } from "react";
 import { useParams } from "react-router";
+import { fetchAblyToken } from "../../../api/ably.api";
 import { fetchTable } from "../../../api/table.api";
 import { BROADCAST_TYPES, DIRECT_TYPES } from "../../../constants/message";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
@@ -15,7 +23,7 @@ import {
 import { CommandMessage } from "../../../types/message/command";
 import { DirectMessage } from "../../../types/message/direct";
 import ErrorPage from "../error/ErrorPage";
-import LoadingPage from "../loading/LoadingPage";
+import LoadingOverlay from "../loading/LoadingOverlay";
 import ConnectionContext from "./ConnectionContext";
 
 type ConnectionApiProviderProps = {
@@ -32,6 +40,9 @@ function ConnectionApiProvider({
   const [refreshed, setRefreshed] = useState(false);
   const dispatch = useAppDispatch();
   const uid = useAppSelector(authSlice.selectors.uid);
+  const [connectionState, setConnectionState] =
+    useState<Ably.ConnectionState | null>(null);
+  const [timeLeft, setTimeLeft] = useState(0);
 
   // Alert other users to the presence of this user
   usePresence(broadcastName);
@@ -147,12 +158,44 @@ function ConnectionApiProvider({
     direct?.publish(command.name, command.data);
   };
 
-  return refreshed ? (
-    <ConnectionContext.Provider value={{ sendChatMsg, sendCommand }}>
-      {children}
-    </ConnectionContext.Provider>
-  ) : (
-    <LoadingPage />
+  const retryInTimeoutCallback = () => {
+    if (timeLeft > 1000) {
+      setTimeLeft(timeLeft - 1000);
+    } else {
+      setTimeLeft(0);
+    }
+  };
+
+  // Listen for changes in the connection state
+  useConnectionStateListener((state) => {
+    setConnectionState(state.current);
+    switch (state.current) {
+      case "disconnected":
+        setRefreshed(false);
+        if (state.retryIn && state.retryIn > 1000) {
+          setTimeLeft(state.retryIn);
+          setTimeout(retryInTimeoutCallback, 1000);
+        }
+        break;
+      default:
+        break;
+    }
+  });
+
+  console.log(refreshed);
+  return (
+    <>
+      {connectionState === "connecting" || !refreshed ? (
+        <LoadingOverlay text="Connecting to the table" trailingEllipsis />
+      ) : connectionState === "disconnected" ? (
+        <LoadingOverlay
+          text={`Disconnected. Retrying in... ${timeLeft / 1000}`}
+        />
+      ) : null}
+      <ConnectionContext.Provider value={{ sendChatMsg, sendCommand }}>
+        {children}
+      </ConnectionContext.Provider>
+    </>
   );
 }
 
@@ -169,6 +212,7 @@ export default function ConnectionProvider({
   const uid = useAppSelector(authSlice.selectors.uid);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState(null);
+  const [client, setClient] = useState<Ably.Realtime | null>(null);
   const [broadcastName, setBroadcastName] = useState("");
   const [directName, setDirectName] = useState("");
 
@@ -180,6 +224,19 @@ export default function ConnectionProvider({
       .then((table) => {
         setBroadcastName(table.id);
         setDirectName(`${table.id}:${uid}`);
+        const newAblyClient = new Ably.Realtime({
+          authCallback: async (_, callback) => {
+            try {
+              const result = await fetchAblyToken();
+              callback(null, result.tokenRequest);
+            } catch (e) {
+              callback(e as string, null);
+              return;
+            }
+          },
+          clientId: uid,
+        });
+        setClient(newAblyClient);
       })
       .catch((error) => setError(error))
       .finally(() => setLoading(false));
@@ -189,24 +246,31 @@ export default function ConnectionProvider({
       dispatch(tableSlice.actions.reset());
       dispatch(gameSlice.actions.reset());
       dispatch(handSlice.actions.reset());
+      // Close the Ably connection
+      client?.close();
+      setClient(null);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return loading ? (
-    <LoadingPage />
+    <LoadingOverlay text={`Searching for ${paramTableId}`} />
+  ) : client === null ? (
+    <LoadingOverlay text={`Connecting to ${paramTableId}`} />
   ) : error ? (
     <ErrorPage error={error} />
   ) : (
-    <ChannelProvider channelName={paramTableId}>
-      <ChannelProvider channelName={`${paramTableId}:${uid}`}>
-        <ConnectionApiProvider
-          broadcastName={broadcastName}
-          directName={directName}
-        >
-          {children}
-        </ConnectionApiProvider>
+    <AblyProvider client={client}>
+      <ChannelProvider channelName={broadcastName}>
+        <ChannelProvider channelName={directName}>
+          <ConnectionApiProvider
+            broadcastName={broadcastName}
+            directName={directName}
+          >
+            {children}
+          </ConnectionApiProvider>
+        </ChannelProvider>
       </ChannelProvider>
-    </ChannelProvider>
+    </AblyProvider>
   );
 }

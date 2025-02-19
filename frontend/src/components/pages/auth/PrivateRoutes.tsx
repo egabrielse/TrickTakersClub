@@ -4,7 +4,7 @@ import { DIALOG_TYPES } from "../../../constants/dialog";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
 import dialogSlice from "../../../store/slices/dialog.slice";
-import LoadingPage from "../loading/LoadingPage";
+import LoadingOverlay from "../loading/LoadingOverlay";
 import AuthContext from "./AuthContext";
 
 export default function PrivateRoutes() {
@@ -18,8 +18,10 @@ export default function PrivateRoutes() {
     }
   }, [dispatch, initialized, isAuthenticated]);
 
-  if (!initialized || !isAuthenticated) {
-    return <LoadingPage />;
+  if (!initialized) {
+    return <LoadingOverlay text="Checking for user" trailingEllipsis />;
+  } else if (!isAuthenticated) {
+    return <LoadingOverlay />;
   } else {
     return <Outlet />;
   }

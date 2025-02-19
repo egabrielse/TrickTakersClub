@@ -1,5 +1,8 @@
 .Seat {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: absolute;
-    width: 100px;
-    height: 100px;
+    width: 125px;
+    height: 125px;
 }

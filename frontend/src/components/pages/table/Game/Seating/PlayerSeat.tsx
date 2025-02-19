@@ -65,21 +65,6 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
     [isUpNext, phase, selected, blindSize, playableCards],
   );
 
-  const isCardDisabled = useCallback(
-    (card: PlayingCard) => {
-      if (!isUpNext) {
-        return true;
-      } else if (
-        isUpNext &&
-        (phase === HAND_PHASE.BURY || phase === HAND_PHASE.PLAY)
-      ) {
-        return !canClickCard(card);
-      }
-      return false;
-    },
-    [isUpNext, phase, canClickCard],
-  );
-
   /**
    * Bury the selected cards.
    */
@@ -119,7 +104,7 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
                 card={card}
                 size="large"
                 highlighted={selected.includes(card)}
-                disabled={isCardDisabled(card)}
+                disabled={!canClickCard(card)}
                 onClick={canClickCard(card) ? () => clickCard(card) : undefined}
               />
             ))}

@@ -66,6 +66,7 @@ const handSlice = createSlice({
             state.partnerId = action.payload.partnerId;
             state.currentTrick = action.payload.currentTrick;
             state.summaries = action.payload.summaries || [];
+            state.updates = [];
         },
         dealHand: (state, action: PayloadAction<MessageData<DealHandMessage>>) => {
             state.dealerId = action.payload.dealerId;

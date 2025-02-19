@@ -7,7 +7,7 @@ import authSlice from "../../../../store/slices/auth.slice";
 import { arrangeSeats } from "../../../../utils/game";
 import Center from "./Center/Center";
 import "./Game.scss";
-import GameUpdates from "./GameUpdates";
+import GameUpdates from "./GameUpdates/GameUpdates";
 import PlayerSeat from "./Seating/PlayerSeat";
 import Seat from "./Seating/Seat";
 
