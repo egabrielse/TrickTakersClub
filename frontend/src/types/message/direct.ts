@@ -8,8 +8,8 @@ export interface ErrorMessage extends Message {
     data: { message: string };
 }
 
-export interface RefreshMessage extends Message {
-    name: typeof DIRECT_TYPES.REFRESH;
+export interface InitializeMessage extends Message {
+    name: typeof DIRECT_TYPES.INITIALIZE;
     data: {
         playerId: string;
         tableId: string;
@@ -59,5 +59,5 @@ export interface BuriedCardsMessage extends Message {
 
 
 export type DirectMessage = (
-    ErrorMessage | RefreshMessage | DealHandMessage | PickedCardsMessage | BuriedCardsMessage
+    ErrorMessage | InitializeMessage | DealHandMessage | PickedCardsMessage | BuriedCardsMessage
 );

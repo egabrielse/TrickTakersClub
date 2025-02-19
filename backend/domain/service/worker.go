@@ -124,7 +124,7 @@ func (t *TableWorker) RegisterClient(clientID string, connectionID string) {
 		user.Enter(t.Ctx, connectionID, t.HandleCommands)
 	}
 	// Send the current state of the table/game to the newly registered user
-	t.DirectMessage(msg.RefreshMessage(t.Table.ID, t.Table.HostID, clientID, t.SeatedPlayers, t.GameSettings, t.Game))
+	t.DirectMessage(msg.InitializeMessage(t.Table.ID, t.Table.HostID, clientID, t.SeatedPlayers, t.GameSettings, t.Game))
 }
 
 // UnregisterClient unregisters a client from the table service

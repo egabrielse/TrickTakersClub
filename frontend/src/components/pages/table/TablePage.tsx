@@ -1,7 +1,7 @@
 import { useAppSelector } from "../../../store/hooks";
 import gameSlice from "../../../store/slices/game.slice";
 import Game from "./Game/Game";
-import GameMenu from "./GameMenu/GameMenu";
+import GameMenu from "./GameMenu";
 import Chat from "./SideBar/Chat/Chat";
 import LinkButton from "./SideBar/LinkButton";
 import ScoreboardDisplay from "./SideBar/ScoreboardDisplay";

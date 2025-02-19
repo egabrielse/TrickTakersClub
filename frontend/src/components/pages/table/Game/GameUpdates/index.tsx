@@ -8,7 +8,7 @@ import handSlice from "../../../../../store/slices/hand.slice";
 import { UpdateMessages } from "../../../../../types/game";
 import { prettyPrintCard } from "../../../../../utils/card";
 import ProfileSnapshot from "../../../../common/ProfileSnapshot";
-import "./GameUpdates.scss";
+import "./index.scss";
 
 const renderUpdateMessage = (update: UpdateMessages) => {
   switch (update.name) {

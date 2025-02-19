@@ -1,7 +1,7 @@
 import { Divider, Paper } from "@mui/material";
-import "./GameMenu.scss";
 import GameSeating from "./GameSeating";
 import GameSettingsForm from "./GameSettingsForm";
+import "./index.scss";
 
 export default function GameMenu() {
   return (

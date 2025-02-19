@@ -5,9 +5,9 @@ import { useAppSelector } from "../../../../store/hooks";
 import selectors from "../../../../store/selectors";
 import authSlice from "../../../../store/slices/auth.slice";
 import { arrangeSeats } from "../../../../utils/game";
-import Center from "./Center/Center";
+import Center from "./Center";
 import "./Game.scss";
-import GameUpdates from "./GameUpdates/GameUpdates";
+import GameUpdates from "./GameUpdates";
 import PlayerSeat from "./Seating/PlayerSeat";
 import Seat from "./Seating/Seat";
 

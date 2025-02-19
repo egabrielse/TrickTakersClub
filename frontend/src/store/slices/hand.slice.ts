@@ -12,15 +12,14 @@ import {
     CardPlayedMessage,
     NewTrickMessage,
     PartnerRevealedMessage,
-    TrickDoneMessage,
     UpNextMessage,
 } from "../../types/message/broadcast";
 import { MessageData } from "../../types/message/data";
 import {
     BuriedCardsMessage,
     DealHandMessage,
+    InitializeMessage,
     PickedCardsMessage,
-    RefreshMessage,
 } from "../../types/message/direct";
 import { compareCards } from "../../utils/card";
 import { findCallableAces } from "../../utils/game";
@@ -54,7 +53,7 @@ const handSlice = createSlice({
     initialState,
     reducers: {
         reset: () => initialState,
-        refreshed: (state, action: PayloadAction<MessageData<RefreshMessage>>) => {
+        initialize: (state, action: PayloadAction<MessageData<InitializeMessage>>) => {
             state.dealerId = action.payload.dealerId;
             state.upNextId = action.payload.upNextId;
             state.phase = action.payload.phase || HAND_PHASE.SETUP;
@@ -125,12 +124,8 @@ const handSlice = createSlice({
         ) => {
             state.partnerId = action.payload.playerId;
         },
-        trickDone: (
-            state,
-            action: PayloadAction<MessageData<TrickDoneMessage>>,
-        ) => {
-            const { trickSummary } = action.payload;
-            state.summaries.push(trickSummary);
+        trickDone: (state, action: PayloadAction<TrickSummary>) => {
+            state.summaries.push(action.payload);
         },
         gameOver: () => initialState,
         displayMessage: (state, action: PayloadAction<UpdateMessages>) => {

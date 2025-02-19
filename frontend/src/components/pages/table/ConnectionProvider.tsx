@@ -81,8 +81,10 @@ function ConnectionApiProvider({
         dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       case BROADCAST_TYPES.TRICK_DONE: {
-        dispatch(handSlice.actions.trickDone(msg.data));
-        dispatch(gameSlice.actions.trickDone(msg.data));
+        dispatch(handSlice.actions.trickDone(msg.data.trickSummary));
+        if (msg.data.handSummary) {
+          dispatch(gameSlice.actions.handDone(msg.data.handSummary));
+        }
         dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       }
@@ -117,11 +119,11 @@ function ConnectionApiProvider({
   const direct = useChannel(directName, (message) => {
     const msg: DirectMessage = message as DirectMessage;
     switch (msg.name) {
-      case DIRECT_TYPES.REFRESH: {
+      case DIRECT_TYPES.INITIALIZE: {
         setRefreshed(true);
-        dispatch(tableSlice.actions.refreshed(msg.data));
-        dispatch(gameSlice.actions.refreshed(msg.data));
-        dispatch(handSlice.actions.refreshed(msg.data));
+        dispatch(tableSlice.actions.initialize(msg.data));
+        dispatch(gameSlice.actions.initialize(msg.data));
+        dispatch(handSlice.actions.initialize(msg.data));
         break;
       }
       case DIRECT_TYPES.DEAL_HAND:

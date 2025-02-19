@@ -3,7 +3,7 @@ import { ChatMessage, SatDownMessage, SettingsUpdatedMessage, StoodUpMessage } f
 import { GameSettings } from "../../types/game";
 import { GAME_SETTINGS_DEFAULTS } from "../../constants/game";
 import { MessageData } from "../../types/message/data";
-import { RefreshMessage } from "../../types/message/direct";
+import { InitializeMessage } from "../../types/message/direct";
 
 interface TableState {
     chat: ChatMessage[];
@@ -35,7 +35,7 @@ const tableSlice = createSlice({
     initialState,
     reducers: {
         reset: () => initialState,
-        refreshed: (state, action: PayloadAction<MessageData<RefreshMessage>>) => {
+        initialize: (state, action: PayloadAction<MessageData<InitializeMessage>>) => {
             state.refreshed = true;
             state.tableId = action.payload.tableId;
             state.hostId = action.payload.hostId;

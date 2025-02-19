@@ -1,8 +1,8 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { HandSummary, Scoreboard } from "../../types/game";
 import { MessageData } from "../../types/message/data";
-import { RefreshMessage } from "../../types/message/direct";
-import { GameStartedMessage, TrickDoneMessage } from "../../types/message/broadcast";
+import { InitializeMessage } from "../../types/message/direct";
+import { GameStartedMessage } from "../../types/message/broadcast";
 import { createNewScoreboard } from "../../utils/game";
 
 interface GameState {
@@ -27,7 +27,7 @@ const gameSlice = createSlice({
     initialState,
     reducers: {
         reset: () => initialState,
-        refreshed: (state, action: PayloadAction<MessageData<RefreshMessage>>) => {
+        initialize: (state, action: PayloadAction<MessageData<InitializeMessage>>) => {
             state.inProgress = action.payload.inProgress;
             state.scoreboard = action.payload.scoreboard || [];
             state.handsPlayed = action.payload.handsPlayed || 0;
@@ -39,12 +39,12 @@ const gameSlice = createSlice({
             state.handsPlayed = 0;
             state.playerOrder = action.payload.playerOrder;
         },
-        trickDone: (state, action: PayloadAction<MessageData<TrickDoneMessage>>) => {
-            if (action.payload.handSummary) {
+        handDone: (state, action: PayloadAction<HandSummary>) => {
+            if (action.payload) {
                 // Set the hand summary in state to be displayed
                 state.handsPlayed += 1;
-                state.handSummary = action.payload.handSummary;
-                const playerSummaries = action.payload.handSummary.playerSummaries;
+                state.handSummary = action.payload;
+                const playerSummaries = action.payload.playerSummaries;
                 // Update the scoreboard
                 state.scoreboard = state.scoreboard.map((row) => ({
                     playerId: row.playerId,

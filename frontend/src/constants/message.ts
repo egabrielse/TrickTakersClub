@@ -3,7 +3,7 @@
  */
 export const DIRECT_TYPES = {
     ERROR: "error",
-    REFRESH: "refresh",
+    INITIALIZE: "initialize",
     DEAL_HAND: "deal-hand",
     PICKED_CARDS: "picked-cards",
     BURIED_CARDS: "buried-cards",

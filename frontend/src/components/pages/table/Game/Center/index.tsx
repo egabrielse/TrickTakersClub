@@ -4,7 +4,7 @@ import selectors from "../../../../../store/selectors";
 import handSlice from "../../../../../store/slices/hand.slice";
 import Blind from "./Blind";
 import Call from "./Call";
-import "./Center.scss";
+import "./index.scss";
 import Trick from "./Trick";
 
 export default function Center() {

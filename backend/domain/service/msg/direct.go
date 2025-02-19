@@ -60,7 +60,7 @@ func PickedCardsMessage(clientID string, cards []*deck.Card) (string, string, *P
 	return clientID, DirectType.PickedCards, &PickedCardsData{Cards: cards}
 }
 
-type RefreshData struct {
+type InitializeData struct {
 	PlayerID   string   `json:"playerId"`
 	HostID     string   `json:"hostId"`
 	TableID    string   `json:"tableId"`
@@ -86,8 +86,8 @@ type RefreshData struct {
 	Bury []*deck.Card `json:"bury"`
 }
 
-func RefreshMessage(tableID, hostID, clientID string, seating []string, settings *game.GameSettings, game *game.Game) (string, string, *RefreshData) {
-	data := &RefreshData{}
+func InitializeMessage(tableID, hostID, clientID string, seating []string, settings *game.GameSettings, game *game.Game) (string, string, *InitializeData) {
+	data := &InitializeData{}
 	data.PlayerID = clientID
 	data.HostID = hostID
 	data.TableID = tableID
