@@ -1,7 +1,7 @@
 .ScrollableContainer {
     height: 100%;
-    overflow-y: scroll;
     position: relative;
+    max-width: 1000px;
     border-radius: 5px;
 
     &-Header {
