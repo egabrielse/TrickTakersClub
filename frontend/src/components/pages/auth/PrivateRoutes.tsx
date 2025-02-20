@@ -14,6 +14,7 @@ export default function PrivateRoutes() {
 
   useEffect(() => {
     if (initialized && !isAuthenticated) {
+      console.log("PrivateRoutes: Opening login dialog");
       dispatch(dialogSlice.actions.openDialog({ type: DIALOG_TYPES.LOGIN }));
     }
   }, [dispatch, initialized, isAuthenticated]);

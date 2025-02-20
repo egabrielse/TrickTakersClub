@@ -229,6 +229,7 @@ func (g *Game) PlayCard(playerID string, card *deck.Card) (*PlayCardResult, erro
 		// Play the card in the trick
 		trickSummary := g.Play.PlayCard(card)
 		// Check if partner has been revealed
+		// TODO: possibly something going wrong here
 		result.PartnerID = g.Call.ConditionallyRevealPartner(card)
 		// Check if the trick is complete
 		if trickSummary != nil {
@@ -284,14 +285,21 @@ func (g *Game) SummarizeHand() *summary.HandSummary {
 		scores, sum.Winners = scoring.ScoreMostersHand(points)
 	default:
 		// Someone picked, score hand normally
-		pickerID := g.Blind.PickerID
-		partnerID := g.Call.PartnerID
-		sum.PickerID = pickerID
+		sum.PickerID = g.Blind.PickerID
+		sum.PartnerID = g.Call.PartnerID
+		sum.OpponentIDs = utils.Filter(g.PlayerOrder, func(id string) bool {
+			return id != sum.PickerID && id != sum.PartnerID
+		})
 		buriedPoints := deck.CountPoints(g.Bury.Cards)
 		// Count up the points in the bury and add to the picker's points
-		points[pickerID] += buriedPoints
+		points[sum.PickerID] += buriedPoints
 		sum.BurySummary = summary.BurySummary{Cards: g.Bury.Cards, Points: buriedPoints}
-		scores, sum.Winners = scoring.ScoreHand(pickerID, partnerID, points, tricks, g.Settings.DoubleOnTheBump)
+		scores, sum.Winners = scoring.ScoreHand(sum.PickerID, sum.PartnerID, points, tricks, g.Settings.DoubleOnTheBump)
+		if utils.Contains(sum.Winners, sum.PickerID) {
+			sum.WinningTeam = "picking"
+		} else {
+			sum.WinningTeam = "opponents"
+		}
 	}
 	// Update the player summaries
 	for playerID, score := range scores {

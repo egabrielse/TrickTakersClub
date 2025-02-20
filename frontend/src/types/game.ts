@@ -47,7 +47,7 @@ export type TrickSummary = {
 
 export type BurySummary = {
     cards: PlayingCard[];
-    complete: boolean;
+    points: number;
 };
 
 export type PlayerSummary = {
@@ -58,8 +58,11 @@ export type PlayerSummary = {
 
 export type HandSummary = {
     winners: string[];
+    winningTeam: "picking" | "opponents";
     playerSummaries: Record<string, PlayerSummary>;
     pickerId: string;
+    partnerId: string;
+    opponentIds: string[];
     burySummary: BurySummary;
     trickSummaries: TrickSummary[];
 };

@@ -43,7 +43,6 @@ const gameSlice = createSlice({
             if (action.payload) {
                 // Set the hand summary in state to be displayed
                 state.handsPlayed += 1;
-                state.handSummary = action.payload;
                 const playerSummaries = action.payload.playerSummaries;
                 // Update the scoreboard
                 state.scoreboard = state.scoreboard.map((row) => ({

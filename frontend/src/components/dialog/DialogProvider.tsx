@@ -7,6 +7,7 @@ import { DialogParams } from "../../types/dialog";
 import SlideTransition from "../common/SlideTransition";
 import ConfirmExitDialog from "./contents/ConfirmExitDialog";
 import ErrorDialog from "./contents/ErrorDialog";
+import GameSummaryDialog from "./contents/GameSummaryDialog";
 import LoginDialog from "./contents/LoginDialog";
 import RegisterDialog from "./contents/RegisterDialog";
 import ResetPassDialog from "./contents/ResetPasswordDialog";
@@ -33,6 +34,8 @@ export default function DialogProvider({ children }: DialogProviderProps) {
         return <ErrorDialog {...dialog} />;
       case DIALOG_TYPES.CONFIRM_EXIT:
         return <ConfirmExitDialog {...dialog} />;
+      case DIALOG_TYPES.GAME_SUMMARY:
+        return <GameSummaryDialog {...dialog} />;
       default:
         console.error("Unknown dialog parameters", dialog);
         return null;

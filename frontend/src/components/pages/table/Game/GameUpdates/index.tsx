@@ -45,7 +45,8 @@ const renderUpdateMessage = (update: UpdateMessages) => {
             uid={update.data.playerId}
           />
           <Typography>
-            played the {prettyPrintCard(update.data.card)}!
+            played the&nbsp;
+            {prettyPrintCard(update.data.card)}!
           </Typography>
         </>
       );

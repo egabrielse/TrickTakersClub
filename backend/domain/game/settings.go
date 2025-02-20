@@ -31,7 +31,7 @@ func (gs *GameSettings) SetAutoDeal(autoDeal bool) {
 }
 
 func (gs *GameSettings) SetPlayerCount(playerCount int) error {
-	if playerCount < 3 || playerCount > 6 {
+	if playerCount < 3 || playerCount > 5 {
 		return fmt.Errorf("invalid player count")
 	}
 	// Update the player count
@@ -46,8 +46,6 @@ func (gs *GameSettings) SetPlayerCount(playerCount int) error {
 		gs.HandSize = 7
 	case 5:
 		gs.HandSize = 6
-	case 6:
-		gs.HandSize = 5
 	}
 	return nil
 }

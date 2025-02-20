@@ -11,7 +11,7 @@ var DirectType = struct {
 	// Errors
 	Error string
 	// Contains the current state of the table/game/hand
-	Refresh string
+	Initialize string
 	// Cards dealt to a player
 	DealHand string
 	// Cards picked up from the blind
@@ -23,7 +23,7 @@ var DirectType = struct {
 	DealHand:    "deal-hand",
 	Error:       "error",
 	PickedCards: "picked-cards",
-	Refresh:     "refresh",
+	Initialize:  "initialize",
 }
 
 type BuriedCardsData struct {
@@ -123,5 +123,5 @@ func InitializeMessage(tableID, hostID, clientID string, seating []string, setti
 			}
 		}
 	}
-	return clientID, DirectType.Refresh, data
+	return clientID, DirectType.Initialize, data
 }

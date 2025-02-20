@@ -10,9 +10,11 @@ import { ReactNode, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { fetchAblyToken } from "../../../api/ably.api";
 import { fetchTable } from "../../../api/table.api";
+import { DIALOG_TYPES } from "../../../constants/dialog";
 import { BROADCAST_TYPES, DIRECT_TYPES } from "../../../constants/message";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
+import dialogSlice from "../../../store/slices/dialog.slice";
 import gameSlice from "../../../store/slices/game.slice";
 import handSlice from "../../../store/slices/hand.slice";
 import tableSlice from "../../../store/slices/table.slice";
@@ -37,7 +39,7 @@ function ConnectionApiProvider({
   broadcastName,
   directName,
 }: ConnectionApiProviderProps) {
-  const [refreshed, setRefreshed] = useState(false);
+  const [initialized, setInitialized] = useState(false);
   const dispatch = useAppDispatch();
   const uid = useAppSelector(authSlice.selectors.uid);
   const [connectionState, setConnectionState] =
@@ -83,6 +85,12 @@ function ConnectionApiProvider({
       case BROADCAST_TYPES.TRICK_DONE: {
         dispatch(handSlice.actions.trickDone(msg.data.trickSummary));
         if (msg.data.handSummary) {
+          dispatch(
+            dialogSlice.actions.openDialog({
+              type: DIALOG_TYPES.GAME_SUMMARY,
+              props: { summary: msg.data.handSummary },
+            }),
+          );
           dispatch(gameSlice.actions.handDone(msg.data.handSummary));
         }
         dispatch(handSlice.actions.displayMessage({ ...msg }));
@@ -120,7 +128,7 @@ function ConnectionApiProvider({
     const msg: DirectMessage = message as DirectMessage;
     switch (msg.name) {
       case DIRECT_TYPES.INITIALIZE: {
-        setRefreshed(true);
+        setInitialized(true);
         dispatch(tableSlice.actions.initialize(msg.data));
         dispatch(gameSlice.actions.initialize(msg.data));
         dispatch(handSlice.actions.initialize(msg.data));
@@ -173,7 +181,7 @@ function ConnectionApiProvider({
     setConnectionState(state.current);
     switch (state.current) {
       case "disconnected":
-        setRefreshed(false);
+        setInitialized(false);
         if (state.retryIn && state.retryIn > 1000) {
           setTimeLeft(state.retryIn);
           setTimeout(retryInTimeoutCallback, 1000);
@@ -184,10 +192,9 @@ function ConnectionApiProvider({
     }
   });
 
-  console.log(refreshed);
   return (
     <>
-      {connectionState === "connecting" || !refreshed ? (
+      {connectionState === "connecting" || !initialized ? (
         <LoadingOverlay text="Connecting to the table" trailingEllipsis />
       ) : connectionState === "disconnected" ? (
         <LoadingOverlay

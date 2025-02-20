@@ -6,5 +6,4 @@ const (
 	Player3 = "player-3"
 	Player4 = "player-4"
 	Player5 = "player-5"
-	Player6 = "player-6"
 )

@@ -90,45 +90,16 @@ export const arrangeSeats = (playerOrder: string[]) => {
             // Player 3 (top quarter from left)
             seats[2].style.left = QUARTER;
             seats[2].style.transform = `translateX(-${QUARTER})`;
-            seats[2].style.top = HALF;
-            seats[2].style.transform = `translateY(-${HALF})`;
+            seats[2].style.top = ZERO;
             // Player 4 (top quarter from right)
             seats[3].style.right = QUARTER;
             seats[3].style.transform = `translateX(${QUARTER})`;
-            seats[3].style.top = HALF;
-            seats[3].style.transform = `translateY(-${HALF})`;
+            seats[3].style.top = ZERO;
             // Player 5 (right center)
             seats[4].style.right = ZERO;
             seats[4].style.top = HALF;
             seats[4].style.transform = `translateY(-${HALF})`;
             break;
-        }
-        case 6: {
-            // Player 1 (bottom center)
-            seats[0].style.left = HALF;
-            seats[0].style.transform = `translateX(-${HALF})`;
-            seats[0].style.bottom = ZERO;
-            // Player 2 (left quarter from bottom)
-            seats[1].style.left = QUARTER;
-            seats[1].style.transform = `translateX(-${QUARTER})`;
-            seats[1].style.bottom = ZERO;
-            // Player 3 (left quarter from top)
-            seats[2].style.left = QUARTER;
-            seats[2].style.transform = `translateX(-${QUARTER})`;
-            seats[2].style.top = ZERO;
-            // Player 4 (top center)
-            seats[3].style.left = HALF;
-            seats[3].style.transform = `translateX(-${HALF})`;
-            seats[3].style.top = ZERO;
-            // Player 5 (right quarter from top)
-            seats[4].style.right = QUARTER;
-            seats[4].style.transform = `translateX(${QUARTER})`;
-            seats[4].style.top = ZERO;
-            // Player 6 (right quarter from bottom) 
-            seats[5].style.right = QUARTER;
-            seats[5].style.transform = `translateX(${QUARTER})`;
-            seats[5].style.bottom = ZERO;
-            break
         }
         default:
             console.warn("Unsupported number of seats");

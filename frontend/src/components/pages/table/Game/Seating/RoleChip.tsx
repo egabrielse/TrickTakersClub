@@ -1,6 +1,6 @@
 import { Box, Tooltip } from "@mui/material";
 type RoleChipProps = {
-  role: "dealer" | "d" | "picker" | "pi" | "partner" | "pa";
+  role: "dealer" | "d" | "picker" | "pi" | "partner" | "pa" | "opponent";
   size?: "small" | "medium" | "large";
   opacity?: number;
 };
