@@ -6,6 +6,7 @@ import { useAppSelector } from "../../../../../store/hooks";
 import selectors from "../../../../../store/selectors";
 import handSlice from "../../../../../store/slices/hand.slice";
 import { PlayingCard } from "../../../../../types/card";
+import { handContainsCard } from "../../../../../utils/card";
 import Card from "../../../../common/Card";
 import CardList from "../../../../common/CardList";
 import ConnectionContext from "../../ConnectionContext";
@@ -57,7 +58,7 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
       } else if (phase === HAND_PHASE.PLAY) {
         return (
           selected.includes(card) ||
-          (playableCards.includes(card) && selected.length < 1)
+          (handContainsCard(playableCards, card) && selected.length < 1)
         );
       }
       return false;

@@ -111,31 +111,38 @@ export const getCardPoints = (card: PlayingCard) => {
  */
 export const compareCards = (a: PlayingCard, b: PlayingCard) => {
     if (a.rank === b.rank && a.suit === b.suit) {
+        // Same card
         return 0;
-    } else if (isTrumpCard(a) && !isTrumpCard(b)) {
-        // Trump before non-trump
-        return 1;
-    } else if (!isTrumpCard(a) && isTrumpCard(b)) {
-        // Trump before non-trump
-        return -1;
     } else if ((isTrumpCard(a) && isTrumpCard(b)) || a.suit === b.suit) {
-        // Both trump or same suit, compare values
+        // Both are trump or of same suit, compare rank values
         return getCardinalRank(a) - getCardinalRank(b);
+    } else if (isTrumpCard(a)) {
+        // Trump cards come first
+        return 1;
+    } else if (isTrumpCard(b)) {
+        // Trump cards come first
+        return -1;
     } else if (a.suit === CARD_SUIT.CLUB) {
-        // Clubs before other fail suits
+        // Clubs before hearts
         return 1;
     } else if (b.suit === CARD_SUIT.CLUB) {
-        // Clubs before other fail suits
+        // Clubs before hearts
         return -1;
-    } else if (a.suit === CARD_SUIT.HEART && !(b.suit === CARD_SUIT.SPADE)) {
+    } else if (a.suit === CARD_SUIT.HEART) {
         // Hearts before spades
         return 1;
-    } else if (b.suit === CARD_SUIT.HEART && !(a.suit === CARD_SUIT.SPADE)) {
+    } else if (b.suit === CARD_SUIT.HEART) {
         // Hearts before spades
         return -1;
-    } else {
+    } else if (a.suit === CARD_SUIT.SPADE) {
         // Spades last
-        return -1;
+        return 1;
+    } else if (b.suit === CARD_SUIT.SPADE) {
+        // Spades last
+        return 0;
+    } else {
+        // Unknown case (unreachable?)
+        return 0;
     }
 };
 

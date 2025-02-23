@@ -1,16 +1,16 @@
 import Typography from "@mui/material/Typography";
 
 type StyledNumberProps = {
-  value: number;
+  children: number;
 };
 
-export default function StyledNumber({ value }: StyledNumberProps) {
-  const color = value > 0 ? "green" : value < 0 ? "red" : undefined;
-  const prefix = value > 0 ? "+" : "";
+export default function StyledNumber({ children }: StyledNumberProps) {
+  const color = children > 0 ? "success" : children < 0 ? "error" : undefined;
+  const prefix = children > 0 ? "+" : "";
   return (
-    <Typography color={color} variant="body1">
+    <Typography color={color} fontWeight="bold" variant="body1">
       {prefix}
-      {value}
+      {children}
     </Typography>
   );
 }

@@ -21,10 +21,13 @@ func NewDeck() *Deck {
 }
 
 func (d *Deck) Draw(count int) []*Card {
+	drawnCards := make([]*Card, 0)
 	if count > len(d.Cards) {
 		count = len(d.Cards)
 	}
-	cards := d.Cards[:count]
+	for i := 0; i < count; i++ {
+		drawnCards = append(drawnCards, d.Cards[i])
+	}
 	d.Cards = d.Cards[count:]
-	return cards
+	return drawnCards
 }

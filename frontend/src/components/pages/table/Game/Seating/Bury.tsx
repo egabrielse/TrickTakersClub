@@ -21,6 +21,7 @@ export default function Bury() {
                 id={`bury-card-${card.suit}-${card.rank}`}
                 key={`bury-card-${card.suit}-${card.rank}`}
                 card={card}
+                disabled
               />
             ))}
       </CardList>
