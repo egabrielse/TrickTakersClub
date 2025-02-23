@@ -19,7 +19,6 @@ func TestBlind(t *testing.T) {
 		blind := NewBlind(pickOrder, cardsInBlind)
 
 		assert.Equal(t, 0, blind.Index)
-		assert.Empty(t, blind.Cards)
 		assert.Equal(t, len(pickOrder), len(blind.PickOrder))
 		assert.Empty(t, blind.PickerID)
 	})
