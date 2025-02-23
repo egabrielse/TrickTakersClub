@@ -8,7 +8,6 @@ import TableRow from "@mui/material/TableRow";
 import { HandSummary } from "../../../../../types/game";
 import ProfileSnapshot from "../../../../common/ProfileSnapshot";
 import StyledNumber from "../../../../common/StyledNumber";
-import RoleChip from "../Seating/RoleChip";
 
 type ScoresTableProps = {
   summary: HandSummary;
@@ -28,29 +27,35 @@ export default function ScoresTable({ summary }: ScoresTableProps) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {Object.entries(summary.playerSummaries).map(([key, playerSum]) => (
-            <TableRow>
-              <TableCell>
-                <ProfileSnapshot variant="avatar" uid={key} />
-              </TableCell>
-              <TableCell>
-                <RoleChip
-                  role={
-                    summary.pickerId === key
-                      ? "picker"
-                      : summary.partnerId === key
-                        ? "partner"
-                        : "opponent"
-                  }
-                />
-              </TableCell>
-              <TableCell>{playerSum.tricks}</TableCell>
-              <TableCell>{playerSum.points}</TableCell>
-              <TableCell>
-                <StyledNumber value={playerSum.score} />
-              </TableCell>
-            </TableRow>
-          ))}
+          {Object.entries(summary.playerSummaries)
+            .sort(([key]) => {
+              if (summary.pickerId === key) {
+                return -1;
+              } else if (summary.partnerId === key) {
+                return -1;
+              } else {
+                return 1;
+              }
+            })
+            .map(([key, playerSum]) => (
+              <TableRow>
+                <TableCell>
+                  <ProfileSnapshot variant="avatar" uid={key} />
+                </TableCell>
+                <TableCell>
+                  {summary.pickerId === key
+                    ? "Picker"
+                    : summary.partnerId === key
+                      ? "Partner"
+                      : null}
+                </TableCell>
+                <TableCell>{playerSum.tricks}</TableCell>
+                <TableCell>{playerSum.points}</TableCell>
+                <TableCell>
+                  <StyledNumber>{playerSum.score}</StyledNumber>
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     </TableContainer>

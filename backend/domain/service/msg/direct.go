@@ -61,18 +61,16 @@ func PickedCardsMessage(clientID string, cards []*deck.Card) (string, string, *P
 }
 
 type InitializeData struct {
-	PlayerID   string   `json:"playerId"`
-	HostID     string   `json:"hostId"`
-	TableID    string   `json:"tableId"`
-	Seating    []string `json:"seating"`
-	InProgress bool     `json:"inProgress"`
-	// Game state
-	DealerID    string             `json:"dealerId"`
-	Scoreboard  game.Scoreboard    `json:"scoreboard"`
-	PlayerOrder []string           `json:"playerOrder"`
-	HandsPlayed int                `json:"handsPlayed"`
-	Settings    *game.GameSettings `json:"settings"`
-	// Hand state
+	PlayerID     string                  `json:"playerId"`
+	HostID       string                  `json:"hostId"`
+	TableID      string                  `json:"tableId"`
+	Seating      []string                `json:"seating"`
+	InProgress   bool                    `json:"inProgress"`
+	DealerID     string                  `json:"dealerId"`
+	Scoreboard   game.Scoreboard         `json:"scoreboard"`
+	PlayerOrder  []string                `json:"playerOrder"`
+	HandsPlayed  int                     `json:"handsPlayed"`
+	Settings     *game.GameSettings      `json:"settings"`
 	CalledCard   *deck.Card              `json:"calledCard"`
 	BlindSize    int                     `json:"blindSize"`
 	Phase        string                  `json:"phase"`
@@ -81,9 +79,8 @@ type InitializeData struct {
 	PartnerID    string                  `json:"partnerId"`
 	Summaries    []*summary.TrickSummary `json:"summaries"`
 	CurrentTrick *hand.Trick             `json:"currentTrick"`
-	// Player's hand state
-	Hand []*deck.Card `json:"hand"`
-	Bury []*deck.Card `json:"bury"`
+	Hand         []*deck.Card            `json:"hand"`
+	Bury         []*deck.Card            `json:"bury"`
 }
 
 func InitializeMessage(tableID, hostID, clientID string, seating []string, settings *game.GameSettings, game *game.Game) (string, string, *InitializeData) {

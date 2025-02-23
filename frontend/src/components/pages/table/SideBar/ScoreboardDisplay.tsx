@@ -2,6 +2,7 @@ import { Paper } from "@mui/material";
 import { useAppSelector } from "../../../../store/hooks";
 import gameSlice from "../../../../store/slices/game.slice";
 import ProfileSnapshot from "../../../common/ProfileSnapshot";
+import StyledNumber from "../../../common/StyledNumber";
 import "./ScoreboardDisplay.scss";
 
 export default function ScoreboardDisplay() {
@@ -30,7 +31,9 @@ export default function ScoreboardDisplay() {
                       uid={playerId}
                     />
                   </td>
-                  <td>{score}</td>
+                  <td>
+                    <StyledNumber>{score}</StyledNumber>
+                  </td>
                   <td>{totalPoints}</td>
                   <td>{totalTricks}</td>
                 </tr>
