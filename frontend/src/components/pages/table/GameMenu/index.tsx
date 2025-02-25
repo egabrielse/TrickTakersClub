@@ -5,11 +5,11 @@ import "./index.scss";
 
 export default function GameMenu() {
   return (
-    <Paper className="GameMenu">
+    <Paper id="game-menu" className="GameMenu">
       <div className="GameMenu-Settings">
         <GameSettingsForm />
       </div>
-      <Divider orientation="vertical" />
+      <Divider orientation="vertical" sx={{ height: "100%" }} />
       <div className="GameMenu-Players">
         <GameSeating />
       </div>

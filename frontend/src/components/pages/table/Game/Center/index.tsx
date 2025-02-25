@@ -29,5 +29,9 @@ export default function Center() {
     }
   };
 
-  return <div className="Center">{renderCenterNode()}</div>;
+  return (
+    <div id="game-center" className="Center">
+      {renderCenterNode()}
+    </div>
+  );
 }

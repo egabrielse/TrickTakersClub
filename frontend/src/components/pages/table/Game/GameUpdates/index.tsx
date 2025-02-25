@@ -97,7 +97,7 @@ export default function GameUpdates() {
 
   return (
     <Fade in={Boolean(upNextId && !updates.length) || Boolean(nextUpdate)}>
-      <Paper className="GameUpdates">
+      <Paper id="game-updates" className="GameUpdates">
         {nextUpdate ? (
           // 1. Show the next update in the queue
           renderUpdateMessage(nextUpdate)

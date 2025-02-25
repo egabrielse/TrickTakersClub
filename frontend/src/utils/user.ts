@@ -31,7 +31,7 @@ export function getAvatarFontSize(size: Size, charCount: 1 | 2 | 3): number {
  * @returns font size of the display name
  */
 export function getDisplayNameFontSize(size: Size): number {
-  const baseFontSize = 14;
+  const baseFontSize = 16;
   return scaleBySize(size, baseFontSize);
 }
 

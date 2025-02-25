@@ -1,11 +1,11 @@
 import SendIcon from "@mui/icons-material/Send";
-import { IconButton, InputAdornment, Paper, TextField } from "@mui/material";
+import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useAppSelector } from "../../../../../store/hooks";
 import tableSlice from "../../../../../store/slices/table.slice";
 import ConnectionContext from "../../ConnectionContext";
 import "./Chat.scss";
-import MessageBubble from "./MessageBubble";
+import ChatMessageBubble from "./ChatMessageBubble";
 
 // TODO: consolidate chat messages if they are from the same user and within a certain time frame
 export default function Chat() {
@@ -28,16 +28,18 @@ export default function Chat() {
   };
 
   return (
-    <Paper className="Chat">
+    <div className="Chat">
       <div className="Chat-Messages">
         {chat.map((msg, i) => (
-          <MessageBubble key={i} message={msg} />
+          <ChatMessageBubble key={i} message={msg} />
         ))}
+        {chat.length === 0 && <i className="EmptyMessage">No messages</i>}
         <div ref={bottomRef} />
       </div>
       <TextField
         id="chat-input"
         name="chat-input"
+        className="Chat-Input"
         placeholder="Type a message..."
         value={value}
         multiline
@@ -67,6 +69,6 @@ export default function Chat() {
           },
         }}
       />
-    </Paper>
+    </div>
   );
 }

@@ -1,0 +1,68 @@
+.ExpandingButton {
+    position: relative;
+    width: 3rem;
+    height: 3rem;
+    overflow: hidden;
+    background-color: #94bc81 !important;
+    border: 1px solid white !important;
+    color: white !important;
+    border-radius: 50% !important;
+    transition: 250ms;
+
+    &.expanded {
+        display: flex;
+        flex-direction: column;
+        width: 256px;
+        height: auto;
+        max-height: 320px;
+        border-radius: 0.5rem !important;
+
+        .ExpandingButton-Title {
+            display: flex;
+            align-items: center;
+            min-height: 3rem;
+            padding-left: 0.5rem;
+            width: 100%;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .ExpandingButton-Content {
+            height: calc(100% - 3rem);
+            padding: 0 0.5rem;
+            width: auto;
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+
+
+    &-Button {
+        top: 0;
+        right: 0;
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        width: 3rem;
+        height: 3rem;
+        transition: 250ms;
+    }
+
+    &-Title {
+        height: 0;
+        width: 0;
+        opacity: 0;
+        visibility: hidden;
+        transition: 250ms;
+    }
+
+    &-Content {
+        height: 0;
+        width: 0;
+        opacity: 0;
+        visibility: hidden;
+        transition: 250ms;
+    }
+}

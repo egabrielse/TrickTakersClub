@@ -1,4 +1,3 @@
-import { Paper } from "@mui/material";
 import { useAppSelector } from "../../../../store/hooks";
 import gameSlice from "../../../../store/slices/game.slice";
 import ProfileSnapshot from "../../../common/ProfileSnapshot";
@@ -7,9 +6,9 @@ import "./ScoreboardDisplay.scss";
 
 export default function ScoreboardDisplay() {
   const scoreboard = useAppSelector(gameSlice.selectors.scoreboard);
-  if (scoreboard !== null && Object.entries(scoreboard).length > 0) {
-    return (
-      <Paper className="ScoreboardDisplay">
+  return (
+    <div id="scoreboard-display" className="ScoreboardDisplay">
+      {scoreboard !== null && Object.entries(scoreboard).length > 0 ? (
         <table>
           <thead>
             <tr>
@@ -40,9 +39,9 @@ export default function ScoreboardDisplay() {
               ))}
           </tbody>
         </table>
-      </Paper>
-    );
-  } else {
-    return null;
-  }
+      ) : (
+        <p>No scores to display</p>
+      )}
+    </div>
+  );
 }

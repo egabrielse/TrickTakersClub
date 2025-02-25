@@ -30,6 +30,7 @@ export default function ExitButton() {
 
   return (
     <PaperButton
+      id="exit-button"
       onClick={onClick}
       startIcon={<LogoutIcon style={{ transform: "rotate(180deg)" }} />}
     >

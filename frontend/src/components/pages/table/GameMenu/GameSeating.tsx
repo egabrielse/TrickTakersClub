@@ -47,7 +47,7 @@ export default function GameSeating() {
 
   return (
     <div className="GameSeating">
-      <Typography variant="h1">Players</Typography>
+      <Typography variant="h2">Players</Typography>
       <div className="GameSeating-PlayerList">{renderSeats()}</div>
       <Button
         id="seat-button"

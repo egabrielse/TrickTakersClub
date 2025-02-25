@@ -7,6 +7,7 @@ import "./ProfileSnapshot.scss";
 import UserAvatar from "./UserAvatar";
 
 type ProfileSnapshotProps = {
+  id?: string;
   uid: string;
   variant: "avatar" | "name-row" | "name-column";
   size?: Size;
@@ -31,6 +32,7 @@ type ProfileSnapshotProps = {
 };
 
 export default function ProfileSnapshot({
+  id,
   uid,
   variant,
   size = "medium",
@@ -45,7 +47,7 @@ export default function ProfileSnapshot({
   const flexDirection = variant === "name-row" ? "row" : "column";
 
   return (
-    <div className="ProfileSnapshot" style={{ flexDirection }}>
+    <div id={id} className="ProfileSnapshot" style={{ flexDirection }}>
       {status === "loaded" ? (
         <Badge
           anchorOrigin={{ vertical: "bottom", horizontal: "left" }}

@@ -3,40 +3,43 @@ import { FunctionComponent } from "react";
 import { useCachedUser } from "../../../../../store/hooks";
 import { ChatMessage } from "../../../../../types/message/broadcast";
 import UserAvatar from "../../../../common/UserAvatar";
-import "./MessageBubble.scss";
+import "./ChatMessageBubble.scss";
 
 type MessageProps = {
   message: ChatMessage;
 };
 
-const MessageBubble: FunctionComponent<MessageProps> = ({ message }) => {
+const ChatMessageBubble: FunctionComponent<MessageProps> = ({ message }) => {
   const { data, clientId, timestamp } = message;
-  const time = new Date(timestamp!).toLocaleTimeString();
+  const time = new Date(timestamp!).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
   const { user, status } = useCachedUser(clientId!);
 
   return (
-    <div className="MessageBubble">
-      <div className="MessageBubble-IconContainer">
+    <div className="ChatMessageBubble">
+      <div className="ChatMessageBubble-IconContainer">
         <UserAvatar
           loading={status !== "loaded"}
           name={user?.displayName || undefined}
           size="small"
         />
       </div>
-      <div className="MessageBubble-MessageContainer">
-        <div className="MessageBubble-MessageContainer-ByLine">
-          <span className="MessageBubble-MessageContainer-ByLine-Sender">
+      <div className="ChatMessageBubble-MessageContainer">
+        <div className="ChatMessageBubble-MessageContainer-ByLine">
+          <span className="ChatMessageBubble-MessageContainer-ByLine-Sender">
             {status === "loaded" ? (
               user!.displayName!
             ) : (
               <Skeleton variant="text" />
             )}
           </span>
-          <span className="MessageBubble-MessageContainer-ByLine-TimeStamp">
+          <span className="ChatMessageBubble-MessageContainer-ByLine-TimeStamp">
             {time}
           </span>
         </div>
-        <span className="MessageBubble-MessageContainer-Content">
+        <span className="ChatMessageBubble-MessageContainer-Content">
           {data.message}
         </span>
       </div>
@@ -44,4 +47,4 @@ const MessageBubble: FunctionComponent<MessageProps> = ({ message }) => {
   );
 };
 
-export default MessageBubble;
+export default ChatMessageBubble;

@@ -18,7 +18,7 @@ import AuthProvider from "./pages/auth/AuthProvider";
 import PrivateRoutes from "./pages/auth/PrivateRoutes";
 import HomePage from "./pages/home/HomePage";
 import ConnectionProvider from "./pages/table/ConnectionProvider";
-import TablePage from "./pages/table/TablePage";
+import GamePage from "./pages/table/GamePage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -36,7 +36,7 @@ const router = createBrowserRouter(
           path={PATHS.TABLE}
           element={
             <ConnectionProvider>
-              <TablePage />
+              <GamePage />
             </ConnectionProvider>
           }
         />

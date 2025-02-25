@@ -95,7 +95,7 @@ export default function GameSettingsForm() {
 
   return (
     <div className="GameSettingsForm">
-      <Typography variant="h1">Game Settings</Typography>
+      <Typography variant="h2">Game Settings</Typography>
       <div className="GameSettingsForm-Body">
         <div className="LabeledInput">
           <InputLabel margin="dense">Player Count</InputLabel>
