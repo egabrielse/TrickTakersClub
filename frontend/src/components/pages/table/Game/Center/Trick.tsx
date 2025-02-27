@@ -12,18 +12,18 @@ export default function Trick() {
     if (currentTrick) {
       Object.entries(currentTrick.cards).forEach(([playerId, card]) => {
         if (card) {
-          const index = playerOrder.indexOf(playerId);
           const playedCard = document.getElementById(
             `card-${card.suit}-${card.rank}`,
           );
           if (playedCard) {
             playedCard.style.position = "absolute";
-            playedCard.style.zIndex = String(index);
+            const orderPlayed = currentTrick.turnOrder.indexOf(playerId);
+            playedCard.style.zIndex = String(orderPlayed);
             playedCard.style.top = "40%";
             playedCard.style.left = "50%";
             playedCard.style.transform = "translate(-50%, -10%)";
             playedCard.style.transformOrigin = "top left";
-            switch (index) {
+            switch (playerOrder.indexOf(playerId)) {
               case 0:
                 break;
               case 1:
