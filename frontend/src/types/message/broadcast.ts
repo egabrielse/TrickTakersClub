@@ -65,7 +65,7 @@ export interface SatDownMessage extends Message {
 
 export interface SettingsUpdatedMessage extends Message {
     name: typeof BROADCAST_TYPES.SETTINGS_UPDATED;
-    data: { settings: GameSettings, seating: string[] };
+    data: { settings: GameSettings };
 }
 
 export interface StoodUpMessage extends Message {

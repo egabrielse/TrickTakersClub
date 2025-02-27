@@ -48,7 +48,6 @@ const tableSlice = createSlice({
         },
         settingsUpdated: (state, action: PayloadAction<MessageData<SettingsUpdatedMessage>>) => {
             state.settings = action.payload.settings;
-            state.seating = action.payload.seating;
         },
         satDown: (state, action: PayloadAction<MessageData<SatDownMessage>>) => {
             state.seating = [...state.seating, action.payload.playerId]

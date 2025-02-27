@@ -130,11 +130,10 @@ func SatDownMessage(playerID string) (name string, data *SatDownData) {
 
 type SettingsUpdatedData struct {
 	Settings *game.GameSettings `json:"settings"`
-	Seating  []string           `json:"seating"`
 }
 
-func SettingsUpdatedMessage(settings *game.GameSettings, seating []string) (name string, data *SettingsUpdatedData) {
-	return BroadcastType.SettingsUpdated, &SettingsUpdatedData{Settings: settings, Seating: seating}
+func SettingsUpdatedMessage(settings *game.GameSettings) (name string, data *SettingsUpdatedData) {
+	return BroadcastType.SettingsUpdated, &SettingsUpdatedData{Settings: settings}
 }
 
 type StoodUpData struct {

@@ -15,7 +15,7 @@ func HandleUpdateAutoDeal(t *TableWorker, clientID string, data interface{}) {
 		t.DirectMessage(msg.ErrorMessage(clientID, "invalid setting value"))
 	} else {
 		t.GameSettings.SetAutoDeal(params.AutoDeal)
-		t.BroadcastMessage(msg.SettingsUpdatedMessage(t.GameSettings, t.SeatedPlayers))
+		t.BroadcastMessage(msg.SettingsUpdatedMessage(t.GameSettings))
 	}
 }
 
@@ -30,7 +30,7 @@ func HandleUpdateCallingMethod(t *TableWorker, clientID string, data interface{}
 		if err := t.GameSettings.SetCallingMethod(params.CallingMethod); err != nil {
 			t.DirectMessage(msg.ErrorMessage(clientID, err.Error()))
 		} else {
-			t.BroadcastMessage(msg.SettingsUpdatedMessage(t.GameSettings, t.SeatedPlayers))
+			t.BroadcastMessage(msg.SettingsUpdatedMessage(t.GameSettings))
 		}
 	}
 }
@@ -46,7 +46,7 @@ func HandleUpdateNoPickResolution(t *TableWorker, clientID string, data interfac
 		if err := t.GameSettings.SetNoPickResolution(params.NoPickResolution); err != nil {
 			t.DirectMessage(msg.ErrorMessage(clientID, err.Error()))
 		} else {
-			t.BroadcastMessage(msg.SettingsUpdatedMessage(t.GameSettings, t.SeatedPlayers))
+			t.BroadcastMessage(msg.SettingsUpdatedMessage(t.GameSettings))
 		}
 	}
 }
@@ -60,7 +60,7 @@ func HandleUpdateDoubleOnTheBump(t *TableWorker, clientID string, data interface
 		t.DirectMessage(msg.ErrorMessage(clientID, "invalid settings payload"))
 	} else {
 		t.GameSettings.SetDoubleOnTheBump(params.DoubleOnTheBump)
-		t.BroadcastMessage(msg.SettingsUpdatedMessage(t.GameSettings, t.SeatedPlayers))
+		t.BroadcastMessage(msg.SettingsUpdatedMessage(t.GameSettings))
 	}
 }
 
@@ -102,8 +102,6 @@ func HandleStartGameCommand(t *TableWorker, clientID string, data interface{}) {
 		t.Game = game.NewGame(t.SeatedPlayers, t.GameSettings)
 		// Start the first hand
 		t.Game.StartNewHand()
-		// Reset Players for the next game
-		t.SeatedPlayers = []string{t.Table.HostID}
 		// Announce the start of the game
 		t.BroadcastMessage(msg.GameStartedMessage(t.Game.PlayerOrder))
 		for _, playerID := range t.Game.PlayerOrder {
@@ -123,6 +121,8 @@ func HandleEndGameCommand(t *TableWorker, clientID string, data interface{}) {
 	} else if t.Game == nil {
 		t.DirectMessage(msg.ErrorMessage(clientID, "game has not been initialized"))
 	} else {
+		// Reset Players for the next game
+		t.SeatedPlayers = []string{t.Table.HostID}
 		t.BroadcastMessage(msg.GameOverMessage())
 		t.Game = nil
 	}
