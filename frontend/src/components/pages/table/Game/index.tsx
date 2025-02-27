@@ -9,6 +9,7 @@ import Blind from "./Center/Blind";
 import CallAnAce from "./Center/CallAnAce";
 import Trick from "./Center/Trick";
 import GameUpdates from "./GameUpdates";
+import OpponentHand from "./OpponentHand";
 import PlayerHand from "./PlayerHand";
 import TrickPile from "./TrickPile";
 
@@ -28,30 +29,35 @@ export default function Game() {
             seat.style.left = "50%";
             seat.style.transform = "translateX(-50%)";
             seat.style.bottom = "200px";
+            seat.style.zIndex = "4";
             break;
           case 1:
             // Player 2 (left )
-            seat.style.left = "0px";
-            seat.style.top = "45%";
+            seat.style.left = "2rem";
+            seat.style.top = "50%";
             seat.style.transform = "translateY(-50%) rotate(90deg)";
+            seat.style.zIndex = "4";
             break;
           case 2:
             // Player 3 (top left)
             seat.style.left = "33%";
-            seat.style.transform = "translateX(-25%)";
-            seat.style.top = "0px";
+            seat.style.transform = "translateX(-33%)";
+            seat.style.top = "5rem";
+            seat.style.zIndex = "4";
             break;
           case 3:
             // Player 4 (top right)
-            seat.style.right = "25%";
-            seat.style.transform = "translateX(25%)";
-            seat.style.top = "0px";
+            seat.style.right = "33%";
+            seat.style.transform = "translateX(33%)";
+            seat.style.top = "5rem";
+            seat.style.zIndex = "4";
             break;
           case 4:
             // Player 5 (right )
-            seat.style.right = "0px";
+            seat.style.right = "2rem";
             seat.style.top = "50%";
-            seat.style.transform = "translateY(-50%) rotate(-90deg)";
+            seat.style.transform = "translateY(-50%) rotate(270deg)";
+            seat.style.zIndex = "4";
             break;
         }
       }
@@ -74,15 +80,43 @@ export default function Game() {
       {phase === HAND_PHASE.CALL && isUpNext && <CallAnAce />}
       {phase === HAND_PHASE.PLAY && <Trick />}
       <GameUpdates />
-      <PlayerHand />
       <Bury />
       <TrickPile />
+      {playerOrder.map((playerId, index) =>
+        index === 0 ? (
+          <PlayerHand key={`hand-${playerId}`} />
+        ) : index === 1 ? (
+          <OpponentHand
+            key={`hand-${playerId}`}
+            playerId={playerId}
+            position="left"
+          />
+        ) : index === 2 ? (
+          <OpponentHand
+            key={`hand-${playerId}`}
+            playerId={playerId}
+            position="top-left"
+          />
+        ) : index === 3 ? (
+          <OpponentHand
+            key={`hand-${playerId}`}
+            playerId={playerId}
+            position="top-right"
+          />
+        ) : (
+          <OpponentHand
+            key={`hand-${playerId}`}
+            playerId={playerId}
+            position="right"
+          />
+        ),
+      )}
       {playerOrder.map((playerId) => (
         <ProfileSnapshot
           id={`player-${playerId}`}
+          key={`player-${playerId}`}
           variant="name-row"
           size="small"
-          key={playerId}
           uid={playerId}
         />
       ))}

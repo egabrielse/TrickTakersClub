@@ -45,11 +45,13 @@ export default function TablePage() {
         </Box>
         {inProgress && settings && (
           <>
-            <Typography variant="overline" lineHeight={1}>
-              {CALLING_METHODS[settings.callingMethod].LABEL}
+            <Typography variant="body1" lineHeight={1}>
+              {CALLING_METHODS[settings.callingMethod].LABEL.toUpperCase()}
             </Typography>
-            <Typography variant="overline">
-              {NO_PICK_RESOLUTIONS[settings.noPickResolution].LABEL}
+            <Typography variant="body1">
+              {NO_PICK_RESOLUTIONS[
+                settings.noPickResolution
+              ].LABEL.toUpperCase()}
             </Typography>
           </>
         )}

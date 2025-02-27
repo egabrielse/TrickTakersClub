@@ -73,7 +73,7 @@ export default function PlayerHand() {
     return null;
   }
   return (
-    <CardFan baseZIndex={3}>
+    <CardFan id="player-hand" style={{ top: "100%", left: "50%" }}>
       {hand.map((card) => (
         <Card
           id={`card-${card.suit}-${card.rank}`}
