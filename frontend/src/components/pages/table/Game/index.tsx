@@ -4,12 +4,12 @@ import { useAppSelector } from "../../../../store/hooks";
 import selectors from "../../../../store/selectors";
 import handSlice from "../../../../store/slices/hand.slice";
 import ProfileSnapshot from "../../../common/ProfileSnapshot";
-import PlayerHand from "../PlayerHand";
 import Bury from "./BuriedCards";
 import Blind from "./Center/Blind";
 import CallAnAce from "./Center/CallAnAce";
 import Trick from "./Center/Trick";
 import GameUpdates from "./GameUpdates";
+import PlayerHand from "./PlayerHand";
 import TrickPile from "./TrickPile";
 
 export default function Game() {

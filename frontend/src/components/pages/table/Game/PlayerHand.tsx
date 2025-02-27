@@ -1,14 +1,14 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { HAND_PHASE } from "../../../constants/game";
-import { COMMAND_TYPES } from "../../../constants/message";
-import { useAppSelector } from "../../../store/hooks";
-import selectors from "../../../store/selectors";
-import handSlice from "../../../store/slices/hand.slice";
-import { PlayingCard } from "../../../types/card";
-import { handContainsCard } from "../../../utils/card";
-import Card from "../../common/Card";
-import CardFan from "../../common/CardFan";
-import ConnectionContext from "./ConnectionContext";
+import { HAND_PHASE } from "../../../../constants/game";
+import { COMMAND_TYPES } from "../../../../constants/message";
+import { useAppSelector } from "../../../../store/hooks";
+import selectors from "../../../../store/selectors";
+import handSlice from "../../../../store/slices/hand.slice";
+import { PlayingCard } from "../../../../types/card";
+import { handContainsCard } from "../../../../utils/card";
+import Card from "../../../common/Card";
+import CardFan from "../../../common/CardFan";
+import ConnectionContext from "../ConnectionContext";
 
 export default function PlayerHand() {
   const { sendCommand } = useContext(ConnectionContext);
@@ -69,6 +69,9 @@ export default function PlayerHand() {
     }
   }, [blindSize, phase, selected, sendCommand]);
 
+  if (hand.length === 0) {
+    return null;
+  }
   return (
     <CardFan baseZIndex={3}>
       {hand.map((card) => (
