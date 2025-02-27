@@ -9,8 +9,8 @@ import {
 import { useState } from "react";
 import { GameSummaryDialogParams } from "../../../types/dialog";
 import ProfileSnapshot from "../../common/ProfileSnapshot";
-import BreakdownTable from "../../pages/table/Game/Summary/BreakdownTable";
-import ScoresTable from "../../pages/table/Game/Summary/ScoresTable";
+import BreakdownTable from "../../pages/table/Summary/BreakdownTable";
+import ScoresTable from "../../pages/table/Summary/ScoresTable";
 import CloseDialogButton from "../components/CloseDialogButton";
 import DialogBody from "../components/DialogBody";
 import DialogHeader from "../components/DialogHeader";

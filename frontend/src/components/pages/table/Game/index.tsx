@@ -1,11 +1,20 @@
 import { useEffect } from "react";
-import { useAppSelector } from "../../../store/hooks";
-import selectors from "../../../store/selectors";
-import ProfileSnapshot from "../../common/ProfileSnapshot";
-import Center from "./Game/Center";
-import GameUpdates from "./Game/GameUpdates";
+import { HAND_PHASE } from "../../../../constants/game";
+import { useAppSelector } from "../../../../store/hooks";
+import selectors from "../../../../store/selectors";
+import handSlice from "../../../../store/slices/hand.slice";
+import ProfileSnapshot from "../../../common/ProfileSnapshot";
+import PlayerHand from "../PlayerHand";
+import Bury from "./BuriedCards";
+import Blind from "./Center/Blind";
+import CallAnAce from "./Center/CallAnAce";
+import Trick from "./Center/Trick";
+import GameUpdates from "./GameUpdates";
+import TrickPile from "./TrickPile";
 
 export default function Game() {
+  const isUpNext = useAppSelector(selectors.isUpNext);
+  const phase = useAppSelector(handSlice.selectors.phase);
   const playerOrder = useAppSelector(selectors.playerOrderStartingWithUser);
 
   useEffect(() => {
@@ -18,7 +27,7 @@ export default function Game() {
             // Player 1 (bottom )
             seat.style.left = "50%";
             seat.style.transform = "translateX(-50%)";
-            seat.style.bottom = "0px";
+            seat.style.bottom = "200px";
             break;
           case 1:
             // Player 2 (left )
@@ -51,8 +60,23 @@ export default function Game() {
 
   return (
     <>
-      <Center />
+      <div
+        style={{
+          width: 2,
+          height: 2,
+          background: "red",
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+        }}
+      />
+      {phase === HAND_PHASE.PICK && <Blind />}
+      {phase === HAND_PHASE.CALL && isUpNext && <CallAnAce />}
+      {phase === HAND_PHASE.PLAY && <Trick />}
       <GameUpdates />
+      <PlayerHand />
+      <Bury />
+      <TrickPile />
       {playerOrder.map((playerId) => (
         <ProfileSnapshot
           id={`player-${playerId}`}

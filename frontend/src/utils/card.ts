@@ -156,9 +156,9 @@ export const cardSizeToPixels = (size: CardSize | undefined) => {
     if (size === "small") {
         ratio = 0.8;
     } else if (size === "large") {
-        ratio = 1.2;
+        ratio = 1.25;
     }
-    return { width: 63 * ratio, height: 88 * ratio };
+    return { width: 126 * ratio, height: 176 * ratio };
 };
 
 /**

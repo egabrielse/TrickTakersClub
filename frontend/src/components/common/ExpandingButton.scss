@@ -17,10 +17,15 @@
         max-height: 320px;
         border-radius: 0.5rem !important;
 
+        .ExpandingButton-Button {
+            height: 2.5rem;
+            width: 2.5rem;
+        }
+
         .ExpandingButton-Title {
             display: flex;
             align-items: center;
-            min-height: 3rem;
+            min-height: 2.5rem;
             padding-left: 0.5rem;
             width: 100%;
             opacity: 1;
@@ -48,6 +53,7 @@
         width: 3rem;
         height: 3rem;
         transition: 250ms;
+        cursor: pointer;
     }
 
     &-Title {

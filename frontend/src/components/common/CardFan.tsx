@@ -1,46 +1,35 @@
 import { CardProps } from "@mui/material";
-import { ReactElement, useCallback, useEffect } from "react";
-import { useResizeDetector } from "react-resize-detector";
+import { ReactElement, useEffect } from "react";
 import "./CardFan.scss";
 
 type CardFanProps = {
   children: Array<ReactElement<CardProps>>;
-  width: number;
+  baseZIndex?: number;
 };
 
-export default function CardFan({ children, width }: CardFanProps) {
-  const reLayout = useCallback(() => {
+export default function CardFan({ children, baseZIndex }: CardFanProps) {
+  useEffect(() => {
     const angle = 65; // Example angle, you can adjust as needed
     const count = children.length;
     const offset = angle / 2;
 
-    children.forEach((child, i) => {
+    children.forEach((child, index) => {
       const increment = angle / (count + 1);
-      const transform = `translate(-50%, -50%) rotate(${-offset + increment * (i + 1)}deg)`;
+      const transform = `translate(-50%, 20%) rotate(${-offset + increment * (index + 1)}deg)`;
       const element = document.getElementById(child.props.id as string);
       if (element) {
+        element.style.position = "absolute";
+        // place cards at bottom center
+        element.style.left = "50%";
+        element.style.bottom = "0px";
         element.style.transform = transform;
-        element.style.transformOrigin = `center ${width}%`;
+        element.style.transformOrigin = `center ${(children.length + 1) * 75}px`;
+        if (baseZIndex) {
+          element.style.zIndex = String(baseZIndex + index);
+        }
       }
     });
-  }, [children, width]);
+  }, [children]);
 
-  const { ref } = useResizeDetector({
-    handleHeight: false,
-    refreshMode: "debounce",
-    refreshRate: 250,
-    onResize: reLayout,
-  });
-
-  useEffect(() => {
-    // Relayout the fan whenever the number of cards changes
-    reLayout();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [children.length]);
-
-  return (
-    <div ref={ref} className="CardFan" style={{ width }}>
-      {children}
-    </div>
-  );
+  return children;
 }

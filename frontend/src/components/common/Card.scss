@@ -1,42 +1,41 @@
 .CardContainer {
     position: relative;
-    background-color: rgba(255, 255, 255, 0.2);
-    transition: translate 250ms ease-in;
-    transition: scale 250ms ease-in;
-    border-radius: 5%;
-    scale: 1;
+    transition: all 250ms ease-in;
 
     &.disabled {
-        filter: brightness(85%);
+        filter: brightness(75%);
     }
 
     &.interactive {
         cursor: pointer;
 
-        &:hover {
-            transition: translate 250ms ease-in;
-            translate: 0% -10%;
+        .Card {
+            &:hover {
+                transition: translate 250ms ease-in;
+                translate: 0% -10%;
+            }
         }
     }
 
     &.highlighted {
         .Card {
-            box-shadow: 1px 0 3px 3px rgba(255, 215, 0, 0.5);
-        }
+            &:hover {
+                transition: translate 250ms ease-in;
+                translate: 0% -15% !important;
+            }
 
-        transition: translate 250ms ease-in;
-        translate: 0% -15% !important;
-
-        &:hover {
             transition: translate 250ms ease-in;
             translate: 0% -15% !important;
         }
+
+
     }
 
     .Card {
-        display: flex;
-        border-radius: 5%;
-        box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.75);
+        object-fit: fill;
+        height: 100%;
+        width: 100%;
+        border-radius: 4%;
     }
 
     .OverlayText {

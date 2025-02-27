@@ -20,7 +20,7 @@ export default function HeaderBar() {
 
           <Box sx={{ flexGrow: { xs: 1, sm: 0 }, display: "flex" }}>
             <AppLogo size="large" />
-            <Typography variant="h6" color="white" sx={{ lineHeight: 0.75 }}>
+            <Typography variant="h6" sx={{ lineHeight: 0.75 }}>
               &nbsp;TRICK
               <br />
               TAKERS

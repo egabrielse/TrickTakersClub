@@ -6,9 +6,9 @@ import { PlayingCard } from "../../../../../types/card";
 import Card from "../../../../common/Card";
 import PaperButton from "../../../../common/PaperButton";
 import ConnectionContext from "../../ConnectionContext";
-import "./Call.scss";
+import "./CallAnAce.scss";
 
-export default function Call() {
+export default function CallAnAce() {
   const { sendCommand } = useContext(ConnectionContext);
   const callableAces = useAppSelector(handSlice.selectors.callableAces);
 
@@ -21,7 +21,7 @@ export default function Call() {
   };
 
   return (
-    <div className="Call">
+    <div className="CallAnAce">
       {callableAces.map((ace) => {
         return (
           <Card

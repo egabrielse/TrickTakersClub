@@ -1,20 +1,38 @@
 export const CALLING_METHODS = {
-    CUT_THROAT: 'cut-throat',
-    JACK_OF_DIAMONDS: 'jack-of-diamonds',
-    CALL_AN_ACE: 'call-an-ace',
+    ['cut-throat']: {
+        ID: "cut-throat",
+        LABEL: "Call an Ace",
+    },
+    ['jack-of-diamonds']: {
+        ID: "jack-of-diamonds",
+        LABEL: "Jack of Diamonds",
+    },
+    ['call-an-ace']: {
+        ID: "call-an-ace",
+        LABEL: "Cut Throat",
+    },
 } as const;
 
 export const NO_PICK_RESOLUTIONS = {
-    SCREW_THE_DEALER: 'screw-the-dealer',
-    LEASTERS: 'leasters',
-    MOSTERS: 'mosters',
+    ['screw-the-dealer']: {
+        ID: "screw-the-dealer",
+        LABEL: "Screw the Dealer",
+    },
+    ['leasters']: {
+        ID: "leasters",
+        LABEL: "Leasters",
+    },
+    ['mosters']: {
+        ID: "mosters",
+        LABEL: "Mosters",
+    },
 } as const;
 
 export const GAME_SETTINGS_DEFAULTS = {
     AUTO_DEAL: false,
     PLAYER_COUNT: 5,
-    CALLING_METHODS: CALLING_METHODS.JACK_OF_DIAMONDS,
-    NO_PICK_RESOLUTIONS: NO_PICK_RESOLUTIONS.SCREW_THE_DEALER,
+    CALLING_METHODS: CALLING_METHODS["jack-of-diamonds"],
+    NO_PICK_RESOLUTIONS: NO_PICK_RESOLUTIONS["screw-the-dealer"],
     DOUBLE_ON_THE_BUMP: false,
     BLITZING: false,
     CRACKING: false,

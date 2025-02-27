@@ -36,7 +36,7 @@ type HandSummary struct {
 	PlayerSummaries map[string]*PlayerSummary `json:"playerSummaries"` // Map of player IDs to summaries
 	PickerID        string                    `json:"pickerId"`        // ID of the player who picked
 	PartnerID       string                    `json:"partnerId"`       // ID of the picker's partner
-	OpponentIDs     []string                  `json:"OpponentIds"`     // IDs of the picker's opponents
+	OpponentIDs     []string                  `json:"opponentIds"`     // IDs of the picker's opponents
 	BurySummary     BurySummary               `json:"burySummary"`     // Summary of the picker's bury
 	TrickSummaries  []*TrickSummary           `json:"trickSummaries"`  // Summaries of tricks
 }

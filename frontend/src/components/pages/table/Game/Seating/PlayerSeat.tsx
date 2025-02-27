@@ -10,10 +10,10 @@ import { handContainsCard } from "../../../../../utils/card";
 import Card from "../../../../common/Card";
 import CardList from "../../../../common/CardList";
 import ConnectionContext from "../../ConnectionContext";
-import Bury from "./Bury";
+import Bury from "../BuriedCards";
+import TrickPile from "../TrickPile";
 import "./PlayerSeat.scss";
 import RoleChip from "./RoleChip";
-import TrickPile from "./TrickPile";
 
 export default function PlayerSeat({ playerId }: { playerId: string }) {
   const { sendCommand } = useContext(ConnectionContext);

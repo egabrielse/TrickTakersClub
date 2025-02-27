@@ -7,9 +7,9 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { HandSummary } from "../../../../../types/game";
-import Card from "../../../../common/Card";
-import ProfileSnapshot from "../../../../common/ProfileSnapshot";
+import { HandSummary } from "../../../../types/game";
+import Card from "../../../common/Card";
+import ProfileSnapshot from "../../../common/ProfileSnapshot";
 
 type BreakdownTableProps = {
   summary: HandSummary;

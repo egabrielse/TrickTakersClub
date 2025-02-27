@@ -18,36 +18,6 @@ import tableSlice from "../../../../store/slices/table.slice";
 import ConnectionContext from "../ConnectionContext";
 import "./GameSettingsForm.scss";
 
-const CallingMethodOptions = [
-  {
-    value: CALLING_METHODS.CALL_AN_ACE,
-    label: "Call an Ace",
-  },
-  {
-    value: CALLING_METHODS.JACK_OF_DIAMONDS,
-    label: "Jack of Diamonds",
-  },
-  {
-    value: CALLING_METHODS.CUT_THROAT,
-    label: "Cut Throat",
-  },
-];
-
-const NoPickResolutionOptions = [
-  {
-    value: NO_PICK_RESOLUTIONS.SCREW_THE_DEALER,
-    label: "Screw the Dealer",
-  },
-  {
-    value: NO_PICK_RESOLUTIONS.LEASTERS,
-    label: "Leasters",
-  },
-  {
-    value: NO_PICK_RESOLUTIONS.MOSTERS,
-    label: "Mosters",
-  },
-];
-
 export default function GameSettingsForm() {
   const isHost = useAppSelector(selectors.isHost);
   const { sendCommand } = useContext(ConnectionContext);
@@ -122,9 +92,9 @@ export default function GameSettingsForm() {
             disabled={inputDisabled}
             onChange={(event) => updateCallingMethod(event.target.value)}
           >
-            {CallingMethodOptions.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
+            {Object.values(CALLING_METHODS).map((option) => (
+              <MenuItem key={option.ID} value={option.ID}>
+                {option.LABEL}
               </MenuItem>
             ))}
           </Select>
@@ -139,9 +109,9 @@ export default function GameSettingsForm() {
             disabled={inputDisabled}
             onChange={(event) => updateNoPickResolution(event.target.value)}
           >
-            {NoPickResolutionOptions.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
+            {Object.values(NO_PICK_RESOLUTIONS).map((option) => (
+              <MenuItem key={option.ID} value={option.ID}>
+                {option.LABEL}
               </MenuItem>
             ))}
           </Select>

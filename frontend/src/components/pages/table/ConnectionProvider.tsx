@@ -264,10 +264,10 @@ export default function ConnectionProvider({
 
   return loading ? (
     <LoadingOverlay text={`Searching for ${paramTableId}`} />
-  ) : client === null ? (
-    <LoadingOverlay text={`Connecting to ${paramTableId}`} />
   ) : error ? (
     <ErrorPage error={error} />
+  ) : client === null ? (
+    <LoadingOverlay text={`Connecting to ${paramTableId}`} />
   ) : (
     <AblyProvider client={client}>
       <ChannelProvider channelName={broadcastName}>

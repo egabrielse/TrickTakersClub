@@ -138,9 +138,9 @@ export const findCallableAces = (hand: PlayingCard[]) => {
 
     hand.forEach((card) => {
         if (card.rank === CARD_RANK.ACE) {
-            aces[card.suit] = true
+            aces[card.suit] = true;
         } else if (!isTrumpCard(card)) {
-            failSuit[card.suit] = true
+            failSuit[card.suit] = true;
         }
     })
 

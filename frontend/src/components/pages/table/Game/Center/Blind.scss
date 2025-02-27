@@ -1,11 +1,9 @@
 .Blind {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
     gap: 0.5rem;
-
-    &-VerticalButton {
-        min-width: 3rem !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-    }
 }
