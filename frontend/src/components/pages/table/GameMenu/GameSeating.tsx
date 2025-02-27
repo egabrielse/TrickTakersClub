@@ -1,8 +1,8 @@
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import PlayIcon from "@mui/icons-material/PlayArrow";
 import { Button, Typography } from "@mui/material";
 import { useContext } from "react";
+import { PLAYER_COUNT } from "../../../../constants/game";
 import { COMMAND_TYPES } from "../../../../constants/message";
 import { useAppSelector } from "../../../../store/hooks";
 import selectors from "../../../../store/selectors";
@@ -15,14 +15,12 @@ import "./GameSeating.scss";
 export default function GameSeating() {
   const { sendCommand } = useContext(ConnectionContext);
   const seating = useAppSelector(tableSlice.selectors.seating);
-  const settings = useAppSelector(tableSlice.selectors.settings);
   const isHost = useAppSelector(selectors.isHost);
   const isSeated = useAppSelector(selectors.isSeated);
-  const tableFull = seating.length >= settings!.playerCount;
 
   const renderSeats = () => {
     const seats = [];
-    for (let i = 0; i < settings!.playerCount; i++) {
+    for (let i = 0; i < PLAYER_COUNT; i++) {
       if (seating.length > i) {
         const uid = seating[i];
         seats.push(<ProfileSnapshot key={uid} uid={uid} variant="name-row" />);
@@ -41,10 +39,6 @@ export default function GameSeating() {
     sendCommand({ name: COMMAND_TYPES.STAND_UP, data: undefined });
   };
 
-  const startGame = () => {
-    sendCommand({ name: COMMAND_TYPES.START_GAME, data: undefined });
-  };
-
   return (
     <div className="GameSeating">
       <Typography variant="h2">Players</Typography>
@@ -59,16 +53,6 @@ export default function GameSeating() {
       >
         {isSeated ? "Stand Up" : "Sit Down"}
       </Button>
-      {isHost && (
-        <Button
-          id="start-game-button"
-          startIcon={<PlayIcon />}
-          onClick={startGame}
-          disabled={!tableFull}
-        >
-          Start Game
-        </Button>
-      )}
     </div>
   );
 }

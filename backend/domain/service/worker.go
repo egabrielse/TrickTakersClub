@@ -86,8 +86,7 @@ func (t *TableWorker) HandleCommands(message *ably.Message) {
 		HandleUpdateDoubleOnTheBump(t, message.ClientID, message.Data)
 	case msg.CommandType.UpdateNoPickResolution:
 		HandleUpdateNoPickResolution(t, message.ClientID, message.Data)
-	case msg.CommandType.UpdatePlayerCount:
-		HandleUpdatePlayerCount(t, message.ClientID, message.Data)
+
 	case msg.CommandType.SitDown:
 		HandleSitDownCommand(t, message.ClientID, message.Data)
 	case msg.CommandType.StandUp:

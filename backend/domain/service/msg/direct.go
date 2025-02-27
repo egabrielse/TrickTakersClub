@@ -35,13 +35,12 @@ func BuriedCardsMessage(clientID string, cards []*deck.Card) (string, string, *B
 }
 
 type DealHandData struct {
-	DealerID  string       `json:"dealerId"`
-	Cards     []*deck.Card `json:"cards"`
-	BlindSize int          `json:"blindSize"`
+	DealerID string       `json:"dealerId"`
+	Cards    []*deck.Card `json:"cards"`
 }
 
-func DealHandMessage(clientID, dealerID string, cards []*deck.Card, blindSize int) (string, string, *DealHandData) {
-	return clientID, DirectType.DealHand, &DealHandData{DealerID: dealerID, Cards: cards, BlindSize: blindSize}
+func DealHandMessage(clientID, dealerID string, cards []*deck.Card) (string, string, *DealHandData) {
+	return clientID, DirectType.DealHand, &DealHandData{DealerID: dealerID, Cards: cards}
 }
 
 type ErrorData struct {
@@ -72,7 +71,6 @@ type InitializeData struct {
 	HandsPlayed  int                     `json:"handsPlayed"`
 	Settings     *game.GameSettings      `json:"settings"`
 	CalledCard   *deck.Card              `json:"calledCard"`
-	BlindSize    int                     `json:"blindSize"`
 	Phase        string                  `json:"phase"`
 	UpNextID     string                  `json:"upNextId"`
 	PickerID     string                  `json:"pickerId"`
@@ -98,7 +96,6 @@ func InitializeMessage(tableID, hostID, clientID string, seating []string, setti
 		data.Scoreboard = game.Scoreboard
 		data.PlayerOrder = game.PlayerOrder
 		data.HandsPlayed = game.HandsPlayed
-		data.BlindSize = game.Settings.GetBlindSize()
 
 		// Hand is in progress, include hand state
 		if game.HandInProgress() {

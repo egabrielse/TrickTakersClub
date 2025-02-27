@@ -51,8 +51,7 @@ func (g *Game) StartNewHand() error {
 			players.SetHand(playerID, deck.Draw(g.Settings.HandSize))
 		}
 		g.Players = players
-		blindSize := g.Settings.GetBlindSize()
-		g.Blind = hand.NewBlind(turnOrder, deck.Draw(blindSize))
+		g.Blind = hand.NewBlind(turnOrder, deck.Draw(BlindSize))
 		g.Bury = hand.NewBury()
 		g.Call = hand.NewCall()
 		g.Play = hand.NewPlay(turnOrder, g.Settings.HandSize)
@@ -139,8 +138,8 @@ func (g *Game) BuryCards(playerID string, cards []*deck.Card) (*BuryResult, erro
 		return nil, fmt.Errorf("bury phase is already complete")
 	} else if ok := g.Players.HandContains(playerID, cards); !ok {
 		return nil, fmt.Errorf("player does not possess all the cards")
-	} else if len(cards) != g.Settings.GetBlindSize() {
-		return nil, fmt.Errorf("expected %d cards, got %d", g.Settings.GetBlindSize(), len(cards))
+	} else if len(cards) != BlindSize {
+		return nil, fmt.Errorf("expected %d cards, got %d", BlindSize, len(cards))
 	} else {
 		// Remove the buried cards from the player's hand
 		g.Players.RemoveCards(playerID, cards)

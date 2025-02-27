@@ -1,6 +1,6 @@
 import { Fade, Paper, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { HAND_PHASE } from "../../../../../constants/game";
+import { BLIND_SIZE, HAND_PHASE } from "../../../../../constants/game";
 import { BROADCAST_TYPES } from "../../../../../constants/message";
 import { useAppDispatch, useAppSelector } from "../../../../../store/hooks";
 import selectors from "../../../../../store/selectors";
@@ -84,7 +84,6 @@ export default function GameUpdates() {
   const upNextId = useAppSelector(handSlice.selectors.upNextId);
   const phase = useAppSelector(handSlice.selectors.phase);
   const isUpNext = useAppSelector(selectors.isUpNext);
-  const blindSize = useAppSelector(handSlice.selectors.blindSize);
   const [nextUpdate, setNextUpdate] = useState<UpdateMessages | null>(null);
 
   useEffect(() => {
@@ -110,7 +109,7 @@ export default function GameUpdates() {
               : phase === HAND_PHASE.CALL
                 ? "Call a card or go it alone"
                 : phase === HAND_PHASE.BURY
-                  ? `Pick ${blindSize} cards to bury`
+                  ? `Pick ${BLIND_SIZE} cards to bury`
                   : phase === HAND_PHASE.PLAY
                     ? "Play a card"
                     : null}

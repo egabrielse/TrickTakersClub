@@ -19,22 +19,6 @@ func HandleUpdateAutoDeal(t *TableWorker, clientID string, data interface{}) {
 	}
 }
 
-func HandleUpdatePlayerCount(t *TableWorker, clientID string, data interface{}) {
-	if t.Table.HostID != clientID {
-		t.DirectMessage(msg.ErrorMessage(clientID, "only the host can update settings"))
-	} else if t.Game != nil {
-		t.DirectMessage(msg.ErrorMessage(clientID, "game already in progress"))
-	} else if params, err := msg.ExtractParams[msg.UpdatePlayerCountParams](data); utils.LogOnError(err) {
-		t.DirectMessage(msg.ErrorMessage(clientID, "invalid settings payload"))
-	} else {
-		if err := t.GameSettings.SetPlayerCount(params.PlayerCount); err != nil {
-			t.DirectMessage(msg.ErrorMessage(clientID, err.Error()))
-		} else {
-			t.BroadcastMessage(msg.SettingsUpdatedMessage(t.GameSettings, t.SeatedPlayers))
-		}
-	}
-}
-
 func HandleUpdateCallingMethod(t *TableWorker, clientID string, data interface{}) {
 	if t.Table.HostID != clientID {
 		t.DirectMessage(msg.ErrorMessage(clientID, "only the host can update settings"))
@@ -83,7 +67,7 @@ func HandleUpdateDoubleOnTheBump(t *TableWorker, clientID string, data interface
 func HandleSitDownCommand(t *TableWorker, clientID string, data interface{}) {
 	if t.Game != nil {
 		t.DirectMessage(msg.ErrorMessage(clientID, "game already in progress"))
-	} else if t.GameSettings.PlayerCount == len(t.SeatedPlayers) {
+	} else if len(t.SeatedPlayers) == game.PlayerCount {
 		t.DirectMessage(msg.ErrorMessage(clientID, "table is full"))
 	} else {
 		t.SeatedPlayers = append(t.SeatedPlayers, clientID)
@@ -111,7 +95,7 @@ func HandleStartGameCommand(t *TableWorker, clientID string, data interface{}) {
 		t.DirectMessage(msg.ErrorMessage(clientID, "only the host can start the game"))
 	} else if t.Game != nil {
 		t.DirectMessage(msg.ErrorMessage(clientID, "game already in progress"))
-	} else if len(t.SeatedPlayers) != t.GameSettings.PlayerCount {
+	} else if len(t.SeatedPlayers) != game.PlayerCount {
 		t.DirectMessage(msg.ErrorMessage(clientID, "not enough players"))
 	} else {
 		// Start a new game
@@ -127,7 +111,6 @@ func HandleStartGameCommand(t *TableWorker, clientID string, data interface{}) {
 				playerID,
 				t.Game.WhoIsDealer(),
 				t.Game.Players.GetHand(playerID),
-				t.Game.Settings.GetBlindSize(),
 			))
 		}
 		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext()))

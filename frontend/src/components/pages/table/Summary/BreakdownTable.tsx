@@ -42,6 +42,7 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
                   id={`summary-${card.rank}-${card.suit}`}
                   key={`summary-${card.rank}-${card.suit}`}
                   card={card}
+                  size="small"
                 />
               ))}
             </TableCell>
@@ -53,11 +54,12 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
                 <ProfileSnapshot variant="avatar" uid={trickSum.takerId} />
               </TableCell>
               <TableCell>
-                {trickSum.cards.map((card) => (
+                {Object.values(trickSum.cards).map((card) => (
                   <Card
                     id={`summary-${card.rank}-${card.suit}`}
                     key={`summary-${card.rank}-${card.suit}`}
                     card={card}
+                    size="small"
                   />
                 ))}
               </TableCell>

@@ -36,8 +36,6 @@ var CommandType = struct {
 	UpdateAutoDeal string
 	// Updates the game settings - pick resolution
 	UpdateNoPickResolution string
-	// Updates the game settings - player count
-	UpdatePlayerCount string
 }{
 	Bury:                   "bury",
 	Call:                   "call",
@@ -53,7 +51,6 @@ var CommandType = struct {
 	UpdateDoubleOnTheBump:  "update-double-on-the-bump",
 	UpdateAutoDeal:         "update-auto-deal",
 	UpdateNoPickResolution: "update-no-pick-resolution",
-	UpdatePlayerCount:      "update-player-count",
 }
 
 type BuryCommandParams struct {
@@ -82,10 +79,6 @@ type UpdateDoubleOnTheBumpParams struct {
 
 type UpdateNoPickResolutionParams struct {
 	NoPickResolution string `json:"noPickResolution"`
-}
-
-type UpdatePlayerCountParams struct {
-	PlayerCount int `json:"playerCount"`
 }
 
 func ExtractParams[T any](data interface{}) (*T, error) {

@@ -1,5 +1,9 @@
 package game
 
+const PlayerCount = 5
+const HandSize = 6
+const BlindSize = 2
+
 var CallingMethod = struct {
 	CutThroat      string
 	JackOfDiamonds string
@@ -22,14 +26,12 @@ var NoPickResolution = struct {
 
 var GameDefaults = struct {
 	AutoDeal         bool
-	PlayerCount      int
 	CallingMethod    string
 	NoPickResolution string
 	DoubleOnTheBump  bool
 	HandSize         int
 }{
 	AutoDeal:         true,
-	PlayerCount:      5,
 	CallingMethod:    CallingMethod.JackOfDiamonds,
 	NoPickResolution: NoPickResolution.ScrewTheDealer,
 	DoubleOnTheBump:  false,

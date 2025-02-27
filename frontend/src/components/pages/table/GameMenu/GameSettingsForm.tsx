@@ -1,14 +1,7 @@
-import {
-  InputLabel,
-  MenuItem,
-  Select,
-  Slider,
-  Typography,
-} from "@mui/material";
+import { InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import {
   CALLING_METHODS,
-  GAME_SETTINGS_PARAMS,
   NO_PICK_RESOLUTIONS,
 } from "../../../../constants/game";
 import { COMMAND_TYPES } from "../../../../constants/message";
@@ -30,14 +23,6 @@ export default function GameSettingsForm() {
   const setPendingWithTimeout = () => {
     setPending(true);
     setTimeout(() => setPending(false), 1000);
-  };
-
-  const updatePlayerCount = (value: number) => {
-    setPendingWithTimeout();
-    sendCommand({
-      name: COMMAND_TYPES.UPDATE_PLAYER_COUNT,
-      data: { playerCount: value },
-    });
   };
 
   const updateCallingMethod = (value: string) => {
@@ -67,22 +52,6 @@ export default function GameSettingsForm() {
     <div className="GameSettingsForm">
       <Typography variant="h2">Game Settings</Typography>
       <div className="GameSettingsForm-Body">
-        <div className="LabeledInput">
-          <InputLabel margin="dense">Player Count</InputLabel>
-          <Slider
-            id="playerCount"
-            value={settings.playerCount}
-            disabled={inputDisabled}
-            onChange={(_, value) => updatePlayerCount(value as number)}
-            valueLabelDisplay="auto"
-            min={GAME_SETTINGS_PARAMS.MIN_PLAYERS}
-            max={GAME_SETTINGS_PARAMS.MAX_PLAYERS}
-            marks={GAME_SETTINGS_PARAMS.SUPPORTED_PLAYER_COUNTS.map(
-              (value) => ({ value, label: value.toString() }),
-            )}
-          />
-        </div>
-
         <div className="LabeledInput">
           <InputLabel margin="dense">Calling Method</InputLabel>
           <Select

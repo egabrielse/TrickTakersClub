@@ -19,7 +19,6 @@ export type NoPickResolution = typeof NO_PICK_RESOLUTIONS[keyof typeof NO_PICK_R
 
 export type GameSettings = {
     autoDeal: boolean;
-    playerCount: number;
     callingMethod: CallingMethod;
     noPickResolution: NoPickResolution;
     doubleOnTheBump: boolean;
@@ -38,7 +37,7 @@ export type Scoreboard = Array<ScoreboardRow>;
 
 export type TrickSummary = {
     takerId: string;
-    cards: PlayingCard[];
+    cards: Record<string, PlayingCard>;
     points: number;
     complete: boolean;
 };

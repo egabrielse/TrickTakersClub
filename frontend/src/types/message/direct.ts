@@ -22,7 +22,6 @@ export interface InitializeMessage extends Message {
         playerOrder?: string[];
         handsPlayed?: number;
         calledCard?: PlayingCard;
-        blindSize?: number;
         phase?: HandPhase;
         upNextId?: string;
         pickerId?: string;
@@ -39,7 +38,6 @@ export interface DealHandMessage extends Message {
     data: {
         dealerId: string;
         cards: PlayingCard[];
-        blindSize: number;
     };
 }
 

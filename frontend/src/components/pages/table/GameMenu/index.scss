@@ -1,14 +1,27 @@
 .GameMenu {
     display: flex;
+    flex-direction: column;
     padding: 1rem;
     gap: 1rem;
 
-    &-Settings {
-        flex: 1;
+    &-Top {
+        display: flex;
+        height: fit-content;
+        gap: 1rem;
+
+        &-Settings {
+            flex: 1;
+        }
+
+        &-Waiting {
+            flex: 1;
+            max-width: 250px;
+        }
     }
 
-    &-Waiting {
-        flex: 1;
-        max-width: 250px;
+    &-Bottom {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
     }
 }

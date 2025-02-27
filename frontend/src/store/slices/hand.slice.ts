@@ -29,7 +29,6 @@ interface HandState {
     upNextId?: string;
     phase: HandPhase;
     hand: PlayingCard[];
-    blindSize: number;
     bury: PlayingCard[];
     calledCard?: PlayingCard;
     pickerId?: string;
@@ -42,7 +41,6 @@ interface HandState {
 const initialState: HandState = {
     phase: HAND_PHASE.SETUP,
     hand: [],
-    blindSize: 0,
     bury: [],
     summaries: [],
     updates: [],
@@ -58,7 +56,6 @@ const handSlice = createSlice({
             state.upNextId = action.payload.upNextId;
             state.phase = action.payload.phase || HAND_PHASE.SETUP;
             state.hand = [...(action.payload.hand || [])].sort(compareCards);
-            state.blindSize = action.payload.blindSize || 0;
             state.bury = action.payload.bury || [];
             state.calledCard = action.payload.calledCard;
             state.pickerId = action.payload.pickerId;
@@ -70,7 +67,6 @@ const handSlice = createSlice({
         dealHand: (state, action: PayloadAction<MessageData<DealHandMessage>>) => {
             state.dealerId = action.payload.dealerId;
             state.hand = action.payload.cards.sort(compareCards);
-            state.blindSize = action.payload.blindSize;
         },
         startNewTrick: (state, action: PayloadAction<MessageData<NewTrickMessage>>) => {
             state.currentTrick = {
@@ -147,7 +143,6 @@ const handSlice = createSlice({
         phase: (state: HandState) => state.phase,
         hand: (state: HandState) => state.hand,
         callableAces: (state: HandState) => findCallableAces(state.hand),
-        blindSize: (state: HandState) => state.blindSize,
         bury: (state: HandState) => state.bury,
         calledCard: (state: HandState) => state.calledCard,
         leadingCard: (state: HandState) =>

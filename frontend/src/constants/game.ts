@@ -28,9 +28,10 @@ export const NO_PICK_RESOLUTIONS = {
     },
 } as const;
 
+export const PLAYER_COUNT = 5;
+
 export const GAME_SETTINGS_DEFAULTS = {
     AUTO_DEAL: false,
-    PLAYER_COUNT: 5,
     CALLING_METHODS: CALLING_METHODS["jack-of-diamonds"],
     NO_PICK_RESOLUTIONS: NO_PICK_RESOLUTIONS["screw-the-dealer"],
     DOUBLE_ON_THE_BUMP: false,
@@ -56,7 +57,7 @@ export const HAND_PHASE = {
 export const MIN_GAME_WIDTH = 500;
 export const MIN_GAME_HEIGHT = 500;
 
-
+export const BLIND_SIZE = 2;
 
 export const PLAYER_ROLE = {
     PICKER: "picker",

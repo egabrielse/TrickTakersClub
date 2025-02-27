@@ -1,6 +1,6 @@
 import { Button } from "@mui/material";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { HAND_PHASE } from "../../../../../constants/game";
+import { BLIND_SIZE, HAND_PHASE } from "../../../../../constants/game";
 import { COMMAND_TYPES } from "../../../../../constants/message";
 import { useAppSelector } from "../../../../../store/hooks";
 import selectors from "../../../../../store/selectors";
@@ -23,7 +23,6 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
   const isPartner = useAppSelector(selectors.isPartner);
   const phase = useAppSelector(handSlice.selectors.phase);
   const playableCards = useAppSelector(selectors.playableCards);
-  const blindSize = useAppSelector(handSlice.selectors.blindSize);
   const hand = useAppSelector(handSlice.selectors.hand);
   const [selected, setSelected] = useState<PlayingCard[]>([]);
 
@@ -54,7 +53,7 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
       if (!isUpNext) {
         return false;
       } else if (phase === HAND_PHASE.BURY) {
-        return selected.includes(card) || selected.length < blindSize;
+        return selected.includes(card) || selected.length < BLIND_SIZE;
       } else if (phase === HAND_PHASE.PLAY) {
         return (
           selected.includes(card) ||
@@ -63,14 +62,14 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
       }
       return false;
     },
-    [isUpNext, phase, selected, blindSize, playableCards],
+    [isUpNext, phase, selected, playableCards],
   );
 
   /**
    * Bury the selected cards.
    */
   const buryCards = () => {
-    if (phase === HAND_PHASE.BURY && selected.length === blindSize) {
+    if (phase === HAND_PHASE.BURY && selected.length === BLIND_SIZE) {
       sendCommand({ name: COMMAND_TYPES.BURY, data: { cards: selected } });
     }
   };
@@ -93,7 +92,7 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
           // Placeholder for dealer chip
           <div style={{ height: 44 }} />
         )}
-        <TrickPile playerId={playerId} />
+        <TrickPile />
       </div>
       <div className="PlayerSeat-Center">
         <div className="PlayerSeat-Center-Top">
@@ -116,7 +115,7 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
             <Button
               variant="contained"
               color="primary"
-              disabled={selected.length !== blindSize}
+              disabled={selected.length !== BLIND_SIZE}
               onClick={buryCards}
             >
               Bury Cards

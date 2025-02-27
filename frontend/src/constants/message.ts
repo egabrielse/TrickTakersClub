@@ -24,7 +24,6 @@ export const COMMAND_TYPES = {
     SIT_DOWN: "sit-down",
     STAND_UP: "stand-up",
     UPDATE_AUTO_DEAL: "update-auto-deal",
-    UPDATE_PLAYER_COUNT: "update-player-count",
     UPDATE_CALLING_METHOD: "update-calling-method",
     UPDATE_NO_PICK_RESOLUTION: "update-no-pick-resolution",
     UPDATE_DOUBLE_ON_THE_BUMP: "update-double-on-the-bump",

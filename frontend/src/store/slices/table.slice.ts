@@ -22,7 +22,6 @@ const initialState: TableState = {
     seating: [],
     settings: {
         autoDeal: GAME_SETTINGS_DEFAULTS.AUTO_DEAL,
-        playerCount: GAME_SETTINGS_DEFAULTS.PLAYER_COUNT,
         callingMethod: GAME_SETTINGS_DEFAULTS.CALLING_METHODS.ID,
         noPickResolution: GAME_SETTINGS_DEFAULTS.NO_PICK_RESOLUTIONS.ID,
         doubleOnTheBump: GAME_SETTINGS_DEFAULTS.DOUBLE_ON_THE_BUMP,

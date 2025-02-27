@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { HAND_PHASE } from "../../../../constants/game";
+import { BLIND_SIZE, HAND_PHASE } from "../../../../constants/game";
 import { COMMAND_TYPES } from "../../../../constants/message";
 import { useAppSelector } from "../../../../store/hooks";
 import selectors from "../../../../store/selectors";
@@ -15,7 +15,6 @@ export default function PlayerHand() {
   const isUpNext = useAppSelector(selectors.isUpNext);
   const phase = useAppSelector(handSlice.selectors.phase);
   const playableCards = useAppSelector(selectors.playableCards);
-  const blindSize = useAppSelector(handSlice.selectors.blindSize);
   const hand = useAppSelector(handSlice.selectors.hand);
   const [selected, setSelected] = useState<PlayingCard[]>([]);
 
@@ -46,7 +45,7 @@ export default function PlayerHand() {
       if (!isUpNext) {
         return false;
       } else if (phase === HAND_PHASE.BURY) {
-        return selected.includes(card) || selected.length < blindSize;
+        return selected.includes(card) || selected.length < BLIND_SIZE;
       } else if (phase === HAND_PHASE.PLAY) {
         return (
           selected.includes(card) ||
@@ -55,7 +54,7 @@ export default function PlayerHand() {
       }
       return false;
     },
-    [isUpNext, phase, selected, blindSize, playableCards],
+    [isUpNext, phase, selected, playableCards],
   );
 
   useEffect(() => {
@@ -64,10 +63,10 @@ export default function PlayerHand() {
         name: COMMAND_TYPES.PLAY_CARD,
         data: { card: selected[0] },
       });
-    } else if (phase === HAND_PHASE.BURY && selected.length === blindSize) {
+    } else if (phase === HAND_PHASE.BURY && selected.length === BLIND_SIZE) {
       sendCommand({ name: COMMAND_TYPES.BURY, data: { cards: selected } });
     }
-  }, [blindSize, phase, selected, sendCommand]);
+  }, [phase, selected, sendCommand]);
 
   if (hand.length === 0) {
     return null;
