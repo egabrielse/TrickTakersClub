@@ -32,8 +32,6 @@ var CommandType = struct {
 	UpdateCallingMethod string
 	// Updates the game settings - bury resolution
 	UpdateDoubleOnTheBump string
-	// Updates the game settings - auto deal
-	UpdateAutoDeal string
 	// Updates the game settings - pick resolution
 	UpdateNoPickResolution string
 }{
@@ -49,7 +47,6 @@ var CommandType = struct {
 	StandUp:                "stand-up",
 	UpdateCallingMethod:    "update-calling-method",
 	UpdateDoubleOnTheBump:  "update-double-on-the-bump",
-	UpdateAutoDeal:         "update-auto-deal",
 	UpdateNoPickResolution: "update-no-pick-resolution",
 }
 
@@ -63,10 +60,6 @@ type CallCommandParams struct {
 
 type PlayCardCommandParams struct {
 	Card *deck.Card `json:"card"`
-}
-
-type UpdateAutoDealParams struct {
-	AutoDeal bool `json:"autoDeal"`
 }
 
 type UpdateCallingMethodParams struct {

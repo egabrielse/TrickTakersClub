@@ -150,16 +150,14 @@ func TimeoutMessage() (name string, data *TimeoutData) {
 	return BroadcastType.Timeout, &TimeoutData{}
 }
 
-type TrickDoneData struct {
-	TrickSummary *summary.TrickSummary `json:"trickSummary"`
-	HandSummary  *summary.HandSummary  `json:"handSummary"`
+type HandDoneData struct {
+	HandSummary *summary.HandSummary `json:"handSummary"`
 }
 
-func TrickDoneMessage(trickSum *summary.TrickSummary, handSum *summary.HandSummary) (name string, data *TrickDoneData) {
-	return BroadcastType.TrickDone, &TrickDoneData{TrickSummary: trickSum, HandSummary: handSum}
+func HandDoneMessage(handSum *summary.HandSummary) (name string, data *HandDoneData) {
+	return BroadcastType.TrickDone, &HandDoneData{HandSummary: handSum}
 }
 
-// Who's turn is it and what phase are we in
 type NewTrickData struct {
 	NextTrickOrder []string `json:"nextTrickOrder"`
 }
@@ -168,7 +166,6 @@ func NewTrickMessage(nextTrickOrder []string) (name string, data *NewTrickData) 
 	return BroadcastType.NewTrick, &NewTrickData{NextTrickOrder: nextTrickOrder}
 }
 
-// Who's turn is it and what phase are we in
 type UpNextData struct {
 	PlayerID string `json:"playerId"`
 	Phase    string `json:"phase"`

@@ -6,25 +6,21 @@ import (
 )
 
 type GameSettings struct {
-	AutoDeal         bool   `json:"autoDeal"`
 	CallingMethod    string `json:"callingMethod"`
 	NoPickResolution string `json:"noPickResolution"`
-	DoubleOnTheBump  bool   `json:"doubleOnTheBump"`
-	HandSize         int    `json:"handSize"`
+	DoubleOnTheBump  bool   `json:"doubleOnTheBump"` // TODO: Implement
+	Blitzing         bool   `json:"blitzing"`        // TODO: Implement
+	Cracking         bool   `json:"cracking"`        // TODO: Implement
 }
 
 func NewGameSettings() *GameSettings {
 	return &GameSettings{
-		AutoDeal:         GameDefaults.AutoDeal,
 		CallingMethod:    GameDefaults.CallingMethod,
 		NoPickResolution: GameDefaults.NoPickResolution,
 		DoubleOnTheBump:  GameDefaults.DoubleOnTheBump,
-		HandSize:         GameDefaults.HandSize,
+		Blitzing:         GameDefaults.Blitzing,
+		Cracking:         GameDefaults.Cracking,
 	}
-}
-
-func (gs *GameSettings) SetAutoDeal(autoDeal bool) {
-	gs.AutoDeal = autoDeal
 }
 
 func (gs *GameSettings) SetCallingMethod(callingMethod string) error {

@@ -25,17 +25,17 @@ var NoPickResolution = struct {
 }
 
 var GameDefaults = struct {
-	AutoDeal         bool
 	CallingMethod    string
 	NoPickResolution string
 	DoubleOnTheBump  bool
-	HandSize         int
+	Blitzing         bool
+	Cracking         bool
 }{
-	AutoDeal:         true,
 	CallingMethod:    CallingMethod.JackOfDiamonds,
 	NoPickResolution: NoPickResolution.ScrewTheDealer,
 	DoubleOnTheBump:  false,
-	HandSize:         6,
+	Blitzing:         false,
+	Cracking:         false,
 }
 
 var PlayerRole = struct {

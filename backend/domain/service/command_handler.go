@@ -6,19 +6,6 @@ import (
 	"main/utils"
 )
 
-func HandleUpdateAutoDeal(t *TableWorker, clientID string, data interface{}) {
-	if t.Table.HostID != clientID {
-		t.DirectMessage(msg.ErrorMessage(clientID, "only the host can update settings"))
-	} else if t.Game != nil {
-		t.DirectMessage(msg.ErrorMessage(clientID, "game already in progress"))
-	} else if params, err := msg.ExtractParams[msg.UpdateAutoDealParams](data); utils.LogOnError(err) {
-		t.DirectMessage(msg.ErrorMessage(clientID, "invalid setting value"))
-	} else {
-		t.GameSettings.SetAutoDeal(params.AutoDeal)
-		t.BroadcastMessage(msg.SettingsUpdatedMessage(t.GameSettings))
-	}
-}
-
 func HandleUpdateCallingMethod(t *TableWorker, clientID string, data interface{}) {
 	if t.Table.HostID != clientID {
 		t.DirectMessage(msg.ErrorMessage(clientID, "only the host can update settings"))
@@ -169,7 +156,8 @@ func HandleBuryCommand(t *TableWorker, clientID string, data interface{}) {
 			t.BroadcastMessage(msg.CalledCardMessage(result.CallResult.CalledCard))
 		}
 		if t.Game.Phase == game.HandPhase.Play {
-			t.BroadcastMessage(msg.NewTrickMessage(t.Game.GetTurnOrder()))
+			newTrick := t.Game.GetCurrentTrick()
+			t.BroadcastMessage(msg.NewTrickMessage(newTrick.TurnOrder))
 		}
 		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext()))
 	}
@@ -185,7 +173,8 @@ func HandleCallCommand(t *TableWorker, clientID string, data interface{}) {
 	} else {
 		t.BroadcastMessage(msg.CalledCardMessage(result.CalledCard))
 		t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext()))
-		t.BroadcastMessage(msg.NewTrickMessage(t.Game.GetTurnOrder()))
+		newTrick := t.Game.GetCurrentTrick()
+		t.BroadcastMessage(msg.NewTrickMessage(newTrick.TurnOrder))
 	}
 }
 
@@ -213,17 +202,17 @@ func HandlePlayCardCommand(t *TableWorker, clientID string, data interface{}) {
 			// Partner has been revealed, let all players know
 			t.BroadcastMessage(msg.PartnerRevealedMessage(result.PartnerID))
 		}
-		if result.TrickSummary == nil {
+		if result.TrickComplete && result.HandSummary == nil {
+			// Trick is over, but hand is not, start the next trick
+			newTrick := t.Game.GetCurrentTrick()
+			t.BroadcastMessage(msg.NewTrickMessage(newTrick.TurnOrder))
+			t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext()))
+		} else if result.TrickComplete && result.HandSummary != nil {
+			// Finished the last trick, send a summary of the hand
+			t.BroadcastMessage(msg.HandDoneMessage(result.HandSummary))
+		} else {
 			// Trick is not over, continue to the next player
 			t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext()))
-		} else {
-			t.BroadcastMessage(msg.TrickDoneMessage(result.TrickSummary, result.HandSummary))
-			if result.HandSummary == nil {
-				// Trick is over, but the hand is not, continue to the next player
-				// and send along the turn order for the next trick
-				t.BroadcastMessage(msg.NewTrickMessage(t.Game.GetTurnOrder()))
-				t.BroadcastMessage(msg.UpNextMessage(t.Game.Phase, t.Game.WhoIsNext()))
-			}
 		}
 	}
 }

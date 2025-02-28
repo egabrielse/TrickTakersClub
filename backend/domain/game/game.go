@@ -20,7 +20,7 @@ type Game struct {
 	Blind         *hand.Blind   `json:"blind"`         // Blind Phase
 	Bury          *hand.Bury    `json:"bury"`          // Bury Phase
 	Call          *hand.Call    `json:"call"`          // Call Phase
-	Play          *hand.Play    `json:"play"`          // Play Phase
+	Tricks        []*hand.Trick `json:"tricks"`        // Play Phase - tricks in the hand
 	ScoringMethod string        `json:"scoringMethod"` // Method to use for scoring the hand
 }
 
@@ -48,13 +48,13 @@ func (g *Game) StartNewHand() error {
 		players := NewPlayers(turnOrder)
 		for index := range g.PlayerOrder {
 			playerID := turnOrder[index]
-			players.SetHand(playerID, deck.Draw(g.Settings.HandSize))
+			players.SetHand(playerID, deck.Draw(HandSize))
 		}
 		g.Players = players
 		g.Blind = hand.NewBlind(turnOrder, deck.Draw(BlindSize))
 		g.Bury = hand.NewBury()
 		g.Call = hand.NewCall()
-		g.Play = hand.NewPlay(turnOrder, g.Settings.HandSize)
+		g.Tricks = []*hand.Trick{hand.NewTrick(turnOrder)}
 		g.ScoringMethod = ScoringMethod.Default
 		return nil
 	}
@@ -77,17 +77,21 @@ func (g *Game) WhoIsNext() string {
 	case HandPhase.Call:
 		return g.Blind.PickerID
 	case HandPhase.Play:
-		return g.Play.WhoIsNext()
+		currentTrick := g.GetCurrentTrick()
+		if currentTrick == nil {
+			return ""
+		}
+		return currentTrick.WhoIsNext()
 	default:
 		return ""
 	}
 }
 
-func (g *Game) GetTurnOrder() []string {
-	if g.Phase == HandPhase.Play {
-		return g.Play.GetCurrentTrick().TurnOrder
+func (g *Game) GetCurrentTrick() *hand.Trick {
+	if len(g.Tricks) == 0 {
+		return nil
 	}
-	return nil
+	return g.Tricks[len(g.Tricks)-1]
 }
 
 func (g *Game) Pick(playerID string) (*PickOrPassResult, error) {
@@ -217,36 +221,38 @@ func (g *Game) PlayCard(playerID string, card *deck.Card) (*PlayCardResult, erro
 		return nil, fmt.Errorf("not in the call phase")
 	} else if playerID != g.WhoIsNext() {
 		return nil, fmt.Errorf("not player's turn")
-	} else if g.Play.IsComplete() {
-		return nil, fmt.Errorf("call play is already complete")
 	} else if !g.Players.HandContains(playerID, []*deck.Card{card}) {
 		return nil, fmt.Errorf("player does not possess the card")
 	} else {
 		result := &PlayCardResult{PlayedCard: card}
-		// Remove the card from the player's hand
+		// Remove the card from the player's hand and play it on the trick
 		g.Players.RemoveCards(playerID, []*deck.Card{card})
-		// Play the card in the trick
-		trickSummary := g.Play.PlayCard(card)
+		currentTrick := g.GetCurrentTrick()
+		currentTrick.PlayCard(card)
 		// Check if partner has been revealed
-		// TODO: possibly something going wrong here
 		result.PartnerID = g.Call.ConditionallyRevealPartner(card)
 		// Check if the trick is complete
-		if trickSummary != nil {
+		if currentTrick.IsComplete() {
 			// Trick is complete
-			result.TrickSummary = trickSummary
-			if g.Play.IsComplete() {
+			if len(g.Tricks) == HandSize {
 				// Hand is complete
 				result.HandSummary = g.SummarizeHand()
 				// Update the scoreboard
-				for playerID, summary := range result.HandSummary.PlayerSummaries {
-					g.Scoreboard.UpdateScore(playerID, summary.Score, summary.Points, summary.Tricks)
+				for _, playerID := range g.PlayerOrder {
+					score := result.HandSummary.Scores[playerID]
+					points := result.HandSummary.PointsWon[playerID]
+					tricks := result.HandSummary.TricksWon[playerID]
+					g.Scoreboard.UpdateScore(playerID, score, points, tricks)
 				}
 				// Move onto the done phase
 				g.Phase = HandPhase.Score
-				if g.Settings.AutoDeal {
-					// Automatically start the next hand
-					g.StartNewHand()
-				}
+				g.StartNewHand()
+			} else {
+				// If the hand is not yet complete, start the next trick
+				takerID := currentTrick.GetTakerID()
+				newTrickOrder := utils.RelistStartingWith(g.PlayerOrder, takerID)
+				newTrick := hand.NewTrick(newTrickOrder)
+				g.Tricks = append(g.Tricks, newTrick)
 			}
 		}
 		return result, nil
@@ -255,22 +261,18 @@ func (g *Game) PlayCard(playerID string, card *deck.Card) (*PlayCardResult, erro
 
 func (g *Game) SummarizeHand() *summary.HandSummary {
 	sum := summary.NewHandSummary(g.PlayerOrder)
-	// Summarize the tricks
-	trickSummaries := g.Play.SummarizeTricks()
-	sum.TrickSummaries = trickSummaries
-
 	// Count up the points won from tricks and the number of tricks each player won
-	points := map[string]int{}
-	tricks := map[string]int{}
+	pointsWon := map[string]int{}
+	tricksWon := map[string]int{}
 	for index := range g.PlayerOrder {
 		playerID := g.PlayerOrder[index]
-		points[playerID] = 0
-		tricks[playerID] = 0
+		pointsWon[playerID] = 0
+		tricksWon[playerID] = 0
 	}
-	for index := range trickSummaries {
-		trickSum := trickSummaries[index]
-		tricks[trickSum.TakerID] += 1
-		points[trickSum.TakerID] += trickSum.Points
+	for _, trick := range g.Tricks {
+		takerID := trick.GetTakerID()
+		tricksWon[takerID] += 1
+		pointsWon[takerID] += trick.CountPoints()
 	}
 
 	// Calculate the hand summary
@@ -278,10 +280,10 @@ func (g *Game) SummarizeHand() *summary.HandSummary {
 	switch g.ScoringMethod {
 	case NoPickResolution.Leasters:
 		// Leasters Hand (No Picker)
-		scores, sum.Winners = scoring.ScoreLeastersHand(points, tricks)
+		scores, sum.Winners = scoring.ScoreLeastersHand(pointsWon, tricksWon)
 	case NoPickResolution.Mosters:
 		// Mosters Hand (No Picker)
-		scores, sum.Winners = scoring.ScoreMostersHand(points)
+		scores, sum.Winners = scoring.ScoreMostersHand(pointsWon)
 	default:
 		// Someone picked, score hand normally
 		sum.PickerID = g.Blind.PickerID
@@ -289,24 +291,26 @@ func (g *Game) SummarizeHand() *summary.HandSummary {
 		sum.OpponentIDs = utils.Filter(g.PlayerOrder, func(id string) bool {
 			return id != sum.PickerID && id != sum.PartnerID
 		})
-		buriedPoints := deck.CountPoints(g.Bury.Cards)
 		// Count up the points in the bury and add to the picker's points
-		points[sum.PickerID] += buriedPoints
-		sum.BurySummary = summary.BurySummary{Cards: g.Bury.Cards, Points: buriedPoints}
-		scores, sum.Winners = scoring.ScoreHand(sum.PickerID, sum.PartnerID, points, tricks, g.Settings.DoubleOnTheBump)
+		sum.Bury = g.Bury.Cards
+		buriedPoints := deck.CountPoints(g.Bury.Cards)
+		pointsWon[sum.PickerID] += buriedPoints
+		scores, sum.Winners = scoring.ScoreHand(
+			sum.PickerID,
+			sum.PartnerID,
+			pointsWon,
+			tricksWon,
+			g.Settings.DoubleOnTheBump,
+		)
 		if utils.Contains(sum.Winners, sum.PickerID) {
 			sum.WinningTeam = "picking"
 		} else {
 			sum.WinningTeam = "opponents"
 		}
 	}
-	// Update the player summaries
-	for playerID, score := range scores {
-		sum.PlayerSummaries[playerID] = &summary.PlayerSummary{
-			Score:  score,
-			Points: points[playerID],
-			Tricks: tricks[playerID],
-		}
-	}
+	sum.Scores = scores
+	sum.PointsWon = pointsWon
+	sum.TricksWon = tricksWon
+
 	return sum
 }

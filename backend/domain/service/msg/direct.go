@@ -4,7 +4,6 @@ import (
 	"main/domain/game"
 	"main/domain/game/deck"
 	"main/domain/game/hand"
-	"main/domain/game/summary"
 )
 
 var DirectType = struct {
@@ -60,25 +59,24 @@ func PickedCardsMessage(clientID string, cards []*deck.Card) (string, string, *P
 }
 
 type InitializeData struct {
-	PlayerID     string                  `json:"playerId"`
-	HostID       string                  `json:"hostId"`
-	TableID      string                  `json:"tableId"`
-	Seating      []string                `json:"seating"`
-	InProgress   bool                    `json:"inProgress"`
-	DealerID     string                  `json:"dealerId"`
-	Scoreboard   game.Scoreboard         `json:"scoreboard"`
-	PlayerOrder  []string                `json:"playerOrder"`
-	HandsPlayed  int                     `json:"handsPlayed"`
-	Settings     *game.GameSettings      `json:"settings"`
-	CalledCard   *deck.Card              `json:"calledCard"`
-	Phase        string                  `json:"phase"`
-	UpNextID     string                  `json:"upNextId"`
-	PickerID     string                  `json:"pickerId"`
-	PartnerID    string                  `json:"partnerId"`
-	Summaries    []*summary.TrickSummary `json:"summaries"`
-	CurrentTrick *hand.Trick             `json:"currentTrick"`
-	Hand         []*deck.Card            `json:"hand"`
-	Bury         []*deck.Card            `json:"bury"`
+	PlayerID    string             `json:"playerId"`
+	HostID      string             `json:"hostId"`
+	TableID     string             `json:"tableId"`
+	Seating     []string           `json:"seating"`
+	InProgress  bool               `json:"inProgress"`
+	DealerID    string             `json:"dealerId"`
+	Scoreboard  game.Scoreboard    `json:"scoreboard"`
+	PlayerOrder []string           `json:"playerOrder"`
+	HandsPlayed int                `json:"handsPlayed"`
+	Settings    *game.GameSettings `json:"settings"`
+	CalledCard  *deck.Card         `json:"calledCard"`
+	Phase       string             `json:"phase"`
+	UpNextID    string             `json:"upNextId"`
+	PickerID    string             `json:"pickerId"`
+	PartnerID   string             `json:"partnerId"`
+	Tricks      []*hand.Trick      `json:"tricks"`
+	Hand        []*deck.Card       `json:"hand"`
+	Bury        []*deck.Card       `json:"bury"`
 }
 
 func InitializeMessage(tableID, hostID, clientID string, seating []string, settings *game.GameSettings, game *game.Game) (string, string, *InitializeData) {
@@ -104,8 +102,7 @@ func InitializeMessage(tableID, hostID, clientID string, seating []string, setti
 			data.UpNextID = game.WhoIsNext()
 			data.PickerID = game.Blind.PickerID
 			data.PartnerID = game.Call.GetPartnerIfRevealed()
-			data.CurrentTrick = game.Play.GetCurrentTrick()
-			data.Summaries = game.Play.SummarizeTricks()
+			data.Tricks = game.Tricks
 
 			// Client is a player in the current game, include their hand and bury
 			if hand := game.Players.GetHand(clientID); hand != nil {

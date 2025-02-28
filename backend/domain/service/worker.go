@@ -78,8 +78,6 @@ func (t *TableWorker) HandleCommands(message *ably.Message) {
 	t.LastUpdate = time.Now()
 	logrus.Infof("Received private message: %s", message.Data)
 	switch message.Name {
-	case msg.CommandType.UpdateAutoDeal:
-		HandleUpdateAutoDeal(t, message.ClientID, message.Data)
 	case msg.CommandType.UpdateCallingMethod:
 		HandleUpdateCallingMethod(t, message.ClientID, message.Data)
 	case msg.CommandType.UpdateDoubleOnTheBump:
