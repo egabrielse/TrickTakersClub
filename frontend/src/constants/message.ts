@@ -46,7 +46,7 @@ export const BROADCAST_TYPES = {
     SETTINGS_UPDATED: "settings-updated",
     STOOD_UP: "stood-up",
     TIMEOUT: "timeout",
-    TRICK_DONE: "trick-done",
+    TRICK_WON: "trick-won",
     HAND_DONE: "hand-done",
     NEW_TRICK: "new-trick",
     UP_NEXT: "up-next",

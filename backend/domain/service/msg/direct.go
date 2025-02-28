@@ -4,6 +4,8 @@ import (
 	"main/domain/game"
 	"main/domain/game/deck"
 	"main/domain/game/hand"
+	"main/domain/game/scoring"
+	"main/domain/game/settings"
 )
 
 var DirectType = struct {
@@ -59,27 +61,27 @@ func PickedCardsMessage(clientID string, cards []*deck.Card) (string, string, *P
 }
 
 type InitializeData struct {
-	PlayerID    string             `json:"playerId"`
-	HostID      string             `json:"hostId"`
-	TableID     string             `json:"tableId"`
-	Seating     []string           `json:"seating"`
-	InProgress  bool               `json:"inProgress"`
-	DealerID    string             `json:"dealerId"`
-	Scoreboard  game.Scoreboard    `json:"scoreboard"`
-	PlayerOrder []string           `json:"playerOrder"`
-	HandsPlayed int                `json:"handsPlayed"`
-	Settings    *game.GameSettings `json:"settings"`
-	CalledCard  *deck.Card         `json:"calledCard"`
-	Phase       string             `json:"phase"`
-	UpNextID    string             `json:"upNextId"`
-	PickerID    string             `json:"pickerId"`
-	PartnerID   string             `json:"partnerId"`
-	Tricks      []*hand.Trick      `json:"tricks"`
-	Hand        []*deck.Card       `json:"hand"`
-	Bury        []*deck.Card       `json:"bury"`
+	PlayerID    string                 `json:"playerId"`
+	HostID      string                 `json:"hostId"`
+	TableID     string                 `json:"tableId"`
+	Seating     []string               `json:"seating"`
+	InProgress  bool                   `json:"inProgress"`
+	DealerID    string                 `json:"dealerId"`
+	Scoreboard  scoring.Scoreboard     `json:"scoreboard"`
+	PlayerOrder []string               `json:"playerOrder"`
+	HandsPlayed int                    `json:"handsPlayed"`
+	Settings    *settings.GameSettings `json:"settings"`
+	CalledCard  *deck.Card             `json:"calledCard"`
+	Phase       string                 `json:"phase"`
+	UpNextID    string                 `json:"upNextId"`
+	PickerID    string                 `json:"pickerId"`
+	PartnerID   string                 `json:"partnerId"`
+	Tricks      []*hand.Trick          `json:"tricks"`
+	Hand        []*deck.Card           `json:"hand"`
+	Bury        []*deck.Card           `json:"bury"`
 }
 
-func InitializeMessage(tableID, hostID, clientID string, seating []string, settings *game.GameSettings, game *game.Game) (string, string, *InitializeData) {
+func InitializeMessage(tableID, hostID, clientID string, seating []string, settings *settings.GameSettings, game *game.Game) (string, string, *InitializeData) {
 	data := &InitializeData{}
 	data.PlayerID = clientID
 	data.HostID = hostID
@@ -88,29 +90,27 @@ func InitializeMessage(tableID, hostID, clientID string, seating []string, setti
 	data.Settings = settings
 	data.InProgress = false
 	if game != nil {
-		// Game is in progress, include game state
+		// Game is in progress, include game and hand state
 		data.InProgress = true
 		data.DealerID = game.WhoIsDealer()
-		data.Scoreboard = game.Scoreboard
+		data.Scoreboard = game.TallyScores()
 		data.PlayerOrder = game.PlayerOrder
-		data.HandsPlayed = game.HandsPlayed
+		data.HandsPlayed = game.CountHandsPlayed()
+		// State related to the current hand
+		currentHand := game.GetCurrentHand()
+		data.CalledCard = currentHand.Call.GetCalledCard()
+		data.Phase = currentHand.Phase
+		data.UpNextID = currentHand.WhoIsNext()
+		data.PickerID = currentHand.Blind.PickerID
+		data.PartnerID = currentHand.Call.GetPartnerIfRevealed()
+		data.Tricks = currentHand.Tricks
 
-		// Hand is in progress, include hand state
-		if game.HandInProgress() {
-			data.CalledCard = game.Call.GetCalledCard()
-			data.Phase = game.Phase
-			data.UpNextID = game.WhoIsNext()
-			data.PickerID = game.Blind.PickerID
-			data.PartnerID = game.Call.GetPartnerIfRevealed()
-			data.Tricks = game.Tricks
-
-			// Client is a player in the current game, include their hand and bury
-			if hand := game.Players.GetHand(clientID); hand != nil {
-				data.Hand = hand
-				if clientID == game.Blind.PickerID {
-					// Only send buried cards to the picker
-					data.Bury = game.Bury.Cards
-				}
+		// Client is a player in the current game, include their hand and bury
+		if hand := currentHand.PlayerHands.GetHand(clientID); hand != nil {
+			data.Hand = hand
+			if clientID == currentHand.Blind.PickerID {
+				// Only send buried cards to the picker
+				data.Bury = currentHand.Bury.Cards
 			}
 		}
 	}

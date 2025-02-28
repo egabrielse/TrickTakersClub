@@ -4,7 +4,6 @@ import {
     GameSettings,
     HandPhase,
     HandSummary,
-    TrickSummary,
 } from "../game";
 import { PlayingCard } from "../card";
 
@@ -50,7 +49,7 @@ export interface GameStartedMessage extends Message {
 
 export interface GoneAloneMessage extends Message {
     name: typeof BROADCAST_TYPES.GONE_ALONE;
-    data: undefined;
+    data: { forced: boolean };
 }
 
 export interface PartnerRevealedMessage extends Message {
@@ -78,11 +77,15 @@ export interface TimeoutMessage extends Message {
     data: undefined;
 }
 
-export interface TrickDoneMessage extends Message {
-    name: typeof BROADCAST_TYPES.TRICK_DONE;
+export interface TrickWonMessage extends Message {
+    name: typeof BROADCAST_TYPES.TRICK_WON;
+    data: { playerId: string };
+}
+
+export interface HandDoneMessage extends Message {
+    name: typeof BROADCAST_TYPES.HAND_DONE;
     data: {
-        trickSummary: TrickSummary;
-        handSummary: HandSummary;
+        summary: HandSummary;
     }
 }
 
@@ -115,7 +118,8 @@ export type BroadcastMessage = (
     SettingsUpdatedMessage |
     StoodUpMessage |
     TimeoutMessage |
-    TrickDoneMessage |
+    TrickWonMessage |
+    HandDoneMessage |
     NewTrickMessage |
     UpNextMessage
 );

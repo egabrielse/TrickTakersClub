@@ -73,35 +73,37 @@ function ConnectionApiProvider({
         break;
       case BROADCAST_TYPES.CALLED_CARD:
         dispatch(handSlice.actions.calledCard(msg.data));
-        dispatch(handSlice.actions.displayMessage({ ...msg }));
+        dispatch(handSlice.actions.displayMessage(msg));
         break;
       case BROADCAST_TYPES.GONE_ALONE:
-        dispatch(handSlice.actions.displayMessage({ ...msg }));
+        if (!msg.data.forced) {
+          // Only display the message if the player chose to go alone
+          // Otherwise the picker probably wants this to remain a secret
+          dispatch(handSlice.actions.displayMessage(msg));
+        }
         break;
       case BROADCAST_TYPES.PARTNER_REVEALED:
         dispatch(handSlice.actions.partnerRevealed(msg.data));
-        dispatch(handSlice.actions.displayMessage({ ...msg }));
+        dispatch(handSlice.actions.displayMessage(msg));
         break;
-      case BROADCAST_TYPES.TRICK_DONE: {
-        dispatch(handSlice.actions.trickDone(msg.data.trickSummary));
-        if (msg.data.handSummary) {
-          dispatch(
-            dialogSlice.actions.openDialog({
-              type: DIALOG_TYPES.GAME_SUMMARY,
-              props: { summary: msg.data.handSummary },
-            }),
-          );
-          dispatch(gameSlice.actions.handDone(msg.data.handSummary));
-        }
-        dispatch(handSlice.actions.displayMessage({ ...msg }));
+      case BROADCAST_TYPES.TRICK_WON:
+        dispatch(handSlice.actions.displayMessage(msg));
         break;
-      }
+      case BROADCAST_TYPES.HAND_DONE:
+        dispatch(
+          dialogSlice.actions.openDialog({
+            type: DIALOG_TYPES.GAME_SUMMARY,
+            props: { summary: msg.data.summary },
+          }),
+        );
+        dispatch(gameSlice.actions.handDone(msg.data));
+        break;
       case BROADCAST_TYPES.BLIND_PICKED:
-        dispatch(handSlice.actions.displayMessage({ ...msg }));
+        dispatch(handSlice.actions.displayMessage(msg));
         break;
       case BROADCAST_TYPES.CARD_PLAYED: {
         dispatch(handSlice.actions.cardPlayed(msg.data));
-        dispatch(handSlice.actions.displayMessage({ ...msg }));
+        dispatch(handSlice.actions.displayMessage(msg));
         break;
       }
       case BROADCAST_TYPES.GAME_OVER:

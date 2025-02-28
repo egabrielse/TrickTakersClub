@@ -1,9 +1,9 @@
 package msg
 
 import (
-	"main/domain/game"
 	"main/domain/game/deck"
-	"main/domain/game/summary"
+	"main/domain/game/hand"
+	"main/domain/game/settings"
 )
 
 var BroadcastType = struct {
@@ -32,7 +32,9 @@ var BroadcastType = struct {
 	// Game has ended
 	GameOver string
 	// Trick has been won
-	TrickDone string
+	TrickWon string
+	// Hand is finished
+	HandDone string
 	// Service timed out due to inactivity
 	Timeout string
 	// New trick has started
@@ -52,7 +54,8 @@ var BroadcastType = struct {
 	StoodUp:         "stood-up",
 	GameStarted:     "game-started",
 	GameOver:        "game-over",
-	TrickDone:       "trick-done",
+	TrickWon:        "trick-won",
+	HandDone:        "hand-done",
 	Timeout:         "timeout",
 	NewTrick:        "new-trick",
 	UpNext:          "up-next",
@@ -106,10 +109,12 @@ func GameStartedMessage(playerOrder []string) (name string, data *GameStartedDat
 	return BroadcastType.GameStarted, &GameStartedData{PlayerOrder: playerOrder}
 }
 
-type GoneAlonePayload struct{}
+type GoneAlonePayload struct {
+	Forced bool `json:"forced"`
+}
 
-func GoneAloneMessage() (name string, data *GoneAlonePayload) {
-	return BroadcastType.GoneAlone, &GoneAlonePayload{}
+func GoneAloneMessage(forced bool) (name string, data *GoneAlonePayload) {
+	return BroadcastType.GoneAlone, &GoneAlonePayload{Forced: forced}
 }
 
 type PartnerRevealedData struct {
@@ -129,10 +134,10 @@ func SatDownMessage(playerID string) (name string, data *SatDownData) {
 }
 
 type SettingsUpdatedData struct {
-	Settings *game.GameSettings `json:"settings"`
+	Settings *settings.GameSettings `json:"settings"`
 }
 
-func SettingsUpdatedMessage(settings *game.GameSettings) (name string, data *SettingsUpdatedData) {
+func SettingsUpdatedMessage(settings *settings.GameSettings) (name string, data *SettingsUpdatedData) {
 	return BroadcastType.SettingsUpdated, &SettingsUpdatedData{Settings: settings}
 }
 
@@ -150,12 +155,20 @@ func TimeoutMessage() (name string, data *TimeoutData) {
 	return BroadcastType.Timeout, &TimeoutData{}
 }
 
-type HandDoneData struct {
-	HandSummary *summary.HandSummary `json:"handSummary"`
+type TrickWonData struct {
+	PlayerID string `json:"playerId"`
 }
 
-func HandDoneMessage(handSum *summary.HandSummary) (name string, data *HandDoneData) {
-	return BroadcastType.TrickDone, &HandDoneData{HandSummary: handSum}
+func TrickWonMessage(playerId string) (name string, data *TrickWonData) {
+	return BroadcastType.TrickWon, &TrickWonData{PlayerID: playerId}
+}
+
+type HandDoneData struct {
+	Summary *hand.HandSummary `json:"summary"`
+}
+
+func HandDoneMessage(summary *hand.HandSummary) (name string, data *HandDoneData) {
+	return BroadcastType.HandDone, &HandDoneData{Summary: summary}
 }
 
 type NewTrickData struct {

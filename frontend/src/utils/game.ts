@@ -1,7 +1,7 @@
 import { CARD_RANK, CARD_SUIT } from "../constants/card";
 import { CardSuit, PlayingCard } from "../types/card";
-import { Scoreboard } from "../types/game";
-import { isTrumpCard } from "./card";
+import { Scoreboard, Trick } from "../types/game";
+import { compareCards, isTrumpCard } from "./card";
 
 /**
  * Arrange points on an ellipse given its width and height.
@@ -148,4 +148,23 @@ export const findCallableAces = (hand: PlayingCard[]) => {
         const hasFailSuit = failSuit[suit as CardSuit];
         return !hasAce && hasFailSuit
     }).map(([suit]) => ({ suit, rank: CARD_RANK.ACE } as PlayingCard));
+}
+
+/**
+ * Returns the id of the player who won the trick.
+ * @param trick - the trick to evaluate
+ */
+export const getTakerId = (trick: Trick) => {
+    if (trick.turnOrder.length === Object(trick.cards).length) {
+        return "";
+    } else {
+        let takerId = "";
+        const leadingCard = trick.cards[trick.turnOrder[0]];
+        for (const playerId of trick.turnOrder) {
+            if (takerId === "" || compareCards(trick.cards[playerId], trick.cards[takerId], leadingCard.suit)) {
+                takerId = playerId;
+            }
+        }
+        return takerId;
+    }
 }

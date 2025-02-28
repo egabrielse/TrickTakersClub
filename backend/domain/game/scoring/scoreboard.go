@@ -1,4 +1,4 @@
-package game
+package scoring
 
 type ScoreboardRow struct {
 	PlayerID    string `json:"playerId"`    // Player's ID

@@ -5,6 +5,7 @@ import authSlice from "./slices/auth.slice";
 import gameSlice from "./slices/game.slice";
 import tableSlice from "./slices/table.slice";
 import { relistStartingWith } from "../utils/list";
+import { getTakerId } from "../utils/game";
 
 /**
  * True if the user is the dealer, false otherwise.
@@ -118,10 +119,11 @@ const playerOrderStartingWithUser = createSelector(
 );
 
 const tricksWon = createSelector(
-    [handSlice.selectors.summaries],
-    (summaries) => summaries.reduce((prev: Record<string, number>, curr) => {
-        if (curr.takerId) {
-            prev[curr.takerId] = (prev[curr.takerId] || 0) + 1;
+    [handSlice.selectors.tricks],
+    (tricks) => tricks.reduce((prev: Record<string, number>, curr) => {
+        const takerId = getTakerId(curr);
+        if (takerId) {
+            prev[takerId] = (prev[takerId] || 0) + 1;
         }
         return prev;
     }, {})

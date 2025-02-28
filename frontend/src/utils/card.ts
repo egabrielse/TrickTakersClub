@@ -1,6 +1,6 @@
 import { capitalize } from "@mui/material";
 import { CARD_RANK, CARD_SUIT } from "../constants/card";
-import { CardSize, PlayingCard } from "../types/card";
+import { CardSize, CardSuit, PlayingCard } from "../types/card";
 
 /**
  * Return the path to the face of the playing card.
@@ -103,13 +103,17 @@ export const getCardPoints = (card: PlayingCard) => {
     }
 };
 
+export const countCardPoints = (cards: PlayingCard[]) => {
+    return cards.reduce((acc, card) => acc + getCardPoints(card), 0);
+}
+
 /**
  * Comparison function used for sorting playing cards by rank and suit.
  * @param a Card
  * @param b Card
  * @returns -1 if a < b, 0 if a == b, 1 if a > b
  */
-export const compareCards = (a: PlayingCard, b: PlayingCard) => {
+export const sortCards = (a: PlayingCard, b: PlayingCard) => {
     if (a.rank === b.rank && a.suit === b.suit) {
         // Same card
         return 0;
@@ -171,4 +175,19 @@ export const handContainsCard = (hand: PlayingCard[], card: PlayingCard) => {
 
 export const prettyPrintCard = (card: PlayingCard) => {
     return `${capitalize(card?.rank)} of ${capitalize(card?.suit)}`;
+}
+
+
+export const compareCards = (a: PlayingCard, b: PlayingCard, leadingSuit: CardSuit) => {
+    if (isTrumpCard(a) && !isTrumpCard(b)) {
+        return 1;
+    } else if (!isTrumpCard(a) && isTrumpCard(b)) {
+        return -1;
+    } else if (a.suit === leadingSuit && b.suit !== leadingSuit) {
+        return 1;
+    } else if (a.suit !== leadingSuit && b.suit === leadingSuit) {
+        return -1;
+    } else {
+        return getCardinalRank(a) - getCardinalRank(b);
+    }
 }
