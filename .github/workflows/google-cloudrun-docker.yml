@@ -121,6 +121,7 @@ jobs:
           FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
           ABLY_API_KEY: ${{ secrets.ABLY_API_KEY }}
           BROWSER_ORIGIN: ${{ secrets.BROWSER_ORIGIN }}
+          SERVER_WORKER_TIMEOUT: ${{ secrets.SERVER_WORKER_TIMEOUT }}
         with:
           service: ${{ env.BACKEND_SERVICE }}
           region: ${{ env.REGION }}

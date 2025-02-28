@@ -16,6 +16,7 @@ services:
       - FIREBASE_API_KEY=demo-api-key
       - BROWSER_ORIGIN=http://localhost:5173
       - ABLY_API_KEY=${ABLY_DEV_API_KEY}
+      - SERVER_WORKER_TIMEOUT=1800s
     image: backend
     ports:
       - "8080:8080"
