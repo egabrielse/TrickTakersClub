@@ -137,6 +137,13 @@ func (t *TableWorker) UnregisterClient(clientID string, connectionID string) {
 
 // StartService starts a goroutine for the table service and begins listening for messages
 func (t *TableWorker) StartService() {
+	serverWorkerTimeout := utils.GetEnvironmentVariable("SERVER_WORKER_TIMEOUT")
+	// Convert the timeout duration to integer
+	timeoutDuration, err := time.ParseDuration(serverWorkerTimeout)
+	if err != nil {
+		timeoutDuration = DefaultTimeoutDuration
+	}
+
 	go func() {
 		logrus.Infof("Starting service for table %s", t.Table.ID)
 		ticker := time.NewTicker(TickerDuration)
@@ -176,12 +183,13 @@ func (t *TableWorker) StartService() {
 			})
 		})
 
+		// Connect to the Ably service
 		t.AblyClient.Connect()
 
 		for {
 			select {
 			case <-ticker.C:
-				if time.Since(t.LastUpdate) >= TimeoutDuration {
+				if time.Since(t.LastUpdate) >= timeoutDuration {
 					// Stop the service if no activity is detected for a certain duration
 					logrus.Infof("Service for table %s timed out", t.Table.ID)
 					// Inform any clients that the service has timed out
