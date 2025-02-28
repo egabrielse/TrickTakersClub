@@ -31,7 +31,6 @@ export const NO_PICK_RESOLUTIONS = {
 export const PLAYER_COUNT = 5;
 
 export const GAME_SETTINGS_DEFAULTS = {
-    AUTO_DEAL: false,
     CALLING_METHODS: CALLING_METHODS["jack-of-diamonds"],
     NO_PICK_RESOLUTIONS: NO_PICK_RESOLUTIONS["screw-the-dealer"],
     DOUBLE_ON_THE_BUMP: false,

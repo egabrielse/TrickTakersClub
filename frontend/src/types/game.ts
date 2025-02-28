@@ -19,10 +19,11 @@ export type CallingMethod = typeof CALLING_METHODS[keyof typeof CALLING_METHODS]
 export type NoPickResolution = typeof NO_PICK_RESOLUTIONS[keyof typeof NO_PICK_RESOLUTIONS]['ID'];
 
 export type GameSettings = {
-    autoDeal: boolean;
     callingMethod: CallingMethod;
     noPickResolution: NoPickResolution;
     doubleOnTheBump: boolean;
+    blitzing: boolean; // TODO: Implement
+    cracking: boolean; // TODO: Implement
 };
 
 export type HandPhase = (typeof HAND_PHASE)[keyof typeof HAND_PHASE];

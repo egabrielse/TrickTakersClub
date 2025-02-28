@@ -52,11 +52,6 @@ export interface StandUpCommand extends Message {
     data: undefined;
 }
 
-export interface UpdateAutoDealCommand extends Message {
-    name: typeof COMMAND_TYPES.UPDATE_AUTO_DEAL;
-    data: { autoDeal: boolean };
-}
-
 export interface UpdateCallingMethodCommand extends Message {
     name: typeof COMMAND_TYPES.UPDATE_CALLING_METHOD;
     data: { callingMethod: string };
@@ -83,7 +78,6 @@ export type CommandMessage = (
     | StartGameCommand
     | SitDownCommand
     | StandUpCommand
-    | UpdateAutoDealCommand
     | UpdateCallingMethodCommand
     | UpdateNoPickResolutionCommand
     | UpdateDoubleOnTheBumpCommand
