@@ -22,13 +22,13 @@ export default function CallAnAce() {
 
   return (
     <div className="CallAnAce">
-      {callableAces.map((ace) => {
+      {callableAces.map((suit) => {
         return (
           <PaperButton
-            key={`call-${ace.rank}-${ace.suit}-btn`}
-            onClick={() => handleCallCard(ace)}
+            key={`call-${suit}-btn`}
+            onClick={() => handleCallCard({ suit, rank: "ace" })}
           >
-            <PrintedCard {...ace} />
+            <PrintedCard suit={suit} rank={"ace"} />
           </PaperButton>
         );
       })}

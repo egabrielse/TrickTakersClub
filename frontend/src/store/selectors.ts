@@ -7,7 +7,7 @@ import tableSlice from "./slices/table.slice";
 import { relistStartingWith } from "../utils/list";
 import { getTakerId } from "../utils/game";
 import { CARD_RANK, CARD_SUIT } from "../constants/card";
-import { CardSuit, PlayingCard } from "../types/card";
+import { FailSuit } from "../types/card";
 
 /**
  * True if the user is the dealer, false otherwise.
@@ -118,34 +118,21 @@ const playableCards = createSelector([
 const callableAces = createSelector([
     handSlice.selectors.hand,
     handSlice.selectors.bury,
-], (hand, bury) => {
+], (hand, bury): FailSuit[] => {
     const cards = [...hand, ...bury];
-    const failSuit: Record<CardSuit, boolean> = {
+    const aces: Record<FailSuit, boolean> = {
         [CARD_SUIT.CLUB]: false,
         [CARD_SUIT.HEART]: false,
         [CARD_SUIT.SPADE]: false,
-        [CARD_SUIT.DIAMOND]: false
     }
-
-    const aces: Record<CardSuit, boolean> = {
-        [CARD_SUIT.CLUB]: false,
-        [CARD_SUIT.HEART]: false,
-        [CARD_SUIT.SPADE]: false,
-        [CARD_SUIT.DIAMOND]: false
-    }
-
-    cards.forEach((card) => {
-        if (card.rank === CARD_RANK.ACE) {
-            aces[card.suit] = true;
-        } else if (!isTrumpCard(card)) {
-            failSuit[card.suit] = true;
+    for (const key in aces) {
+        const hasAce = cards.some((card) => card.rank === CARD_RANK.ACE && card.suit === key);
+        const holdsFailSuit = hand.some((card) => !isTrumpCard(card) && card.suit === key);
+        if (!hasAce && holdsFailSuit) {
+            aces[key as FailSuit] = true;
         }
-    })
-
-    return Object.entries(aces).filter(([suit, hasAce]) => {
-        const hasFailSuit = failSuit[suit as CardSuit];
-        return !hasAce && hasFailSuit
-    }).map(([suit]) => ({ suit, rank: CARD_RANK.ACE } as PlayingCard));
+    }
+    return Object.keys(aces).filter((value) => value) as FailSuit[];
 });
 
 /**
