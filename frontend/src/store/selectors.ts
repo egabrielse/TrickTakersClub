@@ -101,7 +101,7 @@ const playableCards = createSelector([
     } else if (isPicker && calledCard && !partnerRevealed) {
         // Picker has a partner and partner has not been revealed
         // Picker must retain at least one fail suit card of the called card, until it is led
-        const count = hand.filter((card) => card.suit === calledCard.suit).length;
+        const count = hand.filter((card) => card.suit === calledCard.suit && !isTrumpCard(card)).length;
         if (count === 1) {
             return hand.filter((card) => card.suit !== calledCard.suit);
         } else {
