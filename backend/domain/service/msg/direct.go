@@ -66,6 +66,7 @@ type InitializeData struct {
 	TableID     string                 `json:"tableId"`
 	Seating     []string               `json:"seating"`
 	InProgress  bool                   `json:"inProgress"`
+	LastHand    map[string]bool        `json:"lastHand"`
 	DealerID    string                 `json:"dealerId"`
 	Scoreboard  scoring.Scoreboard     `json:"scoreboard"`
 	PlayerOrder []string               `json:"playerOrder"`
@@ -92,6 +93,7 @@ func InitializeMessage(tableID, hostID, clientID string, seating []string, setti
 	if game != nil {
 		// Game is in progress, include game and hand state
 		data.InProgress = true
+		data.LastHand = game.LastHand
 		data.DealerID = game.WhoIsDealer()
 		data.Scoreboard = game.TallyScores()
 		data.PlayerOrder = game.PlayerOrder

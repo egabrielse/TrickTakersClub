@@ -9,6 +9,7 @@ import {
 import {
     CalledCardMessage,
     CardPlayedMessage,
+    LastHandStatusMessage,
     NewTrickMessage,
     PartnerRevealedMessage,
     UpNextMessage,
@@ -34,6 +35,7 @@ interface HandState {
     partnerId?: string;
     tricks: Trick[];
     updates: UpdateMessages[];
+    lastHand: Record<string, boolean>;
 }
 
 const initialState: HandState = {
@@ -42,6 +44,7 @@ const initialState: HandState = {
     bury: [],
     tricks: [],
     updates: [],
+    lastHand: {},
 };
 
 const handSlice = createSlice({
@@ -53,6 +56,7 @@ const handSlice = createSlice({
             state.dealerId = action.payload.dealerId;
             state.upNextId = action.payload.upNextId;
             state.phase = action.payload.phase || HAND_PHASE.SETUP;
+            state.lastHand = action.payload.lastHand || {};
             state.hand = [...(action.payload.hand || [])].sort(sortCards);
             state.bury = action.payload.bury || [];
             state.calledCard = action.payload.calledCard;
@@ -64,6 +68,7 @@ const handSlice = createSlice({
         dealHand: (state, action: PayloadAction<MessageData<DealHandMessage>>) => {
             state.dealerId = action.payload.dealerId;
             state.hand = action.payload.cards.sort(sortCards);
+            state.lastHand = {};
         },
         startNewTrick: (state, action: PayloadAction<MessageData<NewTrickMessage>>) => {
             state.tricks.push({
@@ -117,7 +122,6 @@ const handSlice = createSlice({
         ) => {
             state.partnerId = action.payload.playerId;
         },
-        gameOver: () => initialState,
         displayMessage: (state, action: PayloadAction<UpdateMessages>) => {
             state.updates.push(action.payload);
         },
@@ -126,7 +130,11 @@ const handSlice = createSlice({
         },
         clearUpdates: (state) => {
             state.updates = [];
-        }
+        },
+        updateLastHandStatus: (state, action: PayloadAction<MessageData<LastHandStatusMessage>>) => {
+            const { playerId, lastHand } = action.payload;
+            state.lastHand[playerId] = lastHand;
+        },
     },
     selectors: {
         dealerId: (state: HandState) => state.dealerId,
@@ -154,6 +162,8 @@ const handSlice = createSlice({
             return null;
         },
         updates: (state: HandState) => state.updates,
+        lastHand: (state: HandState) => state.lastHand,
+        isLastHand: (state: HandState) => Object.values(state.lastHand).some((v) => v),
     },
 });
 

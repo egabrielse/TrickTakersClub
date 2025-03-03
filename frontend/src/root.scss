@@ -11,9 +11,6 @@ $background-color: #4b7c34;
 $paper-color: #94bc81;
 $paper-color-light: #A9C99A;
 $paper-color-dark: #67835A;
-// Highlight
-$highlight-color: #f7db77;
-$highlight-color-dark: #deb230;
 // Text
 $font-family: Courier, monospace;
 
@@ -31,16 +28,6 @@ $font-family: Courier, monospace;
   text-rendering: optimizeLegibility;
 }
 
-a {
-  font-weight: 500;
-  color: $highlight-color;
-  text-decoration: inherit;
-  text-shadow: 0 0 1px lightgray;
-}
-
-a:hover {
-  color: $highlight-color-dark;
-}
 
 body {
   margin: 0;

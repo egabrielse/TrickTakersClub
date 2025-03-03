@@ -110,8 +110,17 @@ func HandleEndGameCommand(t *TableWorker, clientID string, data interface{}) {
 	} else {
 		// Reset Players for the next game
 		t.SeatedPlayers = []string{t.Table.HostID}
-		t.BroadcastMessage(msg.GameOverMessage())
+		t.BroadcastMessage(msg.GameOverMessage(t.Game.TallyScores()))
 		t.Game = nil
+	}
+}
+
+func HandleToggleLastHandCommand(t *TableWorker, clientID string, data interface{}) {
+	if t.Game == nil {
+		t.DirectMessage(msg.ErrorMessage(clientID, "game has not been initialized"))
+	} else {
+		lastHand := t.Game.ToggleLastHand(clientID)
+		t.BroadcastMessage(msg.LastHandStatusMessage(clientID, lastHand))
 	}
 }
 
@@ -236,18 +245,23 @@ func HandlePlayCardCommand(t *TableWorker, clientID string, data interface{}) {
 					} else {
 						t.BroadcastMessage(msg.HandDoneMessage(summary))
 					}
-					// Then start the next hand
-					// TODO: Implement LastHand logic here
-					t.Game.StartNewHand()
-					currentHand = t.Game.GetCurrentHand()
-					for _, playerID := range t.Game.PlayerOrder {
-						t.DirectMessage(msg.DealHandMessage(
-							playerID,
-							t.Game.WhoIsDealer(),
-							currentHand.PlayerHands.GetHand(playerID),
-						))
+					if t.Game.IsLastHand() {
+						// A player has said it's their last hand, end the game
+						t.BroadcastMessage(msg.GameOverMessage(t.Game.TallyScores()))
+						t.Game = nil
+					} else {
+						//  Otherwise, start a new hand
+						t.Game.StartNewHand()
+						currentHand = t.Game.GetCurrentHand()
+						for _, playerID := range t.Game.PlayerOrder {
+							t.DirectMessage(msg.DealHandMessage(
+								playerID,
+								t.Game.WhoIsDealer(),
+								currentHand.PlayerHands.GetHand(playerID),
+							))
+						}
+						t.BroadcastMessage(msg.UpNextMessage(t.Game.GetUpNext()))
 					}
-					t.BroadcastMessage(msg.UpNextMessage(t.Game.GetUpNext()))
 				}
 			} else {
 				// Trick is not over, continue to the next player

@@ -90,7 +90,7 @@ export default function GameUpdates() {
     if (updates.length && !nextUpdate) {
       setNextUpdate(updates[0]);
       dispatch(handSlice.actions.shiftUpdate());
-      setTimeout(() => setNextUpdate(null), 2000);
+      setTimeout(() => setNextUpdate(null), 2500);
     }
   }, [dispatch, nextUpdate, updates]);
 

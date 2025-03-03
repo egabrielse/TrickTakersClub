@@ -3,8 +3,8 @@ import { COMMAND_TYPES } from "../../../../../constants/message";
 import { useAppSelector } from "../../../../../store/hooks";
 import handSlice from "../../../../../store/slices/hand.slice";
 import { PlayingCard } from "../../../../../types/card";
-import Card from "../../../../common/Card";
 import PaperButton from "../../../../common/PaperButton";
+import PrintedCard from "../../../../common/PrintedCard";
 import ConnectionContext from "../../ConnectionContext";
 import "./CallAnAce.scss";
 
@@ -24,15 +24,17 @@ export default function CallAnAce() {
     <div className="CallAnAce">
       {callableAces.map((ace) => {
         return (
-          <Card
-            id={`${ace.rank}-${ace.suit}`}
-            key={`${ace.rank}-${ace.suit}`}
-            card={ace}
+          <PaperButton
+            key={`call-${ace.rank}-${ace.suit}-btn`}
             onClick={() => handleCallCard(ace)}
-          />
+          >
+            <PrintedCard {...ace} />
+          </PaperButton>
         );
       })}
-      <PaperButton onClick={handleGoAlone}>Go Alone</PaperButton>
+      <PaperButton key={"go-alone-btn"} onClick={handleGoAlone}>
+        Go Alone
+      </PaperButton>
     </div>
   );
 }

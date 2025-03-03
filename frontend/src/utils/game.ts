@@ -151,13 +151,18 @@ export const findCallableAces = (hand: PlayingCard[]) => {
 }
 
 /**
+ * Returns true if the trick is done.
+ */
+export const isTrickDone = (trick: Trick) => {
+    return trick.turnOrder.length === Object(trick.cards).length;
+}
+
+/**
  * Returns the id of the player who won the trick.
  * @param trick - the trick to evaluate
  */
 export const getTakerId = (trick: Trick) => {
-    if (trick.turnOrder.length === Object(trick.cards).length) {
-        return "";
-    } else {
+    if (isTrickDone(trick)) {
         let takerId = "";
         const leadingCard = trick.cards[trick.turnOrder[0]];
         for (const playerId of trick.turnOrder) {
@@ -167,4 +172,5 @@ export const getTakerId = (trick: Trick) => {
         }
         return takerId;
     }
+    return "";
 }

@@ -29,6 +29,7 @@ export interface InitializeMessage extends Message {
         tricks: Trick[];
         hand?: PlayingCard[];
         bury?: PlayingCard[];
+        lastHand: Record<string, boolean>;
     };
 }
 

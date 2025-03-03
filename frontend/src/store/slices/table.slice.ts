@@ -55,7 +55,10 @@ const tableSlice = createSlice({
         },
         stoodUp: (state, action: PayloadAction<MessageData<StoodUpMessage>>) => {
             state.seating = state.seating.filter((playerId) => playerId !== action.payload.playerId);
-        }
+        },
+        resetSeating: (state) => {
+            state.seating = [state.hostId]
+        },
     },
     selectors: {
         chat: (state: TableState) => state.chat,

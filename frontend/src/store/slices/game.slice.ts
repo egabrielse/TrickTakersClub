@@ -45,12 +45,8 @@ const gameSlice = createSlice({
                 totalPoints: row.totalPoints += summary.pointsWon[row.playerId],
                 totalTricks: row.totalTricks += summary.tricksWon[row.playerId],
             }));
+            state.handsPlayed += 1;
         },
-        gameOver: (state) => {
-            // Only set inProgress to false if the game is over
-            // Other state can be displayed still via popup (e.g. hand summary)
-            state.inProgress = false;
-        }
     },
     selectors: {
         inProgress: (state: GameState) => state.inProgress,

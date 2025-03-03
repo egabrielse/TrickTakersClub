@@ -17,6 +17,11 @@ export interface EndGameCommand extends Message {
     data: undefined;
 }
 
+export interface ToggleLastHandCommand extends Message {
+    name: typeof COMMAND_TYPES.TOGGLE_LAST_HAND;
+    data: undefined;
+}
+
 export interface GoAloneCommand extends Message {
     name: typeof COMMAND_TYPES.GO_ALONE;
     data: undefined;
@@ -71,6 +76,7 @@ export type CommandMessage = (
     | BuryCommand
     | CallCommand
     | EndGameCommand
+    | ToggleLastHandCommand
     | GoAloneCommand
     | PassCommand
     | PlayCardCommand

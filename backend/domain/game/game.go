@@ -14,15 +14,21 @@ type Game struct {
 	Hands       []*hand.Hand           `json:"hands"`       // Hands played
 	PlayerOrder []string               `json:"playerOrder"` // Order of players at the table
 	Settings    *settings.GameSettings `json:"settings"`    // Game settings
+	LastHand    map[string]bool        `json:"lastHand"`    // Tracks players who have said it's their last hand
 }
 
 // Creates a new Game and initializes the first hand
 func NewGame(playerOrder []string, settings *settings.GameSettings) *Game {
+	lastHand := map[string]bool{}
+	for _, playerID := range playerOrder {
+		lastHand[playerID] = false
+	}
 	return &Game{
 		DealerIndex: 0,
 		Hands:       []*hand.Hand{hand.NewHand(playerOrder, settings)},
 		PlayerOrder: playerOrder,
 		Settings:    settings,
+		LastHand:    lastHand,
 	}
 }
 
@@ -43,7 +49,12 @@ func (g *Game) GetCurrentHand() *hand.Hand {
 }
 
 func (g *Game) CountHandsPlayed() int {
-	return len(g.Hands)
+	if len(g.Hands) == 0 {
+		return 0
+	} else if g.GetCurrentHand().IsComplete() {
+		return len(g.Hands)
+	}
+	return len(g.Hands) - 1
 }
 
 func (g *Game) WhoIsDealer() string {
@@ -74,4 +85,18 @@ func (g *Game) TallyScores() scoring.Scoreboard {
 		}
 	}
 	return scoreboard
+}
+
+func (g *Game) ToggleLastHand(playerID string) bool {
+	g.LastHand[playerID] = !g.LastHand[playerID]
+	return g.LastHand[playerID]
+}
+
+func (g *Game) IsLastHand() bool {
+	for _, lastHand := range g.LastHand {
+		if lastHand {
+			return true
+		}
+	}
+	return false
 }

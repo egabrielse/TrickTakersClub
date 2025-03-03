@@ -34,12 +34,18 @@ export default function CardFan({
         element.style.transformOrigin = `center ${(children.length + 1) * (scale * 60)}px`;
         if (!prevChildren.includes(child.props.id)) {
           // Flash newly added cards
-          // TODO: doesn't look quite right. maybe try a different way of flashing (filter?)
-          element?.animate([{ opacity: 1 }, { opacity: 0.2 }, { opacity: 1 }], {
-            duration: 500,
-            easing: "ease-in-out",
-            fill: "forwards",
-          });
+          element?.animate(
+            [
+              { filter: "inherit" },
+              { filter: "brightness(1.5)" },
+              { filter: "inherit" },
+            ],
+            {
+              duration: 500,
+              easing: "ease-in-out",
+              fill: "forwards",
+            },
+          );
           setPrevChildren((prev) => [...prev, child.props.id]);
         }
       }

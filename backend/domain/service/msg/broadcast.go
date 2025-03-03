@@ -3,6 +3,7 @@ package msg
 import (
 	"main/domain/game/deck"
 	"main/domain/game/hand"
+	"main/domain/game/scoring"
 	"main/domain/game/settings"
 )
 
@@ -17,6 +18,8 @@ var BroadcastType = struct {
 	Chat string
 	// Errors
 	Error string
+	// Update to the last hand status of a player
+	LastHandStatus string
 	// Picker chose to go it alone
 	GoneAlone string
 	// Partner has been revealed
@@ -47,6 +50,7 @@ var BroadcastType = struct {
 	CardPlayed:      "card-played",
 	Chat:            "chat",
 	Error:           "error",
+	LastHandStatus:  "last-hand-status",
 	GoneAlone:       "gone-alone",
 	PartnerRevealed: "partner-revealed",
 	SettingsUpdated: "settings-updated",
@@ -95,10 +99,21 @@ func ChatMessage(message string) (name string, data *ChatData) {
 	return BroadcastType.Chat, &ChatData{Message: message}
 }
 
-type GameOverData struct{}
+type LastHandStatusData struct {
+	PlayerID string `json:"playerId"`
+	LastHand bool   `json:"lastHand"`
+}
 
-func GameOverMessage() (name string, data *GameOverData) {
-	return BroadcastType.GameOver, &GameOverData{}
+func LastHandStatusMessage(playerID string, lastHand bool) (name string, data *LastHandStatusData) {
+	return BroadcastType.LastHandStatus, &LastHandStatusData{PlayerID: playerID, LastHand: lastHand}
+}
+
+type GameOverData struct {
+	Scoreboard scoring.Scoreboard `json:"scoreboard"`
+}
+
+func GameOverMessage(scoreboard scoring.Scoreboard) (name string, data *GameOverData) {
+	return BroadcastType.GameOver, &GameOverData{Scoreboard: scoreboard}
 }
 
 type GameStartedData struct {

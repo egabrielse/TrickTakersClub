@@ -16,6 +16,8 @@ var CommandType = struct {
 	GoAlone string
 	// End the current game
 	EndGame string
+	// Toggles last hand status
+	ToggleLastHand string
 	// Pass on the blind
 	Pass string
 	// Player plays a card
@@ -39,6 +41,7 @@ var CommandType = struct {
 	Call:                   "call",
 	GoAlone:                "go-alone",
 	EndGame:                "end-game",
+	ToggleLastHand:         "toggle-last-hand",
 	Pass:                   "pass",
 	PlayCard:               "play-card",
 	Pick:                   "pick",
