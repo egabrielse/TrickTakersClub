@@ -13,17 +13,17 @@ export default function ActiveGameSettings() {
 
   return inProgress && settings ? (
     <div>
-      <Typography variant="body2" lineHeight={1}>
+      <Typography variant="body1" lineHeight={1}>
         {CALLING_METHODS[settings.callingMethod].LABEL}
       </Typography>
-      <Typography variant="body2">
+      <Typography variant="body1">
         {NO_PICK_RESOLUTIONS[settings.noPickResolution].LABEL}
       </Typography>
       {settings.doubleOnTheBump && (
-        <Typography variant="body2">Double on the Bump</Typography>
+        <Typography variant="body1">Double on the Bump</Typography>
       )}
-      {settings.blitzing && <Typography variant="body2">Blitzing</Typography>}
-      {settings.cracking && <Typography variant="body2">Cracking</Typography>}
+      {settings.blitzing && <Typography variant="body1">Blitzing</Typography>}
+      {settings.cracking && <Typography variant="body1">Cracking</Typography>}
     </div>
   ) : null;
 }
