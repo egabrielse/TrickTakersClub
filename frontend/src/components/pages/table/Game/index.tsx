@@ -35,7 +35,7 @@ export default function Game() {
             // Player 2 (left )
             seat.style.left = "2rem";
             seat.style.top = "50%";
-            seat.style.transform = "translateY(-50%) rotate(90deg)";
+            seat.style.transform = "translateY(-50%) rotate(-90deg)";
             seat.style.zIndex = "4";
             break;
           case 2:
@@ -56,7 +56,7 @@ export default function Game() {
             // Player 5 (right )
             seat.style.right = "2rem";
             seat.style.top = "50%";
-            seat.style.transform = "translateY(-50%) rotate(270deg)";
+            seat.style.transform = "translateY(-50%) rotate(90deg)";
             seat.style.zIndex = "4";
             break;
         }

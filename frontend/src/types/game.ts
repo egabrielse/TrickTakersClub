@@ -9,8 +9,9 @@ import {
     CalledCardMessage,
     CardPlayedMessage,
     GoneAloneMessage,
+    HandDoneMessage,
     PartnerRevealedMessage,
-    TrickDoneMessage,
+    TrickWonMessage,
 } from "./message/broadcast";
 
 export type CallingMethod = typeof CALLING_METHODS[keyof typeof CALLING_METHODS]['ID'];
@@ -18,10 +19,11 @@ export type CallingMethod = typeof CALLING_METHODS[keyof typeof CALLING_METHODS]
 export type NoPickResolution = typeof NO_PICK_RESOLUTIONS[keyof typeof NO_PICK_RESOLUTIONS]['ID'];
 
 export type GameSettings = {
-    autoDeal: boolean;
     callingMethod: CallingMethod;
     noPickResolution: NoPickResolution;
     doubleOnTheBump: boolean;
+    blitzing: boolean; // TODO: Implement
+    cracking: boolean; // TODO: Implement
 };
 
 export type HandPhase = (typeof HAND_PHASE)[keyof typeof HAND_PHASE];
@@ -35,33 +37,16 @@ export type ScoreboardRow = {
 
 export type Scoreboard = Array<ScoreboardRow>;
 
-export type TrickSummary = {
-    takerId: string;
-    cards: Record<string, PlayingCard>;
-    points: number;
-    complete: boolean;
-};
-
-export type BurySummary = {
-    cards: PlayingCard[];
-    points: number;
-};
-
-export type PlayerSummary = {
-    score: number;
-    points: number;
-    tricks: number;
-};
-
 export type HandSummary = {
     winners: string[];
-    winningTeam: "picking" | "opponents";
-    playerSummaries: Record<string, PlayerSummary>;
     pickerId: string;
     partnerId: string;
     opponentIds: string[];
-    burySummary: BurySummary;
-    trickSummaries: TrickSummary[];
+    tricks: Trick[];
+    bury: PlayingCard[];
+    scores: Record<string, number>;
+    pointsWon: Record<string, number>;
+    tricksWon: Record<string, number>;
 };
 
 export type Trick = {
@@ -75,4 +60,5 @@ export type UpdateMessages =
     | GoneAloneMessage
     | CardPlayedMessage
     | PartnerRevealedMessage
-    | TrickDoneMessage;
+    | TrickWonMessage
+    | HandDoneMessage;

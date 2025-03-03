@@ -1,7 +1,5 @@
-import { CARD_RANK, CARD_SUIT } from "../constants/card";
-import { CardSuit, PlayingCard } from "../types/card";
-import { Scoreboard } from "../types/game";
-import { isTrumpCard } from "./card";
+import { Scoreboard, Trick } from "../types/game";
+import { compareCards } from "./card";
 
 /**
  * Arrange points on an ellipse given its width and height.
@@ -115,37 +113,26 @@ export const createNewScoreboard = (playerOrder: string[]) => {
 }
 
 /**
- * Returns a list of callable aces given a picker's hand.
- * The picker can call an ace so long as they don't have it in their hand
- * and they have a fail suit of that ace in their hand.
- * @param hand - list of cards in picker's hand
- * @returns list of callable aces
+ * Returns true if the trick is done.
  */
-export const findCallableAces = (hand: PlayingCard[]) => {
-    const failSuit: Record<CardSuit, boolean> = {
-        [CARD_SUIT.CLUB]: false,
-        [CARD_SUIT.HEART]: false,
-        [CARD_SUIT.SPADE]: false,
-        [CARD_SUIT.DIAMOND]: false
-    }
+export const isTrickDone = (trick: Trick) => {
+    return trick.turnOrder.length === Object.keys(trick.cards).length;
+}
 
-    const aces: Record<CardSuit, boolean> = {
-        [CARD_SUIT.CLUB]: false,
-        [CARD_SUIT.HEART]: false,
-        [CARD_SUIT.SPADE]: false,
-        [CARD_SUIT.DIAMOND]: false
-    }
-
-    hand.forEach((card) => {
-        if (card.rank === CARD_RANK.ACE) {
-            aces[card.suit] = true;
-        } else if (!isTrumpCard(card)) {
-            failSuit[card.suit] = true;
+/**
+ * Returns the id of the player who won the trick.
+ * @param trick - the trick to evaluate
+ */
+export const getTakerId = (trick: Trick) => {
+    if (isTrickDone(trick)) {
+        let takerId = "";
+        const leadingCard = trick.cards[trick.turnOrder[0]];
+        for (const playerId of trick.turnOrder) {
+            if (takerId === "" || compareCards(trick.cards[playerId], trick.cards[takerId], leadingCard.suit)) {
+                takerId = playerId;
+            }
         }
-    })
-
-    return Object.entries(aces).filter(([suit, hasAce]) => {
-        const hasFailSuit = failSuit[suit as CardSuit];
-        return !hasAce && hasFailSuit
-    }).map(([suit]) => ({ suit, rank: CARD_RANK.ACE } as PlayingCard));
+        return takerId;
+    }
+    return "";
 }

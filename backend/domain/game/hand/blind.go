@@ -4,7 +4,7 @@ import "main/domain/game/deck"
 
 type Blind struct {
 	Index     int          `json:"index"`     // Index of the player who picked the blind
-	PickOrder []string     `json:"pickOrder"` // Order of players starting with the dealer
+	PickOrder []string     `json:"pickOrder"` // Order of players ending with the dealer
 	Cards     []*deck.Card `json:"cards"`     // Cards in the blind
 	PickerID  string       `json:"pickerId"`  // ID of the player who picked the blind
 }

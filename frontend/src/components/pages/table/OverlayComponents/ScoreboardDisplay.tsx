@@ -6,14 +6,15 @@ import "./ScoreboardDisplay.scss";
 
 export default function ScoreboardDisplay() {
   const scoreboard = useAppSelector(gameSlice.selectors.scoreboard);
+  const handsPlayed = useAppSelector(gameSlice.selectors.handsPlayed);
+
   return (
     <div id="scoreboard-display" className="ScoreboardDisplay">
       {scoreboard !== null && Object.entries(scoreboard).length > 0 ? (
         <table>
           <thead>
             <tr>
-              <th></th>
-              <th>Score</th>
+              <th colSpan={2}>Score</th>
               <th>Points</th>
               <th>Tricks</th>
             </tr>
@@ -38,6 +39,11 @@ export default function ScoreboardDisplay() {
                 </tr>
               ))}
           </tbody>
+          <tfoot>
+            <tr>
+              <td colSpan={4}>Hands Played: {handsPlayed}</td>
+            </tr>
+          </tfoot>
         </table>
       ) : (
         <p>No scores to display</p>

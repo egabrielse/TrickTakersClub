@@ -6,7 +6,7 @@ import * as yup from "yup";
 import { createTable } from "../../../api/table.api";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { VALIDATION_ERRORS } from "../../../constants/error";
-import { PATHS } from "../../../constants/url";
+import { PATHS, SEGMENTS } from "../../../constants/url";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
 import dialogSlice from "../../../store/slices/dialog.slice";
@@ -24,7 +24,6 @@ const validationSchema = yup.object({
 
 export default function HomePage() {
   const dispatch = useAppDispatch();
-
   const navigate = useNavigate();
   const isAuthenticated = useAppSelector(authSlice.selectors.isAuthenticated);
   const [loading, setLoading] = useState(false);
@@ -95,6 +94,21 @@ export default function HomePage() {
           onChange={formik.handleChange}
           error={formik.touched.tableId && Boolean(formik.errors.tableId)}
           helperText={formik.touched.tableId && formik.errors.tableId}
+          onPaste={(e) => {
+            console.log(e.clipboardData);
+            console.log(location);
+            if (e.clipboardData) {
+              const text = e.clipboardData.getData("text");
+              const prefix = location.origin + "/" + SEGMENTS.TABLE + "/";
+              if (text.startsWith(prefix)) {
+                e.preventDefault();
+                formik.setFieldValue(
+                  "tableId",
+                  text.substring(text.lastIndexOf("/") + 1),
+                );
+              }
+            }
+          }}
         />
         <ActionButton
           color="secondary"

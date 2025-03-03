@@ -17,6 +17,7 @@ export const CARD_RANK = {
 } as const;
 
 export const CARD_SIZE = {
+    XSMALL: 'xsmall',
     SMALL: 'small',
     MEDIUM: 'medium',
     LARGE: 'large',

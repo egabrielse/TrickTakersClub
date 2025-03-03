@@ -1,7 +1,7 @@
 export const CALLING_METHODS = {
     ['cut-throat']: {
         ID: "cut-throat",
-        LABEL: "Call an Ace",
+        LABEL: "Cut Throat",
     },
     ['jack-of-diamonds']: {
         ID: "jack-of-diamonds",
@@ -9,7 +9,7 @@ export const CALLING_METHODS = {
     },
     ['call-an-ace']: {
         ID: "call-an-ace",
-        LABEL: "Cut Throat",
+        LABEL: "Call an Ace",
     },
 } as const;
 
@@ -31,7 +31,6 @@ export const NO_PICK_RESOLUTIONS = {
 export const PLAYER_COUNT = 5;
 
 export const GAME_SETTINGS_DEFAULTS = {
-    AUTO_DEAL: false,
     CALLING_METHODS: CALLING_METHODS["jack-of-diamonds"],
     NO_PICK_RESOLUTIONS: NO_PICK_RESOLUTIONS["screw-the-dealer"],
     DOUBLE_ON_THE_BUMP: false,
@@ -39,29 +38,15 @@ export const GAME_SETTINGS_DEFAULTS = {
     CRACKING: false,
 } as const;
 
-export const GAME_SETTINGS_PARAMS = {
-    SUPPORTED_PLAYER_COUNTS: [3, 4, 5],
-    MIN_PLAYERS: 3,
-    MAX_PLAYERS: 5,
-} as const;
-
 export const HAND_PHASE = {
-    SETUP: 'setup',
     PICK: 'pick',
     CALL: 'call',
     BURY: 'bury',
     PLAY: 'play',
-    SCORE: 'score',
+    DONE: 'done',
 } as const;
 
 export const MIN_GAME_WIDTH = 500;
 export const MIN_GAME_HEIGHT = 500;
 
 export const BLIND_SIZE = 2;
-
-export const PLAYER_ROLE = {
-    PICKER: "picker",
-    PARTNER: "partner",
-    OPPONENT: "opponent",
-} as const;
-

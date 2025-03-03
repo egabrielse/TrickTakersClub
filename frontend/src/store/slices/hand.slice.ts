@@ -4,12 +4,12 @@ import { PlayingCard } from "../../types/card";
 import {
     HandPhase,
     Trick,
-    TrickSummary,
     UpdateMessages,
 } from "../../types/game";
 import {
     CalledCardMessage,
     CardPlayedMessage,
+    LastHandStatusMessage,
     NewTrickMessage,
     PartnerRevealedMessage,
     UpNextMessage,
@@ -21,8 +21,7 @@ import {
     InitializeMessage,
     PickedCardsMessage,
 } from "../../types/message/direct";
-import { compareCards } from "../../utils/card";
-import { findCallableAces } from "../../utils/game";
+import { sortCards } from "../../utils/card";
 
 interface HandState {
     dealerId?: string;
@@ -33,17 +32,18 @@ interface HandState {
     calledCard?: PlayingCard;
     pickerId?: string;
     partnerId?: string;
-    currentTrick?: Trick;
-    summaries: TrickSummary[];
+    tricks: Trick[];
     updates: UpdateMessages[];
+    lastHand: Record<string, boolean>;
 }
 
 const initialState: HandState = {
     phase: HAND_PHASE.SETUP,
     hand: [],
     bury: [],
-    summaries: [],
+    tricks: [],
     updates: [],
+    lastHand: {},
 };
 
 const handSlice = createSlice({
@@ -55,24 +55,25 @@ const handSlice = createSlice({
             state.dealerId = action.payload.dealerId;
             state.upNextId = action.payload.upNextId;
             state.phase = action.payload.phase || HAND_PHASE.SETUP;
-            state.hand = [...(action.payload.hand || [])].sort(compareCards);
+            state.lastHand = action.payload.lastHand || {};
+            state.hand = [...(action.payload.hand || [])].sort(sortCards);
             state.bury = action.payload.bury || [];
             state.calledCard = action.payload.calledCard;
             state.pickerId = action.payload.pickerId;
             state.partnerId = action.payload.partnerId;
-            state.currentTrick = action.payload.currentTrick;
-            state.summaries = action.payload.summaries || [];
+            state.tricks = action.payload.tricks || [];
             state.updates = [];
         },
         dealHand: (state, action: PayloadAction<MessageData<DealHandMessage>>) => {
             state.dealerId = action.payload.dealerId;
-            state.hand = action.payload.cards.sort(compareCards);
+            state.hand = action.payload.cards.sort(sortCards);
+            state.lastHand = {};
         },
         startNewTrick: (state, action: PayloadAction<MessageData<NewTrickMessage>>) => {
-            state.currentTrick = {
+            state.tricks.push({
                 turnOrder: action.payload.nextTrickOrder,
                 cards: {},
-            };
+            });
         },
         upNext: (state, action: PayloadAction<MessageData<UpNextMessage>>) => {
             state.upNextId = action.payload.playerId;
@@ -82,7 +83,7 @@ const handSlice = createSlice({
             state,
             action: PayloadAction<MessageData<PickedCardsMessage>>,
         ) => {
-            state.hand = [...state.hand, ...action.payload.cards].sort(compareCards);
+            state.hand = [...state.hand, ...action.payload.cards].sort(sortCards);
         },
         buriedCards: (
             state,
@@ -110,8 +111,8 @@ const handSlice = createSlice({
             state.hand = state.hand.filter(
                 (c) => !(c.rank === card.rank && c.suit === card.suit),
             );
-            if (state.currentTrick) {
-                state.currentTrick.cards[playerId] = card;
+            if (state.tricks.length) {
+                state.tricks[state.tricks.length - 1].cards[playerId] = card;
             }
         },
         partnerRevealed: (
@@ -120,10 +121,6 @@ const handSlice = createSlice({
         ) => {
             state.partnerId = action.payload.playerId;
         },
-        trickDone: (state, action: PayloadAction<TrickSummary>) => {
-            state.summaries.push(action.payload);
-        },
-        gameOver: () => initialState,
         displayMessage: (state, action: PayloadAction<UpdateMessages>) => {
             state.updates.push(action.payload);
         },
@@ -132,7 +129,11 @@ const handSlice = createSlice({
         },
         clearUpdates: (state) => {
             state.updates = [];
-        }
+        },
+        updateLastHandStatus: (state, action: PayloadAction<MessageData<LastHandStatusMessage>>) => {
+            const { playerId, lastHand } = action.payload;
+            state.lastHand[playerId] = lastHand;
+        },
     },
     selectors: {
         dealerId: (state: HandState) => state.dealerId,
@@ -142,15 +143,25 @@ const handSlice = createSlice({
         partnerRevealed: (state: HandState) => state.partnerId !== "",
         phase: (state: HandState) => state.phase,
         hand: (state: HandState) => state.hand,
-        callableAces: (state: HandState) => findCallableAces(state.hand),
         bury: (state: HandState) => state.bury,
         calledCard: (state: HandState) => state.calledCard,
-        leadingCard: (state: HandState) =>
-            state.currentTrick &&
-            state.currentTrick.cards[state.currentTrick.turnOrder[0]],
-        currentTrick: (state: HandState) => state.currentTrick,
-        summaries: (state: HandState) => state.summaries,
+        leadingCard: (state: HandState) => {
+            if (state.tricks.length) {
+                const currentTrick = state.tricks[state.tricks.length - 1]
+                return currentTrick && currentTrick.cards[currentTrick.turnOrder[0]];
+            }
+            return null;
+        },
+        tricks: (state: HandState) => state.tricks,
+        currentTrick: (state: HandState) => {
+            if (state.tricks.length) {
+                return state.tricks[state.tricks.length - 1];
+            }
+            return null;
+        },
         updates: (state: HandState) => state.updates,
+        lastHand: (state: HandState) => state.lastHand,
+        isLastHand: (state: HandState) => Object.values(state.lastHand).some((v) => v),
     },
 });
 

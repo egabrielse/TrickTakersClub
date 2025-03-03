@@ -1,16 +1,16 @@
 import { useContext } from "react";
 import { COMMAND_TYPES } from "../../../../../constants/message";
 import { useAppSelector } from "../../../../../store/hooks";
-import handSlice from "../../../../../store/slices/hand.slice";
+import selectors from "../../../../../store/selectors";
 import { PlayingCard } from "../../../../../types/card";
-import Card from "../../../../common/Card";
 import PaperButton from "../../../../common/PaperButton";
+import PrintedCard from "../../../../common/PrintedCard";
 import ConnectionContext from "../../ConnectionContext";
 import "./CallAnAce.scss";
 
 export default function CallAnAce() {
   const { sendCommand } = useContext(ConnectionContext);
-  const callableAces = useAppSelector(handSlice.selectors.callableAces);
+  const callableAces = useAppSelector(selectors.callableAces);
 
   const handleCallCard = (card: PlayingCard) => {
     sendCommand({ name: COMMAND_TYPES.CALL, data: { card } });
@@ -22,17 +22,19 @@ export default function CallAnAce() {
 
   return (
     <div className="CallAnAce">
-      {callableAces.map((ace) => {
+      {callableAces.map((suit) => {
         return (
-          <Card
-            id={`${ace.rank}-${ace.suit}`}
-            key={`${ace.rank}-${ace.suit}`}
-            card={ace}
-            onClick={() => handleCallCard(ace)}
-          />
+          <PaperButton
+            key={`call-${suit}-btn`}
+            onClick={() => handleCallCard({ suit, rank: "ace" })}
+          >
+            <PrintedCard suit={suit} rank={"ace"} />
+          </PaperButton>
         );
       })}
-      <PaperButton onClick={handleGoAlone}>Go Alone</PaperButton>
+      <PaperButton key={"go-alone-btn"} onClick={handleGoAlone}>
+        Go Alone
+      </PaperButton>
     </div>
   );
 }

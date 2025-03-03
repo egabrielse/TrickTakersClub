@@ -1,33 +1,33 @@
-package game
+package hand
 
 import (
 	"main/domain/game/deck"
 	"main/utils"
 )
 
-type Players struct {
+type PlayerHands struct {
 	Hands map[string][]*deck.Card `json:"hands"` // Player hands
 }
 
-func NewPlayers(playerIDs []string) *Players {
+func NewPlayerHands(playerIDs []string) *PlayerHands {
 	hands := map[string][]*deck.Card{}
 	for _, id := range playerIDs {
 		hands[id] = []*deck.Card{}
 	}
-	return &Players{
+	return &PlayerHands{
 		Hands: hands,
 	}
 }
 
-func (p *Players) GetHand(playerID string) []*deck.Card {
+func (p *PlayerHands) GetHand(playerID string) []*deck.Card {
 	return p.Hands[playerID]
 }
 
-func (p *Players) SetHand(playerID string, hand []*deck.Card) {
+func (p *PlayerHands) SetHand(playerID string, hand []*deck.Card) {
 	p.Hands[playerID] = hand
 }
 
-func (p *Players) WhoHas(card *deck.Card) string {
+func (p *PlayerHands) WhoHas(card *deck.Card) string {
 	for id, hand := range p.Hands {
 		for _, c := range hand {
 			if *c == *card {
@@ -38,7 +38,7 @@ func (p *Players) WhoHas(card *deck.Card) string {
 	return ""
 }
 
-func (p *Players) RemoveCard(playerID string, card *deck.Card) {
+func (p *PlayerHands) RemoveCard(playerID string, card *deck.Card) {
 	hand := p.Hands[playerID]
 	filtered := utils.Filter(hand, func(c *deck.Card) bool {
 		return *c != *card
@@ -46,13 +46,13 @@ func (p *Players) RemoveCard(playerID string, card *deck.Card) {
 	p.Hands[playerID] = filtered
 }
 
-func (p *Players) RemoveCards(playerID string, cards []*deck.Card) {
+func (p *PlayerHands) RemoveCards(playerID string, cards []*deck.Card) {
 	for _, card := range cards {
 		p.RemoveCard(playerID, card)
 	}
 }
 
-func (p *Players) HandContains(playerID string, cards []*deck.Card) bool {
+func (p *PlayerHands) HandContains(playerID string, cards []*deck.Card) bool {
 	hand := p.Hands[playerID]
 	for _, cardToFind := range cards {
 		found := false

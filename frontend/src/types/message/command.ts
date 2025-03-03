@@ -17,6 +17,11 @@ export interface EndGameCommand extends Message {
     data: undefined;
 }
 
+export interface ToggleLastHandCommand extends Message {
+    name: typeof COMMAND_TYPES.TOGGLE_LAST_HAND;
+    data: undefined;
+}
+
 export interface GoAloneCommand extends Message {
     name: typeof COMMAND_TYPES.GO_ALONE;
     data: undefined;
@@ -52,11 +57,6 @@ export interface StandUpCommand extends Message {
     data: undefined;
 }
 
-export interface UpdateAutoDealCommand extends Message {
-    name: typeof COMMAND_TYPES.UPDATE_AUTO_DEAL;
-    data: { autoDeal: boolean };
-}
-
 export interface UpdateCallingMethodCommand extends Message {
     name: typeof COMMAND_TYPES.UPDATE_CALLING_METHOD;
     data: { callingMethod: string };
@@ -76,6 +76,7 @@ export type CommandMessage = (
     | BuryCommand
     | CallCommand
     | EndGameCommand
+    | ToggleLastHandCommand
     | GoAloneCommand
     | PassCommand
     | PlayCardCommand
@@ -83,7 +84,6 @@ export type CommandMessage = (
     | StartGameCommand
     | SitDownCommand
     | StandUpCommand
-    | UpdateAutoDealCommand
     | UpdateCallingMethodCommand
     | UpdateNoPickResolutionCommand
     | UpdateDoubleOnTheBumpCommand

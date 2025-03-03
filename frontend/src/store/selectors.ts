@@ -5,6 +5,9 @@ import authSlice from "./slices/auth.slice";
 import gameSlice from "./slices/game.slice";
 import tableSlice from "./slices/table.slice";
 import { relistStartingWith } from "../utils/list";
+import { getTakerId } from "../utils/game";
+import { CARD_RANK, CARD_SUIT } from "../constants/card";
+import { FailSuit } from "../types/card";
 
 /**
  * True if the user is the dealer, false otherwise.
@@ -98,7 +101,7 @@ const playableCards = createSelector([
     } else if (isPicker && calledCard && !partnerRevealed) {
         // Picker has a partner and partner has not been revealed
         // Picker must retain at least one fail suit card of the called card, until it is led
-        const count = hand.filter((card) => card.suit === calledCard.suit).length;
+        const count = hand.filter((card) => card.suit === calledCard.suit && !isTrumpCard(card)).length;
         if (count === 1) {
             return hand.filter((card) => card.suit !== calledCard.suit);
         } else {
@@ -110,6 +113,29 @@ const playableCards = createSelector([
 });
 
 /**
+ * Returns a list of callable aces for the user.
+ */
+const callableAces = createSelector([
+    handSlice.selectors.hand,
+    handSlice.selectors.bury,
+], (hand, bury): FailSuit[] => {
+    const cards = [...hand, ...bury];
+    const aces: Record<FailSuit, boolean> = {
+        [CARD_SUIT.CLUB]: false,
+        [CARD_SUIT.HEART]: false,
+        [CARD_SUIT.SPADE]: false,
+    }
+    for (const key in aces) {
+        const hasAce = cards.some((card) => card.rank === CARD_RANK.ACE && card.suit === key);
+        const holdsFailSuit = hand.some((card) => !isTrumpCard(card) && card.suit === key);
+        if (!hasAce && holdsFailSuit) {
+            aces[key as FailSuit] = true;
+        }
+    }
+    return Object.keys(aces).filter((value) => value) as FailSuit[];
+});
+
+/**
  * Returns the player order starting with the user.
  */
 const playerOrderStartingWithUser = createSelector(
@@ -118,10 +144,11 @@ const playerOrderStartingWithUser = createSelector(
 );
 
 const tricksWon = createSelector(
-    [handSlice.selectors.summaries],
-    (summaries) => summaries.reduce((prev: Record<string, number>, curr) => {
-        if (curr.takerId) {
-            prev[curr.takerId] = (prev[curr.takerId] || 0) + 1;
+    [handSlice.selectors.tricks],
+    (tricks) => tricks.reduce((prev: Record<string, number>, curr) => {
+        const takerId = getTakerId(curr);
+        if (takerId) {
+            prev[takerId] = (prev[takerId] || 0) + 1;
         }
         return prev;
     }, {})
@@ -135,6 +162,7 @@ const selectors = {
     isHost,
     isSeated,
     playableCards,
+    callableAces,
     playerOrderStartingWithUser,
     tricksWon,
 };

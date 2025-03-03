@@ -1,6 +1,6 @@
 import { Message } from "ably";
 import { DIRECT_TYPES } from "../../constants/message";
-import { GameSettings, HandPhase, Scoreboard, Trick, TrickSummary } from "../game";
+import { GameSettings, HandPhase, Scoreboard, Trick } from "../game";
 import { PlayingCard } from "../card";
 
 export interface ErrorMessage extends Message {
@@ -26,10 +26,10 @@ export interface InitializeMessage extends Message {
         upNextId?: string;
         pickerId?: string;
         partnerId?: string;
-        currentTrick?: Trick;
-        summaries?: TrickSummary[],
+        tricks: Trick[];
         hand?: PlayingCard[];
         bury?: PlayingCard[];
+        lastHand: Record<string, boolean>;
     };
 }
 

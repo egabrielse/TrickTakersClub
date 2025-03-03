@@ -65,6 +65,10 @@ function ConnectionApiProvider({
         dispatch(gameSlice.actions.gameStarted(msg.data));
         break;
       }
+      case BROADCAST_TYPES.LAST_HAND_STATUS: {
+        dispatch(handSlice.actions.updateLastHandStatus(msg.data));
+        break;
+      }
       case BROADCAST_TYPES.NEW_TRICK:
         dispatch(handSlice.actions.startNewTrick(msg.data));
         break;
@@ -76,26 +80,28 @@ function ConnectionApiProvider({
         dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       case BROADCAST_TYPES.GONE_ALONE:
-        dispatch(handSlice.actions.displayMessage({ ...msg }));
+        if (!msg.data.forced) {
+          // Only display the message if the player chose to go alone
+          // Otherwise the picker probably wants this to remain a secret
+          dispatch(handSlice.actions.displayMessage({ ...msg }));
+        }
         break;
       case BROADCAST_TYPES.PARTNER_REVEALED:
         dispatch(handSlice.actions.partnerRevealed(msg.data));
         dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
-      case BROADCAST_TYPES.TRICK_DONE: {
-        dispatch(handSlice.actions.trickDone(msg.data.trickSummary));
-        if (msg.data.handSummary) {
-          dispatch(
-            dialogSlice.actions.openDialog({
-              type: DIALOG_TYPES.GAME_SUMMARY,
-              props: { summary: msg.data.handSummary },
-            }),
-          );
-          dispatch(gameSlice.actions.handDone(msg.data.handSummary));
-        }
+      case BROADCAST_TYPES.TRICK_WON:
         dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
-      }
+      case BROADCAST_TYPES.HAND_DONE:
+        dispatch(
+          dialogSlice.actions.openDialog({
+            type: DIALOG_TYPES.GAME_SUMMARY,
+            props: { summary: msg.data.summary },
+          }),
+        );
+        dispatch(gameSlice.actions.handDone(msg.data));
+        break;
       case BROADCAST_TYPES.BLIND_PICKED:
         dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
@@ -105,15 +111,29 @@ function ConnectionApiProvider({
         break;
       }
       case BROADCAST_TYPES.GAME_OVER:
-        // Reset the state EXCEPT for the hands played and scoreboard
+        // TODO: Display a game over dialog, which displays the final scoreboard
+        // Reset the state when the game is over
         dispatch(handSlice.actions.reset());
         dispatch(gameSlice.actions.reset());
+        dispatch(tableSlice.actions.resetSeating());
         break;
       case BROADCAST_TYPES.SAT_DOWN:
         dispatch(tableSlice.actions.satDown(msg.data));
         break;
       case BROADCAST_TYPES.STOOD_UP:
         dispatch(tableSlice.actions.stoodUp(msg.data));
+        break;
+      case BROADCAST_TYPES.TIMEOUT:
+        dispatch(
+          dialogSlice.actions.openDialog({
+            type: DIALOG_TYPES.ERROR,
+            props: {
+              title: "Timed Out",
+              message: "The table was inactive for too long.",
+            },
+            closeable: false,
+          }),
+        );
         break;
       default:
         if (msg.clientId !== uid) {

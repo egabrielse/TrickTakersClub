@@ -62,13 +62,13 @@ const renderUpdateMessage = (update: UpdateMessages) => {
           <Typography>is the partner!</Typography>
         </>
       );
-    case BROADCAST_TYPES.TRICK_DONE:
+    case BROADCAST_TYPES.TRICK_WON:
       return (
         <>
           <ProfileSnapshot
             size="small"
             variant="avatar"
-            uid={update.data?.trickSummary?.takerId}
+            uid={update.data.playerId}
           />
           <Typography>took the trick!</Typography>
         </>
@@ -90,7 +90,7 @@ export default function GameUpdates() {
     if (updates.length && !nextUpdate) {
       setNextUpdate(updates[0]);
       dispatch(handSlice.actions.shiftUpdate());
-      setTimeout(() => setNextUpdate(null), 2000);
+      setTimeout(() => setNextUpdate(null), 2500);
     }
   }, [dispatch, nextUpdate, updates]);
 

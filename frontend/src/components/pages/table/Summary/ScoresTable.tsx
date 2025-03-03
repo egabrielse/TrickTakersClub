@@ -14,6 +14,11 @@ type ScoresTableProps = {
 };
 
 export default function ScoresTable({ summary }: ScoresTableProps) {
+  const playerIds = [summary.pickerId];
+  if (summary.partnerId) {
+    playerIds.push(summary.partnerId);
+  }
+  playerIds.push(...summary.opponentIds);
   return (
     <TableContainer sx={{ maxHeight: 500 }} component={Paper}>
       <Table sx={{ minWidth: 500 }} size="small" stickyHeader>
@@ -27,35 +32,25 @@ export default function ScoresTable({ summary }: ScoresTableProps) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {Object.entries(summary.playerSummaries)
-            .sort(([key]) => {
-              if (summary.pickerId === key) {
-                return -1;
-              } else if (summary.partnerId === key) {
-                return -1;
-              } else {
-                return 1;
-              }
-            })
-            .map(([key, playerSum]) => (
-              <TableRow>
-                <TableCell>
-                  <ProfileSnapshot variant="avatar" uid={key} />
-                </TableCell>
-                <TableCell>
-                  {summary.pickerId === key
-                    ? "Picker"
-                    : summary.partnerId === key
-                      ? "Partner"
-                      : null}
-                </TableCell>
-                <TableCell>{playerSum.tricks}</TableCell>
-                <TableCell>{playerSum.points}</TableCell>
-                <TableCell>
-                  <StyledNumber>{playerSum.score}</StyledNumber>
-                </TableCell>
-              </TableRow>
-            ))}
+          {playerIds.map((playerId) => (
+            <TableRow>
+              <TableCell>
+                <ProfileSnapshot variant="avatar" uid={playerId} />
+              </TableCell>
+              <TableCell>
+                {summary.pickerId === playerId
+                  ? "Picker"
+                  : summary.partnerId === playerId
+                    ? "Partner"
+                    : null}
+              </TableCell>
+              <TableCell>{summary.tricksWon[playerId]}</TableCell>
+              <TableCell>{summary.pointsWon[playerId]}</TableCell>
+              <TableCell>
+                <StyledNumber>{summary.scores[playerId]}</StyledNumber>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </TableContainer>

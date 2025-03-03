@@ -8,6 +8,8 @@ import {
   TableRow,
 } from "@mui/material";
 import { HandSummary } from "../../../../types/game";
+import { countCardPoints } from "../../../../utils/card";
+import { getTakerId } from "../../../../utils/game";
 import Card from "../../../common/Card";
 import ProfileSnapshot from "../../../common/ProfileSnapshot";
 
@@ -16,6 +18,10 @@ type BreakdownTableProps = {
 };
 
 export default function BreakdownTable({ summary }: BreakdownTableProps) {
+  console.log(summary);
+  summary.tricks.forEach((trick) => {
+    console.log(getTakerId(trick));
+  });
   return (
     <TableContainer sx={{ maxHeight: 500 }} component={Paper}>
       <Table
@@ -36,8 +42,8 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
             <TableCell>
               <ProfileSnapshot variant="avatar" uid={summary.pickerId} />
             </TableCell>
-            <TableCell>
-              {summary.burySummary.cards.map((card) => (
+            <TableCell style={{ display: "flex" }}>
+              {summary.bury.map((card) => (
                 <Card
                   id={`summary-${card.rank}-${card.suit}`}
                   key={`summary-${card.rank}-${card.suit}`}
@@ -46,15 +52,15 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
                 />
               ))}
             </TableCell>
-            <TableCell>{summary.burySummary.points}</TableCell>
+            <TableCell>{countCardPoints(summary.bury)}</TableCell>
           </TableRow>
-          {summary.trickSummaries.map((trickSum, index) => (
+          {summary.tricks.map((trick, index) => (
             <TableRow key={index}>
               <TableCell>
-                <ProfileSnapshot variant="avatar" uid={trickSum.takerId} />
+                <ProfileSnapshot variant="avatar" uid={getTakerId(trick)} />
               </TableCell>
-              <TableCell>
-                {Object.values(trickSum.cards).map((card) => (
+              <TableCell style={{ display: "flex" }}>
+                {Object.values(trick.cards).map((card) => (
                   <Card
                     id={`summary-${card.rank}-${card.suit}`}
                     key={`summary-${card.rank}-${card.suit}`}
@@ -63,7 +69,9 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
                   />
                 ))}
               </TableCell>
-              <TableCell>{trickSum.points}</TableCell>
+              <TableCell>
+                {countCardPoints(Object.values(trick.cards))}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

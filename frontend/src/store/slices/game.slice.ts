@@ -1,8 +1,8 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { HandSummary, Scoreboard } from "../../types/game";
+import { Scoreboard } from "../../types/game";
 import { MessageData } from "../../types/message/data";
 import { InitializeMessage } from "../../types/message/direct";
-import { GameStartedMessage } from "../../types/message/broadcast";
+import { GameStartedMessage, HandDoneMessage } from "../../types/message/broadcast";
 import { createNewScoreboard } from "../../utils/game";
 
 interface GameState {
@@ -10,7 +10,6 @@ interface GameState {
     scoreboard: Scoreboard;
     playerOrder: string[];
     handsPlayed: number;
-    handSummary: HandSummary | null;
 }
 
 const initialState: GameState = {
@@ -18,7 +17,6 @@ const initialState: GameState = {
     scoreboard: [],
     playerOrder: [],
     handsPlayed: 0,
-    handSummary: null,
 };
 
 
@@ -39,32 +37,22 @@ const gameSlice = createSlice({
             state.handsPlayed = 0;
             state.playerOrder = action.payload.playerOrder;
         },
-        handDone: (state, action: PayloadAction<HandSummary>) => {
-            if (action.payload) {
-                // Set the hand summary in state to be displayed
-                state.handsPlayed += 1;
-                const playerSummaries = action.payload.playerSummaries;
-                // Update the scoreboard
-                state.scoreboard = state.scoreboard.map((row) => ({
-                    playerId: row.playerId,
-                    score: row.score += playerSummaries[row.playerId].score,
-                    totalPoints: row.totalPoints += playerSummaries[row.playerId].points,
-                    totalTricks: row.totalTricks += playerSummaries[row.playerId].tricks,
-                }));
-            }
+        handDone: (state, action: PayloadAction<MessageData<HandDoneMessage>>) => {
+            const { summary } = action.payload;
+            state.scoreboard = state.scoreboard.map((row) => ({
+                playerId: row.playerId,
+                score: row.score += summary.scores[row.playerId],
+                totalPoints: row.totalPoints += summary.pointsWon[row.playerId],
+                totalTricks: row.totalTricks += summary.tricksWon[row.playerId],
+            }));
+            state.handsPlayed += 1;
         },
-        gameOver: (state) => {
-            // Only set inProgress to false if the game is over
-            // Other state can be displayed still via popup (e.g. hand summary)
-            state.inProgress = false;
-        }
     },
     selectors: {
         inProgress: (state: GameState) => state.inProgress,
         scoreboard: (state: GameState) => state.scoreboard,
         playerOrder: (state: GameState) => state.playerOrder,
         handsPlayed: (state: GameState) => state.handsPlayed,
-        handSummary: (state: GameState) => state.handSummary,
     }
 });
 

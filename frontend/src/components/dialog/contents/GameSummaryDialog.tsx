@@ -32,7 +32,7 @@ export default function GameSummaryDialog({ props }: GameSummaryDialogParams) {
     <>
       <CloseDialogButton />
       <DialogHeader>
-        {summary.winningTeam === "picking" ? (
+        {summary.winners.includes(summary.pickerId) ? (
           <>
             <ProfileSnapshot
               uid={summary.pickerId}
