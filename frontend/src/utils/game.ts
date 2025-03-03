@@ -1,7 +1,5 @@
-import { CARD_RANK, CARD_SUIT } from "../constants/card";
-import { CardSuit, PlayingCard } from "../types/card";
 import { Scoreboard, Trick } from "../types/game";
-import { compareCards, isTrumpCard } from "./card";
+import { compareCards } from "./card";
 
 /**
  * Arrange points on an ellipse given its width and height.
@@ -112,42 +110,6 @@ export const createNewScoreboard = (playerOrder: string[]) => {
         scoreboard.push({ playerId, score: 0, totalPoints: 0, totalTricks: 0 });
     });
     return scoreboard;
-}
-
-/**
- * Returns a list of callable aces given a picker's hand.
- * The picker can call an ace so long as they don't have it in their hand
- * and they have a fail suit of that ace in their hand.
- * @param hand - list of cards in picker's hand
- * @returns list of callable aces
- */
-export const findCallableAces = (hand: PlayingCard[]) => {
-    const failSuit: Record<CardSuit, boolean> = {
-        [CARD_SUIT.CLUB]: false,
-        [CARD_SUIT.HEART]: false,
-        [CARD_SUIT.SPADE]: false,
-        [CARD_SUIT.DIAMOND]: false
-    }
-
-    const aces: Record<CardSuit, boolean> = {
-        [CARD_SUIT.CLUB]: false,
-        [CARD_SUIT.HEART]: false,
-        [CARD_SUIT.SPADE]: false,
-        [CARD_SUIT.DIAMOND]: false
-    }
-
-    hand.forEach((card) => {
-        if (card.rank === CARD_RANK.ACE) {
-            aces[card.suit] = true;
-        } else if (!isTrumpCard(card)) {
-            failSuit[card.suit] = true;
-        }
-    })
-
-    return Object.entries(aces).filter(([suit, hasAce]) => {
-        const hasFailSuit = failSuit[suit as CardSuit];
-        return !hasAce && hasFailSuit
-    }).map(([suit]) => ({ suit, rank: CARD_RANK.ACE } as PlayingCard));
 }
 
 /**

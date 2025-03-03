@@ -6,6 +6,8 @@ import gameSlice from "./slices/game.slice";
 import tableSlice from "./slices/table.slice";
 import { relistStartingWith } from "../utils/list";
 import { getTakerId } from "../utils/game";
+import { CARD_RANK, CARD_SUIT } from "../constants/card";
+import { CardSuit, PlayingCard } from "../types/card";
 
 /**
  * True if the user is the dealer, false otherwise.
@@ -111,6 +113,42 @@ const playableCards = createSelector([
 });
 
 /**
+ * Returns a list of callable aces for the user.
+ */
+const callableAces = createSelector([
+    handSlice.selectors.hand,
+    handSlice.selectors.bury,
+], (hand, bury) => {
+    const cards = [...hand, ...bury];
+    const failSuit: Record<CardSuit, boolean> = {
+        [CARD_SUIT.CLUB]: false,
+        [CARD_SUIT.HEART]: false,
+        [CARD_SUIT.SPADE]: false,
+        [CARD_SUIT.DIAMOND]: false
+    }
+
+    const aces: Record<CardSuit, boolean> = {
+        [CARD_SUIT.CLUB]: false,
+        [CARD_SUIT.HEART]: false,
+        [CARD_SUIT.SPADE]: false,
+        [CARD_SUIT.DIAMOND]: false
+    }
+
+    cards.forEach((card) => {
+        if (card.rank === CARD_RANK.ACE) {
+            aces[card.suit] = true;
+        } else if (!isTrumpCard(card)) {
+            failSuit[card.suit] = true;
+        }
+    })
+
+    return Object.entries(aces).filter(([suit, hasAce]) => {
+        const hasFailSuit = failSuit[suit as CardSuit];
+        return !hasAce && hasFailSuit
+    }).map(([suit]) => ({ suit, rank: CARD_RANK.ACE } as PlayingCard));
+});
+
+/**
  * Returns the player order starting with the user.
  */
 const playerOrderStartingWithUser = createSelector(
@@ -137,6 +175,7 @@ const selectors = {
     isHost,
     isSeated,
     playableCards,
+    callableAces,
     playerOrderStartingWithUser,
     tricksWon,
 };

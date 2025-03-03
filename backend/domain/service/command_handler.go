@@ -248,7 +248,10 @@ func HandlePlayCardCommand(t *TableWorker, clientID string, data interface{}) {
 					if t.Game.IsLastHand() {
 						// A player has said it's their last hand, end the game
 						t.BroadcastMessage(msg.GameOverMessage(t.Game.TallyScores()))
+						// Clear the game from state
 						t.Game = nil
+						// Reset seated players
+						t.SeatedPlayers = []string{t.Table.HostID}
 					} else {
 						//  Otherwise, start a new hand
 						t.Game.StartNewHand()

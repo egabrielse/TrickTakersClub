@@ -77,21 +77,21 @@ function ConnectionApiProvider({
         break;
       case BROADCAST_TYPES.CALLED_CARD:
         dispatch(handSlice.actions.calledCard(msg.data));
-        dispatch(handSlice.actions.displayMessage(msg));
+        dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       case BROADCAST_TYPES.GONE_ALONE:
         if (!msg.data.forced) {
           // Only display the message if the player chose to go alone
           // Otherwise the picker probably wants this to remain a secret
-          dispatch(handSlice.actions.displayMessage(msg));
+          dispatch(handSlice.actions.displayMessage({ ...msg }));
         }
         break;
       case BROADCAST_TYPES.PARTNER_REVEALED:
         dispatch(handSlice.actions.partnerRevealed(msg.data));
-        dispatch(handSlice.actions.displayMessage(msg));
+        dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       case BROADCAST_TYPES.TRICK_WON:
-        dispatch(handSlice.actions.displayMessage(msg));
+        dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       case BROADCAST_TYPES.HAND_DONE:
         dispatch(
@@ -103,11 +103,11 @@ function ConnectionApiProvider({
         dispatch(gameSlice.actions.handDone(msg.data));
         break;
       case BROADCAST_TYPES.BLIND_PICKED:
-        dispatch(handSlice.actions.displayMessage(msg));
+        dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       case BROADCAST_TYPES.CARD_PLAYED: {
         dispatch(handSlice.actions.cardPlayed(msg.data));
-        dispatch(handSlice.actions.displayMessage(msg));
+        dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       }
       case BROADCAST_TYPES.GAME_OVER:

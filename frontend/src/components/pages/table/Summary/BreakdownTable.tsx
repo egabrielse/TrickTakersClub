@@ -18,6 +18,7 @@ type BreakdownTableProps = {
 };
 
 export default function BreakdownTable({ summary }: BreakdownTableProps) {
+  console.log(summary);
   return (
     <TableContainer sx={{ maxHeight: 500 }} component={Paper}>
       <Table
@@ -38,7 +39,7 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
             <TableCell>
               <ProfileSnapshot variant="avatar" uid={summary.pickerId} />
             </TableCell>
-            <TableCell>
+            <TableCell style={{ display: "flex" }}>
               {summary.bury.map((card) => (
                 <Card
                   id={`summary-${card.rank}-${card.suit}`}

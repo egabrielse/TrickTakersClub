@@ -22,7 +22,6 @@ import {
     PickedCardsMessage,
 } from "../../types/message/direct";
 import { sortCards } from "../../utils/card";
-import { findCallableAces } from "../../utils/game";
 
 interface HandState {
     dealerId?: string;
@@ -144,7 +143,6 @@ const handSlice = createSlice({
         partnerRevealed: (state: HandState) => state.partnerId !== "",
         phase: (state: HandState) => state.phase,
         hand: (state: HandState) => state.hand,
-        callableAces: (state: HandState) => findCallableAces(state.hand),
         bury: (state: HandState) => state.bury,
         calledCard: (state: HandState) => state.calledCard,
         leadingCard: (state: HandState) => {

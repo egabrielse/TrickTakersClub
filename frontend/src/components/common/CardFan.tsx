@@ -1,5 +1,5 @@
 import { CardProps } from "@mui/material";
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useEffect } from "react";
 import "./CardFan.scss";
 
 type CardFanProps = {
@@ -15,10 +15,6 @@ export default function CardFan({
   style,
   scale = 1,
 }: CardFanProps) {
-  const [prevChildren, setPrevChildren] = useState(
-    children.map((child) => child.props.id),
-  );
-
   useEffect(() => {
     const angle = 65; // Example angle, you can adjust as needed
     const count = children.length;
@@ -32,25 +28,9 @@ export default function CardFan({
         element.style.position = "absolute";
         element.style.transform = transform;
         element.style.transformOrigin = `center ${(children.length + 1) * (scale * 60)}px`;
-        if (!prevChildren.includes(child.props.id)) {
-          // Flash newly added cards
-          element?.animate(
-            [
-              { filter: "inherit" },
-              { filter: "brightness(1.5)" },
-              { filter: "inherit" },
-            ],
-            {
-              duration: 500,
-              easing: "ease-in-out",
-              fill: "forwards",
-            },
-          );
-          setPrevChildren((prev) => [...prev, child.props.id]);
-        }
       }
     });
-  }, [children, prevChildren, scale]);
+  }, [children, scale]);
 
   return (
     <div id={id} className="CardFan" style={style}>

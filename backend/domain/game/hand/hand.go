@@ -38,6 +38,7 @@ func NewHand(playerOrder []string, settings *settings.GameSettings) *Hand {
 		Bury:        NewBury(),
 		Call:        NewCall(),
 		Tricks:      []*Trick{NewTrick(turnOrder)},
+		Settings:    settings,
 	}
 }
 
@@ -127,8 +128,6 @@ func (h *Hand) BuryCards(playerID string, cards []*deck.Card) (*BuryResult, erro
 		h.PlayerHands.RemoveCards(playerID, cards)
 		// Put the cards in the bury
 		h.Bury.BuryCards(cards)
-		// Move onto the call phase
-		h.Phase = HandPhase.Call
 
 		if h.Settings.CallMethod == settings.CallMethod.CutThroat {
 			// Picker does not get to choose a partner in cut throat
@@ -235,6 +234,7 @@ func (h *Hand) SummarizeHand() (*HandSummary, error) {
 		return nil, fmt.Errorf("hand is not complete")
 	}
 	sum := NewHandSummary(h.PlayerOrder)
+	sum.Tricks = h.Tricks
 	// Count up the points won from tricks and the number of tricks each player won
 	pointsWon := map[string]int{}
 	tricksWon := map[string]int{}
