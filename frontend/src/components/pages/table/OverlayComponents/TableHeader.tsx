@@ -14,12 +14,10 @@ export default function TableHeader() {
       <Typography variant="h6" sx={{ lineHeight: 0.75 }}>
         {styledTableId.map((line, index) => {
           const lastWord = index === styledTableId.length - 1;
-          const nextWordIsShort = styledTableId[index + 1]?.length < 3;
           return (
             <span key={index}>
               {line}
-              {!lastWord && !nextWordIsShort && <br />}
-              {nextWordIsShort && " "}
+              {!lastWord && <br />}
             </span>
           );
         })}
