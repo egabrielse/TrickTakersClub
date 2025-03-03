@@ -116,7 +116,7 @@ export const createNewScoreboard = (playerOrder: string[]) => {
  * Returns true if the trick is done.
  */
 export const isTrickDone = (trick: Trick) => {
-    return trick.turnOrder.length === Object(trick.cards).length;
+    return trick.turnOrder.length === Object.keys(trick.cards).length;
 }
 
 /**

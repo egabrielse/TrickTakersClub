@@ -19,6 +19,9 @@ type BreakdownTableProps = {
 
 export default function BreakdownTable({ summary }: BreakdownTableProps) {
   console.log(summary);
+  summary.tricks.forEach((trick) => {
+    console.log(getTakerId(trick));
+  });
   return (
     <TableContainer sx={{ maxHeight: 500 }} component={Paper}>
       <Table
@@ -56,7 +59,7 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
               <TableCell>
                 <ProfileSnapshot variant="avatar" uid={getTakerId(trick)} />
               </TableCell>
-              <TableCell>
+              <TableCell style={{ display: "flex" }}>
                 {Object.values(trick.cards).map((card) => (
                   <Card
                     id={`summary-${card.rank}-${card.suit}`}
