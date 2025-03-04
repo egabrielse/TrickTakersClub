@@ -163,14 +163,14 @@ export const prettyPrintCard = (card: Card) => {
 
 export const compareCards = (a: Card, b: Card, leadingSuit: CardSuit) => {
     if (isTrumpCard(a) && !isTrumpCard(b)) {
-        return 1;
+        return true;
     } else if (!isTrumpCard(a) && isTrumpCard(b)) {
-        return -1;
+        return false;
     } else if (a.suit === leadingSuit && b.suit !== leadingSuit) {
-        return 1;
+        return true;
     } else if (a.suit !== leadingSuit && b.suit === leadingSuit) {
-        return -1;
+        return false;
     } else {
-        return getCardinalRank(a) - getCardinalRank(b);
+        return getCardinalRank(a) - getCardinalRank(b) > 0;
     }
 }
