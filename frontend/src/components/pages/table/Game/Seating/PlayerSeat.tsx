@@ -7,8 +7,8 @@ import selectors from "../../../../../store/selectors";
 import handSlice from "../../../../../store/slices/hand.slice";
 import { Card } from "../../../../../types/card";
 import { handContainsCard } from "../../../../../utils/card";
-import CardList from "../../../../common/CardList";
 import PlayingCard from "../../../../common/PlayingCard";
+import PlayingCardList from "../../../../common/PlayingCardList";
 import ConnectionContext from "../../ConnectionContext";
 import Bury from "../BuriedCards";
 import TrickPile from "../TrickPile";
@@ -96,7 +96,7 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
       </div>
       <div className="PlayerSeat-Center">
         <div className="PlayerSeat-Center-Top">
-          <CardList>
+          <PlayingCardList>
             {hand.map((card, index) => (
               <PlayingCard
                 id={`hand-${card.suit}-${card.rank}`}
@@ -108,7 +108,7 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
                 onClick={canClickCard(card) ? () => clickCard(card) : undefined}
               />
             ))}
-          </CardList>
+          </PlayingCardList>
         </div>
         <div className="PlayerSeat-Center-Bottom">
           {isUpNext && phase === HAND_PHASE.BURY && (

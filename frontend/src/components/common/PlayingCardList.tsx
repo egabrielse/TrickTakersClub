@@ -1,14 +1,14 @@
 import { ReactElement, useEffect } from "react";
 import { cardSizeToPixels } from "../../utils/card";
-import "./CardList.scss";
 import { PlayingCardProps } from "./PlayingCard";
+import "./PlayingCardList.scss";
 
 type CardListProps = {
   children: Array<ReactElement<PlayingCardProps>>;
   orientation?: "horizontal" | "vertical";
 };
 
-export default function CardList({
+export default function PlayingCardList({
   children,
   orientation = "horizontal",
 }: CardListProps) {
@@ -44,7 +44,7 @@ export default function CardList({
 
   return (
     <div
-      className="CardList"
+      className="PlayingCardList"
       style={{ height: totalHeight, width: totalWidth }}
     >
       {children}
