@@ -5,10 +5,8 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
-    paths:
-      - "backend/**"
-      - "!frontend/**"
-      - ".github/workflows/go-tests.yml"
+    paths-ignore:
+      - "frontend/**"
 
 jobs:
   backend-tests:
