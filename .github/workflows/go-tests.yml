@@ -1,16 +1,14 @@
-name: Go
+name: Backend
 
 on:
   push:
     branches: ["main"]
   pull_request:
     branches: ["main"]
-    paths-ignore:
-      - "frontend/**"
 
 jobs:
-  backend-tests:
-    name: Backend Tests
+  tests:
+    name: Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

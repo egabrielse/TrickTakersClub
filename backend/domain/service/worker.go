@@ -14,8 +14,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const TestBackendChange = "foobar"
-
 // TableWorker represents the service for controlling the table
 type TableWorker struct {
 	Table         *entity.TableEntity
