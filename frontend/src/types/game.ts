@@ -15,6 +15,7 @@ import {
 } from "./message/broadcast";
 
 export type TestFrontendChange = "foobar";
+export type TestFrontendChange1 = "foobar";
 
 export type CallingMethod = typeof CALLING_METHODS[keyof typeof CALLING_METHODS]['ID'];
 
