@@ -41,7 +41,6 @@ export default function BuriedCards() {
           id={`card-${card.suit}-${card.rank}`}
           key={`card-${card.suit}-${card.rank}`}
           card={card}
-          size="medium"
           disabled
         />
       ))}

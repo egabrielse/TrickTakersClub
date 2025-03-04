@@ -6,8 +6,8 @@ import selectors from "../../../../store/selectors";
 import handSlice from "../../../../store/slices/hand.slice";
 import { Card } from "../../../../types/card";
 import { handContainsCard } from "../../../../utils/card";
-import CardFan from "../../../common/CardFan";
 import PlayingCard from "../../../common/PlayingCard";
+import PlayingCardFan from "../../../common/PlayingCardFan";
 import ConnectionContext from "../ConnectionContext";
 
 export default function PlayerHand() {
@@ -59,6 +59,7 @@ export default function PlayerHand() {
 
   useEffect(() => {
     if (phase === HAND_PHASE.PLAY && selected.length === 1) {
+      console.log(selected[0]);
       sendCommand({
         name: COMMAND_TYPES.PLAY_CARD,
         data: { card: selected[0] },
@@ -72,18 +73,18 @@ export default function PlayerHand() {
     return null;
   }
   return (
-    <CardFan id="player-hand" style={{ top: "100%", left: "50%" }}>
+    <PlayingCardFan id="player-hand" style={{ top: "100%", left: "50%" }}>
       {hand.map((card) => (
         <PlayingCard
           id={`card-${card.suit}-${card.rank}`}
           key={`card-${card.suit}-${card.rank}`}
           card={card}
-          size="large"
+          height={250}
           highlighted={selected.includes(card)}
           disabled={!canClickCard(card)}
           onClick={canClickCard(card) ? () => clickCard(card) : undefined}
         />
       ))}
-    </CardFan>
+    </PlayingCardFan>
   );
 }

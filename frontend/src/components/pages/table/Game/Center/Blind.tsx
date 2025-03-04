@@ -31,7 +31,6 @@ export default function Blind() {
             id={`blind-card-${index}`}
             key={`blind-card-${index}`}
             card={card}
-            size="small"
             disabled={!isUpNext}
           />
         ))}

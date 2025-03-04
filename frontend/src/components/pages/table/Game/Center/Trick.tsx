@@ -51,7 +51,6 @@ export default function Trick() {
           id={`card-${card.suit}-${card.rank}`}
           key={`card-${card.suit}-${card.rank}`}
           card={card}
-          size="medium"
         />
       ))
     : null;

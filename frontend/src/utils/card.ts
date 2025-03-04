@@ -1,6 +1,6 @@
 import { capitalize } from "@mui/material";
-import { CARD_RANK, CARD_SIZE, CARD_SUIT } from "../constants/card";
-import { CardSize, CardSuit, Card } from "../types/card";
+import { CARD_RANK, CARD_SUIT } from "../constants/card";
+import { CardSuit, Card } from "../types/card";
 
 /**
  * Return the path to the face of the playing card.
@@ -151,34 +151,15 @@ export const sortCards = (a: Card, b: Card) => {
 };
 
 /**
- * Convert a CardSize to pixel dimensions.
- * @param size CardSize
- * @returns width and height in pixels
- */
-export const cardSizeToPixels = (size: CardSize | undefined) => {
-    let ratio = 1;
-    if (size === CARD_SIZE.XSMALL) {
-        ratio = 0.6;
-    } else if (size === CARD_SIZE.SMALL) {
-        ratio = 0.8;
-    } else if (size === CARD_SIZE.LARGE) {
-        ratio = 1.25;
-    }
-    return { width: 126 * ratio, height: 176 * ratio };
-};
-
-/**
  * Returns true if the hand contains the card, false otherwise.
  */
 export const handContainsCard = (hand: Card[], card: Card) => {
     return hand.some((c) => c.rank === card.rank && c.suit === card.suit);
 };
 
-
 export const prettyPrintCard = (card: Card) => {
     return `${capitalize(card?.rank)} of ${capitalize(card?.suit)}`;
 }
-
 
 export const compareCards = (a: Card, b: Card, leadingSuit: CardSuit) => {
     if (isTrumpCard(a) && !isTrumpCard(b)) {

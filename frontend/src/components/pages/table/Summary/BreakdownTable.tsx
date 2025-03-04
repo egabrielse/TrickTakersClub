@@ -46,7 +46,7 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
                     id={`summary-${card.rank}-${card.suit}`}
                     key={`summary-${card.rank}-${card.suit}`}
                     card={card}
-                    size="small"
+                    height={150}
                   />
                 ))}
               </PlayingCardList>
@@ -65,7 +65,7 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
                       id={`summary-${card.rank}-${card.suit}`}
                       key={`summary-${card.rank}-${card.suit}`}
                       card={card}
-                      size="small"
+                      height={150}
                     />
                   ))}
                 </PlayingCardList>

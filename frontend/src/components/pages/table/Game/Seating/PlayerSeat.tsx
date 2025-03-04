@@ -102,7 +102,6 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
                 id={`hand-${card.suit}-${card.rank}`}
                 key={index}
                 card={card}
-                size="large"
                 highlighted={selected.includes(card)}
                 disabled={!canClickCard(card)}
                 onClick={canClickCard(card) ? () => clickCard(card) : undefined}

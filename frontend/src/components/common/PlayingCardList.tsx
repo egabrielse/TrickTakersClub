@@ -1,9 +1,9 @@
 import { ReactElement, useEffect } from "react";
-import { cardSizeToPixels } from "../../utils/card";
+import { DEFAULT_CARD_HEIGHT } from "../../constants/card";
 import { PlayingCardProps } from "./PlayingCard";
 import "./PlayingCardList.scss";
 
-type CardListProps = {
+type PlayingCardListProps = {
   children: Array<ReactElement<PlayingCardProps>>;
   orientation?: "horizontal" | "vertical";
 };
@@ -11,10 +11,14 @@ type CardListProps = {
 export default function PlayingCardList({
   children,
   orientation = "horizontal",
-}: CardListProps) {
+}: PlayingCardListProps) {
   const count = children.length;
-  const cardSize = children.length ? children[0].props.size : "medium";
-  const { width, height } = cardSizeToPixels(cardSize);
+  console.log(children);
+  const height =
+    count && children[0].props.height
+      ? children[0].props.height
+      : DEFAULT_CARD_HEIGHT;
+  const width = height / 1.5;
   const isHorizontal = orientation === "horizontal";
   const totalHeight = isHorizontal ? height : (height / 4) * (count + 3);
   const totalWidth = isHorizontal ? (width / 2) * (count + 1) : width;

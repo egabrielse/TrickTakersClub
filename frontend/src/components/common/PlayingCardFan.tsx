@@ -1,20 +1,20 @@
 import { ReactElement, useEffect } from "react";
-import "./CardFan.scss";
 import { PlayingCardProps } from "./PlayingCard";
+import "./PlayingCardFan.scss";
 
-type CardFanProps = {
+type PlayingCardFanProps = {
   id: string;
   children: Array<ReactElement<PlayingCardProps>>;
   scale?: number;
   style?: React.CSSProperties;
 };
 
-export default function CardFan({
+export default function PlayingCardFan({
   id,
   children,
   style,
   scale = 1,
-}: CardFanProps) {
+}: PlayingCardFanProps) {
   useEffect(() => {
     const angle = 65; // Example angle, you can adjust as needed
     const count = children.length;
@@ -33,7 +33,7 @@ export default function CardFan({
   }, [children, scale]);
 
   return (
-    <div id={id} className="CardFan" style={style}>
+    <div id={id} className="PlayingCardFan" style={style}>
       {children}
     </div>
   );

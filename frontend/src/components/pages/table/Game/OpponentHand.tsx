@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useAppSelector } from "../../../../store/hooks";
 import handSlice from "../../../../store/slices/hand.slice";
-import CardFan from "../../../common/CardFan";
 import PlayingCard from "../../../common/PlayingCard";
+import PlayingCardFan from "../../../common/PlayingCardFan";
 
 type OpponentHandProps = {
   playerId: string;
@@ -49,16 +49,15 @@ export default function OpponentHand({
   }, [playerId, position]);
 
   return (
-    <CardFan id={`opponent-hand-${playerId}`} scale={0.6}>
+    <PlayingCardFan id={`opponent-hand-${playerId}`} scale={0.6}>
       {OPPONENT_HAND.map((card, index) => (
         <PlayingCard
           id={`card-${index}-${playerId}`}
           key={`card-${index}-${playerId}`}
           card={card}
-          size="small"
           disabled={upNextId !== playerId}
         />
       ))}
-    </CardFan>
+    </PlayingCardFan>
   );
 }
