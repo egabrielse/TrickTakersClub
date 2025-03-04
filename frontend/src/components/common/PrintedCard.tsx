@@ -1,7 +1,7 @@
 import { CARD_RANK, CARD_SUIT } from "../../constants/card";
-import { CardRank, CardSuit, PlayingCard } from "../../types/card";
+import { Card, CardRank, CardSuit } from "../../types/card";
 
-export default function PrintedCard({ rank, suit }: PlayingCard) {
+export default function PrintedCard({ rank, suit }: Card) {
   const printSuit = (suit: CardSuit) => {
     switch (suit) {
       case CARD_SUIT.DIAMOND:

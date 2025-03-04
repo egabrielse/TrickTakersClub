@@ -29,6 +29,8 @@ export const NO_PICK_RESOLUTIONS = {
 } as const;
 
 export const PLAYER_COUNT = 5;
+export const HAND_SIZE = 6;
+export const BLIND_SIZE = 2;
 
 export const GAME_SETTINGS_DEFAULTS = {
     CALLING_METHODS: CALLING_METHODS["jack-of-diamonds"],
@@ -45,8 +47,3 @@ export const HAND_PHASE = {
     PLAY: 'play',
     DONE: 'done',
 } as const;
-
-export const MIN_GAME_WIDTH = 500;
-export const MIN_GAME_HEIGHT = 500;
-
-export const BLIND_SIZE = 2;

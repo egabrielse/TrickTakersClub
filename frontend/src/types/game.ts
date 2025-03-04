@@ -3,7 +3,7 @@ import {
     HAND_PHASE,
     NO_PICK_RESOLUTIONS,
 } from "../constants/game";
-import { PlayingCard } from "./card";
+import { Card } from "./card";
 import {
     BlindPickedMessage,
     CalledCardMessage,
@@ -43,7 +43,7 @@ export type HandSummary = {
     partnerId: string;
     opponentIds: string[];
     tricks: Trick[];
-    bury: PlayingCard[];
+    bury: Card[];
     scores: Record<string, number>;
     pointsWon: Record<string, number>;
     tricksWon: Record<string, number>;
@@ -51,7 +51,7 @@ export type HandSummary = {
 
 export type Trick = {
     turnOrder: string[];
-    cards: Record<string, PlayingCard>;
+    cards: Record<string, Card>;
 };
 
 export type UpdateMessages =

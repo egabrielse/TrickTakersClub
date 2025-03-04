@@ -4,10 +4,10 @@ import { COMMAND_TYPES } from "../../../../constants/message";
 import { useAppSelector } from "../../../../store/hooks";
 import selectors from "../../../../store/selectors";
 import handSlice from "../../../../store/slices/hand.slice";
-import { PlayingCard } from "../../../../types/card";
+import { Card } from "../../../../types/card";
 import { handContainsCard } from "../../../../utils/card";
-import Card from "../../../common/Card";
-import CardFan from "../../../common/CardFan";
+import PlayingCard from "../../../common/PlayingCard";
+import PlayingCardFan from "../../../common/PlayingCardFan";
 import ConnectionContext from "../ConnectionContext";
 
 export default function PlayerHand() {
@@ -16,7 +16,7 @@ export default function PlayerHand() {
   const phase = useAppSelector(handSlice.selectors.phase);
   const playableCards = useAppSelector(selectors.playableCards);
   const hand = useAppSelector(handSlice.selectors.hand);
-  const [selected, setSelected] = useState<PlayingCard[]>([]);
+  const [selected, setSelected] = useState<Card[]>([]);
 
   useEffect(() => {
     // Clear selected cards after every turn
@@ -27,7 +27,7 @@ export default function PlayerHand() {
    * Click a card to select or deselect it.
    */
   const clickCard = useCallback(
-    (card: PlayingCard) => {
+    (card: Card) => {
       if (selected.includes(card)) {
         setSelected(selected.filter((c) => c !== card));
       } else {
@@ -41,7 +41,7 @@ export default function PlayerHand() {
    * Check if the card can be clicked.
    */
   const canClickCard = useCallback(
-    (card: PlayingCard) => {
+    (card: Card) => {
       if (!isUpNext) {
         return false;
       } else if (phase === HAND_PHASE.BURY) {
@@ -59,6 +59,7 @@ export default function PlayerHand() {
 
   useEffect(() => {
     if (phase === HAND_PHASE.PLAY && selected.length === 1) {
+      console.log(selected[0]);
       sendCommand({
         name: COMMAND_TYPES.PLAY_CARD,
         data: { card: selected[0] },
@@ -72,18 +73,18 @@ export default function PlayerHand() {
     return null;
   }
   return (
-    <CardFan id="player-hand" style={{ top: "100%", left: "50%" }}>
+    <PlayingCardFan id="player-hand" style={{ top: "100%", left: "50%" }}>
       {hand.map((card) => (
-        <Card
+        <PlayingCard
           id={`card-${card.suit}-${card.rank}`}
           key={`card-${card.suit}-${card.rank}`}
           card={card}
-          size="large"
+          height={275}
           highlighted={selected.includes(card)}
           disabled={!canClickCard(card)}
           onClick={canClickCard(card) ? () => clickCard(card) : undefined}
         />
       ))}
-    </CardFan>
+    </PlayingCardFan>
   );
 }

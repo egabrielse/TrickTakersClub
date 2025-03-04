@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useAppSelector } from "../../../../store/hooks";
 import selectors from "../../../../store/selectors";
 import authSlice from "../../../../store/slices/auth.slice";
-import Card from "../../../common/Card";
+import PlayingCard from "../../../common/PlayingCard";
 import "./TrickPile.scss";
 
 export default function TrickPile() {
@@ -29,7 +29,7 @@ export default function TrickPile() {
       <Typography className="TrickPileLabel" variant="body1" color="white">
         {`${countOfTricksWon} TRICK${countOfTricksWon === 1 ? "" : "S"} TAKEN`}
       </Typography>
-      <Card id="trick-pile-card" card="back" disabled />
+      <PlayingCard id="trick-pile-card" card="back" disabled />
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { HAND_PHASE } from "../../constants/game";
-import { PlayingCard } from "../../types/card";
+import { Card } from "../../types/card";
 import {
     HandPhase,
     Trick,
@@ -27,9 +27,9 @@ interface HandState {
     dealerId?: string;
     upNextId?: string;
     phase: HandPhase;
-    hand: PlayingCard[];
-    bury: PlayingCard[];
-    calledCard?: PlayingCard;
+    hand: Card[];
+    bury: Card[];
+    calledCard?: Card;
     pickerId?: string;
     partnerId?: string;
     tricks: Trick[];
@@ -38,7 +38,7 @@ interface HandState {
 }
 
 const initialState: HandState = {
-    phase: HAND_PHASE.SETUP,
+    phase: HAND_PHASE.PICK,
     hand: [],
     bury: [],
     tricks: [],
@@ -54,7 +54,7 @@ const handSlice = createSlice({
         initialize: (state, action: PayloadAction<MessageData<InitializeMessage>>) => {
             state.dealerId = action.payload.dealerId;
             state.upNextId = action.payload.upNextId;
-            state.phase = action.payload.phase || HAND_PHASE.SETUP;
+            state.phase = action.payload.phase || HAND_PHASE.PICK;
             state.lastHand = action.payload.lastHand || {};
             state.hand = [...(action.payload.hand || [])].sort(sortCards);
             state.bury = action.payload.bury || [];

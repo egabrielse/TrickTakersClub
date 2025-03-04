@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useAppSelector } from "../../../../../store/hooks";
 import selectors from "../../../../../store/selectors";
 import handSlice from "../../../../../store/slices/hand.slice";
-import Card from "../../../../common/Card";
+import PlayingCard from "../../../../common/PlayingCard";
 
 export default function Trick() {
   const playerOrder = useAppSelector(selectors.playerOrderStartingWithUser);
@@ -47,11 +47,10 @@ export default function Trick() {
 
   return currentTrick
     ? Object.values(currentTrick.cards).map((card) => (
-        <Card
+        <PlayingCard
           id={`card-${card.suit}-${card.rank}`}
           key={`card-${card.suit}-${card.rank}`}
           card={card}
-          size="medium"
         />
       ))
     : null;

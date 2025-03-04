@@ -16,9 +16,4 @@ export const CARD_RANK = {
     QUEEN: 'queen',
 } as const;
 
-export const CARD_SIZE = {
-    XSMALL: 'xsmall',
-    SMALL: 'small',
-    MEDIUM: 'medium',
-    LARGE: 'large',
-} as const;
+export const DEFAULT_CARD_HEIGHT = 150;

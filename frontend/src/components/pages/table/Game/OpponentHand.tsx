@@ -1,21 +1,35 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+import { HAND_SIZE } from "../../../../constants/game";
 import { useAppSelector } from "../../../../store/hooks";
 import handSlice from "../../../../store/slices/hand.slice";
-import Card from "../../../common/Card";
-import CardFan from "../../../common/CardFan";
+import PlayingCard from "../../../common/PlayingCard";
+import PlayingCardFan from "../../../common/PlayingCardFan";
 
 type OpponentHandProps = {
   playerId: string;
   position: "left" | "right" | "top-left" | "top-right";
 };
 
-const OPPONENT_HAND = ["back", "back", "back", "back", "back", "back"] as const;
-
 export default function OpponentHand({
   playerId,
   position,
 }: OpponentHandProps) {
   const upNextId = useAppSelector(handSlice.selectors.upNextId);
+  const tricks = useAppSelector(handSlice.selectors.tricks);
+  const countOfCardsPlayed = useMemo(() => {
+    if (tricks.length === 0) {
+      // No tricks have been played
+      return 0;
+    } else {
+      const currentTrick = tricks[tricks.length - 1];
+      if (playerId in currentTrick.cards) {
+        // Player has played a card in the current trick
+        return tricks.length;
+      }
+      // Player has not played a card in the current trick
+      return tricks.length - 1;
+    }
+  }, [playerId, tricks]);
 
   useEffect(() => {
     const element = document.getElementById(`opponent-hand-${playerId}`);
@@ -49,16 +63,17 @@ export default function OpponentHand({
   }, [playerId, position]);
 
   return (
-    <CardFan id={`opponent-hand-${playerId}`} scale={0.6}>
-      {OPPONENT_HAND.map((card, index) => (
-        <Card
-          id={`card-${index}-${playerId}`}
-          key={`card-${index}-${playerId}`}
-          card={card}
-          size="small"
-          disabled={upNextId !== playerId}
-        />
-      ))}
-    </CardFan>
+    <PlayingCardFan id={`opponent-hand-${playerId}`}>
+      {Array(HAND_SIZE - countOfCardsPlayed)
+        .fill("back")
+        .map((card, index) => (
+          <PlayingCard
+            id={`card-${index}-${playerId}`}
+            key={`card-${index}-${playerId}`}
+            card={card}
+            disabled={upNextId !== playerId}
+          />
+        ))}
+    </PlayingCardFan>
   );
 }

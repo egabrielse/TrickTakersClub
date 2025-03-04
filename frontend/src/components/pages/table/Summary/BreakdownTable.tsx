@@ -6,11 +6,13 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material";
 import { HandSummary } from "../../../../types/game";
 import { countCardPoints } from "../../../../utils/card";
 import { getTakerId } from "../../../../utils/game";
-import Card from "../../../common/Card";
+import PlayingCard from "../../../common/PlayingCard";
+import PlayingCardList from "../../../common/PlayingCardList";
 import ProfileSnapshot from "../../../common/ProfileSnapshot";
 
 type BreakdownTableProps = {
@@ -18,16 +20,12 @@ type BreakdownTableProps = {
 };
 
 export default function BreakdownTable({ summary }: BreakdownTableProps) {
-  console.log(summary);
-  summary.tricks.forEach((trick) => {
-    console.log(getTakerId(trick));
-  });
   return (
     <TableContainer sx={{ maxHeight: 500 }} component={Paper}>
       <Table
-        sx={{ minWidth: 500 }}
+        style={{ minWidth: 500 }}
         aria-label="simple table"
-        size="small"
+        size="medium"
         stickyHeader
       >
         <TableHead>
@@ -42,35 +40,45 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
             <TableCell>
               <ProfileSnapshot variant="avatar" uid={summary.pickerId} />
             </TableCell>
-            <TableCell style={{ display: "flex" }}>
-              {summary.bury.map((card) => (
-                <Card
-                  id={`summary-${card.rank}-${card.suit}`}
-                  key={`summary-${card.rank}-${card.suit}`}
-                  card={card}
-                  size="small"
-                />
-              ))}
+            <TableCell>
+              <PlayingCardList>
+                {summary.bury.map((card) => (
+                  <PlayingCard
+                    id={`summary-${card.rank}-${card.suit}`}
+                    key={`summary-${card.rank}-${card.suit}`}
+                    card={card}
+                    height={100}
+                  />
+                ))}
+              </PlayingCardList>
             </TableCell>
-            <TableCell>{countCardPoints(summary.bury)}</TableCell>
+            <TableCell>
+              <Typography variant="h6">
+                {countCardPoints(Object.values(summary.bury))}
+              </Typography>
+            </TableCell>
           </TableRow>
           {summary.tricks.map((trick, index) => (
             <TableRow key={index}>
               <TableCell>
                 <ProfileSnapshot variant="avatar" uid={getTakerId(trick)} />
               </TableCell>
-              <TableCell style={{ display: "flex" }}>
-                {Object.values(trick.cards).map((card) => (
-                  <Card
-                    id={`summary-${card.rank}-${card.suit}`}
-                    key={`summary-${card.rank}-${card.suit}`}
-                    card={card}
-                    size="small"
-                  />
-                ))}
+              <TableCell>
+                <PlayingCardList>
+                  {Object.values(trick.cards).map((card) => (
+                    <PlayingCard
+                      id={`summary-${card.rank}-${card.suit}`}
+                      key={`summary-${card.rank}-${card.suit}`}
+                      card={card}
+                      height={100}
+                    />
+                  ))}
+                </PlayingCardList>
               </TableCell>
               <TableCell>
-                {countCardPoints(Object.values(trick.cards))}
+                <Typography variant="h6">
+                  {countCardPoints(Object.values(trick.cards))}
+                </Typography>
               </TableCell>
             </TableRow>
           ))}
