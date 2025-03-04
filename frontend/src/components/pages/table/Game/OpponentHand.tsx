@@ -49,7 +49,7 @@ export default function OpponentHand({
   }, [playerId, position]);
 
   return (
-    <PlayingCardFan id={`opponent-hand-${playerId}`} scale={0.6}>
+    <PlayingCardFan id={`opponent-hand-${playerId}`}>
       {OPPONENT_HAND.map((card, index) => (
         <PlayingCard
           id={`card-${index}-${playerId}`}
