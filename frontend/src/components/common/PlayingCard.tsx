@@ -1,12 +1,12 @@
 import { Box } from "@mui/material";
 import classNames from "classnames";
-import { CardSize, PlayingCard } from "../../types/card";
+import { Card, CardSize } from "../../types/card";
 import { cardSizeToPixels, getCardBack, getCardFace } from "../../utils/card";
-import "./Card.scss";
+import "./PlayingCard.scss";
 
-export type CardProps = {
+export type PlayingCardProps = {
   id: string;
-  card: PlayingCard | "back" | "empty";
+  card: Card | "back" | "empty";
   size?: CardSize;
   highlighted?: boolean;
   disabled?: boolean;
@@ -14,7 +14,7 @@ export type CardProps = {
   overlayText?: string;
 };
 
-export default function Card(props: CardProps) {
+export default function PlayingCard(props: PlayingCardProps) {
   const {
     id,
     card,
@@ -29,7 +29,7 @@ export default function Card(props: CardProps) {
   const overlayTextSize =
     size === "large" ? "2rem" : size === "small" ? "1.25rem" : "1.5rem";
 
-  const getCardImage = (card: PlayingCard | "back" | "empty") => {
+  const getCardImage = (card: Card | "back" | "empty") => {
     if (card === "empty") {
       return undefined;
     } else if (card === "back") {
@@ -51,7 +51,7 @@ export default function Card(props: CardProps) {
       })}
     >
       <Box
-        className="Card"
+        className="PlayingCard"
         component={card === "empty" ? "div" : "img"}
         sx={{ height, width }}
         src={getCardImage(card)}

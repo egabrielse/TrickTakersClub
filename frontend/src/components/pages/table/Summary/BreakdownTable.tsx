@@ -10,7 +10,7 @@ import {
 import { HandSummary } from "../../../../types/game";
 import { countCardPoints } from "../../../../utils/card";
 import { getTakerId } from "../../../../utils/game";
-import Card from "../../../common/Card";
+import PlayingCard from "../../../common/PlayingCard";
 import ProfileSnapshot from "../../../common/ProfileSnapshot";
 
 type BreakdownTableProps = {
@@ -44,7 +44,7 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
             </TableCell>
             <TableCell style={{ display: "flex" }}>
               {summary.bury.map((card) => (
-                <Card
+                <PlayingCard
                   id={`summary-${card.rank}-${card.suit}`}
                   key={`summary-${card.rank}-${card.suit}`}
                   card={card}
@@ -61,7 +61,7 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
               </TableCell>
               <TableCell style={{ display: "flex" }}>
                 {Object.values(trick.cards).map((card) => (
-                  <Card
+                  <PlayingCard
                     id={`summary-${card.rank}-${card.suit}`}
                     key={`summary-${card.rank}-${card.suit}`}
                     card={card}

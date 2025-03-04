@@ -1,10 +1,10 @@
-import { CardProps } from "@mui/material";
 import { ReactElement, useEffect } from "react";
 import "./CardFan.scss";
+import { PlayingCardProps } from "./PlayingCard";
 
 type CardFanProps = {
   id: string;
-  children: Array<ReactElement<CardProps>>;
+  children: Array<ReactElement<PlayingCardProps>>;
   scale?: number;
   style?: React.CSSProperties;
 };

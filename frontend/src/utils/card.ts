@@ -1,11 +1,11 @@
 import { capitalize } from "@mui/material";
 import { CARD_RANK, CARD_SIZE, CARD_SUIT } from "../constants/card";
-import { CardSize, CardSuit, PlayingCard } from "../types/card";
+import { CardSize, CardSuit, Card } from "../types/card";
 
 /**
  * Return the path to the face of the playing card.
  */
-export const getCardFace = (card: PlayingCard) => {
+export const getCardFace = (card: Card) => {
     return `/cards/${card.rank}-${card.suit}.svg`;
 };
 
@@ -21,7 +21,7 @@ export const getCardBack = (variant: number = 1) => {
  * @param card to evaluate
  * @returns true if trump, false otherwise
  */
-export const isTrumpCard = (card: PlayingCard) => {
+export const isTrumpCard = (card: Card) => {
     return (
         card.suit === CARD_SUIT.DIAMOND ||
         card.rank === CARD_RANK.JACK ||
@@ -34,7 +34,7 @@ export const isTrumpCard = (card: PlayingCard) => {
  * @param card to evaluate
  * @returns number between 1 and 14 representing the card's rank
  */
-export const getCardinalRank = (card: PlayingCard) => {
+export const getCardinalRank = (card: Card) => {
     switch (card.rank) {
         case CARD_RANK.SEVEN:
             return 1;
@@ -86,7 +86,7 @@ export const getCardinalRank = (card: PlayingCard) => {
  * @param card to evaluate
  * @returns point value of the card
  */
-export const getCardPoints = (card: PlayingCard) => {
+export const getCardPoints = (card: Card) => {
     switch (card.rank) {
         case CARD_RANK.QUEEN:
             return 3;
@@ -103,17 +103,17 @@ export const getCardPoints = (card: PlayingCard) => {
     }
 };
 
-export const countCardPoints = (cards: PlayingCard[]) => {
+export const countCardPoints = (cards: Card[]) => {
     return cards.reduce((acc, card) => acc + getCardPoints(card), 0);
 }
 
 /**
  * Comparison function used for sorting playing cards by rank and suit.
- * @param a Card
- * @param b Card
+ * @param a PlayingCard
+ * @param b PlayingCard
  * @returns -1 if a < b, 0 if a == b, 1 if a > b
  */
-export const sortCards = (a: PlayingCard, b: PlayingCard) => {
+export const sortCards = (a: Card, b: Card) => {
     if (a.rank === b.rank && a.suit === b.suit) {
         // Same card
         return 0;
@@ -170,17 +170,17 @@ export const cardSizeToPixels = (size: CardSize | undefined) => {
 /**
  * Returns true if the hand contains the card, false otherwise.
  */
-export const handContainsCard = (hand: PlayingCard[], card: PlayingCard) => {
+export const handContainsCard = (hand: Card[], card: Card) => {
     return hand.some((c) => c.rank === card.rank && c.suit === card.suit);
 };
 
 
-export const prettyPrintCard = (card: PlayingCard) => {
+export const prettyPrintCard = (card: Card) => {
     return `${capitalize(card?.rank)} of ${capitalize(card?.suit)}`;
 }
 
 
-export const compareCards = (a: PlayingCard, b: PlayingCard, leadingSuit: CardSuit) => {
+export const compareCards = (a: Card, b: Card, leadingSuit: CardSuit) => {
     if (isTrumpCard(a) && !isTrumpCard(b)) {
         return 1;
     } else if (!isTrumpCard(a) && isTrumpCard(b)) {

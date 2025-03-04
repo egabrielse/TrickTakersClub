@@ -1,15 +1,15 @@
 import { COMMAND_TYPES } from "../../constants/message";
 import { Message } from "ably";
-import { PlayingCard } from "../card";
+import { Card } from "../card";
 
 export interface BuryCommand extends Message {
     name: typeof COMMAND_TYPES.BURY;
-    data: { cards: PlayingCard[] };
+    data: { cards: Card[] };
 }
 
 export interface CallCommand extends Message {
     name: typeof COMMAND_TYPES.CALL;
-    data: { card: PlayingCard };
+    data: { card: Card };
 }
 
 export interface EndGameCommand extends Message {
@@ -34,7 +34,7 @@ export interface PassCommand extends Message {
 
 export interface PlayCardCommand extends Message {
     name: typeof COMMAND_TYPES.PLAY_CARD;
-    data: { card: PlayingCard };
+    data: { card: Card };
 }
 
 export interface PickCommand extends Message {

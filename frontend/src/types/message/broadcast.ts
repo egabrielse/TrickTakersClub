@@ -6,7 +6,7 @@ import {
     HandSummary,
     Scoreboard,
 } from "../game";
-import { PlayingCard } from "../card";
+import { Card } from "../card";
 
 export interface BlindPickedMessage extends Message {
     name: typeof BROADCAST_TYPES.BLIND_PICKED;
@@ -15,12 +15,12 @@ export interface BlindPickedMessage extends Message {
 
 export interface CalledCardMessage extends Message {
     name: typeof BROADCAST_TYPES.CALLED_CARD;
-    data: { card: PlayingCard };
+    data: { card: Card };
 }
 
 export interface CardPlayedMessage extends Message {
     name: typeof BROADCAST_TYPES.CARD_PLAYED;
-    data: { playerId: string, card: PlayingCard };
+    data: { playerId: string, card: Card };
 }
 
 export interface ChatMessage extends Message {

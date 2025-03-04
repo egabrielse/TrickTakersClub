@@ -1,7 +1,7 @@
 import { Message } from "ably";
 import { DIRECT_TYPES } from "../../constants/message";
 import { GameSettings, HandPhase, Scoreboard, Trick } from "../game";
-import { PlayingCard } from "../card";
+import { Card } from "../card";
 
 export interface ErrorMessage extends Message {
     name: typeof DIRECT_TYPES.ERROR;
@@ -21,14 +21,14 @@ export interface InitializeMessage extends Message {
         scoreboard?: Scoreboard;
         playerOrder?: string[];
         handsPlayed?: number;
-        calledCard?: PlayingCard;
+        calledCard?: Card;
         phase?: HandPhase;
         upNextId?: string;
         pickerId?: string;
         partnerId?: string;
         tricks: Trick[];
-        hand?: PlayingCard[];
-        bury?: PlayingCard[];
+        hand?: Card[];
+        bury?: Card[];
         lastHand: Record<string, boolean>;
     };
 }
@@ -37,21 +37,21 @@ export interface DealHandMessage extends Message {
     name: typeof DIRECT_TYPES.DEAL_HAND;
     data: {
         dealerId: string;
-        cards: PlayingCard[];
+        cards: Card[];
     };
 }
 
 export interface PickedCardsMessage extends Message {
     name: typeof DIRECT_TYPES.PICKED_CARDS;
     data: {
-        cards: PlayingCard[];
+        cards: Card[];
     };
 }
 
 export interface BuriedCardsMessage extends Message {
     name: typeof DIRECT_TYPES.BURIED_CARDS;
     data: {
-        cards: PlayingCard[];
+        cards: Card[];
     };
 }
 

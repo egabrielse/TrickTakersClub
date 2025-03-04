@@ -2,7 +2,7 @@ import { Typography } from "@mui/material";
 import { useEffect } from "react";
 import { useAppSelector } from "../../../../store/hooks";
 import handSlice from "../../../../store/slices/hand.slice";
-import Card from "../../../common/Card";
+import PlayingCard from "../../../common/PlayingCard";
 import "./BuriedCards.scss";
 
 /**
@@ -37,7 +37,7 @@ export default function BuriedCards() {
         BURIED CARDS
       </Typography>
       {bury.map((card) => (
-        <Card
+        <PlayingCard
           id={`card-${card.suit}-${card.rank}`}
           key={`card-${card.suit}-${card.rank}`}
           card={card}

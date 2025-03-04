@@ -2,9 +2,9 @@ import { useContext } from "react";
 import { COMMAND_TYPES } from "../../../../../constants/message";
 import { useAppSelector } from "../../../../../store/hooks";
 import selectors from "../../../../../store/selectors";
-import Card from "../../../../common/Card";
 import CardList from "../../../../common/CardList";
 import PaperButton from "../../../../common/PaperButton";
+import PlayingCard from "../../../../common/PlayingCard";
 import ConnectionContext from "../../ConnectionContext";
 import "./Blind.scss";
 
@@ -27,7 +27,7 @@ export default function Blind() {
       {isUpNext && <PaperButton onClick={handlePick}>Pick</PaperButton>}
       <CardList>
         {BLIND_CARDS.map((card, index) => (
-          <Card
+          <PlayingCard
             id={`blind-card-${index}`}
             key={`blind-card-${index}`}
             card={card}

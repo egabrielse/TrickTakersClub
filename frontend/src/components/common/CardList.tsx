@@ -1,10 +1,10 @@
 import { ReactElement, useEffect } from "react";
 import { cardSizeToPixels } from "../../utils/card";
-import { CardProps } from "./Card";
 import "./CardList.scss";
+import { PlayingCardProps } from "./PlayingCard";
 
 type CardListProps = {
-  children: Array<ReactElement<CardProps>>;
+  children: Array<ReactElement<PlayingCardProps>>;
   orientation?: "horizontal" | "vertical";
 };
 

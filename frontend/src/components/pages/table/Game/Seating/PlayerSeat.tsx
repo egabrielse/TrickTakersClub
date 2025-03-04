@@ -5,10 +5,10 @@ import { COMMAND_TYPES } from "../../../../../constants/message";
 import { useAppSelector } from "../../../../../store/hooks";
 import selectors from "../../../../../store/selectors";
 import handSlice from "../../../../../store/slices/hand.slice";
-import { PlayingCard } from "../../../../../types/card";
+import { Card } from "../../../../../types/card";
 import { handContainsCard } from "../../../../../utils/card";
-import Card from "../../../../common/Card";
 import CardList from "../../../../common/CardList";
+import PlayingCard from "../../../../common/PlayingCard";
 import ConnectionContext from "../../ConnectionContext";
 import Bury from "../BuriedCards";
 import TrickPile from "../TrickPile";
@@ -24,7 +24,7 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
   const phase = useAppSelector(handSlice.selectors.phase);
   const playableCards = useAppSelector(selectors.playableCards);
   const hand = useAppSelector(handSlice.selectors.hand);
-  const [selected, setSelected] = useState<PlayingCard[]>([]);
+  const [selected, setSelected] = useState<Card[]>([]);
 
   useEffect(() => {
     // Clear selected cards after every turn
@@ -35,7 +35,7 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
    * Click a card to select or deselect it.
    */
   const clickCard = useCallback(
-    (card: PlayingCard) => {
+    (card: Card) => {
       if (selected.includes(card)) {
         setSelected(selected.filter((c) => c !== card));
       } else {
@@ -49,7 +49,7 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
    * Check if the card can be clicked.
    */
   const canClickCard = useCallback(
-    (card: PlayingCard) => {
+    (card: Card) => {
       if (!isUpNext) {
         return false;
       } else if (phase === HAND_PHASE.BURY) {
@@ -98,7 +98,7 @@ export default function PlayerSeat({ playerId }: { playerId: string }) {
         <div className="PlayerSeat-Center-Top">
           <CardList>
             {hand.map((card, index) => (
-              <Card
+              <PlayingCard
                 id={`hand-${card.suit}-${card.rank}`}
                 key={index}
                 card={card}
