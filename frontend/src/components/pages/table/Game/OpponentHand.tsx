@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+import { HAND_SIZE } from "../../../../constants/game";
 import { useAppSelector } from "../../../../store/hooks";
 import handSlice from "../../../../store/slices/hand.slice";
 import PlayingCard from "../../../common/PlayingCard";
@@ -9,13 +10,26 @@ type OpponentHandProps = {
   position: "left" | "right" | "top-left" | "top-right";
 };
 
-const OPPONENT_HAND = ["back", "back", "back", "back", "back", "back"] as const;
-
 export default function OpponentHand({
   playerId,
   position,
 }: OpponentHandProps) {
   const upNextId = useAppSelector(handSlice.selectors.upNextId);
+  const tricks = useAppSelector(handSlice.selectors.tricks);
+  const countOfCardsPlayed = useMemo(() => {
+    if (tricks.length === 0) {
+      // No tricks have been played
+      return 0;
+    } else {
+      const currentTrick = tricks[tricks.length - 1];
+      if (playerId in currentTrick.cards) {
+        // Player has played a card in the current trick
+        return tricks.length;
+      }
+      // Player has not played a card in the current trick
+      return tricks.length - 1;
+    }
+  }, [playerId, tricks]);
 
   useEffect(() => {
     const element = document.getElementById(`opponent-hand-${playerId}`);
@@ -50,14 +64,16 @@ export default function OpponentHand({
 
   return (
     <PlayingCardFan id={`opponent-hand-${playerId}`}>
-      {OPPONENT_HAND.map((card, index) => (
-        <PlayingCard
-          id={`card-${index}-${playerId}`}
-          key={`card-${index}-${playerId}`}
-          card={card}
-          disabled={upNextId !== playerId}
-        />
-      ))}
+      {Array(HAND_SIZE - countOfCardsPlayed)
+        .fill("back")
+        .map((card, index) => (
+          <PlayingCard
+            id={`card-${index}-${playerId}`}
+            key={`card-${index}-${playerId}`}
+            card={card}
+            disabled={upNextId !== playerId}
+          />
+        ))}
     </PlayingCardFan>
   );
 }
