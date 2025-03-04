@@ -6,6 +6,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material";
 import { HandSummary } from "../../../../types/game";
 import { countCardPoints } from "../../../../utils/card";
@@ -22,9 +23,9 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
   return (
     <TableContainer sx={{ maxHeight: 500 }} component={Paper}>
       <Table
-        sx={{ minWidth: 500 }}
+        style={{ minWidth: 500 }}
         aria-label="simple table"
-        size="small"
+        size="medium"
         stickyHeader
       >
         <TableHead>
@@ -46,12 +47,16 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
                     id={`summary-${card.rank}-${card.suit}`}
                     key={`summary-${card.rank}-${card.suit}`}
                     card={card}
-                    height={150}
+                    height={100}
                   />
                 ))}
               </PlayingCardList>
             </TableCell>
-            <TableCell>{countCardPoints(summary.bury)}</TableCell>
+            <TableCell>
+              <Typography variant="h6">
+                {countCardPoints(Object.values(summary.bury))}
+              </Typography>
+            </TableCell>
           </TableRow>
           {summary.tricks.map((trick, index) => (
             <TableRow key={index}>
@@ -65,13 +70,15 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
                       id={`summary-${card.rank}-${card.suit}`}
                       key={`summary-${card.rank}-${card.suit}`}
                       card={card}
-                      height={150}
+                      height={100}
                     />
                   ))}
                 </PlayingCardList>
               </TableCell>
               <TableCell>
-                {countCardPoints(Object.values(trick.cards))}
+                <Typography variant="h6">
+                  {countCardPoints(Object.values(trick.cards))}
+                </Typography>
               </TableCell>
             </TableRow>
           ))}

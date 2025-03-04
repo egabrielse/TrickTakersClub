@@ -1,11 +1,12 @@
-import Typography from "@mui/material/Typography";
+import Typography, { TypographyProps } from "@mui/material/Typography";
 import { useEffect, useRef } from "react";
 
-type StyledNumberProps = {
+type StyledNumberProps = TypographyProps & {
   children: number;
 };
 
-export default function StyledNumber({ children }: StyledNumberProps) {
+export default function StyledNumber(props: StyledNumberProps) {
+  const { children } = props;
   const ref = useRef<HTMLDivElement>(null);
   const color = children > 0 ? "success" : children < 0 ? "error" : undefined;
   const prefix = children > 0 ? "+" : "";
@@ -21,7 +22,7 @@ export default function StyledNumber({ children }: StyledNumberProps) {
   }, [children]);
 
   return (
-    <Typography ref={ref} color={color} fontWeight="bold" variant="body1">
+    <Typography ref={ref} color={color} {...props}>
       {prefix}
       {children}
     </Typography>

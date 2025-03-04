@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -21,7 +22,7 @@ export default function ScoresTable({ summary }: ScoresTableProps) {
   playerIds.push(...summary.opponentIds);
   return (
     <TableContainer sx={{ maxHeight: 500 }} component={Paper}>
-      <Table sx={{ minWidth: 500 }} size="small" stickyHeader>
+      <Table sx={{ minWidth: 500 }} size="medium" stickyHeader>
         <TableHead>
           <TableRow>
             <TableCell>Player</TableCell>
@@ -38,16 +39,28 @@ export default function ScoresTable({ summary }: ScoresTableProps) {
                 <ProfileSnapshot variant="avatar" uid={playerId} />
               </TableCell>
               <TableCell>
-                {summary.pickerId === playerId
-                  ? "Picker"
-                  : summary.partnerId === playerId
-                    ? "Partner"
-                    : null}
+                <Typography variant="h6">
+                  {summary.pickerId === playerId
+                    ? "Picker"
+                    : summary.partnerId === playerId
+                      ? "Partner"
+                      : null}
+                </Typography>
               </TableCell>
-              <TableCell>{summary.tricksWon[playerId]}</TableCell>
-              <TableCell>{summary.pointsWon[playerId]}</TableCell>
               <TableCell>
-                <StyledNumber>{summary.scores[playerId]}</StyledNumber>
+                <Typography variant="h6">
+                  {summary.tricksWon[playerId]}
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="h6">
+                  {summary.pointsWon[playerId]}
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <StyledNumber variant="h6">
+                  {summary.scores[playerId]}
+                </StyledNumber>
               </TableCell>
             </TableRow>
           ))}
