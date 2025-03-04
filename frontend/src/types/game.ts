@@ -14,6 +14,8 @@ import {
     TrickWonMessage,
 } from "./message/broadcast";
 
+export type TestFrontendChange = "foobar";
+
 export type CallingMethod = typeof CALLING_METHODS[keyof typeof CALLING_METHODS]['ID'];
 
 export type NoPickResolution = typeof NO_PICK_RESOLUTIONS[keyof typeof NO_PICK_RESOLUTIONS]['ID'];
