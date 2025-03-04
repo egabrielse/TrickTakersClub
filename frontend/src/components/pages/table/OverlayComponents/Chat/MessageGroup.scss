@@ -1,0 +1,31 @@
+.MessageGroup {
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+
+    &-ByLine {
+        display: flex;
+        font-size: 12px;
+        align-items: center;
+        gap: 0.5rem;
+
+        &-Sender {
+            flex: 1;
+            font-weight: bold;
+        }
+
+
+        &-Timestamp {
+            font-style: italic;
+        }
+    }
+
+    &-Messages {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        width: 100%;
+        font-size: 14px;
+        padding-left: 2rem;
+    }
+}
