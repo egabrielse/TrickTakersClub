@@ -1,4 +1,4 @@
-import { Fade, Paper, Typography } from "@mui/material";
+import { Paper, Slide, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { BLIND_SIZE, HAND_PHASE } from "../../../../constants/game";
 import { BROADCAST_TYPES } from "../../../../constants/message";
@@ -88,7 +88,10 @@ export default function GameUpdates() {
   }, [dispatch, nextUpdate, updates]);
 
   return (
-    <Fade in={Boolean(upNextId && !updates.length) || Boolean(nextUpdate)}>
+    <Slide
+      direction="up"
+      in={Boolean(upNextId && !updates.length) || Boolean(nextUpdate)}
+    >
       <Paper id="game-updates" className="GameUpdates">
         {nextUpdate ? (
           // 1. Show the next update in the queue
@@ -123,6 +126,6 @@ export default function GameUpdates() {
           </>
         )}
       </Paper>
-    </Fade>
+    </Slide>
   );
 }
