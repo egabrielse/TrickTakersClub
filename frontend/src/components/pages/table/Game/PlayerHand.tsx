@@ -17,6 +17,7 @@ export default function PlayerHand() {
   const playableCards = useAppSelector(selectors.playableCards);
   const hand = useAppSelector(handSlice.selectors.hand);
   const [selected, setSelected] = useState<Card[]>([]);
+  const [pending, setPending] = useState(false);
 
   useEffect(() => {
     // Clear selected cards after every turn
@@ -42,7 +43,7 @@ export default function PlayerHand() {
    */
   const canClickCard = useCallback(
     (card: Card) => {
-      if (!isUpNext) {
+      if (!isUpNext || pending) {
         return false;
       } else if (phase === HAND_PHASE.BURY) {
         return selected.includes(card) || selected.length < BLIND_SIZE;
@@ -54,18 +55,21 @@ export default function PlayerHand() {
       }
       return false;
     },
-    [isUpNext, phase, selected, playableCards],
+    [isUpNext, pending, phase, selected, playableCards],
   );
 
   useEffect(() => {
     if (phase === HAND_PHASE.PLAY && selected.length === 1) {
-      console.log(selected[0]);
+      setPending(true);
       sendCommand({
         name: COMMAND_TYPES.PLAY_CARD,
         data: { card: selected[0] },
       });
+      setTimeout(() => setPending(false), 1500);
     } else if (phase === HAND_PHASE.BURY && selected.length === BLIND_SIZE) {
+      setPending(true);
       sendCommand({ name: COMMAND_TYPES.BURY, data: { cards: selected } });
+      setTimeout(() => setPending(false), 1500);
     }
   }, [phase, selected, sendCommand]);
 
