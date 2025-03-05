@@ -1,24 +1,28 @@
-import { Typography } from "@mui/material";
-import { Size } from "../../../../types/size";
-import { getDisplayNameFontSize } from "../../../../utils/user";
-import UserAvatar from "../../../common/UserAvatar";
+import { Avatar, Typography } from "@mui/material";
 import "./EmptySeat.scss";
 
-type EmptySeatProps = {
-  size?: Size;
-};
-
-export default function EmptySeat({ size = "medium" }: EmptySeatProps) {
-  const displayNameFontSize = getDisplayNameFontSize(size);
-
+export default function EmptySeat() {
   return (
     <div className="EmptySeat">
-      <UserAvatar name="Empty Seat" avatar="🪑" size={size} />
+      <Avatar
+        alt={"Empty Seat"}
+        sizes="large"
+        sx={{
+          border: "1px solid #FFFFFF",
+          bgcolor: "#FFFFFF",
+          width: 32,
+          height: 32,
+          fontSize: 24,
+          color: "#FFFFFF",
+        }}
+        children={"🪑"}
+      />
       <Typography
         component="span"
         className="loading-text"
-        fontSize={displayNameFontSize}
+        fontSize={14}
         fontStyle="italic"
+        noWrap
       >
         Empty Seat
       </Typography>

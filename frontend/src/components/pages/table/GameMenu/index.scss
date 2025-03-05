@@ -8,15 +8,6 @@
         display: flex;
         height: fit-content;
         gap: 1rem;
-
-        &-Settings {
-            flex: 1;
-        }
-
-        &-Waiting {
-            flex: 1;
-            max-width: 250px;
-        }
     }
 
     &-Bottom {

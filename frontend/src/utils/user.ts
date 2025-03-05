@@ -26,16 +26,6 @@ export function getAvatarFontSize(size: Size, charCount: 1 | 2 | 3): number {
 }
 
 /**
- * Converts display name size to font size.
- * @param size name of the size ("small", "medium", etc.)
- * @returns font size of the display name
- */
-export function getDisplayNameFontSize(size: Size): number {
-  const baseFontSize = 18;
-  return scaleBySize(size, baseFontSize);
-}
-
-/**
  * Returns the initials of a username.
  * @param username username to get initials for
  * @returns initials (e.g. "JD" "for John Doe")
