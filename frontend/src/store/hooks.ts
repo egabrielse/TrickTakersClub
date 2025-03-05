@@ -1,7 +1,3 @@
-import { useEffect } from "react";
-import { CachedUser } from "../types/user";
-import userSlice from "./slices/user.slice";
-import { FETCH_STATUS } from "../constants/api";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from ".";
 
