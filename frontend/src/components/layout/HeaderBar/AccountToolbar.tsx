@@ -11,7 +11,8 @@ import auth from "../../../firebase/auth";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
 import dialogSlice from "../../../store/slices/dialog.slice";
-import ProfileSnapshot from "../../common/ProfileSnapshot";
+import ProfilePic from "../../common/Profile/ProfilePic";
+import ProfileProvider from "../../common/Profile/ProfileProvider";
 import AuthContext from "../../pages/auth/AuthContext";
 import "./AccountToolbar.scss";
 
@@ -73,7 +74,9 @@ export default function AccountToolbar() {
           name="profile-button"
           onClick={handleOpenUserMenu}
         >
-          <ProfileSnapshot uid={uid} variant="avatar" size="large" />
+          <ProfileProvider uid={uid}>
+            <ProfilePic size="large" />
+          </ProfileProvider>
         </IconButton>
         <Menu
           anchorEl={anchorElUser}

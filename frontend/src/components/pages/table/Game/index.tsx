@@ -3,7 +3,7 @@ import { HAND_PHASE } from "../../../../constants/game";
 import { useAppSelector } from "../../../../store/hooks";
 import selectors from "../../../../store/selectors";
 import handSlice from "../../../../store/slices/hand.slice";
-import ProfileSnapshot from "../../../common/ProfileSnapshot";
+import NameTag from "../OverlayComponents/NameTag";
 import Bury from "./BuriedCards";
 import Blind from "./Center/Blind";
 import CallAnAce from "./Center/CallAnAce";
@@ -20,20 +20,20 @@ export default function Game() {
 
   useEffect(() => {
     playerOrder.forEach((playerId, index) => {
-      const seat = document.getElementById(`player-${playerId}`);
+      const seat = document.getElementById(`name-tag-${playerId}`);
       if (seat) {
         seat.style.position = "absolute";
         switch (index) {
           case 0:
-            // Player 1 (bottom )
+            // Player 1 (bottom)
             seat.style.left = "50%";
             seat.style.transform = "translateX(-50%)";
             seat.style.bottom = "200px";
             seat.style.zIndex = "4";
             break;
           case 1:
-            // Player 2 (left )
-            seat.style.left = "2rem";
+            // Player 2 (left)
+            seat.style.left = "50px";
             seat.style.top = "50%";
             seat.style.transform = "translateY(-50%) rotate(-90deg)";
             seat.style.zIndex = "4";
@@ -42,19 +42,19 @@ export default function Game() {
             // Player 3 (top left)
             seat.style.left = "33%";
             seat.style.transform = "translateX(-33%)";
-            seat.style.top = "5rem";
+            seat.style.top = "100px";
             seat.style.zIndex = "4";
             break;
           case 3:
             // Player 4 (top right)
             seat.style.right = "33%";
             seat.style.transform = "translateX(33%)";
-            seat.style.top = "5rem";
+            seat.style.top = "100px";
             seat.style.zIndex = "4";
             break;
           case 4:
-            // Player 5 (right )
-            seat.style.right = "2rem";
+            // Player 5 (right)
+            seat.style.right = "50px";
             seat.style.top = "50%";
             seat.style.transform = "translateY(-50%) rotate(90deg)";
             seat.style.zIndex = "4";
@@ -112,13 +112,7 @@ export default function Game() {
         ),
       )}
       {playerOrder.map((playerId) => (
-        <ProfileSnapshot
-          id={`player-${playerId}`}
-          key={`player-${playerId}`}
-          variant="name-row"
-          size="small"
-          uid={playerId}
-        />
+        <NameTag key={`name-tag-${playerId}`} playerId={playerId} />
       ))}
     </>
   );

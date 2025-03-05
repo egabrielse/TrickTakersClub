@@ -1,6 +1,7 @@
 import { useAppSelector } from "../../../../store/hooks";
 import gameSlice from "../../../../store/slices/game.slice";
-import ProfileSnapshot from "../../../common/ProfileSnapshot";
+import ProfilePic from "../../../common/Profile/ProfilePic";
+import ProfileProvider from "../../../common/Profile/ProfileProvider";
 import StyledNumber from "../../../common/StyledNumber";
 import "./ScoreboardDisplay.scss";
 
@@ -25,11 +26,9 @@ export default function ScoreboardDisplay() {
               .map(({ playerId, score, totalPoints, totalTricks }) => (
                 <tr key={`scoreboard-row-${playerId}`}>
                   <td>
-                    <ProfileSnapshot
-                      size="small"
-                      variant="avatar"
-                      uid={playerId}
-                    />
+                    <ProfileProvider uid={playerId}>
+                      <ProfilePic size="small" />
+                    </ProfileProvider>
                   </td>
                   <td>
                     <StyledNumber>{score}</StyledNumber>

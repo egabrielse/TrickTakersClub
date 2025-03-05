@@ -103,6 +103,7 @@ function ConnectionApiProvider({
         dispatch(gameSlice.actions.handDone(msg.data));
         break;
       case BROADCAST_TYPES.BLIND_PICKED:
+        dispatch(handSlice.actions.blindPicked(msg.data));
         dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       case BROADCAST_TYPES.CARD_PLAYED: {

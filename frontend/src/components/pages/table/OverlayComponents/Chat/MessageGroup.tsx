@@ -1,7 +1,7 @@
-import { Skeleton } from "@mui/material";
-import { useCachedUser } from "../../../../../store/hooks";
 import { ChatMessage } from "../../../../../types/message/broadcast";
-import UserAvatar from "../../../../common/UserAvatar";
+import DisplayName from "../../../../common/Profile/DisplayName";
+import ProfilePic from "../../../../common/Profile/ProfilePic";
+import ProfileProvider from "../../../../common/Profile/ProfileProvider";
 import "./MessageGroup.scss";
 
 type MessageGroupProps = {
@@ -14,23 +14,16 @@ export default function MessageGroup({ children }: MessageGroupProps) {
     hour: "2-digit",
     minute: "2-digit",
   });
-  const { user, status } = useCachedUser(clientId!);
 
   return (
     <div className="MessageGroup">
       <div className="MessageGroup-ByLine">
-        <UserAvatar
-          loading={status !== "loaded"}
-          name={user?.displayName || undefined}
-          size="small"
-        />
-        <span className="MessageGroup-ByLine-Sender">
-          {status === "loaded" ? (
-            user!.displayName!
-          ) : (
-            <Skeleton variant="text" />
-          )}
-        </span>
+        <ProfileProvider uid={clientId!}>
+          <span className="MessageGroup-ByLine-Sender">
+            <ProfilePic size="small" />
+            <DisplayName fontWeight="bold" fontStyle="italic" />
+          </span>
+        </ProfileProvider>
         <span className="MessageGroup-ByLine-TimeStamp">{time}</span>
       </div>
       <div className="MessageGroup-Messages">

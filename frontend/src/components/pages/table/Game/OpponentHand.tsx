@@ -16,20 +16,10 @@ export default function OpponentHand({
 }: OpponentHandProps) {
   const upNextId = useAppSelector(handSlice.selectors.upNextId);
   const tricks = useAppSelector(handSlice.selectors.tricks);
-  const countOfCardsPlayed = useMemo(() => {
-    if (tricks.length === 0) {
-      // No tricks have been played
-      return 0;
-    } else {
-      const currentTrick = tricks[tricks.length - 1];
-      if (playerId in currentTrick.cards) {
-        // Player has played a card in the current trick
-        return tricks.length;
-      }
-      // Player has not played a card in the current trick
-      return tricks.length - 1;
-    }
-  }, [playerId, tricks]);
+  const countOfCardsPlayed = useMemo(
+    () => tricks.filter((trick) => playerId in trick.cards).length,
+    [playerId, tricks],
+  );
 
   useEffect(() => {
     const element = document.getElementById(`opponent-hand-${playerId}`);
