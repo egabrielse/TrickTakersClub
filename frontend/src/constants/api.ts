@@ -3,3 +3,10 @@ export const FETCH_STATUS = {
     LOADED: 'loaded',
     ERROR: 'error',
 } as const;
+
+export const ASYNC_STATUS = {
+    IDLE: 'idle',
+    PENDING: 'pending',
+    FULFILLED: 'fulfilled',
+    REJECTED: 'rejected',
+} as const;

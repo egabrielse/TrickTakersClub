@@ -4,6 +4,7 @@ import auth from "../../../firebase/auth";
 
 import { useAppDispatch } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
+import settingsSlice from "../../../store/slices/settings.slice";
 import AuthContext from "./AuthContext";
 
 type AuthProviderProps = {
@@ -29,6 +30,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
             displayName: user.displayName || "",
           }),
         );
+        dispatch(settingsSlice.actions.asyncFetchUserSettings());
       } else {
         dispatch(authSlice.actions.reset());
       }

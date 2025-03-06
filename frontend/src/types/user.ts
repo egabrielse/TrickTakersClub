@@ -29,3 +29,7 @@ export type CachedUser = (
     LoadingUser |
     ErrorUser
 );
+
+export type UserSettingsEntity = {
+    soundOn: boolean;
+};
