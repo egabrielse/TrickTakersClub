@@ -1,4 +1,4 @@
-package persistance
+package persistence
 
 import (
 	"context"
@@ -18,7 +18,7 @@ func NewTableRepoImplementation(db *firestore.Client) *TableRepoImplementation {
 	return &TableRepoImplementation{db: db}
 }
 
-// Get returns the table entity from the redis cache
+// Get returns the Table entity from the firestore db
 func (r *TableRepoImplementation) Get(ctx context.Context, ID string) (*entity.TableEntity, error) {
 	var table entity.TableEntity
 	if snapshot, err := r.db.Collection(TableCollection).Doc(ID).Get(ctx); err != nil {
@@ -30,7 +30,7 @@ func (r *TableRepoImplementation) Get(ctx context.Context, ID string) (*entity.T
 	}
 }
 
-// Delete deletes the table entity from the redis cache
+// Delete deletes the Table entity from the firestore db
 func (r *TableRepoImplementation) Delete(ctx context.Context, ID string) error {
 	if _, err := r.db.Collection(TableCollection).Doc(ID).Delete(ctx); err != nil {
 		logrus.Error(err)
@@ -39,7 +39,7 @@ func (r *TableRepoImplementation) Delete(ctx context.Context, ID string) error {
 	return nil
 }
 
-// Save saves the table entity to the redis cache
+// Save saves the Table entity to the firestore db
 func (r *TableRepoImplementation) Save(ctx context.Context, table *entity.TableEntity) error {
 	if _, err := r.db.Collection(TableCollection).Doc(table.ID).Set(ctx, table); err != nil {
 		logrus.Error(err)

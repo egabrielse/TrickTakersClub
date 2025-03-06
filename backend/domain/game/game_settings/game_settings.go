@@ -1,4 +1,4 @@
-package settings
+package game_settings
 
 import (
 	"fmt"

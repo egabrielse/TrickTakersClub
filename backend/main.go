@@ -4,7 +4,7 @@ import (
 	"main/api"
 	"main/domain/repository"
 	"main/infrastructure"
-	"main/infrastructure/persistance"
+	"main/infrastructure/persistence"
 	"main/utils"
 	"math/rand"
 	"net/http"
@@ -31,7 +31,8 @@ func main() {
 
 	// Instantiate the Firestore-based repository implementations
 	store := infrastructure.GetFirebaseStore()
-	repository.InitTableRepo(persistance.NewTableRepoImplementation(store))
+	repository.InitTableRepo(persistence.NewTableRepoImplementation(store))
+	repository.InitSettingsRepo(persistence.NewSettingsRepoImplementation(store))
 
 	// Initialize router
 	router := api.InitRouter()

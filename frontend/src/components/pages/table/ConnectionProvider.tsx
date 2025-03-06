@@ -6,7 +6,7 @@ import {
   useConnectionStateListener,
   usePresence,
 } from "ably/react";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import { fetchAblyToken } from "../../../api/ably.api";
 import { fetchTable } from "../../../api/table.api";
@@ -17,6 +17,7 @@ import authSlice from "../../../store/slices/auth.slice";
 import dialogSlice from "../../../store/slices/dialog.slice";
 import gameSlice from "../../../store/slices/game.slice";
 import handSlice from "../../../store/slices/hand.slice";
+import settingsSlice from "../../../store/slices/settings.slice";
 import tableSlice from "../../../store/slices/table.slice";
 import {
   BroadcastMessage,
@@ -27,6 +28,8 @@ import { DirectMessage } from "../../../types/message/direct";
 import ErrorPage from "../error/ErrorPage";
 import LoadingOverlay from "../loading/LoadingOverlay";
 import ConnectionContext from "./ConnectionContext";
+import dealSound from "/audio/deal-cards.mp3";
+import cardSound from "/audio/play-card.mp3";
 
 type ConnectionApiProviderProps = {
   children: ReactNode;
@@ -45,9 +48,23 @@ function ConnectionApiProvider({
   const [connectionState, setConnectionState] =
     useState<Ably.ConnectionState | null>(null);
   const [timeLeft, setTimeLeft] = useState(0);
+  const soundOn = useAppSelector(settingsSlice.selectors.soundOn);
 
   // Alert other users to the presence of this user
   usePresence(broadcastName);
+
+  const cardSoundRef = useRef(new Audio(cardSound));
+  const dealSoundRef = useRef(new Audio(dealSound));
+
+  const playCardSound = () => {
+    if (!soundOn) return;
+    cardSoundRef.current.play();
+  };
+
+  const dealCardSound = () => {
+    if (!soundOn) return;
+    dealSoundRef.current.play();
+  };
 
   // Listen for incoming broadcast messages from the server worker
   const broadcast = useChannel(broadcastName, (message) => {
@@ -103,10 +120,12 @@ function ConnectionApiProvider({
         dispatch(gameSlice.actions.handDone(msg.data));
         break;
       case BROADCAST_TYPES.BLIND_PICKED:
+        playCardSound();
         dispatch(handSlice.actions.blindPicked(msg.data));
         dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       case BROADCAST_TYPES.CARD_PLAYED: {
+        playCardSound();
         dispatch(handSlice.actions.cardPlayed(msg.data));
         dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
@@ -156,12 +175,14 @@ function ConnectionApiProvider({
         break;
       }
       case DIRECT_TYPES.DEAL_HAND:
+        dealCardSound();
         dispatch(handSlice.actions.dealHand(msg.data));
         break;
       case DIRECT_TYPES.PICKED_CARDS:
         dispatch(handSlice.actions.pickedCards(msg.data));
         break;
       case DIRECT_TYPES.BURIED_CARDS:
+        playCardSound();
         dispatch(handSlice.actions.buriedCards(msg.data));
         break;
       default:
