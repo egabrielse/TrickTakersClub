@@ -8,8 +8,6 @@ import {
 } from "ably/react";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
-import dealSound from "../../../../public/audio/deal-cards.mp3";
-import cardSound from "../../../../public/audio/play-card.mp3";
 import { fetchAblyToken } from "../../../api/ably.api";
 import { fetchTable } from "../../../api/table.api";
 import { DIALOG_TYPES } from "../../../constants/dialog";
@@ -30,6 +28,8 @@ import { DirectMessage } from "../../../types/message/direct";
 import ErrorPage from "../error/ErrorPage";
 import LoadingOverlay from "../loading/LoadingOverlay";
 import ConnectionContext from "./ConnectionContext";
+import dealSound from "/audio/deal-cards.mp3";
+import cardSound from "/audio/play-card.mp3";
 
 type ConnectionApiProviderProps = {
   children: ReactNode;
