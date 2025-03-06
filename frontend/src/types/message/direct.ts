@@ -38,6 +38,7 @@ export interface DealHandMessage extends Message {
     data: {
         dealerId: string;
         cards: Card[];
+        pickOrder: string[];
     };
 }
 

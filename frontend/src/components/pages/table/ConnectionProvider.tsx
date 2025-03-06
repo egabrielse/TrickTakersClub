@@ -103,6 +103,7 @@ function ConnectionApiProvider({
         dispatch(gameSlice.actions.handDone(msg.data));
         break;
       case BROADCAST_TYPES.BLIND_PICKED:
+        dispatch(handSlice.actions.blindPicked(msg.data));
         dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       case BROADCAST_TYPES.CARD_PLAYED: {
@@ -203,7 +204,6 @@ function ConnectionApiProvider({
     setConnectionState(state.current);
     switch (state.current) {
       case "disconnected":
-        setInitialized(false);
         if (state.retryIn && state.retryIn > 1000) {
           setTimeLeft(state.retryIn);
           setTimeout(retryInTimeoutCallback, 1000);
@@ -214,20 +214,22 @@ function ConnectionApiProvider({
     }
   });
 
-  return (
-    <>
-      {connectionState === "connecting" || !initialized ? (
-        <LoadingOverlay text="Connecting to the table" trailingEllipsis />
-      ) : connectionState === "disconnected" ? (
-        <LoadingOverlay
-          text={`Disconnected. Retrying in... ${timeLeft / 1000}`}
-        />
-      ) : null}
-      <ConnectionContext.Provider value={{ sendChatMsg, sendCommand }}>
-        {children}
-      </ConnectionContext.Provider>
-    </>
-  );
+  if (connectionState === "connecting" || !initialized) {
+    return <LoadingOverlay text="Connecting to table" />;
+  } else {
+    return (
+      <>
+        {connectionState === "disconnected" && (
+          <LoadingOverlay
+            text={`Disconnected. Retrying in... ${timeLeft / 1000}`}
+          />
+        )}
+        <ConnectionContext.Provider value={{ sendChatMsg, sendCommand }}>
+          {children}
+        </ConnectionContext.Provider>
+      </>
+    );
+  }
 }
 
 type ConnectionProviderProps = {
@@ -284,10 +286,10 @@ export default function ConnectionProvider({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return loading ? (
-    <LoadingOverlay text={`Searching for ${paramTableId}`} />
-  ) : error ? (
+  return error ? (
     <ErrorPage error={error} />
+  ) : loading ? (
+    <LoadingOverlay text={`Searching for ${paramTableId}`} />
   ) : client === null ? (
     <LoadingOverlay text={`Connecting to ${paramTableId}`} />
   ) : (

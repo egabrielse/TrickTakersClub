@@ -7,6 +7,7 @@ import {
     UpdateMessages,
 } from "../../types/game";
 import {
+    BlindPickedMessage,
     CalledCardMessage,
     CardPlayedMessage,
     LastHandStatusMessage,
@@ -67,6 +68,16 @@ const handSlice = createSlice({
         dealHand: (state, action: PayloadAction<MessageData<DealHandMessage>>) => {
             state.dealerId = action.payload.dealerId;
             state.hand = action.payload.cards.sort(sortCards);
+            // Reset state for a new hand
+            // First trick is always the pick order
+            state.pickerId = undefined;
+            state.partnerId = undefined;
+            state.calledCard = undefined;
+            state.bury = [];
+            state.tricks = [{
+                turnOrder: action.payload.pickOrder,
+                cards: {},
+            }];
             state.lastHand = {};
         },
         startNewTrick: (state, action: PayloadAction<MessageData<NewTrickMessage>>) => {
@@ -78,6 +89,12 @@ const handSlice = createSlice({
         upNext: (state, action: PayloadAction<MessageData<UpNextMessage>>) => {
             state.upNextId = action.payload.playerId;
             state.phase = action.payload.phase;
+        },
+        blindPicked: (
+            state,
+            action: PayloadAction<MessageData<BlindPickedMessage>>,
+        ) => {
+            state.pickerId = action.payload.playerId;
         },
         pickedCards: (
             state,

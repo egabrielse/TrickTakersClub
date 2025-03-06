@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -7,8 +7,10 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { HandSummary } from "../../../../types/game";
-import ProfileSnapshot from "../../../common/ProfileSnapshot";
+import ProfilePic from "../../../common/Profile/ProfilePic";
+import ProfileProvider from "../../../common/Profile/ProfileProvider";
 import StyledNumber from "../../../common/StyledNumber";
+import NameBadge from "../OverlayComponents/NameBadge";
 
 type ScoresTableProps = {
   summary: HandSummary;
@@ -26,7 +28,6 @@ export default function ScoresTable({ summary }: ScoresTableProps) {
         <TableHead>
           <TableRow>
             <TableCell>Player</TableCell>
-            <TableCell>Role</TableCell>
             <TableCell>Tricks</TableCell>
             <TableCell>Points</TableCell>
             <TableCell>Score</TableCell>
@@ -36,16 +37,23 @@ export default function ScoresTable({ summary }: ScoresTableProps) {
           {playerIds.map((playerId) => (
             <TableRow>
               <TableCell>
-                <ProfileSnapshot variant="avatar" uid={playerId} />
-              </TableCell>
-              <TableCell>
-                <Typography variant="h6">
-                  {summary.pickerId === playerId
-                    ? "Picker"
-                    : summary.partnerId === playerId
-                      ? "Partner"
-                      : null}
-                </Typography>
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="center"
+                  fontSize={10}
+                  gap="0.25rem"
+                >
+                  <ProfileProvider uid={playerId}>
+                    <ProfilePic size="small" />
+                  </ProfileProvider>
+                  {summary.pickerId === playerId && (
+                    <NameBadge color="blue">Picker</NameBadge>
+                  )}
+                  {summary.partnerId === playerId && (
+                    <NameBadge color="purple">Partner</NameBadge>
+                  )}
+                </Box>
               </TableCell>
               <TableCell>
                 <Typography variant="h6">

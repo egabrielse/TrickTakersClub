@@ -96,6 +96,7 @@ func HandleStartGameCommand(t *TableWorker, clientID string, data interface{}) {
 				playerID,
 				t.Game.WhoIsDealer(),
 				currentHand.PlayerHands.GetHand(playerID),
+				currentHand.Blind.PickOrder,
 			))
 		}
 		t.BroadcastMessage(msg.UpNextMessage(t.Game.GetUpNext()))
@@ -261,6 +262,7 @@ func HandlePlayCardCommand(t *TableWorker, clientID string, data interface{}) {
 								playerID,
 								t.Game.WhoIsDealer(),
 								currentHand.PlayerHands.GetHand(playerID),
+								currentHand.Blind.PickOrder,
 							))
 						}
 						t.BroadcastMessage(msg.UpNextMessage(t.Game.GetUpNext()))

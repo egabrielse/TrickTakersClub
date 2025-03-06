@@ -13,7 +13,8 @@ import { countCardPoints } from "../../../../utils/card";
 import { getTakerId } from "../../../../utils/game";
 import PlayingCard from "../../../common/PlayingCard";
 import PlayingCardList from "../../../common/PlayingCardList";
-import ProfileSnapshot from "../../../common/ProfileSnapshot";
+import ProfilePic from "../../../common/Profile/ProfilePic";
+import ProfileProvider from "../../../common/Profile/ProfileProvider";
 
 type BreakdownTableProps = {
   summary: HandSummary;
@@ -38,7 +39,9 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
         <TableBody>
           <TableRow>
             <TableCell>
-              <ProfileSnapshot variant="avatar" uid={summary.pickerId} />
+              <ProfileProvider uid={summary.pickerId}>
+                <ProfilePic />
+              </ProfileProvider>
             </TableCell>
             <TableCell>
               <PlayingCardList>
@@ -61,7 +64,9 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
           {summary.tricks.map((trick, index) => (
             <TableRow key={index}>
               <TableCell>
-                <ProfileSnapshot variant="avatar" uid={getTakerId(trick)} />
+                <ProfileProvider uid={getTakerId(trick)}>
+                  <ProfilePic />
+                </ProfileProvider>
               </TableCell>
               <TableCell>
                 <PlayingCardList>

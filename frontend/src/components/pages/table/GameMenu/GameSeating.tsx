@@ -7,8 +7,8 @@ import { COMMAND_TYPES } from "../../../../constants/message";
 import { useAppSelector } from "../../../../store/hooks";
 import selectors from "../../../../store/selectors";
 import tableSlice from "../../../../store/slices/table.slice";
-import ProfileSnapshot from "../../../common/ProfileSnapshot";
 import ConnectionContext from "../ConnectionContext";
+import NameTag from "../OverlayComponents/NameTag";
 import EmptySeat from "./EmptySeat";
 import "./GameSeating.scss";
 
@@ -23,7 +23,7 @@ export default function GameSeating() {
     for (let i = 0; i < PLAYER_COUNT; i++) {
       if (seating.length > i) {
         const uid = seating[i];
-        seats.push(<ProfileSnapshot key={uid} uid={uid} variant="name-row" />);
+        seats.push(<NameTag key={`name-tag-${i}`} playerId={uid} />);
       } else {
         seats.push(<EmptySeat key={`empty-seat-${i}`} />);
       }

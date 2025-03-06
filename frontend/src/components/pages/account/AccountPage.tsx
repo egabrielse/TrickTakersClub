@@ -1,7 +1,8 @@
 import { Paper } from "@mui/material";
 import { useAppSelector } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
-import ProfileSnapshot from "../../common/ProfileSnapshot";
+import ProfilePic from "../../common/Profile/ProfilePic";
+import ProfileProvider from "../../common/Profile/ProfileProvider";
 import "./AccountPage.scss";
 
 export default function AccountPage() {
@@ -10,7 +11,9 @@ export default function AccountPage() {
   const email = useAppSelector(authSlice.selectors.email);
   return (
     <Paper className="AccountPage">
-      <ProfileSnapshot uid={uid} variant="avatar" size="xxlarge" />
+      <ProfileProvider uid={uid}>
+        <ProfilePic size="xxlarge" />
+      </ProfileProvider>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <label>Username:</label>
         <div>{displayName}</div>

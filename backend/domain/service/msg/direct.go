@@ -36,12 +36,13 @@ func BuriedCardsMessage(clientID string, cards []*deck.Card) (string, string, *B
 }
 
 type DealHandData struct {
-	DealerID string       `json:"dealerId"`
-	Cards    []*deck.Card `json:"cards"`
+	DealerID  string       `json:"dealerId"`
+	Cards     []*deck.Card `json:"cards"`
+	PickOrder []string     `json:"pickOrder"`
 }
 
-func DealHandMessage(clientID, dealerID string, cards []*deck.Card) (string, string, *DealHandData) {
-	return clientID, DirectType.DealHand, &DealHandData{DealerID: dealerID, Cards: cards}
+func DealHandMessage(clientID, dealerID string, cards []*deck.Card, pickOrder []string) (string, string, *DealHandData) {
+	return clientID, DirectType.DealHand, &DealHandData{DealerID: dealerID, Cards: cards, PickOrder: pickOrder}
 }
 
 type ErrorData struct {

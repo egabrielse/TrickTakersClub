@@ -1,25 +1,24 @@
-import { Fade, Paper, Typography } from "@mui/material";
+import { Paper, Slide, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { BLIND_SIZE, HAND_PHASE } from "../../../../../constants/game";
-import { BROADCAST_TYPES } from "../../../../../constants/message";
-import { useAppDispatch, useAppSelector } from "../../../../../store/hooks";
-import selectors from "../../../../../store/selectors";
-import handSlice from "../../../../../store/slices/hand.slice";
-import { UpdateMessages } from "../../../../../types/game";
-import { prettyPrintCard } from "../../../../../utils/card";
-import ProfileSnapshot from "../../../../common/ProfileSnapshot";
-import "./index.scss";
+import { BLIND_SIZE, HAND_PHASE } from "../../../../constants/game";
+import { BROADCAST_TYPES } from "../../../../constants/message";
+import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
+import selectors from "../../../../store/selectors";
+import handSlice from "../../../../store/slices/hand.slice";
+import { UpdateMessages } from "../../../../types/game";
+import { prettyPrintCard } from "../../../../utils/card";
+import ProfilePic from "../../../common/Profile/ProfilePic";
+import ProfileProvider from "../../../common/Profile/ProfileProvider";
+import "./GameUpdates.scss";
 
 const renderUpdateMessage = (update: UpdateMessages) => {
   switch (update.name) {
     case BROADCAST_TYPES.BLIND_PICKED:
       return (
         <>
-          <ProfileSnapshot
-            size="small"
-            variant="avatar"
-            uid={update.data.playerId}
-          />
+          <ProfileProvider uid={update.data.playerId}>
+            <ProfilePic size="small" />
+          </ProfileProvider>
           <Typography>
             {update.data.forcePick
               ? "forced to pick the blind!"
@@ -39,11 +38,9 @@ const renderUpdateMessage = (update: UpdateMessages) => {
     case BROADCAST_TYPES.CARD_PLAYED:
       return (
         <>
-          <ProfileSnapshot
-            size="small"
-            variant="avatar"
-            uid={update.data.playerId}
-          />
+          <ProfileProvider uid={update.data.playerId}>
+            <ProfilePic size="small" />
+          </ProfileProvider>
           <Typography>
             played the&nbsp;
             {prettyPrintCard(update.data.card)}!
@@ -54,22 +51,18 @@ const renderUpdateMessage = (update: UpdateMessages) => {
       return (
         <>
           Partner is revealed!
-          <ProfileSnapshot
-            size="small"
-            variant="avatar"
-            uid={update.data.playerId}
-          />
+          <ProfileProvider uid={update.data.playerId}>
+            <ProfilePic size="small" />
+          </ProfileProvider>
           <Typography>is the partner!</Typography>
         </>
       );
     case BROADCAST_TYPES.TRICK_WON:
       return (
         <>
-          <ProfileSnapshot
-            size="small"
-            variant="avatar"
-            uid={update.data.playerId}
-          />
+          <ProfileProvider uid={update.data.playerId}>
+            <ProfilePic size="small" />
+          </ProfileProvider>
           <Typography>took the trick!</Typography>
         </>
       );
@@ -95,7 +88,10 @@ export default function GameUpdates() {
   }, [dispatch, nextUpdate, updates]);
 
   return (
-    <Fade in={Boolean(upNextId && !updates.length) || Boolean(nextUpdate)}>
+    <Slide
+      direction="up"
+      in={Boolean(upNextId && !updates.length) || Boolean(nextUpdate)}
+    >
       <Paper id="game-updates" className="GameUpdates">
         {nextUpdate ? (
           // 1. Show the next update in the queue
@@ -117,7 +113,9 @@ export default function GameUpdates() {
         ) : (
           // 3. Show info about who is up and what they are doing
           <>
-            <ProfileSnapshot size="small" variant="avatar" uid={upNextId!} />
+            <ProfileProvider uid={upNextId!}>
+              <ProfilePic size="small" />
+            </ProfileProvider>
             <Typography component="span" className="loading-text">
               {phase === HAND_PHASE.CALL
                 ? "is calling"
@@ -128,6 +126,6 @@ export default function GameUpdates() {
           </>
         )}
       </Paper>
-    </Fade>
+    </Slide>
   );
 }
