@@ -5,17 +5,17 @@ import (
 	"main/domain/entity"
 )
 
-type UserSettingsRepo interface {
-	Get(ctx context.Context, UID string) (*entity.UserSettings, error)
-	Save(ctx context.Context, UID string, entity *entity.UserSettings) error
+type SettingsRepo interface {
+	Get(ctx context.Context, UID string) (*entity.Settings, error)
+	Save(ctx context.Context, UID string, entity *entity.Settings) error
 }
 
-var userSettingsRepo UserSettingsRepo
+var settingsRepo SettingsRepo
 
-func GetUserSettingsRepo() UserSettingsRepo {
-	return userSettingsRepo
+func GetSettingsRepo() SettingsRepo {
+	return settingsRepo
 }
 
-func InitUserSettingsRepo(us UserSettingsRepo) {
-	userSettingsRepo = us
+func InitSettingsRepo(s SettingsRepo) {
+	settingsRepo = s
 }

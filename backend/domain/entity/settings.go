@@ -4,20 +4,20 @@ import (
 	"encoding/json"
 )
 
-type UserSettings struct {
+type Settings struct {
 	SoundOn bool `json:"soundOn"`
 }
 
-func NewDefaultUserSettingsEntity() *UserSettings {
-	return &UserSettings{
+func NewDefaultSettingsEntity() *Settings {
+	return &Settings{
 		SoundOn: true,
 	}
 }
 
-func (us *UserSettings) MarshalBinary() ([]byte, error) {
-	return json.Marshal(us)
+func (s *Settings) MarshalBinary() ([]byte, error) {
+	return json.Marshal(s)
 }
 
-func (us *UserSettings) UnmarshalBinary(data []byte) error {
-	return json.Unmarshal(data, us)
+func (s *Settings) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, s)
 }

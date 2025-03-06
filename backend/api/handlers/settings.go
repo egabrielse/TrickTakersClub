@@ -10,14 +10,14 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-type CreateUserSettingsResponseBody struct {
-	UserSettings entity.UserSettings `json:"user_settings"`
+type CreateSettingsResponseBody struct {
+	Settings entity.Settings `json:"user_settings"`
 }
 
-func SaveUserSettings(r *http.Request, p httprouter.Params) (code int, body any) {
+func SaveSettings(r *http.Request, p httprouter.Params) (code int, body any) {
 	UID := p.ByName("uid")
-	repo := repository.GetUserSettingsRepo()
-	entity := &entity.UserSettings{}
+	repo := repository.GetSettingsRepo()
+	entity := &entity.Settings{}
 	if body, err := io.ReadAll(r.Body); err != nil {
 		return http.StatusInternalServerError, nil
 	} else if err := entity.UnmarshalBinary(body); err != nil {
@@ -29,9 +29,9 @@ func SaveUserSettings(r *http.Request, p httprouter.Params) (code int, body any)
 	}
 }
 
-func GetUserSettings(r *http.Request, p httprouter.Params) (code int, body any) {
+func GetSettings(r *http.Request, p httprouter.Params) (code int, body any) {
 	UID := p.ByName("uid")
-	repo := repository.GetUserSettingsRepo()
+	repo := repository.GetSettingsRepo()
 	if entity, err := repo.Get(r.Context(), UID); utils.LogOnError(err) {
 		return http.StatusInternalServerError, nil
 	} else {

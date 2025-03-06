@@ -32,7 +32,7 @@ func main() {
 	// Instantiate the Firestore-based repository implementations
 	store := infrastructure.GetFirebaseStore()
 	repository.InitTableRepo(persistence.NewTableRepoImplementation(store))
-	repository.InitUserSettingsRepo(persistence.NewUserSettingsRepoImplementation(store))
+	repository.InitSettingsRepo(persistence.NewSettingsRepoImplementation(store))
 
 	// Initialize router
 	router := api.InitRouter()
