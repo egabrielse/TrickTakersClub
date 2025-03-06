@@ -79,7 +79,6 @@ function ConnectionApiProvider({
         dispatch(tableSlice.actions.settingsUpdated(msg.data));
         break;
       case BROADCAST_TYPES.GAME_STARTED: {
-        dealCardSound();
         dispatch(gameSlice.actions.gameStarted(msg.data));
         break;
       }
@@ -176,6 +175,7 @@ function ConnectionApiProvider({
         break;
       }
       case DIRECT_TYPES.DEAL_HAND:
+        dealCardSound();
         dispatch(handSlice.actions.dealHand(msg.data));
         break;
       case DIRECT_TYPES.PICKED_CARDS:
