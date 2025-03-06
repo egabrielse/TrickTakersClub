@@ -12,6 +12,7 @@ import Chat from "./OverlayComponents/Chat";
 import EndGameButton from "./OverlayComponents/EndGameButton";
 import LastHandButton from "./OverlayComponents/LastHandButton";
 import ScoreboardDisplay from "./OverlayComponents/ScoreboardDisplay";
+import SoundButton from "./OverlayComponents/SoundButton";
 import TableHeader from "./OverlayComponents/TableHeader";
 import "./TablePage.scss";
 
@@ -27,6 +28,7 @@ export default function TablePage() {
         <ActiveGameSettings />
       </div>
       <div id="bottom-left">
+        {inProgress && <SoundButton />}
         {inProgress && isHost && <EndGameButton />}
         {inProgress && <LastHandButton />}
       </div>

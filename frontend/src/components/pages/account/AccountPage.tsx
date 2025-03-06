@@ -17,7 +17,7 @@ export default function AccountPage() {
   const uid = useAppSelector(authSlice.selectors.uid);
   const displayName = useAppSelector(authSlice.selectors.displayName);
   const email = useAppSelector(authSlice.selectors.email);
-  const settings = useAppSelector(settingsSlice.selectors.all);
+  const settings = useAppSelector(settingsSlice.selectors.settings);
 
   return (
     <div className="AccountPage">

@@ -13,7 +13,6 @@ export default function PlayingCardList({
   orientation = "horizontal",
 }: PlayingCardListProps) {
   const count = children.length;
-  console.log(children);
   const height =
     count && children[0].props.height
       ? children[0].props.height

@@ -68,7 +68,7 @@ const settingsSlice = createSlice({
         });
     },
     selectors: {
-        all: (state) => state.settings,
+        settings: (state) => state.settings,
         error: (state) => state.error,
         soundOn: (state) => state.settings.soundOn,
     }
