@@ -1,5 +1,5 @@
 import { DIALOG_TYPES } from "../constants/dialog";
-import { HandSummary } from "./game";
+import { HandSummary, Scoreboard } from "./game";
 
 export type DialogType = (typeof DIALOG_TYPES)[keyof typeof DIALOG_TYPES];
 
@@ -11,7 +11,7 @@ export interface BaseDialogParams {
 
 export interface GameSummaryDialogParams extends BaseDialogParams {
     type: typeof DIALOG_TYPES.GAME_SUMMARY;
-    props: { summary: HandSummary };
+    props: { scoreboard: Scoreboard, summary: HandSummary };
 }
 
 export interface RegisterDialogParams extends BaseDialogParams {

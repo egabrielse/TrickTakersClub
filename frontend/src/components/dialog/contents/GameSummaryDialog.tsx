@@ -23,8 +23,18 @@ const PANELS = {
 } as const;
 
 export default function GameSummaryDialog({ props }: GameSummaryDialogParams) {
-  const { summary } = props;
+  const { scoreboard, summary } = props;
   const [openedPanel, setOpenedPanel] = useState<string>(PANELS.SUMMARY);
+  const [pickingTeamPoints] = useState<number>(
+    summary.pointsWon[summary.pickerId] +
+      (summary.partnerId ? summary.pointsWon[summary.partnerId] : 0),
+  );
+  const [opponentPoints] = useState<number>(
+    summary.opponentIds.reduce(
+      (acc, playerId) => acc + summary.pointsWon[playerId],
+      0,
+    ),
+  );
 
   const handleChange = (_: React.SyntheticEvent, newValue: string) => {
     setOpenedPanel(newValue);
@@ -44,7 +54,7 @@ export default function GameSummaryDialog({ props }: GameSummaryDialogParams) {
                   alignItems="center"
                   gap="0.25rem"
                 >
-                  <ProfilePic size="large" />
+                  <ProfilePic size="xlarge" />
                   {summary.partnerId && (
                     <NameBadge color="blue">PICKER</NameBadge>
                   )}
@@ -58,14 +68,16 @@ export default function GameSummaryDialog({ props }: GameSummaryDialogParams) {
                     alignItems="center"
                     gap="0.25rem"
                   >
-                    <ProfilePic size="large" />
+                    <ProfilePic size="xlarge" />
                     <NameBadge color="purple">PARTNER</NameBadge>
                   </Box>
                 </ProfileProvider>
               )}
             </Box>
             <Typography variant="overline" fontSize="1rem">
-              {summary.partnerId ? "Picking Team Won!" : "Picker Won!"}
+              {summary.partnerId
+                ? `Picking Team Won with ${pickingTeamPoints} Points!`
+                : `Picker Won with ${pickingTeamPoints} Points!`}
             </Typography>
           </>
         ) : (
@@ -73,12 +85,12 @@ export default function GameSummaryDialog({ props }: GameSummaryDialogParams) {
             <AvatarGroup>
               {summary.opponentIds.map((playerId) => (
                 <ProfileProvider key={playerId} uid={playerId}>
-                  <ProfilePic size="large" />
+                  <ProfilePic size="xlarge" />
                 </ProfileProvider>
               ))}
             </AvatarGroup>
             <Typography variant="overline" fontSize="1rem">
-              Opponents Won!
+              {`Opponents Won with ${opponentPoints} Points!`}
             </Typography>
           </>
         )}
@@ -90,7 +102,7 @@ export default function GameSummaryDialog({ props }: GameSummaryDialogParams) {
             <Tab label={PANELS.DETAILS} value={PANELS.DETAILS} />
           </TabList>
           <TabPanel value={PANELS.SUMMARY} sx={{ padding: 0 }}>
-            <ScoresTable summary={summary} />
+            <ScoresTable scoreboard={scoreboard} summary={summary} />
           </TabPanel>
           <TabPanel value={PANELS.DETAILS} sx={{ padding: 0 }}>
             <TableContainer sx={{ maxHeight: 500 }}>

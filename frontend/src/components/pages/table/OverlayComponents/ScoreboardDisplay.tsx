@@ -15,15 +15,15 @@ export default function ScoreboardDisplay() {
         <table>
           <thead>
             <tr>
-              <th colSpan={2}>Score</th>
-              <th>Points</th>
-              <th>Tricks</th>
+              <th></th>
+              <th>Score</th>
+              <th>Hands Won</th>
             </tr>
           </thead>
           <tbody>
-            {[...scoreboard]
-              .sort((a, b) => b.score - a.score)
-              .map(({ playerId, score, totalPoints, totalTricks }) => (
+            {Object.entries(scoreboard)
+              .sort(([, a], [, b]) => b.score - a.score)
+              .map(([playerId, { score, handsWon }]) => (
                 <tr key={`scoreboard-row-${playerId}`}>
                   <td>
                     <ProfileProvider uid={playerId}>
@@ -33,14 +33,13 @@ export default function ScoreboardDisplay() {
                   <td>
                     <StyledNumber>{score}</StyledNumber>
                   </td>
-                  <td>{totalPoints}</td>
-                  <td>{totalTricks}</td>
+                  <td>{handsWon}</td>
                 </tr>
               ))}
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan={4}>Hands Played: {handsPlayed}</td>
+              <td colSpan={3}>Total Hands Played: {handsPlayed}</td>
             </tr>
           </tfoot>
         </table>

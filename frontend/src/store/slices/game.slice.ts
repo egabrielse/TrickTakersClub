@@ -14,7 +14,7 @@ interface GameState {
 
 const initialState: GameState = {
     inProgress: false,
-    scoreboard: [],
+    scoreboard: {},
     playerOrder: [],
     handsPlayed: 0,
 };
@@ -27,7 +27,7 @@ const gameSlice = createSlice({
         reset: () => initialState,
         initialize: (state, action: PayloadAction<MessageData<InitializeMessage>>) => {
             state.inProgress = action.payload.inProgress;
-            state.scoreboard = action.payload.scoreboard || [];
+            state.scoreboard = action.payload.scoreboard || {};
             state.handsPlayed = action.payload.handsPlayed || 0;
             state.playerOrder = action.payload.playerOrder || [];
         },
@@ -38,13 +38,7 @@ const gameSlice = createSlice({
             state.playerOrder = action.payload.playerOrder;
         },
         handDone: (state, action: PayloadAction<MessageData<HandDoneMessage>>) => {
-            const { summary } = action.payload;
-            state.scoreboard = state.scoreboard.map((row) => ({
-                playerId: row.playerId,
-                score: row.score += summary.scores[row.playerId],
-                totalPoints: row.totalPoints += summary.pointsWon[row.playerId],
-                totalTricks: row.totalTricks += summary.tricksWon[row.playerId],
-            }));
+            state.scoreboard = action.payload.scoreboard;
             state.handsPlayed += 1;
         },
     },

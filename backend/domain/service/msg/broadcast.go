@@ -179,11 +179,12 @@ func TrickWonMessage(playerId string) (name string, data *TrickWonData) {
 }
 
 type HandDoneData struct {
-	Summary *hand.HandSummary `json:"summary"`
+	Summary    *hand.HandSummary  `json:"summary"`
+	Scoreboard scoring.Scoreboard `json:"scoreboard"`
 }
 
-func HandDoneMessage(summary *hand.HandSummary) (name string, data *HandDoneData) {
-	return BroadcastType.HandDone, &HandDoneData{Summary: summary}
+func HandDoneMessage(summary *hand.HandSummary, scoreboard scoring.Scoreboard) (name string, data *HandDoneData) {
+	return BroadcastType.HandDone, &HandDoneData{Summary: summary, Scoreboard: scoreboard}
 }
 
 type NewTrickData struct {

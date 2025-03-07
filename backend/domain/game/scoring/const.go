@@ -8,13 +8,16 @@ const (
 	PointsAll       = 120
 )
 
-// ScoringFunc is a function that calculates the scores for a hand of Game
-type ScoringFunc func(
-	pickerID string, // ID of the picker
-	partnerID string, // ID of the picker's partner, empty if none
-	totalTricks int, // Total number of tricks in the hand
-	points map[string]int, // Map from player ID to number of points won
-	tricks map[string]int, // Map from player ID to number of tricks won
-) (
-	scores map[string]int, // Map from player ID to score
-)
+var PayoutMultiplier = struct {
+	DoubleOnTheBump string
+	Cracking        string
+	Blitzing        string
+	NoSchneider     string
+	NoTricks        string
+}{
+	DoubleOnTheBump: "double-on-the-bump",
+	Cracking:        "cracking",
+	Blitzing:        "blitzing",
+	NoSchneider:     "no-schneider",
+	NoTricks:        "no-tricks",
+}

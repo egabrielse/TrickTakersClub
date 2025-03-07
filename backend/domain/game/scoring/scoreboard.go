@@ -1,34 +1,29 @@
 package scoring
 
+import "main/utils"
+
 type ScoreboardRow struct {
-	PlayerID    string `json:"playerId"`    // Player's ID
-	Score       int    `json:"score"`       // Player's score
-	TotalPoints int    `json:"totalPoints"` // Total number of points taken by the player
-	TotalTricks int    `json:"totalTricks"` // Total number of tricks taken by the player
+	Score    int `json:"score"`    // Player's score
+	HandsWon int `json:"handsWon"` // Number of hands won
 }
 
-type Scoreboard []ScoreboardRow
+type Scoreboard map[string]*ScoreboardRow
 
 func NewScoreboard(playerIDs []string) Scoreboard {
 	scoreboard := Scoreboard{}
 	for _, playerID := range playerIDs {
-		scoreboard = append(scoreboard, ScoreboardRow{
-			PlayerID:    playerID,
-			Score:       0,
-			TotalPoints: 0,
-			TotalTricks: 0,
-		})
+		scoreboard[playerID] = &ScoreboardRow{
+			Score: 0,
+		}
 	}
 	return scoreboard
 }
 
-func (s *Scoreboard) UpdateScore(playerID string, score int, points int, tricks int) {
-	for i, row := range *s {
-		if row.PlayerID == playerID {
-			(*s)[i].Score += score
-			(*s)[i].TotalPoints += points
-			(*s)[i].TotalTricks += tricks
-			return
+func (s *Scoreboard) TallyHand(payouts map[string]int, winners []string) {
+	for playerID, payout := range payouts {
+		(*s)[playerID].Score += payout
+		if utils.Contains(winners, playerID) {
+			(*s)[playerID].HandsWon++
 		}
 	}
 }

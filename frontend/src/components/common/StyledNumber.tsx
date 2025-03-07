@@ -22,7 +22,7 @@ export default function StyledNumber(props: StyledNumberProps) {
   }, [children]);
 
   return (
-    <Typography ref={ref} color={color} {...props}>
+    <Typography ref={ref} color={color} fontSize="inherit" {...props}>
       {prefix}
       {children}
     </Typography>

@@ -73,14 +73,10 @@ func (g *Game) TallyScores() scoring.Scoreboard {
 			if summary, err := hand.SummarizeHand(); err != nil {
 				logrus.Warn(err)
 			} else {
-				for _, playerID := range g.PlayerOrder {
-					scoreboard.UpdateScore(
-						playerID,
-						summary.Scores[playerID],
-						summary.PointsWon[playerID],
-						summary.TricksWon[playerID],
-					)
-				}
+				scoreboard.TallyHand(
+					summary.Payouts,
+					summary.Winners,
+				)
 			}
 		}
 	}

@@ -1,0 +1,24 @@
+.ScoresTable {
+    min-width: 500px;
+
+    table {
+        width: 100%;
+        border-radius: 3px;
+        background-color: white;
+        color: black;
+        font-size: large;
+
+
+        th {
+            border: 1px solid grey;
+            padding: 3px 0;
+            background-color: whitesmoke;
+            font-weight: bold;
+        }
+
+        td {
+            text-align: center;
+        }
+    }
+
+}

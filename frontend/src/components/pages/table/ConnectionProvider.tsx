@@ -110,15 +110,17 @@ function ConnectionApiProvider({
       case BROADCAST_TYPES.TRICK_WON:
         dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
-      case BROADCAST_TYPES.HAND_DONE:
+      case BROADCAST_TYPES.HAND_DONE: {
+        const { scoreboard, summary } = msg.data;
         dispatch(
           dialogSlice.actions.openDialog({
             type: DIALOG_TYPES.GAME_SUMMARY,
-            props: { summary: msg.data.summary },
+            props: { scoreboard, summary },
           }),
         );
         dispatch(gameSlice.actions.handDone(msg.data));
         break;
+      }
       case BROADCAST_TYPES.BLIND_PICKED:
         playCardSound();
         dispatch(handSlice.actions.blindPicked(msg.data));

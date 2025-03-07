@@ -92,6 +92,7 @@ export interface HandDoneMessage extends Message {
     name: typeof BROADCAST_TYPES.HAND_DONE;
     data: {
         summary: HandSummary;
+        scoreboard: Scoreboard;
     }
 }
 

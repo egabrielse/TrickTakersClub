@@ -29,13 +29,11 @@ export type GameSettings = {
 export type HandPhase = (typeof HAND_PHASE)[keyof typeof HAND_PHASE];
 
 export type ScoreboardRow = {
-    playerId: string;
     score: number;
-    totalPoints: number;
-    totalTricks: number;
+    handsWon: number;
 };
 
-export type Scoreboard = Array<ScoreboardRow>;
+export type Scoreboard = Record<string, ScoreboardRow>;
 
 export type HandSummary = {
     winners: string[];
@@ -44,7 +42,8 @@ export type HandSummary = {
     opponentIds: string[];
     tricks: Trick[];
     bury: Card[];
-    scores: Record<string, number>;
+    payouts: Record<string, number>;
+    payoutMultipliers: string[]
     pointsWon: Record<string, number>;
     tricksWon: Record<string, number>;
 };

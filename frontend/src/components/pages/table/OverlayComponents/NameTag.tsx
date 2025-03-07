@@ -22,7 +22,7 @@ export default function NameTag({ playerId }: NameTagProps) {
       <div id={`name-tag-${playerId}`} className="NameTag">
         <ProfilePic size="medium" />
         <div className="NameTag-Name">
-          <DisplayName fontWeight="bolder" />
+          <DisplayName fontSize={16} fontWeight="bolder" />
           <div className="NameTag-Name-Badges">
             {hostId === playerId && (
               <NameBadge color="darkorange">HOST</NameBadge>

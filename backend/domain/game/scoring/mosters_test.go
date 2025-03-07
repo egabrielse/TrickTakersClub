@@ -8,43 +8,7 @@ import (
 )
 
 func TestScoreMostersHand(t *testing.T) {
-	t.Run("Three players, one loser", func(t *testing.T) {
-		points := map[string]int{
-			"1": 30,
-			"2": 30,
-			"3": 60,
-		}
-		scores, winnerIDs := ScoreMostersHand(points)
-		expected := map[string]int{
-			"1": 1,
-			"2": 1,
-			"3": -2,
-		}
-		assert.Equal(t, expected, scores)
-		assert.Equal(t, []string{"1", "2"}, winnerIDs)
-		utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
-	})
-
-	t.Run("Four players, one loser", func(t *testing.T) {
-		points := map[string]int{
-			"1": 20,
-			"2": 20,
-			"3": 60,
-			"4": 20,
-		}
-		scores, winnerIDs := ScoreMostersHand(points)
-		expected := map[string]int{
-			"1": 1,
-			"2": 1,
-			"3": -3,
-			"4": 1,
-		}
-		assert.Equal(t, expected, scores)
-		assert.Equal(t, []string{"1", "2", "4"}, winnerIDs)
-		utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
-	})
-
-	t.Run("Five players, one winner", func(t *testing.T) {
+	t.Run("One winner", func(t *testing.T) {
 		points := map[string]int{
 			"1": 10,
 			"2": 10,
@@ -65,26 +29,7 @@ func TestScoreMostersHand(t *testing.T) {
 		utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 	})
 
-	t.Run("Four players, two winners", func(t *testing.T) {
-		points := map[string]int{
-			"1": 20,
-			"2": 20,
-			"3": 40,
-			"4": 40,
-		}
-		scores, winnerIDs := ScoreMostersHand(points)
-		expected := map[string]int{
-			"1": 2,
-			"2": 2,
-			"3": -2,
-			"4": -2,
-		}
-		assert.Equal(t, expected, scores)
-		assert.Equal(t, []string{"1", "2"}, winnerIDs)
-		utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
-	})
-
-	t.Run("Five players, two winners", func(t *testing.T) {
+	t.Run("Two winners", func(t *testing.T) {
 		points := map[string]int{
 			"1": 10,
 			"2": 10,

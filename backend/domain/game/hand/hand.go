@@ -250,14 +250,14 @@ func (h *Hand) SummarizeHand() (*HandSummary, error) {
 	}
 
 	// Calculate the hand summary
-	var scores map[string]int
+	var payouts map[string]int
 	if h.Blind.PickerID == "" {
 		if h.Settings.NoPickMethod == game_settings.NoPickMethod.Leasters {
 			// Leasters Hand (No Picker)
-			scores, sum.Winners = scoring.ScoreLeastersHand(pointsWon, tricksWon)
+			payouts, sum.Winners = scoring.ScoreLeastersHand(pointsWon, tricksWon)
 		} else if h.Settings.NoPickMethod == game_settings.NoPickMethod.Mosters {
 			// Mosters Hand (No Picker)
-			scores, sum.Winners = scoring.ScoreMostersHand(pointsWon)
+			payouts, sum.Winners = scoring.ScoreMostersHand(pointsWon)
 		} else {
 			return nil, fmt.Errorf("unhandled no pick method")
 		}
@@ -271,7 +271,7 @@ func (h *Hand) SummarizeHand() (*HandSummary, error) {
 		sum.Bury = h.Bury.Cards
 		buriedPoints := deck.CountPoints(h.Bury.Cards)
 		pointsWon[sum.PickerID] += buriedPoints
-		scores, sum.Winners = scoring.ScoreHand(
+		payouts, sum.Winners, sum.PayoutMultipliers = scoring.ScoreHand(
 			sum.PickerID,
 			sum.PartnerID,
 			pointsWon,
@@ -279,7 +279,7 @@ func (h *Hand) SummarizeHand() (*HandSummary, error) {
 			h.Settings.DoubleOnTheBump,
 		)
 	}
-	sum.Scores = scores
+	sum.Payouts = payouts
 	sum.PointsWon = pointsWon
 	sum.TricksWon = tricksWon
 

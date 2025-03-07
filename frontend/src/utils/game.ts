@@ -105,9 +105,9 @@ export const arrangeSeats = (playerOrder: string[]) => {
 }
 
 export const createNewScoreboard = (playerOrder: string[]) => {
-    const scoreboard: Scoreboard = [];
+    const scoreboard: Scoreboard = {};
     playerOrder.forEach((playerId) => {
-        scoreboard.push({ playerId, score: 0, totalPoints: 0, totalTricks: 0 });
+        scoreboard[playerId] = ({ score: 0, handsWon: 0 });
     });
     return scoreboard;
 }
