@@ -104,11 +104,16 @@ export const arrangeSeats = (playerOrder: string[]) => {
     }
 }
 
-export const createNewScoreboard = (playerOrder: string[]) => {
-    const scoreboard: Scoreboard = {};
-    playerOrder.forEach((playerId) => {
-        scoreboard[playerId] = ({ score: 0, handsWon: 0 });
-    });
+export const createNewScoreboard = (playerOrder?: string[]) => {
+    const scoreboard: Scoreboard = {
+        rows: {},
+        handsPlayed: 0,
+    };
+    if (playerOrder) {
+        playerOrder.forEach((playerId) => {
+            scoreboard.rows[playerId] = ({ score: 0, handsWon: 0 });
+        });
+    }
     return scoreboard;
 }
 

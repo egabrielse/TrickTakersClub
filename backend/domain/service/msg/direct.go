@@ -71,7 +71,6 @@ type InitializeData struct {
 	DealerID    string                      `json:"dealerId"`
 	Scoreboard  scoring.Scoreboard          `json:"scoreboard"`
 	PlayerOrder []string                    `json:"playerOrder"`
-	HandsPlayed int                         `json:"handsPlayed"`
 	Settings    *game_settings.GameSettings `json:"settings"`
 	CalledCard  *deck.Card                  `json:"calledCard"`
 	Phase       string                      `json:"phase"`
@@ -98,7 +97,6 @@ func InitializeMessage(tableID, hostID, clientID string, seating []string, setti
 		data.DealerID = game.WhoIsDealer()
 		data.Scoreboard = game.TallyScores()
 		data.PlayerOrder = game.PlayerOrder
-		data.HandsPlayed = game.CountHandsPlayed()
 		// State related to the current hand
 		currentHand := game.GetCurrentHand()
 		data.CalledCard = currentHand.Call.GetCalledCard()

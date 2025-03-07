@@ -19,6 +19,7 @@ import "./TablePage.scss";
 export default function TablePage() {
   const inProgress = useAppSelector(gameSlice.selectors.inProgress);
   const isHost = useAppSelector(selectors.isHost);
+  const scoreboard = useAppSelector(gameSlice.selectors.scoreboard);
 
   return (
     <div className="TablePage">
@@ -39,7 +40,7 @@ export default function TablePage() {
           expandedIcon={<CloseIcon />}
           collapsedIcon={<FormatListNumberedIcon />}
         >
-          <ScoreboardDisplay />
+          <ScoreboardDisplay scoreboard={scoreboard} />
         </ExpandingButton>
       )}
       <ExpandingButton

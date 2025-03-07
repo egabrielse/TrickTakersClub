@@ -9,9 +9,14 @@ export interface BaseDialogParams {
     props?: object;
 }
 
+export interface HandSummaryDialogParams extends BaseDialogParams {
+    type: typeof DIALOG_TYPES.HAND_SUMMARY;
+    props: { scoreboard: Scoreboard, summary: HandSummary };
+}
+
 export interface GameSummaryDialogParams extends BaseDialogParams {
     type: typeof DIALOG_TYPES.GAME_SUMMARY;
-    props: { scoreboard: Scoreboard, summary: HandSummary };
+    props: { scoreboard: Scoreboard };
 }
 
 export interface RegisterDialogParams extends BaseDialogParams {
@@ -40,4 +45,6 @@ export type DialogParams =
     | ResetPasswordDialogParams
     | ErrorDialogParams
     | ConfirmExitDialogParams
-    | GameSummaryDialogParams;
+    | GameSummaryDialogParams
+    | HandSummaryDialogParams;
+

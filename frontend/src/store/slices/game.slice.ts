@@ -9,14 +9,12 @@ interface GameState {
     inProgress: boolean;
     scoreboard: Scoreboard;
     playerOrder: string[];
-    handsPlayed: number;
 }
 
 const initialState: GameState = {
     inProgress: false,
-    scoreboard: {},
+    scoreboard: createNewScoreboard(),
     playerOrder: [],
-    handsPlayed: 0,
 };
 
 
@@ -27,26 +25,22 @@ const gameSlice = createSlice({
         reset: () => initialState,
         initialize: (state, action: PayloadAction<MessageData<InitializeMessage>>) => {
             state.inProgress = action.payload.inProgress;
-            state.scoreboard = action.payload.scoreboard || {};
-            state.handsPlayed = action.payload.handsPlayed || 0;
+            state.scoreboard = action.payload.scoreboard || createNewScoreboard(action.payload.playerOrder);
             state.playerOrder = action.payload.playerOrder || [];
         },
         gameStarted: (state, action: PayloadAction<MessageData<GameStartedMessage>>) => {
             state.inProgress = true;
             state.scoreboard = createNewScoreboard(action.payload.playerOrder)
-            state.handsPlayed = 0;
             state.playerOrder = action.payload.playerOrder;
         },
         handDone: (state, action: PayloadAction<MessageData<HandDoneMessage>>) => {
             state.scoreboard = action.payload.scoreboard;
-            state.handsPlayed += 1;
         },
     },
     selectors: {
         inProgress: (state: GameState) => state.inProgress,
         scoreboard: (state: GameState) => state.scoreboard,
         playerOrder: (state: GameState) => state.playerOrder,
-        handsPlayed: (state: GameState) => state.handsPlayed,
     }
 });
 

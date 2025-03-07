@@ -48,15 +48,6 @@ func (g *Game) GetCurrentHand() *hand.Hand {
 	return g.Hands[len(g.Hands)-1]
 }
 
-func (g *Game) CountHandsPlayed() int {
-	if len(g.Hands) == 0 {
-		return 0
-	} else if g.GetCurrentHand().IsComplete() {
-		return len(g.Hands)
-	}
-	return len(g.Hands) - 1
-}
-
 func (g *Game) WhoIsDealer() string {
 	return g.PlayerOrder[g.DealerIndex]
 }

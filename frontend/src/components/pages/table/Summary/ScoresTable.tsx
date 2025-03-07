@@ -13,6 +13,7 @@ type ScoresTableProps = {
 };
 
 export default function ScoresTable({ scoreboard, summary }: ScoresTableProps) {
+  const { rows } = scoreboard;
   const playerIds = [summary.pickerId];
   if (summary.partnerId) {
     playerIds.push(summary.partnerId);
@@ -32,7 +33,7 @@ export default function ScoresTable({ scoreboard, summary }: ScoresTableProps) {
         </thead>
         <tbody>
           {playerIds
-            .sort((a, b) => scoreboard[b].score - scoreboard[a].score)
+            .sort((a, b) => rows[b].score - rows[a].score)
             .map((playerId, index) => (
               <tr key={playerId}>
                 <td>{index + 1}</td>
@@ -57,7 +58,7 @@ export default function ScoresTable({ scoreboard, summary }: ScoresTableProps) {
                     {summary.payouts[playerId]}
                   </StyledNumber>
                 </td>
-                <td>{scoreboard[playerId]?.score}</td>
+                <td>{rows[playerId].score}</td>
               </tr>
             ))}
         </tbody>

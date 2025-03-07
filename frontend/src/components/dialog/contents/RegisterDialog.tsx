@@ -16,7 +16,7 @@ import { useAppDispatch } from "../../../store/hooks";
 import dialogSlice from "../../../store/slices/dialog.slice";
 import { RegisterDialogParams } from "../../../types/dialog";
 import { generateDisplayName } from "../../../utils/user";
-import Logo from "../../common/AppLogo";
+import AppLogo from "../../common/AppLogo";
 import CloseDialogButton from "../components/CloseDialogButton";
 import DialogBody from "../components/DialogBody";
 import DialogErrorMessage from "../components/DialogErrorMessage";
@@ -130,7 +130,7 @@ export default function RegisterDialog({ closeable }: RegisterDialogParams) {
     <>
       {closeable && <CloseDialogButton />}
       <DialogHeader>
-        <Logo size="large" />
+        <AppLogo size="large" />
         <h2>CREATE A NEW ACCOUNT</h2>
       </DialogHeader>
       <form onSubmit={formik.handleSubmit}>

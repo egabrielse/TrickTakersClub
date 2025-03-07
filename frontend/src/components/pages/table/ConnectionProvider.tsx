@@ -114,7 +114,7 @@ function ConnectionApiProvider({
         const { scoreboard, summary } = msg.data;
         dispatch(
           dialogSlice.actions.openDialog({
-            type: DIALOG_TYPES.GAME_SUMMARY,
+            type: DIALOG_TYPES.HAND_SUMMARY,
             props: { scoreboard, summary },
           }),
         );
@@ -132,13 +132,22 @@ function ConnectionApiProvider({
         dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       }
-      case BROADCAST_TYPES.GAME_OVER:
-        // TODO: Display a game over dialog, which displays the final scoreboard
-        // Reset the state when the game is over
+      case BROADCAST_TYPES.GAME_OVER: {
+        const { scoreboard } = msg.data;
+        if (scoreboard.handsPlayed > 0) {
+          // If at least one hand has been played, show the final scoreboard
+          dispatch(
+            dialogSlice.actions.openDialog({
+              type: DIALOG_TYPES.GAME_SUMMARY,
+              props: { scoreboard: msg.data.scoreboard },
+            }),
+          );
+        }
         dispatch(handSlice.actions.reset());
         dispatch(gameSlice.actions.reset());
         dispatch(tableSlice.actions.resetSeating());
         break;
+      }
       case BROADCAST_TYPES.SAT_DOWN:
         dispatch(tableSlice.actions.satDown(msg.data));
         break;

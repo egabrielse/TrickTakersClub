@@ -33,7 +33,10 @@ export type ScoreboardRow = {
     handsWon: number;
 };
 
-export type Scoreboard = Record<string, ScoreboardRow>;
+export type Scoreboard = {
+    rows: Record<string, ScoreboardRow>;
+    handsPlayed: number;
+};
 
 export type HandSummary = {
     winners: string[];
