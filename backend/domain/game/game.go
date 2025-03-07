@@ -48,15 +48,6 @@ func (g *Game) GetCurrentHand() *hand.Hand {
 	return g.Hands[len(g.Hands)-1]
 }
 
-func (g *Game) CountHandsPlayed() int {
-	if len(g.Hands) == 0 {
-		return 0
-	} else if g.GetCurrentHand().IsComplete() {
-		return len(g.Hands)
-	}
-	return len(g.Hands) - 1
-}
-
 func (g *Game) WhoIsDealer() string {
 	return g.PlayerOrder[g.DealerIndex]
 }
@@ -73,14 +64,10 @@ func (g *Game) TallyScores() scoring.Scoreboard {
 			if summary, err := hand.SummarizeHand(); err != nil {
 				logrus.Warn(err)
 			} else {
-				for _, playerID := range g.PlayerOrder {
-					scoreboard.UpdateScore(
-						playerID,
-						summary.Scores[playerID],
-						summary.PointsWon[playerID],
-						summary.TricksWon[playerID],
-					)
-				}
+				scoreboard.TallyHand(
+					summary.Payouts,
+					summary.Winners,
+				)
 			}
 		}
 	}

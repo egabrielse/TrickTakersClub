@@ -13,8 +13,9 @@ func ScoreHand(
 	tricks map[string]int,
 	doubleOnBump bool,
 ) (
-	scores map[string]int, // Map from player ID to score
+	payouts map[string]int, // Map from player ID to score
 	winnerIDs []string, // List of player IDs who won the hand
+	multipliers []string, // List of multipliers applied to the payouts
 ) {
 	// sum count of tricks to find total tricks
 	totalTricks := 0
@@ -39,54 +40,59 @@ func ScoreHand(
 	}
 
 	// Base score adjustments (defaults to opponents losing 1 point each)
-	opponentBaseScore := -1
-	pickerBaseScore := 0
-	partnerBaseScore := 0
+	opponentPayout := -1
+	pickerPayout := 0
+	partnerPayout := 0
 
 	// Multiplier to apply to base scores
-	scoreMultiplier := 1
+	payoutMultiplier := 1
+	multipliers = []string{}
 
 	// Determine the base scores for the picker and partner
 	if partnerID == "" {
 		// All points go to the picker
-		pickerBaseScore = len(playerIDs) - 1
+		pickerPayout = len(playerIDs) - 1
 	} else {
 		// Points are split between the picker and partner
 		// Picker gets at least half the points
-		pickerBaseScore = int(math.Ceil(float64(len(playerIDs)-2) / 2))
-		partnerBaseScore = int(math.Floor(float64(len(playerIDs)-2) / 2))
+		pickerPayout = int(math.Ceil(float64(len(playerIDs)-2) / 2))
+		partnerPayout = int(math.Floor(float64(len(playerIDs)-2) / 2))
 	}
 
 	// Apply default score multipliers
 	if pickingTeamTricks == totalTricks || pickingTeamTricks == PointsNone {
 		// Scores are tripled if either team took all tricks
-		scoreMultiplier = scoreMultiplier * 3
-	} else if pickingTeamPoints < PointsSchneider || pickingTeamPoints > (PointsAll-PointsSchneider) {
+		payoutMultiplier = payoutMultiplier * 3
+		multipliers = append(multipliers, PayoutMultiplier.NoTricks)
+	} else if pickingTeamPoints <= PointsSchneider || pickingTeamPoints > (PointsAll-PointsSchneider) {
 		// Scores are doubled if either team did not get Schneider
-		scoreMultiplier = scoreMultiplier * 2
+		// Picker + Partner must get at least 31, while opponents must get at least 30
+		payoutMultiplier = payoutMultiplier * 2
+		multipliers = append(multipliers, PayoutMultiplier.NoSchneider)
 	}
 
 	// Invert score multiplier if picking team lost
 	if pickingTeamPoints < PointsHalf {
-		scoreMultiplier = scoreMultiplier * -1
+		payoutMultiplier = payoutMultiplier * -1
 		if doubleOnBump {
 			// Double on the bump doubles the loss for the picking team
-			scoreMultiplier = scoreMultiplier * 2
+			payoutMultiplier = payoutMultiplier * 2
+			multipliers = append(multipliers, PayoutMultiplier.DoubleOnTheBump)
 		}
 	}
 
 	// Apply the score multipliers to the base scores
-	scores = make(map[string]int)
+	payouts = make(map[string]int)
 
-	// Update the scores in the results
+	// Update the payouts in the results
 	for _, ID := range playerIDs {
 		if ID == pickerID {
-			scores[ID] = pickerBaseScore * scoreMultiplier
+			payouts[ID] = pickerPayout * payoutMultiplier
 		} else if ID == partnerID {
-			scores[ID] = partnerBaseScore * scoreMultiplier
+			payouts[ID] = partnerPayout * payoutMultiplier
 		} else {
-			scores[ID] = opponentBaseScore * scoreMultiplier
+			payouts[ID] = opponentPayout * payoutMultiplier
 		}
 	}
-	return scores, utils.AlphabetizeList(winnerIDs)
+	return payouts, utils.AlphabetizeList(winnerIDs), multipliers
 }

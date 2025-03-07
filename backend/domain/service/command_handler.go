@@ -241,14 +241,15 @@ func HandlePlayCardCommand(t *TableWorker, clientID string, data interface{}) {
 					t.BroadcastMessage(msg.UpNextMessage(t.Game.GetUpNext()))
 				} else {
 					// Hand is complete, summarize the hand for players
+					scoreboard := t.Game.TallyScores()
 					if summary, err := currentHand.SummarizeHand(); utils.LogOnError(err) {
 						t.DirectMessage(msg.ErrorMessage(clientID, err.Error()))
 					} else {
-						t.BroadcastMessage(msg.HandDoneMessage(summary))
+						t.BroadcastMessage(msg.HandDoneMessage(summary, scoreboard))
 					}
 					if t.Game.IsLastHand() {
 						// A player has said it's their last hand, end the game
-						t.BroadcastMessage(msg.GameOverMessage(t.Game.TallyScores()))
+						t.BroadcastMessage(msg.GameOverMessage(scoreboard))
 						// Clear the game from state
 						t.Game = nil
 						// Reset seated players

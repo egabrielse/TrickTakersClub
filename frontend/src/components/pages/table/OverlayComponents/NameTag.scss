@@ -6,13 +6,12 @@
     &-Name {
         display: flex;
         flex-direction: column;
-        font-size: 14px;
         font-weight: bold;
         transition: all 0.2s ease-in-out;
         gap: 0.25rem;
 
         &-Badges {
-            font-size: 12px;
+            font-size: 14px;
             display: flex;
             gap: 0.25rem;
         }

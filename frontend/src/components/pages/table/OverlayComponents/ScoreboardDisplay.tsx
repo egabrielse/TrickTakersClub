@@ -1,46 +1,55 @@
-import { useAppSelector } from "../../../../store/hooks";
-import gameSlice from "../../../../store/slices/game.slice";
+import { Box } from "@mui/material";
+import { Scoreboard } from "../../../../types/game";
+import DisplayName from "../../../common/Profile/DisplayName";
 import ProfilePic from "../../../common/Profile/ProfilePic";
 import ProfileProvider from "../../../common/Profile/ProfileProvider";
 import StyledNumber from "../../../common/StyledNumber";
 import "./ScoreboardDisplay.scss";
 
-export default function ScoreboardDisplay() {
-  const scoreboard = useAppSelector(gameSlice.selectors.scoreboard);
-  const handsPlayed = useAppSelector(gameSlice.selectors.handsPlayed);
+type ScoreboardDisplayProps = {
+  scoreboard: Scoreboard;
+  namesExpanded?: boolean;
+};
 
+export default function ScoreboardDisplay({
+  scoreboard,
+  namesExpanded = false,
+}: ScoreboardDisplayProps) {
+  const { rows, handsPlayed } = scoreboard;
   return (
     <div id="scoreboard-display" className="ScoreboardDisplay">
       {scoreboard !== null && Object.entries(scoreboard).length > 0 ? (
         <table>
           <thead>
             <tr>
-              <th colSpan={2}>Score</th>
-              <th>Points</th>
-              <th>Tricks</th>
+              <th>Player</th>
+              <th>Score</th>
+              <th>Hands Won</th>
             </tr>
           </thead>
           <tbody>
-            {[...scoreboard]
-              .sort((a, b) => b.score - a.score)
-              .map(({ playerId, score, totalPoints, totalTricks }) => (
+            {Object.entries(rows)
+              .sort(([, a], [, b]) => b.score - a.score)
+              .map(([playerId, { score, handsWon }]) => (
                 <tr key={`scoreboard-row-${playerId}`}>
                   <td>
-                    <ProfileProvider uid={playerId}>
-                      <ProfilePic size="small" />
-                    </ProfileProvider>
+                    <Box display="flex" alignItems="center" gap="0.5rem">
+                      <ProfileProvider uid={playerId}>
+                        <ProfilePic size="small" />
+                        {namesExpanded && <DisplayName />}
+                      </ProfileProvider>
+                    </Box>
                   </td>
                   <td>
                     <StyledNumber>{score}</StyledNumber>
                   </td>
-                  <td>{totalPoints}</td>
-                  <td>{totalTricks}</td>
+                  <td>{handsWon}</td>
                 </tr>
               ))}
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan={4}>Hands Played: {handsPlayed}</td>
+              <td colSpan={3}>Total Hands Played: {handsPlayed}</td>
             </tr>
           </tfoot>
         </table>

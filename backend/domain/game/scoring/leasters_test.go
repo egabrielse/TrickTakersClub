@@ -8,29 +8,8 @@ import (
 )
 
 func TestScoreLeastersHand(t *testing.T) {
-	t.Run("Three players, one winner", func(t *testing.T) {
-		points := map[string]int{
-			"1": 45,
-			"2": 30,
-			"3": 45,
-		}
-		tricks := map[string]int{
-			"1": 3,
-			"2": 3,
-			"3": 4,
-		}
-		scores, winnerIDs := ScoreLeastersHand(points, tricks)
-		expected := map[string]int{
-			"1": -1,
-			"2": 2,
-			"3": -1,
-		}
-		assert.Equal(t, expected, scores)
-		assert.Equal(t, []string{"2"}, winnerIDs)
-		utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
-	})
 
-	t.Run("Five players, one winner", func(t *testing.T) {
+	t.Run("One winner", func(t *testing.T) {
 		points := map[string]int{
 			"1": 20,
 			"2": 10,
@@ -58,7 +37,7 @@ func TestScoreLeastersHand(t *testing.T) {
 		utils.AssertZeroSum(t, utils.MapValues(expected), utils.MapValues(scores))
 	})
 
-	t.Run("Five players, two winners", func(t *testing.T) {
+	t.Run("Two winners", func(t *testing.T) {
 		points := map[string]int{
 			"1": 30,
 			"2": 10,

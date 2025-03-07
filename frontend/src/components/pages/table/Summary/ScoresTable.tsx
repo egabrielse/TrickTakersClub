@@ -1,79 +1,68 @@
-import { Box, Typography } from "@mui/material";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import { HandSummary } from "../../../../types/game";
+import { Box } from "@mui/material";
+import { HandSummary, Scoreboard } from "../../../../types/game";
+import DisplayName from "../../../common/Profile/DisplayName";
 import ProfilePic from "../../../common/Profile/ProfilePic";
 import ProfileProvider from "../../../common/Profile/ProfileProvider";
 import StyledNumber from "../../../common/StyledNumber";
 import NameBadge from "../OverlayComponents/NameBadge";
+import "./ScoresTable.scss";
 
 type ScoresTableProps = {
+  scoreboard: Scoreboard;
   summary: HandSummary;
 };
 
-export default function ScoresTable({ summary }: ScoresTableProps) {
+export default function ScoresTable({ scoreboard, summary }: ScoresTableProps) {
+  const { rows } = scoreboard;
   const playerIds = [summary.pickerId];
   if (summary.partnerId) {
     playerIds.push(summary.partnerId);
   }
   playerIds.push(...summary.opponentIds);
   return (
-    <TableContainer sx={{ maxHeight: 500 }} component={Paper}>
-      <Table sx={{ minWidth: 500 }} size="medium" stickyHeader>
-        <TableHead>
-          <TableRow>
-            <TableCell>Player</TableCell>
-            <TableCell>Tricks</TableCell>
-            <TableCell>Points</TableCell>
-            <TableCell>Score</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {playerIds.map((playerId) => (
-            <TableRow>
-              <TableCell>
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  alignItems="center"
-                  fontSize={10}
-                  gap="0.25rem"
-                >
-                  <ProfileProvider uid={playerId}>
-                    <ProfilePic size="small" />
-                  </ProfileProvider>
+    <div className="ScoresTable">
+      <table>
+        <thead style={{ border: "1px solid white" }}>
+          <tr>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>Role</th>
+            <th>Payout</th>
+            <th>New Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          {playerIds
+            .sort((a, b) => rows[b].score - rows[a].score)
+            .map((playerId, index) => (
+              <tr key={playerId}>
+                <td>{index + 1}</td>
+                <td>
+                  <Box display="flex" alignItems="center" gap="0.25rem">
+                    <ProfileProvider uid={playerId}>
+                      <ProfilePic size="small" />
+                      <DisplayName />
+                    </ProfileProvider>
+                  </Box>
+                </td>
+                <td style={{ fontSize: "0.75rem" }}>
                   {summary.pickerId === playerId && (
                     <NameBadge color="blue">Picker</NameBadge>
                   )}
                   {summary.partnerId === playerId && (
                     <NameBadge color="purple">Partner</NameBadge>
                   )}
-                </Box>
-              </TableCell>
-              <TableCell>
-                <Typography variant="h6">
-                  {summary.tricksWon[playerId]}
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="h6">
-                  {summary.pointsWon[playerId]}
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <StyledNumber variant="h6">
-                  {summary.scores[playerId]}
-                </StyledNumber>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+                </td>
+                <td>
+                  <StyledNumber variant="h6">
+                    {summary.payouts[playerId]}
+                  </StyledNumber>
+                </td>
+                <td>{rows[playerId].score}</td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

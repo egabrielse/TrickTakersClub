@@ -1,20 +1,12 @@
-import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { HandSummary } from "../../../../types/game";
 import { countCardPoints } from "../../../../utils/card";
 import { getTakerId } from "../../../../utils/game";
-import PlayingCard from "../../../common/PlayingCard";
-import PlayingCardList from "../../../common/PlayingCardList";
+import PrintedCard from "../../../common/PrintedCard";
+import DisplayName from "../../../common/Profile/DisplayName";
 import ProfilePic from "../../../common/Profile/ProfilePic";
 import ProfileProvider from "../../../common/Profile/ProfileProvider";
+import "./BreakdownTable.scss";
 
 type BreakdownTableProps = {
   summary: HandSummary;
@@ -22,73 +14,79 @@ type BreakdownTableProps = {
 
 export default function BreakdownTable({ summary }: BreakdownTableProps) {
   return (
-    <TableContainer sx={{ maxHeight: 500 }} component={Paper}>
-      <Table
-        style={{ minWidth: 500 }}
-        aria-label="simple table"
-        size="medium"
-        stickyHeader
-      >
-        <TableHead>
-          <TableRow>
-            <TableCell>Taker</TableCell>
-            <TableCell>Cards</TableCell>
-            <TableCell>Points</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          <TableRow>
-            <TableCell>
-              <ProfileProvider uid={summary.pickerId}>
-                <ProfilePic />
-              </ProfileProvider>
-            </TableCell>
-            <TableCell>
-              <PlayingCardList>
-                {summary.bury.map((card) => (
-                  <PlayingCard
-                    id={`summary-${card.rank}-${card.suit}`}
+    <div className="BreakdownTable">
+      <table style={{ minWidth: 500 }}>
+        <thead>
+          <tr>
+            <th>Trick</th>
+            <th>Taker</th>
+            <th>Cards</th>
+            <th>Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <i>bury</i>
+            </td>
+            <td>
+              <Box display="flex" alignItems="center" gap="0.25rem">
+                <ProfileProvider uid={summary.pickerId}>
+                  <ProfilePic size="small" />
+                  <DisplayName />
+                </ProfileProvider>
+              </Box>
+            </td>
+            <td>
+              {summary.bury.map((card, index) => (
+                <>
+                  <PrintedCard
                     key={`summary-${card.rank}-${card.suit}`}
-                    card={card}
-                    height={100}
+                    rank={card.rank}
+                    suit={card.suit}
                   />
-                ))}
-              </PlayingCardList>
-            </TableCell>
-            <TableCell>
+                  {index < Object.values(summary.bury).length - 1 && " "}
+                </>
+              ))}
+            </td>
+            <td>
               <Typography variant="h6">
                 {countCardPoints(Object.values(summary.bury))}
               </Typography>
-            </TableCell>
-          </TableRow>
+            </td>
+          </tr>
           {summary.tricks.map((trick, index) => (
-            <TableRow key={index}>
-              <TableCell>
-                <ProfileProvider uid={getTakerId(trick)}>
-                  <ProfilePic />
-                </ProfileProvider>
-              </TableCell>
-              <TableCell>
-                <PlayingCardList>
-                  {Object.values(trick.cards).map((card) => (
-                    <PlayingCard
-                      id={`summary-${card.rank}-${card.suit}`}
+            <tr key={index}>
+              <td>{index + 1}</td>
+              <td>
+                <Box display="flex" alignItems="center" gap="0.25rem">
+                  <ProfileProvider uid={getTakerId(trick)}>
+                    <ProfilePic size="small" />
+                    <DisplayName />
+                  </ProfileProvider>
+                </Box>
+              </td>
+              <td align="left">
+                {Object.values(trick.cards).map((card, index) => (
+                  <>
+                    <PrintedCard
                       key={`summary-${card.rank}-${card.suit}`}
-                      card={card}
-                      height={100}
+                      rank={card.rank}
+                      suit={card.suit}
                     />
-                  ))}
-                </PlayingCardList>
-              </TableCell>
-              <TableCell>
+                    {index < Object.values(trick.cards).length - 1 && " "}
+                  </>
+                ))}
+              </td>
+              <td>
                 <Typography variant="h6">
                   {countCardPoints(Object.values(trick.cards))}
                 </Typography>
-              </TableCell>
-            </TableRow>
+              </td>
+            </tr>
           ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+        </tbody>
+      </table>
+    </div>
   );
 }

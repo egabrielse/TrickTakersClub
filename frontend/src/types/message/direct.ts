@@ -20,7 +20,6 @@ export interface InitializeMessage extends Message {
         dealerId?: string;
         scoreboard?: Scoreboard;
         playerOrder?: string[];
-        handsPlayed?: number;
         calledCard?: Card;
         phase?: HandPhase;
         upNextId?: string;

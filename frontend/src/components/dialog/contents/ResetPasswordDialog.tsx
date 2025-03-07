@@ -10,7 +10,7 @@ import auth from "../../../firebase/auth";
 import { useAppDispatch } from "../../../store/hooks";
 import dialogSlice from "../../../store/slices/dialog.slice";
 import { ResetPasswordDialogParams } from "../../../types/dialog";
-import Logo from "../../common/AppLogo";
+import AppLogo from "../../common/AppLogo";
 import CloseDialogButton from "../components/CloseDialogButton";
 import DialogBody from "../components/DialogBody";
 import DialogErrorMessage from "../components/DialogErrorMessage";
@@ -69,7 +69,7 @@ export default function ResetPassDialog({
     <>
       {closeable && <CloseDialogButton />}
       <DialogHeader>
-        <Logo size="large" />
+        <AppLogo size="large" />
         <h2>RESET PASSWORD</h2>
       </DialogHeader>
       <form onSubmit={formik.handleSubmit}>
