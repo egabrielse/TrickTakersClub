@@ -1,4 +1,7 @@
 .NameTag {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    transition: all 0.2s ease-in-out;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -8,12 +11,18 @@
         flex-direction: column;
         font-weight: bold;
         transition: all 0.2s ease-in-out;
+        white-space: nowrap;
         gap: 0.25rem;
 
-        &-Badges {
+        &-Flares {
             font-size: 14px;
             display: flex;
             gap: 0.25rem;
         }
     }
+}
+
+.NameTagWrapper {
+    position: relative;
+    overflow: visible;
 }

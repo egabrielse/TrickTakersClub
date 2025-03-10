@@ -10,7 +10,7 @@ import { useState } from "react";
 import { HandSummaryDialogParams } from "../../../types/dialog";
 import ProfilePic from "../../common/Profile/ProfilePic";
 import ProfileProvider from "../../common/Profile/ProfileProvider";
-import NameBadge from "../../pages/table/OverlayComponents/NameBadge";
+import RoleFlare from "../../pages/table/OverlayComponents/RoleFlare";
 import BreakdownTable from "../../pages/table/Summary/BreakdownTable";
 import ScoresTable from "../../pages/table/Summary/ScoresTable";
 import CloseDialogButton from "../components/CloseDialogButton";
@@ -55,7 +55,7 @@ export default function HandSummaryDialog({ props }: HandSummaryDialogParams) {
                   gap="0.25rem"
                 >
                   <ProfilePic size="xlarge" />
-                  {summary.partnerId && <NameBadge role="picker" />}
+                  {summary.partnerId && <RoleFlare role="picker" />}
                 </Box>
               </ProfileProvider>
               {summary.partnerId && (
@@ -67,7 +67,7 @@ export default function HandSummaryDialog({ props }: HandSummaryDialogParams) {
                     gap="0.25rem"
                   >
                     <ProfilePic size="xlarge" />
-                    <NameBadge role="partner" />
+                    <RoleFlare role="partner" />
                   </Box>
                 </ProfileProvider>
               )}

@@ -27,36 +27,33 @@ export default function Game() {
           case 0:
             // Player 1 (bottom)
             seat.style.left = "50%";
-            seat.style.transform = "translateX(-50%)";
-            seat.style.bottom = "200px";
+            seat.style.bottom = "250px";
             seat.style.zIndex = "4";
             break;
           case 1:
             // Player 2 (left)
-            seat.style.left = "50px";
+            seat.style.left = "125px";
             seat.style.top = "50%";
-            seat.style.transform = "translateY(-50%) rotate(-90deg)";
+            seat.style.transform = "rotate(-90deg)";
             seat.style.zIndex = "4";
             break;
           case 2:
             // Player 3 (top left)
             seat.style.left = "33%";
-            seat.style.transform = "translateX(-33%)";
-            seat.style.top = "100px";
+            seat.style.top = "125px";
             seat.style.zIndex = "4";
             break;
           case 3:
             // Player 4 (top right)
             seat.style.right = "33%";
-            seat.style.transform = "translateX(33%)";
-            seat.style.top = "100px";
+            seat.style.top = "125px";
             seat.style.zIndex = "4";
             break;
           case 4:
             // Player 5 (right)
-            seat.style.right = "50px";
+            seat.style.right = "125px";
             seat.style.top = "50%";
-            seat.style.transform = "translateY(-50%) rotate(90deg)";
+            seat.style.transform = "rotate(90deg)";
             seat.style.zIndex = "4";
             break;
         }

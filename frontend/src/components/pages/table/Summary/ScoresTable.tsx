@@ -4,7 +4,7 @@ import DisplayName from "../../../common/Profile/DisplayName";
 import ProfilePic from "../../../common/Profile/ProfilePic";
 import ProfileProvider from "../../../common/Profile/ProfileProvider";
 import StyledNumber from "../../../common/StyledNumber";
-import NameBadge from "../OverlayComponents/NameBadge";
+import RoleFlare from "../OverlayComponents/RoleFlare";
 import "./ScoresTable.scss";
 
 type ScoresTableProps = {
@@ -46,9 +46,9 @@ export default function ScoresTable({ scoreboard, summary }: ScoresTableProps) {
                   </Box>
                 </td>
                 <td style={{ fontSize: "0.75rem" }}>
-                  {summary.pickerId === playerId && <NameBadge role="picker" />}
+                  {summary.pickerId === playerId && <RoleFlare role="picker" />}
                   {summary.partnerId === playerId && (
-                    <NameBadge role="partner" />
+                    <RoleFlare role="partner" />
                   )}
                 </td>
                 <td>

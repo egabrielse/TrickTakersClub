@@ -10,7 +10,7 @@ import { UpdateMessages } from "../../../../types/game";
 import PrintedCard from "../../../common/PrintedCard";
 import ProfilePic from "../../../common/Profile/ProfilePic";
 import ProfileProvider from "../../../common/Profile/ProfileProvider";
-import NameBadge from "../OverlayComponents/NameBadge";
+import RoleFlare from "../OverlayComponents/RoleFlare";
 import "./GameUpdates.scss";
 
 const renderUpdateMessage = (update: UpdateMessages) => {
@@ -27,7 +27,7 @@ const renderUpdateMessage = (update: UpdateMessages) => {
           ) : (
             <>
               is the&nbsp;
-              <NameBadge role="picker" />
+              <RoleFlare role="picker" />
             </>
           )}
         </>
@@ -35,7 +35,7 @@ const renderUpdateMessage = (update: UpdateMessages) => {
     case BROADCAST_TYPES.CALLED_CARD:
       return (
         <>
-          <NameBadge role="picker" />
+          <RoleFlare role="picker" />
           &nbsp;called the&nbsp;
           <PrintedCard
             suit={update.data.card.suit}
@@ -46,7 +46,7 @@ const renderUpdateMessage = (update: UpdateMessages) => {
     case BROADCAST_TYPES.GONE_ALONE:
       return (
         <>
-          <NameBadge role="picker" />
+          <RoleFlare role="picker" />
           &nbsp;is going alone!
         </>
       );
@@ -70,7 +70,7 @@ const renderUpdateMessage = (update: UpdateMessages) => {
             <ProfilePic />
           </ProfileProvider>
           &nbsp;is revealed as the&nbsp;
-          <NameBadge role="partner" />!
+          <RoleFlare role="partner" />!
         </>
       );
     case BROADCAST_TYPES.TRICK_WON:
@@ -79,7 +79,7 @@ const renderUpdateMessage = (update: UpdateMessages) => {
           <ProfileProvider uid={update.data.playerId}>
             <ProfilePic />
           </ProfileProvider>
-          &nbsp; took the trick!
+          &nbsp;took the trick!
         </>
       );
     default:
