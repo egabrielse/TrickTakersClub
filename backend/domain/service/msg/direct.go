@@ -3,7 +3,6 @@ package msg
 import (
 	"main/domain/game"
 	"main/domain/game/deck"
-	"main/domain/game/game_settings"
 	"main/domain/game/hand"
 	"main/domain/game/scoring"
 )
@@ -62,27 +61,27 @@ func PickedCardsMessage(clientID string, cards []*deck.Card) (string, string, *P
 }
 
 type InitializeData struct {
-	PlayerID    string                      `json:"playerId"`
-	HostID      string                      `json:"hostId"`
-	TableID     string                      `json:"tableId"`
-	Seating     []string                    `json:"seating"`
-	InProgress  bool                        `json:"inProgress"`
-	LastHand    map[string]bool             `json:"lastHand"`
-	DealerID    string                      `json:"dealerId"`
-	Scoreboard  scoring.Scoreboard          `json:"scoreboard"`
-	PlayerOrder []string                    `json:"playerOrder"`
-	Settings    *game_settings.GameSettings `json:"settings"`
-	CalledCard  *deck.Card                  `json:"calledCard"`
-	Phase       string                      `json:"phase"`
-	UpNextID    string                      `json:"upNextId"`
-	PickerID    string                      `json:"pickerId"`
-	PartnerID   string                      `json:"partnerId"`
-	Tricks      []*hand.Trick               `json:"tricks"`
-	Hand        []*deck.Card                `json:"hand"`
-	Bury        []*deck.Card                `json:"bury"`
+	PlayerID    string             `json:"playerId"`
+	HostID      string             `json:"hostId"`
+	TableID     string             `json:"tableId"`
+	Seating     []string           `json:"seating"`
+	InProgress  bool               `json:"inProgress"`
+	LastHand    map[string]bool    `json:"lastHand"`
+	DealerID    string             `json:"dealerId"`
+	Scoreboard  scoring.Scoreboard `json:"scoreboard"`
+	PlayerOrder []string           `json:"playerOrder"`
+	Settings    *hand.GameSettings `json:"settings"`
+	CalledCard  *deck.Card         `json:"calledCard"`
+	Phase       string             `json:"phase"`
+	UpNextID    string             `json:"upNextId"`
+	PickerID    string             `json:"pickerId"`
+	PartnerID   string             `json:"partnerId"`
+	Tricks      []*hand.Trick      `json:"tricks"`
+	Hand        []*deck.Card       `json:"hand"`
+	Bury        []*deck.Card       `json:"bury"`
 }
 
-func InitializeMessage(tableID, hostID, clientID string, seating []string, settings *game_settings.GameSettings, game *game.Game) (string, string, *InitializeData) {
+func InitializeMessage(tableID, hostID, clientID string, seating []string, settings *hand.GameSettings, game *game.Game) (string, string, *InitializeData) {
 	data := &InitializeData{}
 	data.PlayerID = clientID
 	data.HostID = hostID

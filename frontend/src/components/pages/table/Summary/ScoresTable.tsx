@@ -46,11 +46,9 @@ export default function ScoresTable({ scoreboard, summary }: ScoresTableProps) {
                   </Box>
                 </td>
                 <td style={{ fontSize: "0.75rem" }}>
-                  {summary.pickerId === playerId && (
-                    <NameBadge color="blue">Picker</NameBadge>
-                  )}
+                  {summary.pickerId === playerId && <NameBadge role="picker" />}
                   {summary.partnerId === playerId && (
-                    <NameBadge color="purple">Partner</NameBadge>
+                    <NameBadge role="partner" />
                   )}
                 </td>
                 <td>

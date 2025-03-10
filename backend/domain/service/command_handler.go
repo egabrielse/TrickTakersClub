@@ -152,7 +152,7 @@ func HandlePassCommand(t *TableWorker, clientID string, data interface{}) {
 				pickerID := result.PickResult.PickerID
 				blind := result.PickResult.Blind
 				t.BroadcastMessage(msg.BlindPickedMessage(pickerID, true))
-				t.DirectMessage(msg.PickedCardsMessage(clientID, blind))
+				t.DirectMessage(msg.PickedCardsMessage(pickerID, blind))
 			}
 			t.BroadcastMessage(msg.UpNextMessage(t.Game.GetUpNext()))
 		}

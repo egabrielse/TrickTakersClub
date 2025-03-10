@@ -1,11 +1,18 @@
 import "./NameBadge.scss";
 
 type NameBadgeProps = {
-  children: string;
-  color?: "blue" | "darkorange" | "purple" | "black";
+  role: "partner" | "picker" | "host" | "dealer";
 };
 
-export default function NameBadge({ children, color }: NameBadgeProps) {
+export default function NameBadge({ role }: NameBadgeProps) {
+  const color =
+    role === "partner"
+      ? "purple"
+      : role === "picker"
+        ? "blue"
+        : role === "host"
+          ? "darkorange"
+          : "black";
   return (
     <span
       className="NameBadge"
@@ -14,7 +21,7 @@ export default function NameBadge({ children, color }: NameBadgeProps) {
         borderColor: color,
       }}
     >
-      {children.toUpperCase()}
+      {role.toUpperCase()}
     </span>
   );
 }

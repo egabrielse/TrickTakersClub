@@ -55,9 +55,7 @@ export default function HandSummaryDialog({ props }: HandSummaryDialogParams) {
                   gap="0.25rem"
                 >
                   <ProfilePic size="xlarge" />
-                  {summary.partnerId && (
-                    <NameBadge color="blue">PICKER</NameBadge>
-                  )}
+                  {summary.partnerId && <NameBadge role="picker" />}
                 </Box>
               </ProfileProvider>
               {summary.partnerId && (
@@ -69,7 +67,7 @@ export default function HandSummaryDialog({ props }: HandSummaryDialogParams) {
                     gap="0.25rem"
                   >
                     <ProfilePic size="xlarge" />
-                    <NameBadge color="purple">PARTNER</NameBadge>
+                    <NameBadge role="partner" />
                   </Box>
                 </ProfileProvider>
               )}

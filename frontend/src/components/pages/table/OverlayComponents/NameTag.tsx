@@ -24,18 +24,10 @@ export default function NameTag({ playerId }: NameTagProps) {
         <div className="NameTag-Name">
           <DisplayName fontSize={16} fontWeight="bolder" />
           <div className="NameTag-Name-Badges">
-            {hostId === playerId && (
-              <NameBadge color="darkorange">HOST</NameBadge>
-            )}
-            {dealerId === playerId && (
-              <NameBadge color="black">DEALER</NameBadge>
-            )}
-            {pickerId === playerId && (
-              <NameBadge color="blue">PICKER</NameBadge>
-            )}
-            {partnerId === playerId && (
-              <NameBadge color="purple">PARTNER</NameBadge>
-            )}
+            {hostId === playerId && <NameBadge role="host" />}
+            {dealerId === playerId && <NameBadge role="dealer" />}
+            {pickerId === playerId && <NameBadge role="picker" />}
+            {partnerId === playerId && <NameBadge role="partner" />}
           </div>
         </div>
       </div>

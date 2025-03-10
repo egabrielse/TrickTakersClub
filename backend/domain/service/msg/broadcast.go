@@ -2,7 +2,6 @@ package msg
 
 import (
 	"main/domain/game/deck"
-	"main/domain/game/game_settings"
 	"main/domain/game/hand"
 	"main/domain/game/scoring"
 )
@@ -149,10 +148,10 @@ func SatDownMessage(playerID string) (name string, data *SatDownData) {
 }
 
 type SettingsUpdatedData struct {
-	Settings *game_settings.GameSettings `json:"settings"`
+	Settings *hand.GameSettings `json:"settings"`
 }
 
-func SettingsUpdatedMessage(settings *game_settings.GameSettings) (name string, data *SettingsUpdatedData) {
+func SettingsUpdatedMessage(settings *hand.GameSettings) (name string, data *SettingsUpdatedData) {
 	return BroadcastType.SettingsUpdated, &SettingsUpdatedData{Settings: settings}
 }
 

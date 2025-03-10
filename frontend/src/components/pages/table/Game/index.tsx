@@ -66,16 +66,6 @@ export default function Game() {
 
   return (
     <>
-      <div
-        style={{
-          width: 2,
-          height: 2,
-          background: "red",
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-        }}
-      />
       {phase === HAND_PHASE.PICK && <Blind />}
       {phase === HAND_PHASE.CALL && isUpNext && <CallAnAce />}
       {phase === HAND_PHASE.PLAY && <Trick />}
