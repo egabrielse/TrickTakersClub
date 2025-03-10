@@ -30,12 +30,6 @@ export interface ChatMessage extends Message {
     data: { message: string };
 }
 
-
-export interface ErrorMessage extends Message {
-    name: typeof BROADCAST_TYPES.ERROR;
-    data: { message: string };
-}
-
 export interface LastHandStatusMessage extends Message {
     name: typeof BROADCAST_TYPES.LAST_HAND_STATUS;
     data: { playerId: string, lastHand: boolean };
@@ -116,7 +110,6 @@ export type BroadcastMessage = (
     CalledCardMessage |
     CardPlayedMessage |
     ChatMessage |
-    ErrorMessage |
     LastHandStatusMessage |
     GameOverMessage |
     GameStartedMessage |

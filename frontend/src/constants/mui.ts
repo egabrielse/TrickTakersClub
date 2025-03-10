@@ -167,5 +167,12 @@ export const theme = createTheme({
                 },
             },
         },
+        MuiAlert: {
+            styleOverrides: {
+                message: {
+                    fontSize: 14,
+                }
+            }
+        }
     },
 });

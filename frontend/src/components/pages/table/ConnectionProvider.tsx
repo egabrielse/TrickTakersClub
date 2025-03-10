@@ -1,3 +1,4 @@
+import { Alert, Snackbar } from "@mui/material";
 import * as Ably from "ably";
 import {
   AblyProvider,
@@ -25,6 +26,7 @@ import {
 } from "../../../types/message/broadcast";
 import { CommandMessage } from "../../../types/message/command";
 import { DirectMessage } from "../../../types/message/direct";
+import SlideTransition from "../../common/SlideTransition";
 import ErrorPage from "../error/ErrorPage";
 import LoadingOverlay from "../loading/LoadingOverlay";
 import ConnectionContext from "./ConnectionContext";
@@ -44,17 +46,22 @@ function ConnectionApiProvider({
 }: ConnectionApiProviderProps) {
   const [initialized, setInitialized] = useState(false);
   const dispatch = useAppDispatch();
-  const uid = useAppSelector(authSlice.selectors.uid);
   const [connectionState, setConnectionState] =
     useState<Ably.ConnectionState | null>(null);
   const [timeLeft, setTimeLeft] = useState(0);
   const soundOn = useAppSelector(settingsSlice.selectors.soundOn);
+  const [showError, setShowError] = useState(false);
+  const [error, setError] = useState<string>("");
 
   // Alert other users to the presence of this user
   usePresence(broadcastName);
 
   const cardSoundRef = useRef(new Audio(cardSound));
   const dealSoundRef = useRef(new Audio(dealSound));
+
+  const handleCloseErrorSnackbar = () => {
+    setShowError(false);
+  };
 
   const playCardSound = () => {
     if (!soundOn) return;
@@ -166,11 +173,6 @@ function ConnectionApiProvider({
           }),
         );
         break;
-      default:
-        if (msg.clientId !== uid) {
-          console.warn("Unhandled broadcast message type", msg.name);
-        }
-        break;
     }
   });
 
@@ -196,10 +198,9 @@ function ConnectionApiProvider({
         playCardSound();
         dispatch(handSlice.actions.buriedCards(msg.data));
         break;
-      default:
-        if (msg.clientId !== uid) {
-          console.warn("Unhandled direct message type", msg.name);
-        }
+      case DIRECT_TYPES.ERROR:
+        setError(msg.data.message);
+        setShowError(true);
         break;
     }
   });
@@ -258,6 +259,21 @@ function ConnectionApiProvider({
         )}
         <ConnectionContext.Provider value={{ sendChatMsg, sendCommand }}>
           {children}
+          <Snackbar
+            open={showError}
+            onClose={handleCloseErrorSnackbar}
+            TransitionComponent={SlideTransition}
+            autoHideDuration={5000}
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          >
+            <Alert
+              variant="filled"
+              severity="error"
+              onClose={handleCloseErrorSnackbar}
+            >
+              {error}
+            </Alert>
+          </Snackbar>
         </ConnectionContext.Provider>
       </>
     );
@@ -339,3 +355,5 @@ export default function ConnectionProvider({
     </AblyProvider>
   );
 }
+
+// TODO: breakup this file into smaller components

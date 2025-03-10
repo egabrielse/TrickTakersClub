@@ -37,7 +37,6 @@ export const BROADCAST_TYPES = {
     CALLED_CARD: "called-card",
     CARD_PLAYED: "card-played",
     CHAT: "chat",
-    ERROR: "error",
     LAST_HAND_STATUS: "last-hand-status",
     GAME_OVER: "game-over",
     GAME_STARTED: "game-started",

@@ -15,8 +15,6 @@ var BroadcastType = struct {
 	CardPlayed string
 	// Text messages between users
 	Chat string
-	// Errors
-	Error string
 	// Update to the last hand status of a player
 	LastHandStatus string
 	// Picker chose to go it alone
@@ -48,7 +46,6 @@ var BroadcastType = struct {
 	CalledCard:      "called-card",
 	CardPlayed:      "card-played",
 	Chat:            "chat",
-	Error:           "error",
 	LastHandStatus:  "last-hand-status",
 	GoneAlone:       "gone-alone",
 	PartnerRevealed: "partner-revealed",
