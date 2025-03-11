@@ -21,7 +21,7 @@ export default function MessageGroup({ children }: MessageGroupProps) {
         <ProfileProvider uid={clientId!}>
           <span className="MessageGroup-ByLine-Sender">
             <ProfilePic size="small" />
-            <DisplayName fontWeight="bold" fontStyle="italic" />
+            <DisplayName />
           </span>
         </ProfileProvider>
         <span className="MessageGroup-ByLine-TimeStamp">{time}</span>
