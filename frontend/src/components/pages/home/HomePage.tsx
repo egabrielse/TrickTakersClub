@@ -88,7 +88,7 @@ export default function HomePage() {
         <TextField
           id="tableId"
           name="tableId"
-          label="Table Code"
+          label="Invite Code"
           size="medium"
           value={formik.values.tableId}
           onChange={formik.handleChange}

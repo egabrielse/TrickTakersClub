@@ -4,6 +4,7 @@
     margin: 2rem 0;
     border: 1px solid white;
     border-radius: 8px;
+    background-color: #74a65e !important;
 
     &-Header {
         display: flex;
@@ -25,21 +26,25 @@
         overflow: hidden;
         padding: 0 1rem 1rem 1rem;
 
+        font-size: large;
+
         h3 {
             font-size: 1.5rem;
             margin-top: 2rem;
             text-align: center;
             text-decoration: underline;
             text-underline-offset: 0.5rem;
+            text-transform: uppercase;
         }
 
         h4 {
-            font-size: large;
+            font-size: larger;
             margin-bottom: 0;
+            text-transform: uppercase;
         }
 
         b {
-            font-style: italic;
+            text-transform: uppercase;
         }
 
         p {
@@ -88,6 +93,10 @@
             width: 100%;
             text-align: center;
             text-indent: 0;
+        }
+
+        .Flare {
+            font-size: 14px;
         }
     }
 }

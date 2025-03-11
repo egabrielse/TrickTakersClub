@@ -1,3 +1,5 @@
+import Flare from "../../../common/Flare";
+
 export default function Variations() {
   return (
     <>
@@ -6,7 +8,9 @@ export default function Variations() {
         While this list is not exhaustive, it does cover some of the more common
         variations. Players should agree on the rules before starting a game.
       </p>
+
       <h3>Calling Methods</h3>
+
       <h4>Call an Ace</h4>
       <ul>
         <li>
@@ -34,21 +38,29 @@ export default function Variations() {
           the reveal.
         </li>
       </ul>
+
       <h4>Jack of Diamonds</h4>
       <ul>
         <li>
           The partner is automatically the player holding the Jack of Diamonds.
         </li>
         <li>
+          <b>
+            Call Up <Flare color="orange">Not Yet Supported</Flare>:&nbsp;
+          </b>
           If the picker has the Jack of Diamonds in their hand or bury, they
-          must <b>call up</b> to the Jack of Hearts. If the Jack of Hearts is
-          also held, then they must call up to the Jack of Spades, and then to
-          the Jack of Clubs.
+          must "call up" to the Jack of Hearts. If the Jack of Hearts is also
+          held, then they must call up to the Jack of Spades, and then to the
+          Jack of Clubs.
         </li>
         <li>If the picker has all Jacks, they are required to go it alone.</li>
       </ul>
+
       <h3>Scoring</h3>
-      <h4>Blitzing</h4>
+
+      <h4>
+        Blitzing <Flare color="orange">Not Yet Supported</Flare>
+      </h4>
       <ul>
         <li>
           <i>Before</i> the blind is picked up, the picker may reveal that they
@@ -56,6 +68,7 @@ export default function Variations() {
         </li>
         <li>Blitzing doubles the payouts for the hand.</li>
       </ul>
+
       <h4>Double on the Bump</h4>
       <ul>
         <li>Payouts are automatically doubled when the picking team loses</li>
@@ -64,7 +77,9 @@ export default function Variations() {
           to pick.
         </li>
       </ul>
+
       <h3>No-Pick</h3>
+
       <h4>Force Pick</h4>
       <ul>
         <li>
@@ -72,15 +87,7 @@ export default function Variations() {
           "screw the dealer".
         </li>
       </ul>
-      <h4>Doublers</h4>
-      <ul>
-        <li>The hand is redealt by the same dealer, and played normally.</li>
-        <li>Payouts are doubled.</li>
-        <li>
-          This rule is compounding, meaning that if there is again a no-pick
-          scenario, the scores are quadrupled, then hextupled, and so on.
-        </li>
-      </ul>
+
       <h4>Leasters</h4>
       <ul>
         <li>The hand is played as a free-for-all with no picker.</li>
@@ -95,6 +102,7 @@ export default function Variations() {
           themself).
         </li>
       </ul>
+
       <h4>Mosters</h4>
       <ul>
         <li>
@@ -104,6 +112,18 @@ export default function Variations() {
         <li>
           The goal of Mosters is to <i>not</i> take the most points. The player
           that takes the most points loses the hand.
+        </li>
+      </ul>
+
+      <h4>
+        Doublers <Flare color="orange">Not Yet Supported</Flare>
+      </h4>
+      <ul>
+        <li>The hand is redealt by the same dealer, and played normally.</li>
+        <li>Payouts are doubled.</li>
+        <li>
+          This rule is compounding, meaning that if there is again a no-pick
+          scenario, the scores are quadrupled, then hextupled, and so on.
         </li>
       </ul>
     </>

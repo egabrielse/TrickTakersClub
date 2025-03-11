@@ -46,13 +46,7 @@ export default function GameMenu() {
             Waiting for host to start game
           </Typography>
         ) : (
-          <Typography
-            component="span"
-            className="loading-text"
-            fontStyle="italic"
-          >
-            Waiting for more players
-          </Typography>
+          <i className="loading-text">Waiting for more players</i>
         )}
       </div>
     </Paper>

@@ -2,7 +2,7 @@ import "./Flare.scss";
 
 type FlareProps = {
   children: React.ReactNode;
-  color: "purple" | "blue" | "darkorange" | "black";
+  color: "purple" | "blue" | "darkorange" | "black" | "orange";
 };
 
 export default function Flare({ children, color }: FlareProps) {
