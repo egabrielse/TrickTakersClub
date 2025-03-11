@@ -89,7 +89,10 @@ const playableCards = createSelector([
     if (!leadingSuit) {
         // Player leads the trick and can play any card 
         // (except the partner, who cannot play the called card)
-        return hand.filter((card) => card !== calledCard);
+        if (isPartner && !partnerRevealed) {
+            return hand.filter((card) => card.suit !== calledCard?.suit || isTrumpCard(card));
+        }
+        return hand;
     } else if (cardsThatFollowSuit.length > 0) {
         // If following and player can follow suit, they must
         const calledSuitLead = calledCard?.suit === leadingSuit;
@@ -103,7 +106,7 @@ const playableCards = createSelector([
         // Picker must retain at least one fail suit card of the called card, until it is led
         const count = hand.filter((card) => card.suit === calledCard.suit && !isTrumpCard(card)).length;
         if (count === 1) {
-            return hand.filter((card) => card.suit !== calledCard.suit);
+            return hand.filter((card) => card.suit !== calledCard.suit && isTrumpCard(card));
         } else {
             return hand;
         }
@@ -118,7 +121,7 @@ const playableCards = createSelector([
 const callableAces = createSelector([
     handSlice.selectors.hand,
     handSlice.selectors.bury,
-], (hand, bury): FailSuit[] => {
+], (hand, bury): Record<FailSuit, boolean> => {
     const cards = [...hand, ...bury];
     const aces: Record<FailSuit, boolean> = {
         [CARD_SUIT.CLUB]: false,
@@ -132,7 +135,7 @@ const callableAces = createSelector([
             aces[key as FailSuit] = true;
         }
     }
-    return Object.keys(aces).filter((value) => value) as FailSuit[];
+    return aces;
 });
 
 /**

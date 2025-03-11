@@ -19,7 +19,7 @@ const renderUpdateMessage = (update: UpdateMessages) => {
       return (
         <>
           <ProfileProvider uid={update.data.playerId}>
-            <ProfilePic />
+            <ProfilePic size="small" />
           </ProfileProvider>
           &nbsp;
           {update.data.forcePick ? (
@@ -54,7 +54,7 @@ const renderUpdateMessage = (update: UpdateMessages) => {
       return (
         <>
           <ProfileProvider uid={update.data.playerId}>
-            <ProfilePic />
+            <ProfilePic size="small" />
           </ProfileProvider>
           &nbsp;played the&nbsp;
           <PrintedCard
@@ -67,7 +67,7 @@ const renderUpdateMessage = (update: UpdateMessages) => {
       return (
         <>
           <ProfileProvider uid={update.data.playerId}>
-            <ProfilePic />
+            <ProfilePic size="small" />
           </ProfileProvider>
           &nbsp;is revealed as the&nbsp;
           <RoleFlare role="partner" />!
@@ -77,7 +77,7 @@ const renderUpdateMessage = (update: UpdateMessages) => {
       return (
         <>
           <ProfileProvider uid={update.data.playerId}>
-            <ProfilePic />
+            <ProfilePic size="small" />
           </ProfileProvider>
           &nbsp;took the trick!
         </>
@@ -111,7 +111,7 @@ export default function GameUpdates() {
       <Paper id="game-updates" className="GameUpdates">
         <Typography
           component="span"
-          fontSize={18}
+          fontSize={16}
           className={classNames({ "loading-text": Boolean(!nextUpdate) })}
         >
           {nextUpdate ? (
@@ -124,7 +124,7 @@ export default function GameUpdates() {
               {phase === HAND_PHASE.PICK
                 ? "Pick or pass on the blind"
                 : phase === HAND_PHASE.CALL
-                  ? "Call a card or go it alone"
+                  ? "Call a partner or go it alone"
                   : phase === HAND_PHASE.BURY
                     ? `Pick ${BLIND_SIZE} cards to bury`
                     : phase === HAND_PHASE.PLAY
@@ -135,7 +135,7 @@ export default function GameUpdates() {
             // 3. Show info about who is up and what they are doing
             <>
               <ProfileProvider uid={upNextId!}>
-                <ProfilePic />
+                <ProfilePic size="small" />
               </ProfileProvider>
               &nbsp;
               {phase === HAND_PHASE.CALL
