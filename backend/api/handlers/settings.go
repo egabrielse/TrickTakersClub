@@ -25,7 +25,7 @@ func SaveSettings(r *http.Request, p httprouter.Params) (code int, body any) {
 	} else if err := repo.Save(r.Context(), UID, entity); err != nil {
 		return http.StatusInternalServerError, nil
 	} else {
-		return http.StatusCreated, &entity
+		return http.StatusOK, &entity
 	}
 }
 
