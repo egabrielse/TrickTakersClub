@@ -1,4 +1,12 @@
-import { InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import {
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import {
   CALLING_METHODS,
@@ -41,6 +49,14 @@ export default function GameSettingsForm() {
     });
   };
 
+  const updateDoubleOnTheBump = (value: boolean) => {
+    setPendingWithTimeout();
+    sendCommand({
+      name: COMMAND_TYPES.UPDATE_DOUBLE_ON_THE_BUMP,
+      data: { doubleOnTheBump: value },
+    });
+  };
+
   useEffect(() => {
     // Set pending state to false when settings are loaded
     if (settings) {
@@ -70,7 +86,7 @@ export default function GameSettingsForm() {
         </div>
 
         <div className="LabeledInput">
-          <InputLabel margin="dense">No-Pick Resolution</InputLabel>
+          <InputLabel margin="dense">No-Pick Method</InputLabel>
           <Select
             id="noPickResolution"
             value={settings.noPickResolution}
@@ -85,6 +101,16 @@ export default function GameSettingsForm() {
             ))}
           </Select>
         </div>
+
+        <FormGroup>
+          <FormControlLabel
+            control={<Checkbox checked={settings.doubleOnTheBump} />}
+            onChange={(_, checked) => updateDoubleOnTheBump(checked)}
+            label="Double on the Bump"
+            disabled={inputDisabled}
+          />
+        </FormGroup>
+        {!isHost && <i>Only the host can edit settings.</i>}
       </div>
     </div>
   );

@@ -3,10 +3,10 @@ export default function Scoring() {
     <>
       <p>
         Scoring in Sheepshead is zero-sum, meaning the sum of all players'
-        points equals zero. In other words, for every point won by one player,
-        another player must lose a point. This is why the scores at the end of a
-        hand are referred to here as payouts, since the points are paid out from
-        one player to another.
+        points add up to zero. In other words, for every point won by one
+        player, another player must lose a point. This is why the scores at the
+        end of a hand are referred to here as payouts, since the points are paid
+        out from one player to another.
       </p>
       <p>
         The following table shows the payouts based on the number of points won
