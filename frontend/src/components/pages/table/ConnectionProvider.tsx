@@ -99,6 +99,9 @@ function ConnectionApiProvider({
       case BROADCAST_TYPES.UP_NEXT:
         dispatch(handSlice.actions.upNext(msg.data));
         break;
+      case BROADCAST_TYPES.NO_PICK_HAND:
+        dispatch(handSlice.actions.noPickHand());
+        break;
       case BROADCAST_TYPES.CALLED_CARD:
         dispatch(handSlice.actions.calledCard(msg.data));
         dispatch(handSlice.actions.displayMessage({ ...msg }));

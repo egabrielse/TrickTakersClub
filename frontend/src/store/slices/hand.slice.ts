@@ -36,6 +36,7 @@ interface HandState {
     tricks: Trick[];
     updates: UpdateMessages[];
     lastHand: Record<string, boolean>;
+    noPickHand: boolean;
 }
 
 const initialState: HandState = {
@@ -45,6 +46,7 @@ const initialState: HandState = {
     tricks: [],
     updates: [],
     lastHand: {},
+    noPickHand: false,
 };
 
 const handSlice = createSlice({
@@ -63,6 +65,7 @@ const handSlice = createSlice({
             state.pickerId = action.payload.pickerId;
             state.partnerId = action.payload.partnerId;
             state.tricks = action.payload.tricks || [];
+            state.noPickHand = action.payload.noPickHand || false;
             state.updates = [];
         },
         dealHand: (state, action: PayloadAction<MessageData<DealHandMessage>>) => {
@@ -79,6 +82,7 @@ const handSlice = createSlice({
                 cards: {},
             }];
             state.lastHand = {};
+            state.noPickHand = false;
         },
         startNewTrick: (state, action: PayloadAction<MessageData<NewTrickMessage>>) => {
             state.tricks.push({
@@ -89,6 +93,9 @@ const handSlice = createSlice({
         upNext: (state, action: PayloadAction<MessageData<UpNextMessage>>) => {
             state.upNextId = action.payload.playerId;
             state.phase = action.payload.phase;
+        },
+        noPickHand: (state) => {
+            state.noPickHand = true;
         },
         blindPicked: (
             state,
@@ -179,6 +186,7 @@ const handSlice = createSlice({
         updates: (state: HandState) => state.updates,
         lastHand: (state: HandState) => state.lastHand,
         isLastHand: (state: HandState) => Object.values(state.lastHand).some((v) => v),
+        noPickHand: (state: HandState) => state.noPickHand,
     },
 });
 

@@ -21,27 +21,25 @@ export default function NameTag({ playerId }: NameTagProps) {
   const calledCard = useAppSelector(handSlice.selectors.calledCard);
 
   return (
-    <div id={`name-tag-${playerId}`} className="NameTagWrapper">
-      <ProfileProvider uid={playerId}>
-        <div className="NameTag">
-          <ProfilePic size="medium" />
-          <div className="NameTag-Name">
-            <DisplayName fontSize={16} fontWeight="bolder" />
-            <div className="NameTag-Name-Flares">
-              {hostId === playerId && <RoleFlare role="host" />}
-              {dealerId === playerId && <RoleFlare role="dealer" />}
-              {pickerId === playerId && <RoleFlare role="picker" />}
-              {partnerId === playerId && <RoleFlare role="partner" />}
-              {pickerId === playerId && calledCard && (
-                <Flare color="purple">
-                  CALLED&nbsp;
-                  <PrintedCard suit={calledCard.suit} rank={calledCard.rank} />
-                </Flare>
-              )}
-            </div>
+    <ProfileProvider uid={playerId}>
+      <div className="NameTag">
+        <ProfilePic size="medium" />
+        <div className="NameTag-Name">
+          <DisplayName fontSize={16} fontWeight="bolder" />
+          <div className="NameTag-Name-Flares">
+            {hostId === playerId && <RoleFlare role="host" />}
+            {dealerId === playerId && <RoleFlare role="dealer" />}
+            {pickerId === playerId && <RoleFlare role="picker" />}
+            {partnerId === playerId && <RoleFlare role="partner" />}
+            {pickerId === playerId && calledCard && (
+              <Flare color="purple">
+                CALLED&nbsp;
+                <PrintedCard suit={calledCard.suit} rank={calledCard.rank} />
+              </Flare>
+            )}
           </div>
         </div>
-      </ProfileProvider>
-    </div>
+      </div>
+    </ProfileProvider>
   );
 }

@@ -106,8 +106,13 @@ func (h *Hand) Pass(playerID string) (*PassResult, error) {
 		if h.Settings.NoPickMethod == NoPickMethod.ScrewTheDealer && dealerID == h.WhoIsNext() {
 			result, _ := h.Pick(dealerID)
 			return &PassResult{PickResult: result}, nil
+		} else if h.Blind.IsComplete() {
+			// No player picked, move onto the play phase of leasters or mosters
+			h.Phase = HandPhase.Play
+			return &PassResult{AllPassed: true}, nil
+		} else {
+			return &PassResult{}, nil
 		}
-		return &PassResult{}, nil
 	}
 }
 

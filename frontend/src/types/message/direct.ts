@@ -28,6 +28,7 @@ export interface InitializeMessage extends Message {
         tricks: Trick[];
         hand?: Card[];
         bury?: Card[];
+        noPickHand?: boolean;
         lastHand: Record<string, boolean>;
     };
 }

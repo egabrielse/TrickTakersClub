@@ -41,6 +41,8 @@ var BroadcastType = struct {
 	NewTrick string
 	// Sent to player who's turn it is
 	UpNext string
+	// Leasters or Mosters hand is played
+	NoPickHand string
 }{
 	BlindPicked:     "blind-picked",
 	CalledCard:      "called-card",
@@ -59,6 +61,7 @@ var BroadcastType = struct {
 	Timeout:         "timeout",
 	NewTrick:        "new-trick",
 	UpNext:          "up-next",
+	NoPickHand:      "no-pick-hand",
 }
 
 type BlindPickedData struct {
@@ -198,4 +201,10 @@ type UpNextData struct {
 
 func UpNextMessage(phase, playerID string) (name string, data *UpNextData) {
 	return BroadcastType.UpNext, &UpNextData{PlayerID: playerID, Phase: phase}
+}
+
+type NoPickHandData struct{}
+
+func NoPickHandMessage() (name string, data *NoPickHandData) {
+	return BroadcastType.NoPickHand, &NoPickHandData{}
 }

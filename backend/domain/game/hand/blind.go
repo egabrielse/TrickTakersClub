@@ -51,6 +51,10 @@ func (b *Blind) Pass() {
 	b.Index++
 }
 
+func (b *Blind) IsNoPickHand() bool {
+	return b.Index == len(b.PickOrder)
+}
+
 func (b *Blind) SetPickerID(playerID string) {
 	b.PickerID = playerID
 }

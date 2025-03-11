@@ -4,6 +4,7 @@ import { useAppSelector } from "../../../../store/hooks";
 import selectors from "../../../../store/selectors";
 import handSlice from "../../../../store/slices/hand.slice";
 import NameTag from "../OverlayComponents/NameTag";
+import NoPickHandDisplay from "../OverlayComponents/NoPickHandDisplay";
 import Bury from "./BuriedCards";
 import Blind from "./Center/Blind";
 import CallAnAce from "./Center/CallAnAce";
@@ -12,11 +13,13 @@ import GameUpdates from "./GameUpdates";
 import OpponentHand from "./OpponentHand";
 import PlayerHand from "./PlayerHand";
 import TrickPile from "./TrickPile";
+import "./index.scss";
 
 export default function Game() {
   const isUpNext = useAppSelector(selectors.isUpNext);
   const phase = useAppSelector(handSlice.selectors.phase);
   const playerOrder = useAppSelector(selectors.playerOrderStartingWithUser);
+  const noPickHand = useAppSelector(handSlice.selectors.noPickHand);
 
   useEffect(() => {
     playerOrder.forEach((playerId, index) => {
@@ -99,8 +102,11 @@ export default function Game() {
         ),
       )}
       {playerOrder.map((playerId) => (
-        <NameTag key={`name-tag-${playerId}`} playerId={playerId} />
+        <div id={`name-tag-${playerId}`} className="NameTagWrapper">
+          <NameTag key={`name-tag-${playerId}`} playerId={playerId} />
+        </div>
       ))}
+      {noPickHand && <NoPickHandDisplay />}
     </>
   );
 }

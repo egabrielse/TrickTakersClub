@@ -50,4 +50,5 @@ export const BROADCAST_TYPES = {
     HAND_DONE: "hand-done",
     NEW_TRICK: "new-trick",
     UP_NEXT: "up-next",
+    NO_PICK_HAND: "no-pick-hand",
 } as const;

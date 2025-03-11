@@ -105,6 +105,12 @@ export interface UpNextMessage extends Message {
     };
 }
 
+export interface NoPickHand extends Message {
+    name: typeof BROADCAST_TYPES.NO_PICK_HAND;
+    data: undefined;
+}
+
+
 export type BroadcastMessage = (
     BlindPickedMessage |
     CalledCardMessage |
@@ -122,5 +128,6 @@ export type BroadcastMessage = (
     TrickWonMessage |
     HandDoneMessage |
     NewTrickMessage |
-    UpNextMessage
+    UpNextMessage |
+    NoPickHand
 );

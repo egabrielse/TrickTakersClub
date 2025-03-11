@@ -79,6 +79,7 @@ type InitializeData struct {
 	Tricks      []*hand.Trick      `json:"tricks"`
 	Hand        []*deck.Card       `json:"hand"`
 	Bury        []*deck.Card       `json:"bury"`
+	NoPickHand  bool               `json:"noPickHand"`
 }
 
 func InitializeMessage(tableID, hostID, clientID string, seating []string, settings *hand.GameSettings, game *game.Game) (string, string, *InitializeData) {
@@ -104,6 +105,7 @@ func InitializeMessage(tableID, hostID, clientID string, seating []string, setti
 		data.PickerID = currentHand.Blind.PickerID
 		data.PartnerID = currentHand.Call.GetPartnerIfRevealed()
 		data.Tricks = currentHand.Tricks
+		data.NoPickHand = currentHand.Blind.IsNoPickHand()
 
 		// Client is a player in the current game, include their hand and bury
 		if hand := currentHand.PlayerHands.GetHand(clientID); hand != nil {
