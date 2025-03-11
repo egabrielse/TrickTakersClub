@@ -25,7 +25,7 @@ export default function NameTag({ playerId }: NameTagProps) {
       <div className="NameTag">
         <ProfilePic size="medium" />
         <div className="NameTag-Name">
-          <DisplayName fontSize={16} fontWeight="bolder" />
+          <DisplayName />
           <div className="NameTag-Name-Flares">
             {hostId === playerId && <RoleFlare role="host" />}
             {dealerId === playerId && <RoleFlare role="dealer" />}

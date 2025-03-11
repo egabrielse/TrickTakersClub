@@ -103,13 +103,17 @@ export default function Game() {
         ),
       )}
       {playerOrder.map((playerId, index) => (
-        <div id={`name-tag-${playerId}`} className="NameTagWrapper">
+        <div
+          key={`name-tag-${playerId}`}
+          id={`name-tag-${playerId}`}
+          className="NameTagWrapper"
+        >
           {index === 0 ? (
             <Paper>
-              <NameTag key={`name-tag-${playerId}`} playerId={playerId} />
+              <NameTag playerId={playerId} />
             </Paper>
           ) : (
-            <NameTag key={`name-tag-${playerId}`} playerId={playerId} />
+            <NameTag playerId={playerId} />
           )}
         </div>
       ))}

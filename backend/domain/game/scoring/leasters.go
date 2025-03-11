@@ -9,46 +9,38 @@ func ScoreLeastersHand(
 	tricks map[string]int,
 ) (
 	scores map[string]int, // Map from player ID to score
-	winnerIDs []string, // List of player IDs who won the hand
+	leasterIDs []string, // List of player IDs who won the hand
 ) {
 	playerIDs := utils.MapKeys(points)
-	winnerIDs = []string{}
-	winningPoints := 0
+	leasterID := ""
+	leasterPoints := 0
 
 	for _, playerID := range playerIDs {
 		tricksWon := tricks[playerID]
 		pointsWon := points[playerID]
 		if tricksWon == 0 {
 			continue
-		} else if len(winnerIDs) == 0 {
-			// Set the first winner
-			winnerIDs = []string{playerID}
-			winningPoints = pointsWon
-		} else if pointsWon < winningPoints {
-			// Reset when a lower score is found
-			winnerIDs = []string{playerID}
-			winningPoints = pointsWon
-		} else if pointsWon == winningPoints {
-			// Tie for lowest score
-			winnerIDs = append(winnerIDs, playerID)
-		} else {
-			continue
+		} else if leasterID == "" || pointsWon < leasterPoints {
+			leasterID = playerID
+			leasterPoints = pointsWon
+		} else if pointsWon == leasterPoints {
+			// If there is a tie, no one wins (draw)
+			leasterID = ""
+			leasterPoints = 0
+			break
 		}
 	}
-
-	winnerCount := len(winnerIDs)
-	loserCount := len(playerIDs) - winnerCount
+	leasterIDs = []string{}
+	if leasterID != "" {
+		leasterIDs = append(leasterIDs, leasterID)
+	}
 	scores = make(map[string]int)
-
 	for _, playerID := range playerIDs {
-		if utils.Contains(winnerIDs, playerID) {
-			// Winners get a chip from each loser
-			scores[playerID] = loserCount
+		if playerID == leasterID {
+			scores[playerID] = 4
 		} else {
-			// Losers give a chip to each winner
-			scores[playerID] = -winnerCount
+			scores[playerID] = -1
 		}
 	}
-
-	return scores, utils.AlphabetizeList(winnerIDs)
+	return scores, leasterIDs
 }

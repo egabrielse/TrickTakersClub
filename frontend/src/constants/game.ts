@@ -28,6 +28,12 @@ export const NO_PICK_RESOLUTIONS = {
     },
 } as const;
 
+export const SCORING_METHOD = {
+    STANDARD: 'standard',
+    LEASTERS: 'leasters',
+    MOSTERS: 'mosters',
+} as const;
+
 export const PLAYER_COUNT = 5;
 export const HAND_SIZE = 6;
 export const BLIND_SIZE = 2;

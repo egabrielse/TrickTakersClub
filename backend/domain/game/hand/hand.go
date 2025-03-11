@@ -259,13 +259,17 @@ func (h *Hand) SummarizeHand() (*HandSummary, error) {
 		if h.Settings.NoPickMethod == NoPickMethod.Leasters {
 			// Leasters Hand (No Picker)
 			payouts, sum.Winners = scoring.ScoreLeastersHand(pointsWon, tricksWon)
+			sum.ScoringMethod = "leasters"
 		} else if h.Settings.NoPickMethod == NoPickMethod.Mosters {
 			// Mosters Hand (No Picker)
 			payouts, sum.Winners = scoring.ScoreMostersHand(pointsWon)
+			sum.ScoringMethod = "mosters"
 		} else {
 			return nil, fmt.Errorf("unhandled no pick method")
 		}
-	} else { // Someone picked, score hand normally
+	} else {
+		// Someone picked, score hand normally
+		sum.ScoringMethod = "standard"
 		sum.PickerID = h.Blind.PickerID
 		sum.PartnerID = h.Call.PartnerID
 		sum.OpponentIDs = utils.Filter(h.PlayerOrder, func(id string) bool {

@@ -16,6 +16,7 @@ type HandSummary struct {
 	Scores            map[string]int `json:"scores"`            // Map of player IDs to their total scores
 	PointsWon         map[string]int `json:"pointsWon"`         // Map of player IDs to their total points won
 	TricksWon         map[string]int `json:"tricksWon"`         // Map of player IDs to their total tricks won
+	ScoringMethod     string         `json:"scoringMethod"`     // Method used to score the hand
 }
 
 func NewHandSummary(playerIDs []string) *HandSummary {
