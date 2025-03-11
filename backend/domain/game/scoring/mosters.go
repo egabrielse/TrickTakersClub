@@ -31,7 +31,9 @@ func ScoreMostersHand(points map[string]int) (
 	}
 	scores = make(map[string]int)
 	for _, playerID := range playerIDs {
-		if playerID == mosterID {
+		if mosterID == "" {
+			scores[playerID] = 0
+		} else if playerID == mosterID {
 			scores[playerID] = -4
 		} else {
 			scores[playerID] = 1

@@ -131,7 +131,7 @@ export default function HandSummaryDialog({ props }: HandSummaryDialogParams) {
               ))}
             </AvatarGroup>
           )
-        ) : (
+        ) : winners.length === 1 ? (
           <ProfileProvider uid={winners[0]}>
             <Box
               display="flex"
@@ -143,6 +143,8 @@ export default function HandSummaryDialog({ props }: HandSummaryDialogParams) {
               {partnerId && <RoleFlare role="picker" />}
             </Box>
           </ProfileProvider>
+        ) : (
+          <div id="draw-spacer" />
         )}
         <Typography
           variant="overline"

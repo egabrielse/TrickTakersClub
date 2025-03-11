@@ -36,7 +36,9 @@ func ScoreLeastersHand(
 	}
 	scores = make(map[string]int)
 	for _, playerID := range playerIDs {
-		if playerID == leasterID {
+		if leasterID == "" {
+			scores[playerID] = 0
+		} else if playerID == leasterID {
 			scores[playerID] = 4
 		} else {
 			scores[playerID] = -1
