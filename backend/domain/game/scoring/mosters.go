@@ -9,34 +9,36 @@ func ScoreMostersHand(points map[string]int) (
 	mosterIDs []string, // List of player IDs who won the hand
 ) {
 	playerIDs := utils.MapKeys(points)
-	mosterID := ""
+	mosterIDs = []string{}
 	mosterPoints := 0
-
+	// Find the player(s) with the most points
 	for _, playerID := range playerIDs {
 		pointsWon := points[playerID]
-		if mosterID == "" && pointsWon > mosterPoints {
-			// Set the first winner
-			mosterID = playerID
+		if len(mosterIDs) == 0 || pointsWon == mosterPoints {
+			mosterIDs = append(mosterIDs, playerID)
 			mosterPoints = pointsWon
-		} else if pointsWon == mosterPoints {
-			// Tie for lowest score
-			mosterID = ""
-			mosterPoints = 0
-			break
+		} else if pointsWon > mosterPoints {
+			// Larger points is found, reset mosters
+			mosterIDs = []string{playerID}
+			mosterPoints = pointsWon
 		}
 	}
-	mosterIDs = []string{}
-	if mosterID != "" {
-		mosterIDs = append(mosterIDs, mosterID)
+	// There can only be one moster.
+	// If there is a tie, no one loses (draw)
+	mosterID := mosterIDs[0]
+	if len(mosterIDs) > 1 {
+		mosterIDs = []string{}
+		mosterID = ""
 	}
+	// Calculate scores
 	scores = make(map[string]int)
 	for _, playerID := range playerIDs {
 		if mosterID == "" {
-			scores[playerID] = 0
+			scores[playerID] = 0 // Draw
 		} else if playerID == mosterID {
-			scores[playerID] = -4
+			scores[playerID] = -4 // Moster
 		} else {
-			scores[playerID] = 1
+			scores[playerID] = 1 // Others
 		}
 	}
 	return scores, mosterIDs
