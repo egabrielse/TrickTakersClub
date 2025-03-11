@@ -13,7 +13,7 @@ export default function ActiveGameSettings() {
 
   return inProgress && settings ? (
     <div>
-      <Typography variant="body1" lineHeight={1}>
+      <Typography variant="body1">
         {CALLING_METHODS[settings.callingMethod].LABEL}
       </Typography>
       <Typography variant="body1">
