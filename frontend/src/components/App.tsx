@@ -16,13 +16,14 @@ import RulesPage from "./pages//rules/RulesPage";
 import AccountPage from "./pages/account/AccountPage";
 import AuthProvider from "./pages/auth/AuthProvider";
 import PrivateRoutes from "./pages/auth/PrivateRoutes";
+import ErrorBoundary from "./pages/error/ErrorBoundary";
 import HomePage from "./pages/home/HomePage";
 import ConnectionProvider from "./pages/table/ConnectionProvider";
 import TablePage from "./pages/table/TablePage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<RootLayout />}>
+    <Route path="/" element={<RootLayout />} errorElement={<ErrorBoundary />}>
       <Route element={<HeaderLayout />}>
         <Route index element={<HomePage />} />
         <Route path={PATHS.HOME} element={<HomePage />} />
