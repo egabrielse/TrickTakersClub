@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { COMMAND_TYPES } from "../../../../../constants/message";
 import { useAppSelector } from "../../../../../store/hooks";
 import selectors from "../../../../../store/selectors";
-import { Card } from "../../../../../types/card";
+import { Card, FailSuit } from "../../../../../types/card";
 import PaperButton from "../../../../common/PaperButton";
 import PrintedCard from "../../../../common/PrintedCard";
 import ConnectionContext from "../../ConnectionContext";
@@ -22,16 +22,18 @@ export default function CallAnAce() {
 
   return (
     <div className="CallAnAce">
-      {callableAces.map((suit) => {
-        return (
+      {Object.entries(callableAces).map(([suit, callable]) =>
+        callable ? (
           <PaperButton
             key={`call-${suit}-btn`}
-            onClick={() => handleCallCard({ suit, rank: "ace" })}
+            onClick={() =>
+              handleCallCard({ suit: suit as FailSuit, rank: "ace" })
+            }
           >
-            <PrintedCard suit={suit} rank={"ace"} />
+            <PrintedCard suit={suit as FailSuit} rank={"ace"} />
           </PaperButton>
-        );
-      })}
+        ) : null,
+      )}
       <PaperButton key={"go-alone-btn"} onClick={handleGoAlone}>
         Go Alone
       </PaperButton>

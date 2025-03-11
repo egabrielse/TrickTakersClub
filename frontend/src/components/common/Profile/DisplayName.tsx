@@ -1,17 +1,14 @@
-import { Typography, TypographyProps } from "@mui/material";
 import Skeleton from "@mui/material/Skeleton";
 import { useContext } from "react";
 import { FETCH_STATUS } from "../../../constants/api";
 import ProfileContext from "./ProfileContext";
 
-export default function DisplayName(props: TypographyProps) {
+export default function DisplayName() {
   const { user, status } = useContext(ProfileContext);
 
   return status === FETCH_STATUS.LOADED ? (
-    <Typography lineHeight={1} {...props}>
-      {user.displayName || user.email}
-    </Typography>
+    <span className="DisplayName">{user.displayName || user.email}</span>
   ) : (
-    <Skeleton variant="text" width={100} />
+    <Skeleton className="DisplayName" variant="text" width={100} />
   );
 }

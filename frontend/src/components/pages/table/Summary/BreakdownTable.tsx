@@ -1,4 +1,5 @@
 import { Box, Typography } from "@mui/material";
+import { SCORING_METHOD } from "../../../../constants/game";
 import { HandSummary } from "../../../../types/game";
 import { countCardPoints } from "../../../../utils/card";
 import { getTakerId } from "../../../../utils/game";
@@ -13,6 +14,7 @@ type BreakdownTableProps = {
 };
 
 export default function BreakdownTable({ summary }: BreakdownTableProps) {
+  const { pickerId, tricks, bury, scoringMethod } = summary;
   return (
     <div className="BreakdownTable">
       <table style={{ minWidth: 500 }}>
@@ -25,37 +27,40 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>
-              <i>bury</i>
-            </td>
-            <td>
-              <Box display="flex" alignItems="center" gap="0.25rem">
-                <ProfileProvider uid={summary.pickerId}>
-                  <ProfilePic size="small" />
-                  <DisplayName />
-                </ProfileProvider>
-              </Box>
-            </td>
-            <td>
-              {summary.bury.map((card, index) => (
-                <>
-                  <PrintedCard
-                    key={`summary-${card.rank}-${card.suit}`}
-                    rank={card.rank}
-                    suit={card.suit}
-                  />
-                  {index < Object.values(summary.bury).length - 1 && " "}
-                </>
-              ))}
-            </td>
-            <td>
-              <Typography variant="h6">
-                {countCardPoints(Object.values(summary.bury))}
-              </Typography>
-            </td>
-          </tr>
-          {summary.tricks.map((trick, index) => (
+          {scoringMethod === SCORING_METHOD.STANDARD && (
+            <tr>
+              <td>
+                <i>bury</i>
+              </td>
+              <td>
+                <Box display="flex" alignItems="center" gap="0.25rem">
+                  <ProfileProvider uid={pickerId}>
+                    <ProfilePic size="small" />
+                    <DisplayName />
+                  </ProfileProvider>
+                </Box>
+              </td>
+              <td>
+                {bury.map((card, index) => (
+                  <>
+                    <PrintedCard
+                      key={`summary-${card.rank}-${card.suit}`}
+                      rank={card.rank}
+                      suit={card.suit}
+                    />
+                    {index < Object.values(bury).length - 1 && " "}
+                  </>
+                ))}
+              </td>
+              <td>
+                <Typography variant="h6">
+                  {countCardPoints(Object.values(bury))}
+                </Typography>
+              </td>
+            </tr>
+          )}
+
+          {tricks.map((trick, index) => (
             <tr key={index}>
               <td>{index + 1}</td>
               <td>
@@ -66,17 +71,17 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
                   </ProfileProvider>
                 </Box>
               </td>
-              <td align="left">
-                {Object.values(trick.cards).map((card, index) => (
-                  <>
+              <td>
+                {trick.turnOrder.map((playerId) => {
+                  const card = trick.cards[playerId];
+                  return (
                     <PrintedCard
                       key={`summary-${card.rank}-${card.suit}`}
                       rank={card.rank}
                       suit={card.suit}
                     />
-                    {index < Object.values(trick.cards).length - 1 && " "}
-                  </>
-                ))}
+                  );
+                })}
               </td>
               <td>
                 <Typography variant="h6">

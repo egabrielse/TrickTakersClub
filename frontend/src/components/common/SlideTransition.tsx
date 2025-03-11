@@ -8,7 +8,7 @@ const SlideTransition = forwardRef(function Transition(
   },
   ref: React.Ref<unknown>,
 ) {
-  return <Slide direction="up" ref={ref} {...props} />;
+  return <Slide dir="up" ref={ref} {...props} />;
 });
 
 export default SlideTransition;

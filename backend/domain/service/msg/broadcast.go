@@ -2,7 +2,6 @@ package msg
 
 import (
 	"main/domain/game/deck"
-	"main/domain/game/game_settings"
 	"main/domain/game/hand"
 	"main/domain/game/scoring"
 )
@@ -16,8 +15,6 @@ var BroadcastType = struct {
 	CardPlayed string
 	// Text messages between users
 	Chat string
-	// Errors
-	Error string
 	// Update to the last hand status of a player
 	LastHandStatus string
 	// Picker chose to go it alone
@@ -44,12 +41,13 @@ var BroadcastType = struct {
 	NewTrick string
 	// Sent to player who's turn it is
 	UpNext string
+	// Leasters or Mosters hand is played
+	NoPickHand string
 }{
 	BlindPicked:     "blind-picked",
 	CalledCard:      "called-card",
 	CardPlayed:      "card-played",
 	Chat:            "chat",
-	Error:           "error",
 	LastHandStatus:  "last-hand-status",
 	GoneAlone:       "gone-alone",
 	PartnerRevealed: "partner-revealed",
@@ -63,6 +61,7 @@ var BroadcastType = struct {
 	Timeout:         "timeout",
 	NewTrick:        "new-trick",
 	UpNext:          "up-next",
+	NoPickHand:      "no-pick-hand",
 }
 
 type BlindPickedData struct {
@@ -149,10 +148,10 @@ func SatDownMessage(playerID string) (name string, data *SatDownData) {
 }
 
 type SettingsUpdatedData struct {
-	Settings *game_settings.GameSettings `json:"settings"`
+	Settings *hand.GameSettings `json:"settings"`
 }
 
-func SettingsUpdatedMessage(settings *game_settings.GameSettings) (name string, data *SettingsUpdatedData) {
+func SettingsUpdatedMessage(settings *hand.GameSettings) (name string, data *SettingsUpdatedData) {
 	return BroadcastType.SettingsUpdated, &SettingsUpdatedData{Settings: settings}
 }
 
@@ -202,4 +201,10 @@ type UpNextData struct {
 
 func UpNextMessage(phase, playerID string) (name string, data *UpNextData) {
 	return BroadcastType.UpNext, &UpNextData{PlayerID: playerID, Phase: phase}
+}
+
+type NoPickHandData struct{}
+
+func NoPickHandMessage() (name string, data *NoPickHandData) {
+	return BroadcastType.NoPickHand, &NoPickHandData{}
 }

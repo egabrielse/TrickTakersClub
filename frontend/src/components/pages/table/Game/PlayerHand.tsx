@@ -5,6 +5,10 @@ import { useAppSelector } from "../../../../store/hooks";
 import selectors from "../../../../store/selectors";
 import handSlice from "../../../../store/slices/hand.slice";
 import { Card } from "../../../../types/card";
+import {
+  BuryCommand,
+  PlayCardCommand,
+} from "../../../../types/message/command";
 import { handContainsCard } from "../../../../utils/card";
 import PlayingCard from "../../../common/PlayingCard";
 import PlayingCardFan from "../../../common/PlayingCardFan";
@@ -58,20 +62,31 @@ export default function PlayerHand() {
     [isUpNext, pending, phase, selected, playableCards],
   );
 
+  const submitCommand = useCallback(
+    (command: PlayCardCommand | BuryCommand) => {
+      setPending(true);
+      sendCommand(command);
+      setTimeout(() => setPending(false), 1500);
+    },
+    [sendCommand],
+  );
+
   useEffect(() => {
-    if (phase === HAND_PHASE.PLAY && selected.length === 1) {
-      setPending(true);
-      sendCommand({
-        name: COMMAND_TYPES.PLAY_CARD,
-        data: { card: selected[0] },
-      });
-      setTimeout(() => setPending(false), 1500);
-    } else if (phase === HAND_PHASE.BURY && selected.length === BLIND_SIZE) {
-      setPending(true);
-      sendCommand({ name: COMMAND_TYPES.BURY, data: { cards: selected } });
-      setTimeout(() => setPending(false), 1500);
+    if (isUpNext) {
+      if (phase === HAND_PHASE.PLAY && selected.length === 1) {
+        submitCommand({
+          name: COMMAND_TYPES.PLAY_CARD,
+          data: { card: selected[0] },
+        });
+        setTimeout(() => setPending(false), 1500);
+      } else if (phase === HAND_PHASE.BURY && selected.length === BLIND_SIZE) {
+        submitCommand({
+          name: COMMAND_TYPES.BURY,
+          data: { cards: selected },
+        });
+      }
     }
-  }, [phase, selected, sendCommand]);
+  }, [isUpNext, phase, selected, sendCommand, submitCommand]);
 
   if (hand.length === 0) {
     return null;

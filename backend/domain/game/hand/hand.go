@@ -3,24 +3,23 @@ package hand
 import (
 	"fmt"
 	"main/domain/game/deck"
-	"main/domain/game/game_settings"
 	"main/domain/game/scoring"
 	"main/utils"
 )
 
 type Hand struct {
-	HandsPlayed int                         `json:"handsPlayed"` // Number of hands played
-	PlayerOrder []string                    `json:"playerOrder"` // Order of players at the table starting with the dealer
-	Phase       string                      `json:"phase"`       // Phase of the hand
-	PlayerHands *PlayerHands                `json:"playerHands"` // Players
-	Blind       *Blind                      `json:"blind"`       // Blind Phase
-	Bury        *Bury                       `json:"bury"`        // Bury Phase
-	Call        *Call                       `json:"call"`        // Call Phase
-	Tricks      []*Trick                    `json:"tricks"`      // Tricks played in the hand
-	Settings    *game_settings.GameSettings `json:"settings"`    // Game settings
+	HandsPlayed int           `json:"handsPlayed"` // Number of hands played
+	PlayerOrder []string      `json:"playerOrder"` // Order of players at the table starting with the dealer
+	Phase       string        `json:"phase"`       // Phase of the hand
+	PlayerHands *PlayerHands  `json:"playerHands"` // Players
+	Blind       *Blind        `json:"blind"`       // Blind Phase
+	Bury        *Bury         `json:"bury"`        // Bury Phase
+	Call        *Call         `json:"call"`        // Call Phase
+	Tricks      []*Trick      `json:"tricks"`      // Tricks played in the hand
+	Settings    *GameSettings `json:"settings"`    // Game settings
 }
 
-func NewHand(playerOrder []string, settings *game_settings.GameSettings) *Hand {
+func NewHand(playerOrder []string, settings *GameSettings) *Hand {
 	// Turn order starts with the player to the left of the dealer
 	leftOfDealer := playerOrder[1]
 	turnOrder := utils.RelistStartingWith(playerOrder, leftOfDealer)
@@ -104,11 +103,16 @@ func (h *Hand) Pass(playerID string) (*PassResult, error) {
 	} else {
 		h.Blind.Pass()
 		dealerID := h.PlayerOrder[0]
-		if dealerID == h.WhoIsNext() && h.Settings.NoPickMethod == game_settings.NoPickMethod.ScrewTheDealer {
+		if h.Settings.NoPickMethod == NoPickMethod.ScrewTheDealer && dealerID == h.WhoIsNext() {
 			result, _ := h.Pick(dealerID)
 			return &PassResult{PickResult: result}, nil
+		} else if h.Blind.IsComplete() {
+			// No player picked, move onto the play phase of leasters or mosters
+			h.Phase = HandPhase.Play
+			return &PassResult{AllPassed: true}, nil
+		} else {
+			return &PassResult{}, nil
 		}
-		return &PassResult{}, nil
 	}
 }
 
@@ -129,10 +133,10 @@ func (h *Hand) BuryCards(playerID string, cards []*deck.Card) (*BuryResult, erro
 		// Put the cards in the bury
 		h.Bury.BuryCards(cards)
 
-		if h.Settings.CallMethod == game_settings.CallMethod.CutThroat {
+		if h.Settings.CallMethod == CallMethod.CutThroat {
 			// Picker does not get to choose a partner in cut throat
 			h.Phase = HandPhase.Play
-		} else if h.Settings.CallMethod == game_settings.CallMethod.JackOfDiamonds {
+		} else if h.Settings.CallMethod == CallMethod.JackOfDiamonds {
 			// Partner is automatically the player holding the jack of diamonds
 			h.Phase = HandPhase.Call
 			jod := &deck.Card{Suit: deck.CardSuit.Diamond, Rank: deck.CardRank.Jack}
@@ -252,16 +256,20 @@ func (h *Hand) SummarizeHand() (*HandSummary, error) {
 	// Calculate the hand summary
 	var payouts map[string]int
 	if h.Blind.PickerID == "" {
-		if h.Settings.NoPickMethod == game_settings.NoPickMethod.Leasters {
+		if h.Settings.NoPickMethod == NoPickMethod.Leasters {
 			// Leasters Hand (No Picker)
 			payouts, sum.Winners = scoring.ScoreLeastersHand(pointsWon, tricksWon)
-		} else if h.Settings.NoPickMethod == game_settings.NoPickMethod.Mosters {
+			sum.ScoringMethod = "leasters"
+		} else if h.Settings.NoPickMethod == NoPickMethod.Mosters {
 			// Mosters Hand (No Picker)
 			payouts, sum.Winners = scoring.ScoreMostersHand(pointsWon)
+			sum.ScoringMethod = "mosters"
 		} else {
 			return nil, fmt.Errorf("unhandled no pick method")
 		}
-	} else { // Someone picked, score hand normally
+	} else {
+		// Someone picked, score hand normally
+		sum.ScoringMethod = "standard"
 		sum.PickerID = h.Blind.PickerID
 		sum.PartnerID = h.Call.PartnerID
 		sum.OpponentIDs = utils.Filter(h.PlayerOrder, func(id string) bool {

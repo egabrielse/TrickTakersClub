@@ -6,45 +6,40 @@ import "main/utils"
 // In mosters, the player(s) with the most points is the loser and pays the other players
 func ScoreMostersHand(points map[string]int) (
 	scores map[string]int, // Map from player ID to score
-	winnerIDs []string, // List of player IDs who won the hand
+	mosterIDs []string, // List of player IDs who won the hand
 ) {
 	playerIDs := utils.MapKeys(points)
-	winnerIDs = []string{}
-	loserIDs := []string{}
-	losingPoints := 0
-
+	mosterIDs = []string{}
+	mosterPoints := 0
+	// Find the player(s) with the most points
 	for _, playerID := range playerIDs {
 		pointsWon := points[playerID]
-		if len(loserIDs) == 0 {
-			// Set the first winner
-			loserIDs = []string{playerID}
-			losingPoints = pointsWon
-		} else if pointsWon > losingPoints {
-			// Reset when a lower score is found
-			loserIDs = []string{playerID}
-			losingPoints = pointsWon
-		} else if pointsWon == losingPoints {
-			// Tie for lowest score
-			loserIDs = append(loserIDs, playerID)
-		} else {
-			continue
+		if len(mosterIDs) == 0 || pointsWon == mosterPoints {
+			mosterIDs = append(mosterIDs, playerID)
+			mosterPoints = pointsWon
+		} else if pointsWon > mosterPoints {
+			// Larger points is found, reset mosters
+			mosterIDs = []string{playerID}
+			mosterPoints = pointsWon
 		}
 	}
-
-	loserCount := len(loserIDs)
-	winnerCount := len(playerIDs) - loserCount
+	// There can only be one moster.
+	// If there is a tie, no one loses (draw)
+	mosterID := mosterIDs[0]
+	if len(mosterIDs) > 1 {
+		mosterIDs = []string{}
+		mosterID = ""
+	}
+	// Calculate scores
 	scores = make(map[string]int)
-
 	for _, playerID := range playerIDs {
-		if utils.Contains(loserIDs, playerID) {
-			// Winners get a chip from each loser
-			scores[playerID] = -winnerCount
+		if mosterID == "" {
+			scores[playerID] = 0 // Draw
+		} else if playerID == mosterID {
+			scores[playerID] = -4 // Moster
 		} else {
-			// Losers give a chip to each winner
-			scores[playerID] = loserCount
-			winnerIDs = append(winnerIDs, playerID)
+			scores[playerID] = 1 // Others
 		}
 	}
-
-	return scores, utils.AlphabetizeList(winnerIDs)
+	return scores, mosterIDs
 }

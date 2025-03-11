@@ -4,7 +4,7 @@ import (
 	"context"
 	"main/domain/entity"
 	"main/domain/game"
-	"main/domain/game/game_settings"
+	"main/domain/game/hand"
 	"main/domain/repository"
 	"main/domain/service/msg"
 	"main/utils"
@@ -19,7 +19,7 @@ type TableWorker struct {
 	Table         *entity.TableEntity
 	Game          *game.Game
 	SeatedPlayers []string
-	GameSettings  *game_settings.GameSettings
+	GameSettings  *hand.GameSettings
 	LastUpdate    time.Time
 	Users         map[string]*UserClient
 	AblyClient    *ably.Realtime
@@ -42,7 +42,7 @@ func NewTableWorker(table *entity.TableEntity) (*TableWorker, error) {
 		return &TableWorker{
 			Table:         table,
 			LastUpdate:    time.Now(),
-			GameSettings:  game_settings.NewGameSettings(),
+			GameSettings:  hand.NewGameSettings(),
 			SeatedPlayers: []string{table.HostID},
 			Users:         make(map[string]*UserClient),
 			AblyClient:    ablyClient,

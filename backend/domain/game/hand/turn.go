@@ -11,6 +11,7 @@ type PickResult struct {
 
 type PassResult struct {
 	PickResult *PickResult `json:"pickResult"`
+	AllPassed  bool        `json:"allPassed"`
 }
 
 type BuryResult struct {

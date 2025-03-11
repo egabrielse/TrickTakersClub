@@ -8,7 +8,8 @@ import ConnectionContext from "../../ConnectionContext";
 import "./index.scss";
 import MessageGroup from "./MessageGroup";
 
-// TODO: consolidate chat messages if they are from the same user and within a certain time frame
+const MAX_MESSAGE_LENGTH = 60;
+
 export default function Chat() {
   const chat = useAppSelector(tableSlice.selectors.chat);
   const { sendChatMsg } = useContext(ConnectionContext);
@@ -59,8 +60,18 @@ export default function Chat() {
         placeholder="Type a message..."
         value={value}
         multiline
+        margin="dense"
         onChange={(e) => setValue(e.target.value)}
         onSubmit={onSubmit}
+        onPaste={(e) => {
+          // Trim the pasted text to 90 characters
+          const pastedText = e.clipboardData.getData("text/plain");
+          if (pastedText.length > MAX_MESSAGE_LENGTH) {
+            e.preventDefault();
+            const newValue = pastedText.substring(0, MAX_MESSAGE_LENGTH);
+            setValue(newValue);
+          }
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault();
@@ -68,8 +79,18 @@ export default function Chat() {
               e.preventDefault();
               onSubmit();
             }
+          } else if (value.length >= MAX_MESSAGE_LENGTH) {
+            if (
+              e.key !== "Backspace" &&
+              e.key !== "Delete" &&
+              e.key !== "ArrowLeft" &&
+              e.key !== "ArrowRight"
+            ) {
+              e.preventDefault();
+            }
           }
         }}
+        helperText={`${value.length}/${MAX_MESSAGE_LENGTH}`}
         slotProps={{
           input: {
             endAdornment: (
@@ -82,6 +103,14 @@ export default function Chat() {
                 </IconButton>
               </InputAdornment>
             ),
+          },
+          formHelperText: {
+            style: {
+              padding: 0,
+              margin: 0,
+              textAlign: "end",
+              color: value.length >= MAX_MESSAGE_LENGTH ? "red" : "inherit",
+            },
           },
         }}
       />

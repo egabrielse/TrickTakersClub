@@ -9,46 +9,43 @@ func ScoreLeastersHand(
 	tricks map[string]int,
 ) (
 	scores map[string]int, // Map from player ID to score
-	winnerIDs []string, // List of player IDs who won the hand
+	leasterIDs []string, // List of player IDs who won the hand
 ) {
 	playerIDs := utils.MapKeys(points)
-	winnerIDs = []string{}
-	winningPoints := 0
-
+	leasterIDs = []string{}
+	leasterPoints := 0
+	// Find the player(s) with the least points (who have taken a trick)
 	for _, playerID := range playerIDs {
 		tricksWon := tricks[playerID]
 		pointsWon := points[playerID]
 		if tricksWon == 0 {
 			continue
-		} else if len(winnerIDs) == 0 {
-			// Set the first winner
-			winnerIDs = []string{playerID}
-			winningPoints = pointsWon
-		} else if pointsWon < winningPoints {
-			// Reset when a lower score is found
-			winnerIDs = []string{playerID}
-			winningPoints = pointsWon
-		} else if pointsWon == winningPoints {
-			// Tie for lowest score
-			winnerIDs = append(winnerIDs, playerID)
-		} else {
-			continue
+		} else if len(leasterIDs) == 0 || pointsWon == leasterPoints {
+			leasterIDs = append(leasterIDs, playerID)
+			leasterPoints = pointsWon
+		} else if pointsWon < leasterPoints {
+			// Lower points is found, reset leasters
+			leasterIDs = []string{playerID}
+			leasterPoints = pointsWon
 		}
 	}
-
-	winnerCount := len(winnerIDs)
-	loserCount := len(playerIDs) - winnerCount
+	// There can only be one leaster.
+	// If there is a tie, no one wins (draw)
+	leasterID := leasterIDs[0]
+	if len(leasterIDs) > 1 {
+		leasterIDs = []string{}
+		leasterID = ""
+	}
+	// Calculate scores
 	scores = make(map[string]int)
-
 	for _, playerID := range playerIDs {
-		if utils.Contains(winnerIDs, playerID) {
-			// Winners get a chip from each loser
-			scores[playerID] = loserCount
+		if leasterID == "" {
+			scores[playerID] = 0 // Draw
+		} else if playerID == leasterID {
+			scores[playerID] = 4 // Leaster
 		} else {
-			// Losers give a chip to each winner
-			scores[playerID] = -winnerCount
+			scores[playerID] = -1 // Others
 		}
 	}
-
-	return scores, utils.AlphabetizeList(winnerIDs)
+	return scores, leasterIDs
 }

@@ -7,10 +7,12 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
+import { SCORING_METHOD } from "../../../constants/game";
 import { HandSummaryDialogParams } from "../../../types/dialog";
+import DisplayName from "../../common/Profile/DisplayName";
 import ProfilePic from "../../common/Profile/ProfilePic";
 import ProfileProvider from "../../common/Profile/ProfileProvider";
-import NameBadge from "../../pages/table/OverlayComponents/NameBadge";
+import RoleFlare from "../../pages/table/OverlayComponents/RoleFlare";
 import BreakdownTable from "../../pages/table/Summary/BreakdownTable";
 import ScoresTable from "../../pages/table/Summary/ScoresTable";
 import CloseDialogButton from "../components/CloseDialogButton";
@@ -24,30 +26,78 @@ const PANELS = {
 
 export default function HandSummaryDialog({ props }: HandSummaryDialogParams) {
   const { scoreboard, summary } = props;
+  const {
+    pickerId,
+    partnerId,
+    scoringMethod,
+    tricksWon,
+    pointsWon,
+    opponentIds,
+    winners,
+  } = summary;
   const [openedPanel, setOpenedPanel] = useState<string>(PANELS.SUMMARY);
   const [pickingTeamPoints] = useState<number>(
-    summary.pointsWon[summary.pickerId] +
-      (summary.partnerId ? summary.pointsWon[summary.partnerId] : 0),
+    pointsWon[pickerId] + (partnerId ? pointsWon[partnerId] : 0),
   );
   const [opponentPoints] = useState<number>(
-    summary.opponentIds.reduce(
-      (acc, playerId) => acc + summary.pointsWon[playerId],
-      0,
-    ),
+    opponentIds.reduce((acc, playerId) => acc + pointsWon[playerId], 0),
   );
 
   const handleChange = (_: React.SyntheticEvent, newValue: string) => {
     setOpenedPanel(newValue);
   };
 
+  const summarySentence = () => {
+    if (scoringMethod === SCORING_METHOD.STANDARD) {
+      if (winners.includes(pickerId)) {
+        if (partnerId) {
+          return `Picking Team Won with ${pickingTeamPoints} Points!`;
+        } else {
+          return `Picker Won with ${pickingTeamPoints} Points!`;
+        }
+      } else {
+        return `Opponents Won with ${opponentPoints} Points`;
+      }
+    } else {
+      // There can only be one winner/loser in leasters and mosters
+      const winner = winners[0];
+      if (winners.length === 0) {
+        return "Draw! No points are exchanged.";
+      }
+      const tricks = tricksWon[winner];
+      const points = pointsWon[winner];
+      if (scoringMethod === SCORING_METHOD.LEASTERS) {
+        return (
+          <>
+            <ProfileProvider uid={winner}>
+              <DisplayName />
+            </ProfileProvider>
+            &nbsp;Won by Taking {tricks} Trick{tricks > 1 && "s"} and&nbsp;
+            {points} Point{points > 1 && "s"}!
+          </>
+        );
+      } else {
+        return (
+          <>
+            <ProfileProvider uid={winner}>
+              <DisplayName />
+            </ProfileProvider>
+            &nbsp;Lost by Taking ${tricks} Trick{tricks > 1 && "s"} and&nbsp;
+            {points} Point{points > 1 && "s"}...
+          </>
+        );
+      }
+    }
+  };
+
   return (
     <>
       <CloseDialogButton />
       <DialogHeader>
-        {summary.winners.includes(summary.pickerId) ? (
-          <>
+        {scoringMethod === SCORING_METHOD.STANDARD ? (
+          winners.includes(pickerId) ? (
             <Box display="flex" alignItems="center" gap="1rem" fontSize={12}>
-              <ProfileProvider uid={summary.pickerId}>
+              <ProfileProvider uid={pickerId}>
                 <Box
                   display="flex"
                   flexDirection="column"
@@ -55,13 +105,11 @@ export default function HandSummaryDialog({ props }: HandSummaryDialogParams) {
                   gap="0.25rem"
                 >
                   <ProfilePic size="xlarge" />
-                  {summary.partnerId && (
-                    <NameBadge color="blue">PICKER</NameBadge>
-                  )}
+                  {partnerId && <RoleFlare role="picker" />}
                 </Box>
               </ProfileProvider>
-              {summary.partnerId && (
-                <ProfileProvider uid={summary.partnerId}>
+              {partnerId && (
+                <ProfileProvider uid={partnerId}>
                   <Box
                     display="flex"
                     flexDirection="column"
@@ -69,31 +117,43 @@ export default function HandSummaryDialog({ props }: HandSummaryDialogParams) {
                     gap="0.25rem"
                   >
                     <ProfilePic size="xlarge" />
-                    <NameBadge color="purple">PARTNER</NameBadge>
+                    <RoleFlare role="partner" />
                   </Box>
                 </ProfileProvider>
               )}
             </Box>
-            <Typography variant="overline" fontSize="1rem">
-              {summary.partnerId
-                ? `Picking Team Won with ${pickingTeamPoints} Points!`
-                : `Picker Won with ${pickingTeamPoints} Points!`}
-            </Typography>
-          </>
-        ) : (
-          <>
+          ) : (
             <AvatarGroup>
-              {summary.opponentIds.map((playerId) => (
+              {opponentIds.map((playerId) => (
                 <ProfileProvider key={playerId} uid={playerId}>
                   <ProfilePic size="xlarge" />
                 </ProfileProvider>
               ))}
             </AvatarGroup>
-            <Typography variant="overline" fontSize="1rem">
-              {`Opponents Won with ${opponentPoints} Points!`}
-            </Typography>
-          </>
+          )
+        ) : winners.length === 1 ? (
+          <ProfileProvider uid={winners[0]}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              gap="0.25rem"
+            >
+              <ProfilePic size="xlarge" />
+              {partnerId && <RoleFlare role="picker" />}
+            </Box>
+          </ProfileProvider>
+        ) : (
+          <div id="draw-spacer" />
         )}
+        <Typography
+          variant="overline"
+          fontSize="1rem"
+          maxWidth={"75%"}
+          textAlign="center"
+        >
+          {summarySentence()}
+        </Typography>
       </DialogHeader>
       <DialogBody>
         <TabContext value={openedPanel}>

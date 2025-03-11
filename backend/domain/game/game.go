@@ -1,7 +1,6 @@
 package game
 
 import (
-	"main/domain/game/game_settings"
 	"main/domain/game/hand"
 	"main/domain/game/scoring"
 	"main/utils"
@@ -10,15 +9,15 @@ import (
 )
 
 type Game struct {
-	DealerIndex int                         `json:"dealerIndex"` // Index of the dealer
-	Hands       []*hand.Hand                `json:"hands"`       // Hands played
-	PlayerOrder []string                    `json:"playerOrder"` // Order of players at the table
-	Settings    *game_settings.GameSettings `json:"settings"`    // Game settings
-	LastHand    map[string]bool             `json:"lastHand"`    // Tracks players who have said it's their last hand
+	DealerIndex int                `json:"dealerIndex"` // Index of the dealer
+	Hands       []*hand.Hand       `json:"hands"`       // Hands played
+	PlayerOrder []string           `json:"playerOrder"` // Order of players at the table
+	Settings    *hand.GameSettings `json:"settings"`    // Game settings
+	LastHand    map[string]bool    `json:"lastHand"`    // Tracks players who have said it's their last hand
 }
 
 // Creates a new Game and initializes the first hand
-func NewGame(playerOrder []string, settings *game_settings.GameSettings) *Game {
+func NewGame(playerOrder []string, settings *hand.GameSettings) *Game {
 	lastHand := map[string]bool{}
 	for _, playerID := range playerOrder {
 		lastHand[playerID] = false

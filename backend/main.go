@@ -6,9 +6,7 @@ import (
 	"main/infrastructure"
 	"main/infrastructure/persistence"
 	"main/utils"
-	"math/rand"
 	"net/http"
-	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -19,9 +17,6 @@ func main() {
 
 	// Configure logger
 	utils.ConfigureLogger()
-
-	// Set seed for random number generator
-	rand.Seed(time.Now().UnixNano())
 
 	// Initialize Firebase app
 	infrastructure.InitFirebaseApp()

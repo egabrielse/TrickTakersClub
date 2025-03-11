@@ -166,6 +166,8 @@ export const compareCards = (a: Card, b: Card, leadingSuit: CardSuit) => {
         return true;
     } else if (!isTrumpCard(a) && isTrumpCard(b)) {
         return false;
+    } else if (isTrumpCard(a) && isTrumpCard(b)) {
+        return getCardinalRank(a) - getCardinalRank(b) > 0;
     } else if (a.suit === leadingSuit && b.suit !== leadingSuit) {
         return true;
     } else if (a.suit !== leadingSuit && b.suit === leadingSuit) {

@@ -1,6 +1,5 @@
 .CardContainer {
     position: relative;
-    transition: all 250ms ease-in;
 
     &.disabled {
         filter: brightness(70%);

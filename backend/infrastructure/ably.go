@@ -14,7 +14,7 @@ func InitAblyRestClient() {
 	key := utils.GetEnvironmentVariable("ABLY_API_KEY")
 	options := []ably.ClientOption{ably.WithKey(key)}
 	if client, err := ably.NewREST(options...); utils.LogOnError(err) {
-		logrus.Fatalf("Error Initializing Ably: ", err)
+		logrus.Fatalf("Error Initializing Ably: %v", err)
 		return
 	} else {
 		ablyClient = client

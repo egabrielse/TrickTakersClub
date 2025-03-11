@@ -42,6 +42,7 @@ export default function PrintedCard({ rank, suit }: Card) {
 
   return (
     <span
+      className="PrintedCard"
       style={{
         color:
           suit === CARD_SUIT.DIAMOND || suit === CARD_SUIT.HEART

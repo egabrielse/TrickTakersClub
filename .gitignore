@@ -9,3 +9,5 @@
 *.sln
 *.sw?
 .env
+// Golang debug logs
+__debug_*

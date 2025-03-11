@@ -1,4 +1,4 @@
-package game_settings
+package hand
 
 import (
 	"fmt"

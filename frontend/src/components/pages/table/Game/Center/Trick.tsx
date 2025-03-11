@@ -19,7 +19,7 @@ export default function Trick() {
             playedCard.style.position = "absolute";
             const orderPlayed = currentTrick.turnOrder.indexOf(playerId);
             playedCard.style.zIndex = String(orderPlayed);
-            playedCard.style.top = "40%";
+            playedCard.style.top = "45%";
             playedCard.style.left = "50%";
             playedCard.style.transform = "translate(-50%, -10%)";
             playedCard.style.transformOrigin = "top left";

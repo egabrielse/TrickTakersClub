@@ -2,6 +2,7 @@ import {
     CALLING_METHODS,
     HAND_PHASE,
     NO_PICK_RESOLUTIONS,
+    SCORING_METHOD,
 } from "../constants/game";
 import { Card } from "./card";
 import {
@@ -10,6 +11,7 @@ import {
     CardPlayedMessage,
     GoneAloneMessage,
     HandDoneMessage,
+    NoPickHandMessage,
     PartnerRevealedMessage,
     TrickWonMessage,
 } from "./message/broadcast";
@@ -17,6 +19,8 @@ import {
 export type CallingMethod = typeof CALLING_METHODS[keyof typeof CALLING_METHODS]['ID'];
 
 export type NoPickResolution = typeof NO_PICK_RESOLUTIONS[keyof typeof NO_PICK_RESOLUTIONS]['ID'];
+
+export type ScoringMethod = typeof SCORING_METHOD[keyof typeof SCORING_METHOD];
 
 export type GameSettings = {
     callingMethod: CallingMethod;
@@ -49,6 +53,7 @@ export type HandSummary = {
     payoutMultipliers: string[]
     pointsWon: Record<string, number>;
     tricksWon: Record<string, number>;
+    scoringMethod: ScoringMethod;
 };
 
 export type Trick = {
@@ -63,4 +68,5 @@ export type UpdateMessages =
     | CardPlayedMessage
     | PartnerRevealedMessage
     | TrickWonMessage
-    | HandDoneMessage;
+    | HandDoneMessage
+    | NoPickHandMessage;

@@ -1,0 +1,11 @@
+.NameTagWrapper {
+    position: absolute;
+    overflow: visible;
+
+    >div {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        transition: all 0.2s ease-in-out;
+        padding: 0.25rem 0.5rem;
+    }
+}

@@ -1,14 +1,11 @@
 .GameUpdates {
-    display: flex;
-    gap: 0.5rem;
-    text-wrap: nowrap;
-    align-items: center;
     padding: 0.5rem;
-    width: auto;
+    box-shadow: 0 3px 5px 3px rgba(black, 0.1);
 
     >* {
         display: flex;
-        gap: 0.5rem;
         align-items: center;
+        text-wrap: nowrap;
+        justify-content: center;
     }
 }
