@@ -1,3 +1,4 @@
+import { Paper } from "@mui/material";
 import { useEffect } from "react";
 import { HAND_PHASE } from "../../../../constants/game";
 import { useAppSelector } from "../../../../store/hooks";
@@ -30,7 +31,7 @@ export default function Game() {
           case 0:
             // Player 1 (bottom)
             seat.style.left = "50%";
-            seat.style.bottom = "250px";
+            seat.style.bottom = "1.5rem";
             seat.style.zIndex = "4";
             break;
           case 1:
@@ -101,9 +102,15 @@ export default function Game() {
           />
         ),
       )}
-      {playerOrder.map((playerId) => (
+      {playerOrder.map((playerId, index) => (
         <div id={`name-tag-${playerId}`} className="NameTagWrapper">
-          <NameTag key={`name-tag-${playerId}`} playerId={playerId} />
+          {index === 0 ? (
+            <Paper>
+              <NameTag key={`name-tag-${playerId}`} playerId={playerId} />
+            </Paper>
+          ) : (
+            <NameTag key={`name-tag-${playerId}`} playerId={playerId} />
+          )}
         </div>
       ))}
       {noPickHand && <NoPickHandDisplay />}
