@@ -105,7 +105,7 @@ export interface UpNextMessage extends Message {
     };
 }
 
-export interface NoPickHand extends Message {
+export interface NoPickHandMessage extends Message {
     name: typeof BROADCAST_TYPES.NO_PICK_HAND;
     data: undefined;
 }
@@ -129,5 +129,5 @@ export type BroadcastMessage = (
     HandDoneMessage |
     NewTrickMessage |
     UpNextMessage |
-    NoPickHand
+    NoPickHandMessage
 );
