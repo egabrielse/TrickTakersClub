@@ -82,6 +82,8 @@ const renderUpdateMessage = (update: UpdateMessages) => {
           &nbsp;took the trick!
         </>
       );
+    case BROADCAST_TYPES.NO_PICK_HAND:
+      return "Everyone passed on the blind!";
     default:
       return null;
   }

@@ -100,6 +100,7 @@ function ConnectionApiProvider({
         dispatch(handSlice.actions.upNext(msg.data));
         break;
       case BROADCAST_TYPES.NO_PICK_HAND:
+        dispatch(handSlice.actions.displayMessage({ ...msg }));
         dispatch(handSlice.actions.noPickHand());
         break;
       case BROADCAST_TYPES.CALLED_CARD:

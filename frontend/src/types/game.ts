@@ -11,6 +11,7 @@ import {
     CardPlayedMessage,
     GoneAloneMessage,
     HandDoneMessage,
+    NoPickHandMessage,
     PartnerRevealedMessage,
     TrickWonMessage,
 } from "./message/broadcast";
@@ -67,4 +68,5 @@ export type UpdateMessages =
     | CardPlayedMessage
     | PartnerRevealedMessage
     | TrickWonMessage
-    | HandDoneMessage;
+    | HandDoneMessage
+    | NoPickHandMessage;
