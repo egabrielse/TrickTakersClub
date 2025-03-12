@@ -13,7 +13,7 @@ branch BRANCH_NAME:
 	git push --set-upstream origin {{BRANCH_NAME}}
 
 
-clean branches:
+cleanup:
 	# 1. Make sure we are on the main branch
 	git checkout main 
 	# 2. Delete all branches except main
