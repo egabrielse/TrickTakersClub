@@ -1,5 +1,6 @@
 import { ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
+import { BrowserView, MobileView } from "react-device-detect";
 import { Provider } from "react-redux";
 import {
   Route,
@@ -17,6 +18,7 @@ import AccountPage from "./pages/account/AccountPage";
 import AuthProvider from "./pages/auth/AuthProvider";
 import PrivateRoutes from "./pages/auth/PrivateRoutes";
 import ErrorBoundary from "./pages/error/ErrorBoundary";
+import ErrorPage from "./pages/error/ErrorPage";
 import HomePage from "./pages/home/HomePage";
 import ConnectionProvider from "./pages/table/ConnectionProvider";
 import TablePage from "./pages/table/TablePage";
@@ -50,12 +52,24 @@ axios.defaults.baseURL = import.meta.env.VITE_BACKEND_HOST;
 
 export default function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <Provider store={store}>
-        <AuthProvider>
-          <RouterProvider router={router} />
-        </AuthProvider>
-      </Provider>
-    </ThemeProvider>
+    <>
+      <MobileView>
+        <ErrorPage
+          error={{
+            name: "Device Not Supported",
+            message: "Unfortunately mobile devices are not yet supported.",
+          }}
+        />
+      </MobileView>
+      <BrowserView>
+        <ThemeProvider theme={theme}>
+          <Provider store={store}>
+            <AuthProvider>
+              <RouterProvider router={router} />
+            </AuthProvider>
+          </Provider>
+        </ThemeProvider>
+      </BrowserView>
+    </>
   );
 }
