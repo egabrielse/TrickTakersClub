@@ -3,8 +3,14 @@ name: Frontend
 on:
   push:
     branches: ["main"]
+    paths:
+      - "frontend/**"
+      - "!frontend/node_modules/**"
   pull_request:
     branches: ["main"]
+    paths:
+      - "frontend/**"
+      - "!frontend/node_modules/**"
 
 jobs:
   tests:
