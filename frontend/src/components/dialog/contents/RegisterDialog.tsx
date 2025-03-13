@@ -7,6 +7,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { useFormik } from "formik";
+import { generateSlug } from "random-word-slugs";
 import { useEffect, useState } from "react";
 import * as yup from "yup";
 import { DIALOG_TYPES } from "../../../constants/dialog";
@@ -15,7 +16,6 @@ import auth from "../../../firebase/auth";
 import { useAppDispatch } from "../../../store/hooks";
 import dialogSlice from "../../../store/slices/dialog.slice";
 import { RegisterDialogParams } from "../../../types/dialog";
-import { generateDisplayName } from "../../../utils/user";
 import AppLogo from "../../common/AppLogo";
 import CloseDialogButton from "../components/CloseDialogButton";
 import DialogBody from "../components/DialogBody";
@@ -106,7 +106,7 @@ export default function RegisterDialog({ closeable }: RegisterDialogParams) {
   const cycleNameOptions = () => {
     const newOptions = [];
     for (let i = 0; i < 5; i++) {
-      newOptions.push(generateDisplayName());
+      newOptions.push(generateSlug(2, { format: "title" }));
     }
     setDisplayNameOptions(newOptions);
   };

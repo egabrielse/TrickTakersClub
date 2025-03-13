@@ -1,4 +1,3 @@
-import { generateSlug } from "random-word-slugs";
 import { Size } from "../types/size";
 import { scaleBySize } from "./size";
 
@@ -36,14 +35,6 @@ export function getInitials(username: string): string {
     .map((n) => n[0])
     .join("")
     .toUpperCase();
-}
-
-/**
- * Generates a random username consisting of two words (e.g. "Red Apple").
- * @returns a random username
- */
-export function generateDisplayName() {
-  return generateSlug(2, { format: "title" });
 }
 
 /**

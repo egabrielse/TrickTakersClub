@@ -4,7 +4,6 @@ import { handContainsCard, isTrumpCard } from "../utils/card";
 import authSlice from "./slices/auth.slice";
 import gameSlice from "./slices/game.slice";
 import tableSlice from "./slices/table.slice";
-import { relistStartingWith } from "../utils/list";
 import { getTakerId } from "../utils/game";
 import { CARD_RANK, CARD_SUIT } from "../constants/card";
 import { FailSuit } from "../types/card";
@@ -143,7 +142,13 @@ const callableAces = createSelector([
  */
 const playerOrderStartingWithUser = createSelector(
     [gameSlice.selectors.playerOrder, authSlice.selectors.uid],
-    (playerOrder, uid) => relistStartingWith(playerOrder, uid)
+    (playerOrder, uid) => {
+        const index = playerOrder.indexOf(uid);
+        if (index === -1) {
+            return playerOrder
+        }
+        return [...playerOrder.slice(index), ...playerOrder.slice(0, index)];
+    }
 );
 
 const tricksWon = createSelector(

@@ -1,5 +1,4 @@
 import "./PageTopper.scss";
-import StyledTitle from "./StyledTitle";
 
 type PageTopperProps = {
   pre?: string;
@@ -12,7 +11,9 @@ export default function PageTopper({ pre, post, title }: PageTopperProps) {
     <div className="PageTopper">
       <div className="PageTopper-Title">
         <h3>{pre || ""}</h3>
-        <StyledTitle title={title.toUpperCase()} size="xlarge" color="white" />
+        <div style={{ fontSize: 72, color: "white" }}>
+          {title.toUpperCase()}
+        </div>
         <h4>{post || ""}</h4>
       </div>
     </div>

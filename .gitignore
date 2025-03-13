@@ -11,3 +11,5 @@
 .env
 // Golang debug logs
 __debug_*
+// Frontend test coverage
+/frontend/coverage
