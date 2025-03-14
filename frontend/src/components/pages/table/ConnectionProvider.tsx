@@ -1,3 +1,4 @@
+import RefreshIcon from "@mui/icons-material/Refresh";
 import { Alert, Snackbar } from "@mui/material";
 import * as Ably from "ably";
 import {
@@ -338,8 +339,17 @@ export default function ConnectionProvider({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const refreshPage = () => {
+    window.location.reload();
+  };
+
   return error ? (
-    <ErrorPage error={error} />
+    <ErrorPage
+      error={error}
+      actions={[
+        { label: "Refresh Page", onClick: refreshPage, icon: <RefreshIcon /> },
+      ]}
+    />
   ) : loading ? (
     <LoadingOverlay text={`Searching for ${paramTableId}`} />
   ) : client === null ? (
