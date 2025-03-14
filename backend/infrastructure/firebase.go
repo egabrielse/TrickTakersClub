@@ -16,8 +16,6 @@ var firebaseStore *firestore.Client
 // InitFirebaseApp initializes the Firebase app
 func InitFirebaseApp() {
 	projectID := utils.GetEnvironmentVariable("FIREBASE_PROJECT_ID")
-	logrus.Debug("Initializing Firebase App")
-	logrus.Debug(projectID)
 	config := &firebase.Config{ProjectID: projectID}
 	app, err := firebase.NewApp(context.Background(), config)
 	if err != nil {
