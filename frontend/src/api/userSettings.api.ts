@@ -7,7 +7,7 @@ export async function fetchUserSettings() {
         throw new Error("User not logged in");
     } else {
         const idToken = await auth.currentUser.getIdToken();
-        const response = await axios.get<UserSettingsEntity>(`/v1/user_settings`, {
+        const response = await axios.get<UserSettingsEntity>(`/api/v1/user_settings`, {
             headers: {
                 Authorization: `Bearer ${idToken}`,
             },
@@ -21,7 +21,7 @@ export async function saveUserSettings(userSettings: UserSettingsEntity) {
         throw new Error("User not logged in");
     } else {
         const idToken = await auth.currentUser.getIdToken();
-        const response = await axios.put(`/v1/user_settings`, userSettings, {
+        const response = await axios.put(`/api/v1/user_settings`, userSettings, {
             headers: {
                 Authorization: `Bearer ${idToken}`,
             },
