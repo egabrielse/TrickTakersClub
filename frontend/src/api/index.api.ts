@@ -10,7 +10,7 @@ export async function healthCheck() {
         throw new Error("User not logged in");
     } else {
         const idToken = await auth.currentUser.getIdToken();
-        const response = await axios.get<HealthCheckResponse>(`/v1`, {
+        const response = await axios.get<HealthCheckResponse>(`/api/v1`, {
             headers: {
                 Authorization: `Bearer ${idToken}`,
             },

@@ -11,7 +11,7 @@ export async function fetchUserInfoById(uid: string) {
         throw new Error("User not logged in");
     } else {
         const idToken = await auth.currentUser.getIdToken();
-        const response = await axios.get<FetchUserResponse>(`/v1/user/${uid}`, {
+        const response = await axios.get<FetchUserResponse>(`/api/v1/user/${uid}`, {
             headers: {
                 Authorization: `Bearer ${idToken}`,
             },
