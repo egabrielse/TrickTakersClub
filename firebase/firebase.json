@@ -1,4 +1,22 @@
 {
+  "hosting": {
+    "rewrites": [
+      {
+        "source": "/api/**",
+        "run": {
+          "serviceId": "backend-service",
+          "region": "us-central1"
+        }
+      },
+      {
+        "source": "**",
+        "run": {
+          "serviceId": "frontend-service",
+          "region": "us-central1"
+        }
+      }
+    ]
+  },
   "emulators": {
     "singleProjectMode": true,
     "auth": {

@@ -11,7 +11,7 @@ export async function fetchAblyToken() {
         throw new Error("User not logged in");
     } else {
         const idToken = await auth.currentUser.getIdToken();
-        const response = await axios.get<AblyTokenResponse>(`/v1/ably/token`, {
+        const response = await axios.get<AblyTokenResponse>(`/api/v1/ably/token`, {
             headers: {
                 Authorization: `Bearer ${idToken}`,
             },
