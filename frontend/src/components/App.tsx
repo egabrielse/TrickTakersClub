@@ -11,6 +11,7 @@ import {
 import { theme } from "../constants/mui";
 import { PATHS } from "../constants/url";
 import { store } from "../store";
+import { DeviceNotSupportedError } from "../types/error";
 import HeaderLayout from "./layout/HeaderLayout";
 import RootLayout from "./layout/RootLayout";
 import RulesPage from "./pages//rules/RulesPage";
@@ -52,24 +53,23 @@ axios.defaults.baseURL = import.meta.env.VITE_BACKEND_HOST;
 
 export default function App() {
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <MobileView>
         <ErrorPage
-          error={{
-            name: "Device Not Supported",
-            message: "Unfortunately mobile devices are not yet supported.",
-          }}
+          error={
+            new DeviceNotSupportedError(
+              "Trick Takers Club is not yet supported on mobile devices. Please use a desktop browser.",
+            )
+          }
         />
       </MobileView>
       <BrowserView>
-        <ThemeProvider theme={theme}>
-          <Provider store={store}>
-            <AuthProvider>
-              <RouterProvider router={router} />
-            </AuthProvider>
-          </Provider>
-        </ThemeProvider>
+        <Provider store={store}>
+          <AuthProvider>
+            <RouterProvider router={router} />
+          </AuthProvider>
+        </Provider>
       </BrowserView>
-    </>
+    </ThemeProvider>
   );
 }
