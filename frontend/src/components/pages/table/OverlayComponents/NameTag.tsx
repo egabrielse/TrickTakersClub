@@ -19,6 +19,7 @@ export default function NameTag({ playerId }: NameTagProps) {
   const pickerId = useAppSelector(handSlice.selectors.pickerId);
   const partnerId = useAppSelector(handSlice.selectors.partnerId);
   const calledCard = useAppSelector(handSlice.selectors.calledCard);
+  const goneAlone = useAppSelector(handSlice.selectors.goneAlone);
 
   return (
     <ProfileProvider uid={playerId}>
@@ -36,6 +37,9 @@ export default function NameTag({ playerId }: NameTagProps) {
                 CALLED&nbsp;
                 <PrintedCard suit={calledCard.suit} rank={calledCard.rank} />
               </Flare>
+            )}
+            {pickerId === playerId && goneAlone && (
+              <Flare color="purple">ALONE</Flare>
             )}
           </div>
         </div>

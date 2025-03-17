@@ -113,6 +113,7 @@ function ConnectionApiProvider({
           // Only display the message if the player chose to go alone
           // Otherwise the picker probably wants this to remain a secret
           dispatch(handSlice.actions.displayMessage({ ...msg }));
+          dispatch(handSlice.actions.goneAlone());
         }
         break;
       case BROADCAST_TYPES.PARTNER_REVEALED:
