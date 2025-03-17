@@ -7,6 +7,7 @@ import tableSlice from "./slices/table.slice";
 import { getTakerId } from "../utils/game";
 import { CARD_RANK, CARD_SUIT } from "../constants/card";
 import { FailSuit } from "../types/card";
+import { HAND_PHASE, HAND_SIZE } from "../constants/game";
 
 /**
  * True if the user is the dealer, false otherwise.
@@ -170,6 +171,42 @@ const tallyTricks = createSelector(
     }
 )
 
+const cardsInHandCounts = createSelector(
+    [
+        gameSlice.selectors.playerOrder,
+        handSlice.selectors.tricks,
+        handSlice.selectors.phase,
+        handSlice.selectors.pickerId,
+    ],
+    (playerOrder, tricks, phase, pickerId) => {
+        // Count how many cards each player has played already
+        const cardsPlayed = tricks.reduce((acc: Record<string, number>, trick) => {
+            for (const playerId in trick.cards) {
+                if (acc[playerId]) {
+                    acc[playerId] += 1;
+                } else {
+                    acc[playerId] = 1;
+                }
+            }
+            return acc;
+        }, {});
+        // Calculate how many cards each player has left in their hand
+        const handCounts: Record<string, number> = {};
+        playerOrder.forEach((playerId) => {
+            handCounts[playerId] = HAND_SIZE;
+            if (playerId === pickerId && phase === HAND_PHASE.BURY) {
+                // Add cards for the picker during the bury phase
+                handCounts[playerId] += 2;
+            }
+            if (cardsPlayed[playerId]) {
+                // Remove played cards
+                handCounts[playerId] -= cardsPlayed[playerId];
+            }
+        });
+        return handCounts;
+    }
+)
+
 const selectors = {
     isDealer,
     isPicker,
@@ -181,6 +218,7 @@ const selectors = {
     callableAces,
     playerOrderStartingWithUser,
     tallyTricks,
+    cardsInHandCounts,
 };
 
 export default selectors;

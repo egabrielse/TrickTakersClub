@@ -8,7 +8,6 @@ import "./TrickPile.scss";
 export default function TrickPile() {
   const uid = useAppSelector(authSlice.selectors.uid);
   const talliedTricks = useAppSelector(selectors.tallyTricks);
-  console.log(talliedTricks);
   const tricksWon = talliedTricks[uid]?.[0];
   const pointsWon = talliedTricks[uid]?.[1];
 

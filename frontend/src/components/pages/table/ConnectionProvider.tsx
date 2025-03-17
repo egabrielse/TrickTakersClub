@@ -223,8 +223,6 @@ function ConnectionApiProvider({
    * @param command
    */
   const sendCommand = (command: CommandMessage) => {
-    console.log("Sending command", command);
-    console.log(direct);
     // Then send the command to the server
     direct?.publish(command.name, command.data);
   };

@@ -11,10 +11,11 @@ import Blind from "./Center/Blind";
 import CallAnAce from "./Center/CallAnAce";
 import Trick from "./Center/Trick";
 import GameUpdates from "./GameUpdates";
+import "./index.scss";
 import OpponentHand from "./OpponentHand";
+import OpponentTrickPile from "./OpponentTrickPile";
 import PlayerHand from "./PlayerHand";
 import TrickPile from "./TrickPile";
-import "./index.scss";
 
 export default function Game() {
   const isUpNext = useAppSelector(selectors.isUpNext);
@@ -71,35 +72,49 @@ export default function Game() {
       {phase === HAND_PHASE.CALL && isUpNext && <CallAnAce />}
       {phase === HAND_PHASE.PLAY && <Trick />}
       <GameUpdates />
-      <Bury />
-      <TrickPile />
       {playerOrder.map((playerId, index) =>
         index === 0 ? (
-          <PlayerHand key={`hand-${playerId}`} />
+          <>
+            <PlayerHand key={`hand-${playerId}`} />
+            <Bury />
+            <TrickPile />
+          </>
         ) : index === 1 ? (
-          <OpponentHand
-            key={`hand-${playerId}`}
-            playerId={playerId}
-            position="left"
-          />
+          <>
+            <OpponentHand
+              key={`hand-${playerId}`}
+              playerId={playerId}
+              position="left"
+            />
+            <OpponentTrickPile playerId={playerId} position="left" />
+          </>
         ) : index === 2 ? (
-          <OpponentHand
-            key={`hand-${playerId}`}
-            playerId={playerId}
-            position="top-left"
-          />
+          <>
+            <OpponentHand
+              key={`hand-${playerId}`}
+              playerId={playerId}
+              position="top-left"
+            />
+            <OpponentTrickPile playerId={playerId} position="top-left" />
+          </>
         ) : index === 3 ? (
-          <OpponentHand
-            key={`hand-${playerId}`}
-            playerId={playerId}
-            position="top-right"
-          />
+          <>
+            <OpponentHand
+              key={`hand-${playerId}`}
+              playerId={playerId}
+              position="top-right"
+            />
+            <OpponentTrickPile playerId={playerId} position="top-right" />
+          </>
         ) : (
-          <OpponentHand
-            key={`hand-${playerId}`}
-            playerId={playerId}
-            position="right"
-          />
+          <>
+            <OpponentHand
+              key={`hand-${playerId}`}
+              playerId={playerId}
+              position="right"
+            />
+            <OpponentTrickPile playerId={playerId} position="right" />
+          </>
         ),
       )}
       {playerOrder.map((playerId, index) => (

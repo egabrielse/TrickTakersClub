@@ -1,6 +1,6 @@
-import { useEffect, useMemo } from "react";
-import { HAND_SIZE } from "../../../../constants/game";
+import { useEffect } from "react";
 import { useAppSelector } from "../../../../store/hooks";
+import selectors from "../../../../store/selectors";
 import handSlice from "../../../../store/slices/hand.slice";
 import PlayingCard from "../../../common/PlayingCard";
 import PlayingCardFan from "../../../common/PlayingCardFan";
@@ -15,11 +15,7 @@ export default function OpponentHand({
   position,
 }: OpponentHandProps) {
   const upNextId = useAppSelector(handSlice.selectors.upNextId);
-  const tricks = useAppSelector(handSlice.selectors.tricks);
-  const countOfCardsPlayed = useMemo(
-    () => tricks.filter((trick) => playerId in trick.cards).length,
-    [playerId, tricks],
-  );
+  const cardsInHand = useAppSelector(selectors.cardsInHandCounts);
 
   useEffect(() => {
     const element = document.getElementById(`opponent-hand-${playerId}`);
@@ -54,7 +50,7 @@ export default function OpponentHand({
 
   return (
     <PlayingCardFan id={`opponent-hand-${playerId}`}>
-      {Array(HAND_SIZE - countOfCardsPlayed)
+      {Array(cardsInHand[playerId])
         .fill("back")
         .map((card, index) => (
           <PlayingCard
