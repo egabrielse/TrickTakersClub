@@ -1,4 +1,3 @@
-import { capitalize } from "@mui/material";
 import { CARD_RANK, CARD_SUIT } from "../constants/card";
 import { CardSuit, Card } from "../types/card";
 
@@ -43,11 +42,11 @@ export const getCardinalRank = (card: Card) => {
         case CARD_RANK.NINE:
             return 3;
         case CARD_RANK.KING:
-            return 4;
+            return 4; // Note: King is below ten
         case CARD_RANK.TEN:
             return 5;
         case CARD_RANK.ACE:
-            return 6;
+            return 6; // Note: Ace is below jack
         case CARD_RANK.JACK: {
             switch (card.suit) {
                 case CARD_SUIT.DIAMOND:
@@ -109,6 +108,13 @@ export const countCardPoints = (cards: Card[]) => {
 
 /**
  * Comparison function used for sorting playing cards by rank and suit.
+ * Cards should be sorted in the following order:
+ * 1. Queens
+ * 2. Jacks
+ * 3. Diamonds (aces, kings, tens, nines, eights, sevens)
+ * 4. Clubs ('')
+ * 5. Hearts('')
+ * 6. Spades('')
  * @param a PlayingCard
  * @param b PlayingCard
  * @returns -1 if a < b, 0 if a == b, 1 if a > b
@@ -157,22 +163,22 @@ export const handContainsCard = (hand: Card[], card: Card) => {
     return hand.some((c) => c.rank === card.rank && c.suit === card.suit);
 };
 
-export const prettyPrintCard = (card: Card) => {
-    return `${capitalize(card?.rank)} of ${capitalize(card?.suit)}`;
-}
-
+/**
+ * Given a leading suit, compares two cards to determine which is stronger.
+ * @returns positive number if a > than b, negative if a < b, 0 if a == b
+ */
 export const compareCards = (a: Card, b: Card, leadingSuit: CardSuit) => {
     if (isTrumpCard(a) && !isTrumpCard(b)) {
-        return true;
+        return 1;
     } else if (!isTrumpCard(a) && isTrumpCard(b)) {
-        return false;
+        return -1;
     } else if (isTrumpCard(a) && isTrumpCard(b)) {
-        return getCardinalRank(a) - getCardinalRank(b) > 0;
+        return getCardinalRank(a) - getCardinalRank(b);
     } else if (a.suit === leadingSuit && b.suit !== leadingSuit) {
-        return true;
+        return 1;
     } else if (a.suit !== leadingSuit && b.suit === leadingSuit) {
-        return false;
+        return -1;
     } else {
-        return getCardinalRank(a) - getCardinalRank(b) > 0;
+        return getCardinalRank(a) - getCardinalRank(b);
     }
 }

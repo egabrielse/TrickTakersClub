@@ -7,7 +7,3 @@ import { Size } from "../types/size";
 export const scaleBySize = (size: Size, base: number) => {
   return base * SIZE_SCALE[size];
 };
-
-export const getAppNameFontSize = (size: Size) => {
-  return scaleBySize(size, 48);
-};
