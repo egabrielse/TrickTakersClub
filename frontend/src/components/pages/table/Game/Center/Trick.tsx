@@ -21,7 +21,7 @@ export default function Trick() {
             playedCard.style.zIndex = String(orderPlayed);
             playedCard.style.top = "45%";
             playedCard.style.left = "50%";
-            playedCard.style.transform = "translate(-50%, -10%)";
+            playedCard.style.transform = "translate(-50%, 10%)";
             playedCard.style.transformOrigin = "top left";
             switch (playerOrder.indexOf(playerId)) {
               case 0:
