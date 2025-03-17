@@ -53,13 +53,13 @@ export default function OverviewSection() {
         </li>
         <li>
           Trump cards are ranked as follows, from highest to lowest:
-          <ul style={{ fontSize: 20 }}>
+          <ul style={{ fontSize: 24, textShadow: "0px 0px 5px white" }}>
             <li>
-              <span className="black">Q♠ Q♣</span>
+              <span className="black">Q♣ Q♠</span>
               &nbsp;
               <span className="red">Q♥ Q♦</span>
               &nbsp;
-              <span className="black">J♠ J♣</span>
+              <span className="black">J♣ J♠</span>
               &nbsp;
               <span className="red">J♥ J♦</span>
               &nbsp;
