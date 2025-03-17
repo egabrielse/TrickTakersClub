@@ -1,19 +1,24 @@
-import RefreshIcon from "@mui/icons-material/Refresh";
 import { Button, Paper, Typography } from "@mui/material";
 import { AxiosError, HttpStatusCode, isAxiosError } from "axios";
 import { ReactNode } from "react";
 import { ErrorResponse, isRouteErrorResponse } from "react-router";
 import "./ErrorPage.scss";
 
-type ErrorPageProps = {
-  error: Error | ErrorResponse | AxiosError | unknown;
+type Action = {
+  icon?: ReactNode;
+  label: string;
+  onClick: () => void;
 };
 
-export default function ErrorPage({ error }: ErrorPageProps): ReactNode {
-  const refreshPage = () => {
-    window.location.reload();
-  };
+type ErrorPageProps = {
+  error: Error | ErrorResponse | AxiosError | unknown;
+  actions?: Action[];
+};
 
+export default function ErrorPage({
+  error,
+  actions = [],
+}: ErrorPageProps): ReactNode {
   const getErrorTitle = () => {
     if (isRouteErrorResponse(error) || isAxiosError(error)) {
       if (error.status === HttpStatusCode.NotFound) {
@@ -41,13 +46,15 @@ export default function ErrorPage({ error }: ErrorPageProps): ReactNode {
       <Paper>
         <Typography variant="h3">{getErrorTitle()}</Typography>
         <Typography variant="body1">{getErrorDetails()}</Typography>
-        <Button
-          onClick={refreshPage}
-          children="Refresh Page"
-          variant="outlined"
-          color="primary"
-          startIcon={<RefreshIcon />}
-        />
+        {actions.map((action) => (
+          <Button
+            onClick={action.onClick}
+            children={action.label}
+            variant="outlined"
+            color="primary"
+            startIcon={action.icon}
+          />
+        ))}
       </Paper>
     </div>
   );
