@@ -1,6 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
 import handSlice from "./slices/hand.slice";
-import { handContainsCard, isTrumpCard } from "../utils/card";
+import { countCardPoints, handContainsCard, isTrumpCard } from "../utils/card";
 import authSlice from "./slices/auth.slice";
 import gameSlice from "./slices/game.slice";
 import tableSlice from "./slices/table.slice";
@@ -151,15 +151,23 @@ const playerOrderStartingWithUser = createSelector(
     }
 );
 
-const tricksWon = createSelector(
-    [handSlice.selectors.tricks],
-    (tricks) => tricks.reduce((prev: Record<string, number>, curr) => {
-        const takerId = getTakerId(curr);
-        if (takerId) {
-            prev[takerId] = (prev[takerId] || 0) + 1;
-        }
-        return prev;
-    }, {})
+const tallyTricks = createSelector(
+    [gameSlice.selectors.playerOrder, handSlice.selectors.tricks],
+    (playerOrder, tricks) => {
+        const count: Record<string, [number, number]> = {};
+        playerOrder.forEach((playerId) => {
+            count[playerId] = [0, 0];
+        });
+        tricks.forEach((trick) => {
+            const takerId = getTakerId(trick);
+            const points = countCardPoints(Object.values(trick.cards));
+            if (takerId) {
+                count[takerId][0] += 1;
+                count[takerId][1] += points;
+            }
+        });
+        return count;
+    }
 )
 
 const selectors = {
@@ -172,7 +180,7 @@ const selectors = {
     playableCards,
     callableAces,
     playerOrderStartingWithUser,
-    tricksWon,
+    tallyTricks,
 };
 
 export default selectors;

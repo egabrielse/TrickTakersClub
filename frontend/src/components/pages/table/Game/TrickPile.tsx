@@ -1,4 +1,3 @@
-import { Typography } from "@mui/material";
 import { useEffect } from "react";
 import { useAppSelector } from "../../../../store/hooks";
 import selectors from "../../../../store/selectors";
@@ -8,8 +7,10 @@ import "./TrickPile.scss";
 
 export default function TrickPile() {
   const uid = useAppSelector(authSlice.selectors.uid);
-  const tricksWon = useAppSelector(selectors.tricksWon);
-  const countOfTricksWon = tricksWon[uid] || 0;
+  const talliedTricks = useAppSelector(selectors.tallyTricks);
+  console.log(talliedTricks);
+  const tricksWon = talliedTricks[uid]?.[0];
+  const pointsWon = talliedTricks[uid]?.[1];
 
   useEffect(() => {
     const trickPileCard = document.getElementById("trick-pile-card");
@@ -19,16 +20,18 @@ export default function TrickPile() {
       trickPileCard.style.right = "25%";
       trickPileCard.style.transform = `translate(50%, -4rem)`;
     }
-  }, [countOfTricksWon]);
+  }, [tricksWon]);
 
-  if (countOfTricksWon === 0) {
+  if (tricksWon === 0) {
     return null;
   }
   return (
     <>
-      <Typography className="TrickPileLabel" variant="body1" color="white">
-        {`${countOfTricksWon} TRICK${countOfTricksWon === 1 ? "" : "S"} TAKEN`}
-      </Typography>
+      <span className="TrickPileLabel">
+        {`${tricksWon} TRICK${tricksWon === 1 ? "" : "S"} TAKEN`}
+        <br />
+        {pointsWon > 0 ? `(${pointsWon}pts)` : ""}
+      </span>
       <PlayingCard id="trick-pile-card" card="back" disabled />
     </>
   );
