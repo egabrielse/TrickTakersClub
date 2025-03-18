@@ -71,8 +71,8 @@ func ScoreHand(
 		multipliers = append(multipliers, PayoutMultiplier.NoSchneider)
 	}
 
-	// Invert score multiplier if picking team lost
-	if pickingTeamPoints < PointsHalf {
+	// Invert score multiplier if picking team lost (60 or less)
+	if pickingTeamPoints <= PointsHalf {
 		payoutMultiplier = payoutMultiplier * -1
 		if doubleOnBump {
 			// Double on the bump doubles the loss for the picking team
