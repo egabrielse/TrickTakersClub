@@ -34,7 +34,8 @@ interface HandState {
     calledCard?: Card;
     pickerId?: string;
     partnerId?: string;
-    tricks: Trick[];
+    currentTrick: Trick | null;
+    completedTricks: Trick[];
     updates: UpdateMessages[];
     lastHand: Record<string, boolean>;
     noPickHand: boolean;
@@ -44,7 +45,8 @@ const initialState: HandState = {
     phase: HAND_PHASE.PICK,
     hand: [],
     bury: [],
-    tricks: [],
+    currentTrick: null,
+    completedTricks: [],
     updates: [],
     lastHand: {},
     noPickHand: false,
@@ -57,18 +59,32 @@ const handSlice = createSlice({
     reducers: {
         reset: () => initialState,
         initialize: (state, action: PayloadAction<MessageData<InitializeMessage>>) => {
-            state.dealerId = action.payload.dealerId;
-            state.upNextId = action.payload.upNextId;
-            state.phase = action.payload.phase || HAND_PHASE.PICK;
-            state.lastHand = action.payload.lastHand || {};
-            state.hand = [...(action.payload.hand || [])].sort(sortCards);
-            state.bury = action.payload.bury || [];
-            state.calledCard = action.payload.calledCard;
-            state.goneAlone = action.payload.phase === HAND_PHASE.PLAY && action.payload.calledCard === undefined;
-            state.pickerId = action.payload.pickerId;
-            state.partnerId = action.payload.partnerId;
-            state.tricks = action.payload.tricks || [];
-            state.noPickHand = action.payload.noPickHand || false;
+            const {
+                dealerId,
+                upNextId,
+                phase,
+                lastHand,
+                hand,
+                bury,
+                calledCard,
+                pickerId,
+                partnerId,
+                noPickHand,
+                tricks,
+            } = action.payload;
+            state.dealerId = dealerId;
+            state.upNextId = upNextId;
+            state.phase = phase || HAND_PHASE.PICK;
+            state.lastHand = lastHand || {};
+            state.hand = [...(hand || [])].sort(sortCards);
+            state.bury = bury || [];
+            state.calledCard = calledCard;
+            state.goneAlone = phase === HAND_PHASE.PLAY && calledCard === undefined;
+            state.pickerId = pickerId;
+            state.partnerId = partnerId;
+            state.currentTrick = tricks.length > 0 ? tricks[tricks.length - 1] : null;
+            state.completedTricks = tricks.length > 0 ? tricks.slice(0, -1) : [];
+            state.noPickHand = noPickHand || false;
             state.updates = [];
         },
         dealHand: (state, action: PayloadAction<MessageData<DealHandMessage>>) => {
@@ -81,18 +97,19 @@ const handSlice = createSlice({
             state.calledCard = undefined;
             state.goneAlone = false;
             state.bury = [];
-            state.tricks = [{
-                turnOrder: action.payload.pickOrder,
-                cards: {},
-            }];
+            state.currentTrick = null;
+            state.completedTricks = [];
             state.lastHand = {};
             state.noPickHand = false;
         },
         startNewTrick: (state, action: PayloadAction<MessageData<NewTrickMessage>>) => {
-            state.tricks.push({
+            if (state.currentTrick) {
+                state.completedTricks.push({ ...state.currentTrick });
+            }
+            state.currentTrick = {
                 turnOrder: action.payload.nextTrickOrder,
                 cards: {},
-            });
+            };
         },
         upNext: (state, action: PayloadAction<MessageData<UpNextMessage>>) => {
             state.upNextId = action.payload.playerId;
@@ -139,11 +156,12 @@ const handSlice = createSlice({
             action: PayloadAction<MessageData<CardPlayedMessage>>,
         ) => {
             const { playerId, card } = action.payload;
+            // Remove played card from player's hand
             state.hand = state.hand.filter(
                 (c) => !(c.rank === card.rank && c.suit === card.suit),
             );
-            if (state.tricks.length) {
-                state.tricks[state.tricks.length - 1].cards[playerId] = card;
+            if (state.currentTrick) {
+                state.currentTrick.cards[playerId] = card;
             }
         },
         partnerRevealed: (
@@ -178,19 +196,13 @@ const handSlice = createSlice({
         calledCard: (state: HandState) => state.calledCard,
         goneAlone: (state: HandState) => state.goneAlone,
         leadingCard: (state: HandState) => {
-            if (state.tricks.length) {
-                const currentTrick = state.tricks[state.tricks.length - 1]
-                return currentTrick && currentTrick.cards[currentTrick.turnOrder[0]];
+            if (state.currentTrick) {
+                return state.currentTrick.cards[state.currentTrick.turnOrder[0]];
             }
             return null;
         },
-        tricks: (state: HandState) => state.tricks,
-        currentTrick: (state: HandState) => {
-            if (state.tricks.length) {
-                return state.tricks[state.tricks.length - 1];
-            }
-            return null;
-        },
+        completedTricks: (state: HandState) => state.completedTricks,
+        currentTrick: (state: HandState) => state.currentTrick,
         updates: (state: HandState) => state.updates,
         lastHand: (state: HandState) => state.lastHand,
         isLastHand: (state: HandState) => Object.values(state.lastHand).some((v) => v),

@@ -95,7 +95,9 @@ function ConnectionApiProvider({
         break;
       }
       case BROADCAST_TYPES.NEW_TRICK:
-        dispatch(handSlice.actions.startNewTrick(msg.data));
+        setTimeout(() => {
+          dispatch(handSlice.actions.startNewTrick(msg.data));
+        }, 1000);
         break;
       case BROADCAST_TYPES.UP_NEXT:
         dispatch(handSlice.actions.upNext(msg.data));

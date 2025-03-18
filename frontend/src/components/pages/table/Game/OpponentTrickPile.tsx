@@ -12,7 +12,7 @@ export default function OpponentTrickPile({
   playerId,
   position,
 }: OpponentTrickPileProps) {
-  const talliedTricks = useAppSelector(selectors.tallyTricks);
+  const talliedTricks = useAppSelector(selectors.tallyCompletedTricks);
   const tricksWon = talliedTricks[playerId]?.[0];
 
   useEffect(() => {
