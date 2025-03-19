@@ -50,7 +50,6 @@ export default function TablePage() {
         <ExpandingButton
           id={"top-right"}
           title="Scoreboard"
-          notification={2}
           expandedIcon={<CloseIcon />}
           collapsedIcon={<FormatListNumberedIcon />}
         >
