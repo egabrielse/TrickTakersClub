@@ -127,13 +127,20 @@ function ConnectionApiProvider({
         break;
       case BROADCAST_TYPES.HAND_DONE: {
         const { scoreboard, summary } = msg.data;
-        dispatch(
-          dialogSlice.actions.openDialog({
-            type: DIALOG_TYPES.HAND_SUMMARY,
-            props: { scoreboard, summary },
-          }),
-        );
         dispatch(gameSlice.actions.handDone(msg.data));
+        // Delay opening summary, to allow players to see the last trick
+        // TODO: there's an opportunity to build a better delay system. Maybe
+        // a queue of delayed actions that can be executed. Delay length
+        // depends on the type of message /  the message's content.
+        setTimeout(() => {
+          dispatch(
+            dialogSlice.actions.openDialog({
+              type: DIALOG_TYPES.HAND_SUMMARY,
+              props: { scoreboard, summary },
+            }),
+          );
+        }, 1000);
+
         break;
       }
       case BROADCAST_TYPES.BLIND_PICKED:
