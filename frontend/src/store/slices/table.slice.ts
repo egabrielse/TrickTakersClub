@@ -62,6 +62,7 @@ const tableSlice = createSlice({
     },
     selectors: {
         chat: (state: TableState) => state.chat,
+        chatLength: (state: TableState) => state.chat.length,
         hostId: (state: TableState) => state.hostId,
         tableId: (state: TableState) => state.tableId,
         refreshed: (state: TableState) => state.refreshed,
