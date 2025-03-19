@@ -2,7 +2,9 @@ import { useEffect } from "react";
 import { useAppSelector } from "../../../../../store/hooks";
 import { selectPlayerOrderStartingWithUser } from "../../../../../store/selectors";
 import handSlice from "../../../../../store/slices/hand.slice";
+import { countCardPoints } from "../../../../../utils/card";
 import PlayingCard from "../../../../common/PlayingCard";
+import TrickPointCounter from "./TrickPointCounter";
 
 export default function Trick() {
   const playerOrder = useAppSelector(selectPlayerOrderStartingWithUser);
@@ -45,13 +47,22 @@ export default function Trick() {
     }
   }, [currentTrick, playerOrder]);
 
-  return currentTrick
-    ? Object.values(currentTrick.cards).map((card) => (
-        <PlayingCard
-          id={`card-${card.suit}-${card.rank}`}
-          key={`card-${card.suit}-${card.rank}`}
-          card={card}
-        />
-      ))
-    : null;
+  return (
+    <>
+      <TrickPointCounter
+        points={
+          currentTrick ? countCardPoints(Object.values(currentTrick.cards)) : 0
+        }
+      />
+      {currentTrick
+        ? Object.values(currentTrick.cards).map((card) => (
+            <PlayingCard
+              id={`card-${card.suit}-${card.rank}`}
+              key={`card-${card.suit}-${card.rank}`}
+              card={card}
+            />
+          ))
+        : null}
+    </>
+  );
 }

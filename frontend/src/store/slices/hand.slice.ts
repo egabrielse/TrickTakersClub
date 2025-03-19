@@ -95,6 +95,7 @@ const handSlice = createSlice({
             state.completedTricks = [];
             state.lastHand = {};
             state.noPickHand = false;
+            state.phase = HAND_PHASE.PICK;
         },
         startNewTrick: (state, action: PayloadAction<MessageData<NewTrickMessage>>) => {
             if (state.currentTrick) {
