@@ -4,71 +4,79 @@ import { countCardPoints, handContainsCard, isTrumpCard } from "../utils/card";
 import authSlice from "./slices/auth.slice";
 import gameSlice from "./slices/game.slice";
 import tableSlice from "./slices/table.slice";
-import { getTakerId } from "../utils/game";
+import { getTakerId, isTrickDone } from "../utils/game";
 import { CARD_RANK, CARD_SUIT } from "../constants/card";
-import { FailSuit } from "../types/card";
+import { Card, FailSuit } from "../types/card";
 import { HAND_PHASE, HAND_SIZE } from "../constants/game";
-
-/**
- * True if the user is the dealer, false otherwise.
- */
-const isDealer = createSelector([
-    authSlice.selectors.uid,
-    handSlice.selectors.dealerId,
-], (uid, dealerId) => dealerId === uid);
+import { Trick } from "../types/game";
 
 /**
  * True if the user is the picker, false otherwise.
  */
-const isPicker = createSelector([
+export const isPicker = (uid: string, pickerId: string) => pickerId === uid;
+
+// Selector for isPicker
+export const selectIsPicker = createSelector([
     authSlice.selectors.uid,
     handSlice.selectors.pickerId,
-], (uid, pickerId) => pickerId === uid);
+], isPicker);
 
 /**
  * True if the user is the partner, false otherwise.
  */
-const isPartner = createSelector([
+export const isPartner = (uid: string, partnerId: string, calledCard: Card | null, hand: Card[]) => {
+    return partnerId === uid || Boolean(calledCard && handContainsCard(hand, calledCard));
+};
+
+// Selector for isPartner
+export const selectIsPartner = createSelector([
     authSlice.selectors.uid,
     handSlice.selectors.partnerId,
     handSlice.selectors.calledCard,
     handSlice.selectors.hand,
-], (uid, partnerId, calledCard, hand) => {
-    return partnerId === uid || Boolean(calledCard && handContainsCard(hand, calledCard));
-});
+], isPartner);
 
 /**
  * True if the user is up next, false otherwise.
  */
-const isUpNext = createSelector([
+export const isUpNext = (uid: string, upNextId: string) => upNextId === uid;
+
+// Selector for isUpNext
+export const selectIsUpNext = createSelector([
     authSlice.selectors.uid,
     handSlice.selectors.upNextId,
-], (uid, upNextId) => upNextId === uid);
+], isUpNext);
 
 /**
  * True if the user is the host, false otherwise.
  */
-const isHost = createSelector([
+export const isHost = (uid: string, hostId: string) => hostId === uid;
+
+// Selector for isHost
+export const selectIsHost = createSelector([
     authSlice.selectors.uid,
     tableSlice.selectors.hostId,
-], (uid, hostId) => hostId === uid);
-
+], isHost);
 
 /**
  * True if the user is seated at the table, false otherwise.
  */
-const isSeated = createSelector([
+export const isSeated = (seating: string[], uid: string) => seating.includes(uid);
+
+// Selector for isSeated
+export const selectIsSeated = createSelector([
     tableSlice.selectors.seating,
     authSlice.selectors.uid,
-], (seating, uid) => seating.includes(uid));
+], isSeated);
 
 /**
  * Returns a list of playable cards for the user.
+ * TODO: Need to have a better logic for this function. Seems to have many bugs...
  */
-const playableCards = createSelector([
-    isUpNext,
-    isPicker,
-    isPartner,
+export const selectPlayableCards = createSelector([
+    selectIsUpNext,
+    selectIsPicker,
+    selectIsPartner,
     handSlice.selectors.hand,
     handSlice.selectors.calledCard,
     handSlice.selectors.leadingCard,
@@ -118,10 +126,7 @@ const playableCards = createSelector([
 /**
  * Returns a list of callable aces for the user.
  */
-const callableAces = createSelector([
-    handSlice.selectors.hand,
-    handSlice.selectors.bury,
-], (hand, bury): Record<FailSuit, boolean> => {
+export const callableAces = (hand: Card[], bury: Card[]): Record<FailSuit, boolean> => {
     const cards = [...hand, ...bury];
     const aces: Record<FailSuit, boolean> = {
         [CARD_SUIT.CLUB]: false,
@@ -136,82 +141,91 @@ const callableAces = createSelector([
         }
     }
     return aces;
-});
+}
+
+// Selector for callableAces
+export const selectCallableAces = createSelector([
+    handSlice.selectors.hand,
+    handSlice.selectors.bury,
+], callableAces);
+
 
 /**
  * Returns the player order starting with the user.
  */
-const playerOrderStartingWithUser = createSelector(
-    [gameSlice.selectors.playerOrder, authSlice.selectors.uid],
-    (playerOrder, uid) => {
-        const index = playerOrder.indexOf(uid);
-        if (index === -1) {
-            return playerOrder
+export const playerOrderStartingWithUser = (playerOrder: string[], uid: string) => {
+    const index = playerOrder.indexOf(uid);
+    if (index === -1) {
+        return playerOrder
+    }
+    return [...playerOrder.slice(index), ...playerOrder.slice(0, index)];
+}
+
+// Selector for playerOrderStartingWithUser
+export const selectPlayerOrderStartingWithUser = createSelector([
+    gameSlice.selectors.playerOrder,
+    authSlice.selectors.uid,
+], playerOrderStartingWithUser);
+
+
+/**
+ * Sums the number of tricks and points won by each player.
+ * @param playerOrder list of player IDs
+ * @param completedTricks list of completed tricks to tally
+ * @return Map of player IDs to [number of tricks won, total points won]
+ */
+export const tallyCompletedTricks = (playerOrder: string[], completedTricks: Trick[]) => {
+    const count: Record<string, [number, number]> = {};
+    playerOrder.forEach((playerId) => {
+        count[playerId] = [0, 0];
+    });
+    completedTricks.filter((trick) => isTrickDone(trick)).forEach((trick) => {
+        const takerId = getTakerId(trick);
+        const points = countCardPoints(Object.values(trick.cards));
+        if (takerId) {
+            count[takerId][0] += 1;
+            count[takerId][1] += points;
         }
-        return [...playerOrder.slice(index), ...playerOrder.slice(0, index)];
-    }
-);
+    });
+    return count;
+}
 
-const tallyCompletedTricks = createSelector(
-    [gameSlice.selectors.playerOrder, handSlice.selectors.completedTricks],
-    (playerOrder, completedTricks) => {
-        const count: Record<string, [number, number]> = {};
-        playerOrder.forEach((playerId) => {
-            count[playerId] = [0, 0];
-        });
-        completedTricks.forEach((trick) => {
-            const takerId = getTakerId(trick);
-            const points = countCardPoints(Object.values(trick.cards));
-            if (takerId) {
-                count[takerId][0] += 1;
-                count[takerId][1] += points;
-            }
-        });
-        return count;
-    }
-)
+// Selector for tallyCompletedTricks
+export const selectTallyCompletedTricks = createSelector([
+    gameSlice.selectors.playerOrder,
+    handSlice.selectors.completedTricks,
+], tallyCompletedTricks);
 
-const cardsInHandCounts = createSelector(
-    [
-        gameSlice.selectors.playerOrder,
-        handSlice.selectors.completedTricks,
-        handSlice.selectors.currentTrick,
-        handSlice.selectors.phase,
-        handSlice.selectors.pickerId,
-    ],
-    (playerOrder, completedTricks, currentTrick, phase, pickerId) => {
-        // Calculate how many cards each player has left in their hand
-        const handCounts: Record<string, number> = {};
-        playerOrder.forEach((playerId) => {
-            // Each player starts with 6 cards
-            handCounts[playerId] = HAND_SIZE;
-            // Subtract cards played in completed tricks
-            handCounts[playerId] -= completedTricks.length;
-            // Add 2 cards for the picker during the bury phase
-            if (playerId === pickerId && phase === HAND_PHASE.BURY) {
-                handCounts[playerId] += 2;
-            }
-            if (currentTrick && currentTrick.cards[playerId]) {
-                // Remove card played in this trick
-                handCounts[playerId] -= 1;
-            }
-        });
-        return handCounts;
-    }
-)
 
-const selectors = {
-    isDealer,
-    isPicker,
-    isPartner,
-    isUpNext,
-    isHost,
-    isSeated,
-    playableCards,
-    callableAces,
-    playerOrderStartingWithUser,
-    tallyCompletedTricks,
-    cardsInHandCounts,
-};
+/**
+ * Calculates the number of cards left in each player's hand.
+ * @returns Map of player IDs to the number of cards left in their hand
+ */
+export const cardsInHandCounts = (playerOrder: string[], completedTricks: number, currentTrick: Trick | null, phase: string, pickerId: string | undefined) => {
+    // Calculate how many cards each player has left in their hand
+    const handCounts: Record<string, number> = {};
+    playerOrder.forEach((playerId) => {
+        // Each player starts with 6 cards
+        handCounts[playerId] = HAND_SIZE;
+        // Subtract cards played in completed tricks
+        handCounts[playerId] -= completedTricks;
+        // Add 2 cards for the picker during the bury phase
+        if (playerId === pickerId && phase === HAND_PHASE.BURY) {
+            handCounts[playerId] += 2;
+        }
+        if (currentTrick && currentTrick.cards[playerId]) {
+            // Remove card played in this trick
+            handCounts[playerId] -= 1;
+        }
+    });
+    return handCounts;
+}
 
-export default selectors;
+// Selector for cardsInHandCounts
+export const selectCardsInHandCounts = createSelector([
+    gameSlice.selectors.playerOrder,
+    handSlice.selectors.countOfCompletedTricks,
+    handSlice.selectors.currentTrick,
+    handSlice.selectors.phase,
+    handSlice.selectors.pickerId,
+], cardsInHandCounts);

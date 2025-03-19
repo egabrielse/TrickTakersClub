@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { useAppSelector } from "../../../../../store/hooks";
-import selectors from "../../../../../store/selectors";
+import { selectPlayerOrderStartingWithUser } from "../../../../../store/selectors";
 import handSlice from "../../../../../store/slices/hand.slice";
 import PlayingCard from "../../../../common/PlayingCard";
 
 export default function Trick() {
-  const playerOrder = useAppSelector(selectors.playerOrderStartingWithUser);
+  const playerOrder = useAppSelector(selectPlayerOrderStartingWithUser);
   const currentTrick = useAppSelector(handSlice.selectors.currentTrick);
 
   useEffect(() => {

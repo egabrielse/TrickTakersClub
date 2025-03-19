@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAppSelector } from "../../../../store/hooks";
-import selectors from "../../../../store/selectors";
+import { selectCardsInHandCounts } from "../../../../store/selectors";
 import handSlice from "../../../../store/slices/hand.slice";
 import PlayingCard from "../../../common/PlayingCard";
 import PlayingCardFan from "../../../common/PlayingCardFan";
@@ -15,7 +15,7 @@ export default function OpponentHand({
   position,
 }: OpponentHandProps) {
   const upNextId = useAppSelector(handSlice.selectors.upNextId);
-  const cardsInHand = useAppSelector(selectors.cardsInHandCounts);
+  const cardsInHand = useAppSelector(selectCardsInHandCounts);
 
   useEffect(() => {
     const element = document.getElementById(`opponent-hand-${playerId}`);

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAppSelector } from "../../../../store/hooks";
-import selectors from "../../../../store/selectors";
+import { selectTallyCompletedTricks } from "../../../../store/selectors";
 import PlayingCard from "../../../common/PlayingCard";
 
 type OpponentTrickPileProps = {
@@ -12,7 +12,7 @@ export default function OpponentTrickPile({
   playerId,
   position,
 }: OpponentTrickPileProps) {
-  const talliedTricks = useAppSelector(selectors.tallyCompletedTricks);
+  const talliedTricks = useAppSelector(selectTallyCompletedTricks);
   const tricksWon = talliedTricks[playerId]?.[0];
 
   useEffect(() => {

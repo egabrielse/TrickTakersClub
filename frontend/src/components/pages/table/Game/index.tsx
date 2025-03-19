@@ -2,7 +2,10 @@ import { Paper } from "@mui/material";
 import { useEffect } from "react";
 import { HAND_PHASE } from "../../../../constants/game";
 import { useAppSelector } from "../../../../store/hooks";
-import selectors from "../../../../store/selectors";
+import {
+  selectIsUpNext,
+  selectPlayerOrderStartingWithUser,
+} from "../../../../store/selectors";
 import handSlice from "../../../../store/slices/hand.slice";
 import NameTag from "../OverlayComponents/NameTag";
 import NoPickHandDisplay from "../OverlayComponents/NoPickHandDisplay";
@@ -18,9 +21,9 @@ import PlayerHand from "./PlayerHand";
 import TrickPile from "./TrickPile";
 
 export default function Game() {
-  const isUpNext = useAppSelector(selectors.isUpNext);
+  const isUpNext = useAppSelector(selectIsUpNext);
   const phase = useAppSelector(handSlice.selectors.phase);
-  const playerOrder = useAppSelector(selectors.playerOrderStartingWithUser);
+  const playerOrder = useAppSelector(selectPlayerOrderStartingWithUser);
   const noPickHand = useAppSelector(handSlice.selectors.noPickHand);
 
   useEffect(() => {

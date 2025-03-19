@@ -2,7 +2,10 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { BLIND_SIZE, HAND_PHASE } from "../../../../constants/game";
 import { COMMAND_TYPES } from "../../../../constants/message";
 import { useAppSelector } from "../../../../store/hooks";
-import selectors from "../../../../store/selectors";
+import {
+  selectIsUpNext,
+  selectPlayableCards,
+} from "../../../../store/selectors";
 import handSlice from "../../../../store/slices/hand.slice";
 import { Card } from "../../../../types/card";
 import {
@@ -16,9 +19,9 @@ import ConnectionContext from "../ConnectionContext";
 
 export default function PlayerHand() {
   const { sendCommand } = useContext(ConnectionContext);
-  const isUpNext = useAppSelector(selectors.isUpNext);
+  const isUpNext = useAppSelector(selectIsUpNext);
   const phase = useAppSelector(handSlice.selectors.phase);
-  const playableCards = useAppSelector(selectors.playableCards);
+  const playableCards = useAppSelector(selectPlayableCards);
   const hand = useAppSelector(handSlice.selectors.hand);
   const [selected, setSelected] = useState<Card[]>([]);
   const [pending, setPending] = useState(false);

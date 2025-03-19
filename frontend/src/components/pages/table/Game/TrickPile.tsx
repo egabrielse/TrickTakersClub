@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { useAppSelector } from "../../../../store/hooks";
-import selectors from "../../../../store/selectors";
+import { selectTallyCompletedTricks } from "../../../../store/selectors";
 import authSlice from "../../../../store/slices/auth.slice";
 import PlayingCard from "../../../common/PlayingCard";
 import "./TrickPile.scss";
 
 export default function TrickPile() {
   const uid = useAppSelector(authSlice.selectors.uid);
-  const talliedTricks = useAppSelector(selectors.tallyCompletedTricks);
+  const talliedTricks = useAppSelector(selectTallyCompletedTricks);
   const tricksWon = talliedTricks[uid]?.[0];
   const pointsWon = talliedTricks[uid]?.[1];
 

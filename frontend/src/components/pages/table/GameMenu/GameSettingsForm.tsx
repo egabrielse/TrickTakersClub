@@ -14,13 +14,13 @@ import {
 } from "../../../../constants/game";
 import { COMMAND_TYPES } from "../../../../constants/message";
 import { useAppSelector } from "../../../../store/hooks";
-import selectors from "../../../../store/selectors";
+import { selectIsHost } from "../../../../store/selectors";
 import tableSlice from "../../../../store/slices/table.slice";
 import ConnectionContext from "../ConnectionContext";
 import "./GameSettingsForm.scss";
 
 export default function GameSettingsForm() {
-  const isHost = useAppSelector(selectors.isHost);
+  const isHost = useAppSelector(selectIsHost);
   const { sendCommand } = useContext(ConnectionContext);
   const settings = useAppSelector(tableSlice.selectors.settings);
   const [pending, setPending] = useState(false);
