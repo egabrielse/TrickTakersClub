@@ -50,7 +50,7 @@ export default function PlayerHand() {
    */
   const canClickCard = useCallback(
     (card: Card) => {
-      if (!isUpNext || pending) {
+      if (!isUpNext || pending || hand.length === 1) {
         return false;
       } else if (phase === HAND_PHASE.BURY) {
         return selected.includes(card) || selected.length < BLIND_SIZE;
@@ -62,7 +62,7 @@ export default function PlayerHand() {
       }
       return false;
     },
-    [isUpNext, pending, phase, selected, playableCards],
+    [isUpNext, pending, hand.length, phase, selected, playableCards],
   );
 
   const submitCommand = useCallback(
@@ -76,12 +76,20 @@ export default function PlayerHand() {
 
   useEffect(() => {
     if (isUpNext) {
-      if (phase === HAND_PHASE.PLAY && selected.length === 1) {
+      if (hand.length === 1) {
+        // Automatically submit the last card if it's the only one left
+        const lastCard = hand[0];
+        setTimeout(() => {
+          submitCommand({
+            name: COMMAND_TYPES.PLAY_CARD,
+            data: { card: lastCard },
+          });
+        }, 500);
+      } else if (phase === HAND_PHASE.PLAY && selected.length === 1) {
         submitCommand({
           name: COMMAND_TYPES.PLAY_CARD,
           data: { card: selected[0] },
         });
-        setTimeout(() => setPending(false), 1500);
       } else if (phase === HAND_PHASE.BURY && selected.length === BLIND_SIZE) {
         submitCommand({
           name: COMMAND_TYPES.BURY,
@@ -89,7 +97,7 @@ export default function PlayerHand() {
         });
       }
     }
-  }, [isUpNext, phase, selected, sendCommand, submitCommand]);
+  }, [hand, isUpNext, phase, selected, sendCommand, submitCommand]);
 
   if (hand.length === 0) {
     return null;
