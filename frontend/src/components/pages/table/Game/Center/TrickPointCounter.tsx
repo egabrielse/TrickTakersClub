@@ -24,17 +24,17 @@ export default function TrickPointCounter({ points }: TrickPointCounterProps) {
           r="49"
           fill="#91c37a"
           stroke="white"
-          stroke-width="2"
+          strokeWidth="2"
         />
 
         {/* Top Text */}
         <text
-          font-size="18"
-          text-anchor="middle"
+          fontSize="18"
+          textAnchor="middle"
           fill="white"
           dy="15"
           textLength="90"
-          font-family="Courier, monospace"
+          fontFamily="Courier, monospace"
         >
           <textPath href="#circlePath" startOffset="25%">
             T R I C K
@@ -45,20 +45,20 @@ export default function TrickPointCounter({ points }: TrickPointCounterProps) {
         <text
           x="100"
           y="110"
-          font-size="36"
-          text-anchor="middle"
+          fontSize="36"
+          textAnchor="middle"
           fill="white"
-          font-family="Courier, monospace"
+          fontFamily="Courier, monospace"
         >
           {points}
         </text>
 
         {/* Bottom Text */}
         <text
-          font-size="18"
-          text-anchor="middle"
+          fontSize="18"
+          textAnchor="middle"
           fill="white"
-          font-family="Courier, monospace"
+          fontFamily="Courier, monospace"
           dy="-5"
         >
           <textPath href="#bottomPath" startOffset="50%">
