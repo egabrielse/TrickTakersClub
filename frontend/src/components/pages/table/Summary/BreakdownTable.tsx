@@ -22,8 +22,8 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
           <tr>
             <th>Trick</th>
             <th>Taker</th>
-            <th>Cards</th>
             <th>Points</th>
+            <th>Cards</th>
           </tr>
         </thead>
         <tbody>
@@ -41,6 +41,11 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
                 </Box>
               </td>
               <td>
+                <Typography variant="h6">
+                  {countCardPoints(Object.values(bury))}
+                </Typography>
+              </td>
+              <td>
                 {bury.map((card, index) => (
                   <>
                     <PrintedCard
@@ -51,11 +56,6 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
                     {index < Object.values(bury).length - 1 && " "}
                   </>
                 ))}
-              </td>
-              <td>
-                <Typography variant="h6">
-                  {countCardPoints(Object.values(bury))}
-                </Typography>
               </td>
             </tr>
           )}
@@ -72,21 +72,34 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
                 </Box>
               </td>
               <td>
-                {trick.turnOrder.map((playerId) => {
-                  const card = trick.cards[playerId];
-                  return (
-                    <PrintedCard
-                      key={`summary-${card.rank}-${card.suit}`}
-                      rank={card.rank}
-                      suit={card.suit}
-                    />
-                  );
-                })}
-              </td>
-              <td>
                 <Typography variant="h6">
                   {countCardPoints(Object.values(trick.cards))}
                 </Typography>
+              </td>
+              <td>
+                <Box
+                  display="flex"
+                  gap={1}
+                  width="100%"
+                  alignContent={"space-around"}
+                  justifyContent="space-evenly"
+                >
+                  {trick.turnOrder.map((playerId) => {
+                    const card = trick.cards[playerId];
+                    return (
+                      <Box
+                        display="flex"
+                        flexDirection="row"
+                        key={`summary-${card.rank}-${card.suit}`}
+                      >
+                        <ProfileProvider uid={playerId}>
+                          <ProfilePic size="small" />
+                        </ProfileProvider>
+                        <PrintedCard rank={card.rank} suit={card.suit} />
+                      </Box>
+                    );
+                  })}
+                </Box>
               </td>
             </tr>
           ))}
