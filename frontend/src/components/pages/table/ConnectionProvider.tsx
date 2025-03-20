@@ -92,7 +92,7 @@ function ConnectionApiProvider({
       }
       case BROADCAST_TYPES.LAST_HAND: {
         dispatch(handSlice.actions.lastHand());
-        dispatch(handSlice.actions.displayMessage({ ...msg })); // TODO:
+        dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       }
       case BROADCAST_TYPES.NEW_TRICK:
