@@ -1,6 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
 import handSlice from "./slices/hand.slice";
-import { countCardPoints, handContainsCard, isTrumpCard } from "../utils/card";
+import { countCardPoints, hasCard, isTrumpCard } from "../utils/card";
 import authSlice from "./slices/auth.slice";
 import gameSlice from "./slices/game.slice";
 import tableSlice from "./slices/table.slice";
@@ -25,7 +25,7 @@ export const selectIsPicker = createSelector([
  * True if the user is the partner, false otherwise.
  */
 export const isPartner = (uid: string, partnerId: string, calledCard: Card | null, hand: Card[]) => {
-    return partnerId === uid || Boolean(calledCard && handContainsCard(hand, calledCard));
+    return partnerId === uid || Boolean(calledCard && hasCard(hand, calledCard));
 };
 
 // Selector for isPartner

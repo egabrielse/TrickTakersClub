@@ -230,11 +230,10 @@ function ConnectionApiProvider({
   };
 
   /**
-   * Send a command to the table
+   * Send a command to the server worker
    * @param command
    */
   const sendCommand = (command: CommandMessage) => {
-    // Then send the command to the server
     direct?.publish(command.name, command.data);
   };
 
