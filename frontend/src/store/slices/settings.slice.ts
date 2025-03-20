@@ -1,35 +1,36 @@
 import { createAsyncThunk, createSlice, SerializedError } from "@reduxjs/toolkit";
-import { UserSettingsEntity } from "../../types/user";
+import { SettingsEntity } from "../../types/settings";
 import { ASYNC_STATUS, } from "../../constants/api";
-import { fetchUserSettings, saveUserSettings } from "../../api/userSettings.api";
+import { fetchSettings, saveSettings } from "../../api/settings.api";
 import { AsyncStatus } from "../../types/api";
 
 
 const initialState: {
-    settings: UserSettingsEntity,
+    settings: SettingsEntity,
     status: AsyncStatus,
     error: SerializedError | null,
 } = {
     settings: {
         soundOn: true,
+        chatOpen: true,
     },
     status: ASYNC_STATUS.IDLE,
     error: null,
 }
 
-const asyncFetchUserSettings = createAsyncThunk(
+const asyncFetchSettings = createAsyncThunk(
     'user/fetchSettings',
-    async (): Promise<UserSettingsEntity> => {
-        const response = await fetchUserSettings();
+    async (): Promise<SettingsEntity> => {
+        const response = await fetchSettings();
         return response;
     }
 )
 
-const asyncSaveUserSettings = createAsyncThunk(
+const asyncUpdateSettings = createAsyncThunk(
     'user/saveSettings',
-    async (settings: UserSettingsEntity): Promise<UserSettingsEntity> => {
-        await saveUserSettings(settings);
-        return settings;
+    async (settings: SettingsEntity): Promise<SettingsEntity> => {
+        const res = await saveSettings(settings);
+        return res;
     }
 )
 
@@ -41,28 +42,30 @@ const settingsSlice = createSlice({
     },
     extraReducers: (builder) => {
         // Fetch Settings
-        builder.addCase(asyncFetchUserSettings.pending, (state) => {
+        builder.addCase(asyncFetchSettings.pending, (state) => {
             state.status = ASYNC_STATUS.PENDING;
             state.error = null;
         });
-        builder.addCase(asyncFetchUserSettings.fulfilled, (state, action) => {
+        builder.addCase(asyncFetchSettings.fulfilled, (state, action) => {
             state.status = ASYNC_STATUS.FULFILLED;
             state.settings = action.payload;
         });
-        builder.addCase(asyncFetchUserSettings.rejected, (state, action) => {
+        builder.addCase(asyncFetchSettings.rejected, (state, action) => {
             state.status = ASYNC_STATUS.REJECTED;
             state.error = action.error;
         });
-        // Save Settings
-        builder.addCase(asyncSaveUserSettings.pending, (state) => {
+        // Update Settings
+        builder.addCase(asyncUpdateSettings.pending, (state, action) => {
             state.status = ASYNC_STATUS.PENDING;
             state.error = null;
+            // Update settings optimistically (if fails, will revert back on page refresh)
+            state.settings = action.meta.arg;
         });
-        builder.addCase(asyncSaveUserSettings.fulfilled, (state, action) => {
+        builder.addCase(asyncUpdateSettings.fulfilled, (state, action) => {
             state.status = ASYNC_STATUS.FULFILLED;
             state.settings = action.payload;
         });
-        builder.addCase(asyncSaveUserSettings.rejected, (state, action) => {
+        builder.addCase(asyncUpdateSettings.rejected, (state, action) => {
             state.status = ASYNC_STATUS.REJECTED;
             state.error = action.error;
         });
@@ -71,6 +74,7 @@ const settingsSlice = createSlice({
         settings: (state) => state.settings,
         error: (state) => state.error,
         soundOn: (state) => state.settings.soundOn,
+        chatOpen: (state) => state.settings.chatOpen,
     }
 });
 
@@ -78,7 +82,7 @@ export default {
     ...settingsSlice,
     actions: {
         ...settingsSlice.actions,
-        asyncFetchUserSettings,
-        asyncSaveUserSettings,
+        asyncFetchSettings,
+        asyncUpdateSettings,
     }
 };

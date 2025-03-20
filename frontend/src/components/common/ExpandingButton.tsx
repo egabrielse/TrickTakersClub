@@ -9,7 +9,7 @@ type ExpandingButtonProps = {
   expandedIcon?: React.ReactNode;
   collapsedIcon?: React.ReactNode;
   defaultExpanded?: boolean;
-  title: string;
+  title?: string;
   notification?: boolean | number;
   onToggleExpanded?: (expanded: boolean) => void;
 };
@@ -41,8 +41,8 @@ export default function ExpandingButton({
 
   const badgeContent = useMemo(() => {
     if (typeof notification === "number") {
-      if (notification > 9) {
-        return "9+";
+      if (notification > 99) {
+        return "99+";
       } else if (notification > 0) {
         return String(notification);
       } else {

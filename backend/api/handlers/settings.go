@@ -11,7 +11,7 @@ import (
 )
 
 type CreateSettingsResponseBody struct {
-	Settings entity.Settings `json:"user_settings"`
+	Settings entity.Settings `json:"settings"`
 }
 
 func SaveSettings(r *http.Request, p httprouter.Params) (code int, body any) {
