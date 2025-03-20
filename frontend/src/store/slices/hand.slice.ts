@@ -10,7 +10,6 @@ import {
     BlindPickedMessage,
     CalledCardMessage,
     CardPlayedMessage,
-    LastHandStatusMessage,
     NewTrickMessage,
     PartnerRevealedMessage,
     UpNextMessage,
@@ -37,7 +36,7 @@ interface HandState {
     currentTrick: Trick | null;
     completedTricks: Trick[];
     updates: UpdateMessages[];
-    lastHand: Record<string, boolean>;
+    isLastHand: boolean;
     noPickHand: boolean;
 }
 
@@ -53,7 +52,7 @@ const initialState: HandState = {
     currentTrick: null,
     completedTricks: [],
     updates: [],
-    lastHand: {},
+    isLastHand: false,
     noPickHand: false,
     goneAlone: false,
 };
@@ -64,7 +63,7 @@ const handSlice = createSlice({
     reducers: {
         reset: () => initialState,
         initialize: (state, action: PayloadAction<MessageData<InitializeMessage>>) => {
-            const { phase, lastHand, hand, bury, calledCard, tricks } = action.payload;
+            const { phase, isLastHand, hand, bury, calledCard, tricks } = action.payload;
             state.dealerId = action.payload.dealerId || "";
             state.upNextId = action.payload.upNextId || "";
             state.pickerId = action.payload.pickerId || "";
@@ -72,7 +71,7 @@ const handSlice = createSlice({
             state.noPickHand = action.payload.noPickHand || false;
             state.calledCard = action.payload.calledCard || null;
             state.phase = phase || HAND_PHASE.PICK;
-            state.lastHand = lastHand || {};
+            state.isLastHand = isLastHand;
             state.hand = [...(hand || [])].sort(sortCards);
             state.bury = bury || [];
             state.goneAlone = phase === HAND_PHASE.PLAY && Boolean(!calledCard);
@@ -93,7 +92,7 @@ const handSlice = createSlice({
             state.bury = [];
             state.currentTrick = null;
             state.completedTricks = [];
-            state.lastHand = {};
+            state.isLastHand = false;
             state.noPickHand = false;
             state.phase = HAND_PHASE.PICK;
         },
@@ -174,9 +173,8 @@ const handSlice = createSlice({
         clearUpdates: (state) => {
             state.updates = [];
         },
-        updateLastHandStatus: (state, action: PayloadAction<MessageData<LastHandStatusMessage>>) => {
-            const { playerId, lastHand } = action.payload;
-            state.lastHand[playerId] = lastHand;
+        lastHand: (state) => {
+            state.isLastHand = true;
         },
     },
     selectors: {
@@ -200,8 +198,7 @@ const handSlice = createSlice({
         countOfCompletedTricks: (state: HandState) => state.completedTricks.length,
         currentTrick: (state: HandState) => state.currentTrick,
         updates: (state: HandState) => state.updates,
-        lastHand: (state: HandState) => state.lastHand,
-        isLastHand: (state: HandState) => Object.values(state.lastHand).some((v) => v),
+        isLastHand: (state: HandState) => state.isLastHand,
         noPickHand: (state: HandState) => state.noPickHand,
     },
 });

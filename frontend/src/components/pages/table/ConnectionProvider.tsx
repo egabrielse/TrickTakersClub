@@ -90,8 +90,9 @@ function ConnectionApiProvider({
         dispatch(gameSlice.actions.gameStarted(msg.data));
         break;
       }
-      case BROADCAST_TYPES.LAST_HAND_STATUS: {
-        dispatch(handSlice.actions.updateLastHandStatus(msg.data));
+      case BROADCAST_TYPES.LAST_HAND: {
+        dispatch(handSlice.actions.lastHand());
+        dispatch(handSlice.actions.displayMessage({ ...msg })); // TODO:
         break;
       }
       case BROADCAST_TYPES.NEW_TRICK:

@@ -84,6 +84,15 @@ const renderUpdateMessage = (update: UpdateMessages) => {
       );
     case BROADCAST_TYPES.NO_PICK_HAND:
       return "Everyone passed on the blind!";
+    case BROADCAST_TYPES.LAST_HAND:
+      return (
+        <>
+          <ProfileProvider uid={update.data.playerId}>
+            <ProfilePic size="small" />
+          </ProfileProvider>
+          &nbsp;called last hand!
+        </>
+      );
     default:
       return null;
   }

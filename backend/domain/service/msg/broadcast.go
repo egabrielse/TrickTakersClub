@@ -15,8 +15,8 @@ var BroadcastType = struct {
 	CardPlayed string
 	// Text messages between users
 	Chat string
-	// Update to the last hand status of a player
-	LastHandStatus string
+	// Last hand of the game was called
+	LastHand string
 	// Picker chose to go it alone
 	GoneAlone string
 	// Partner has been revealed
@@ -48,7 +48,7 @@ var BroadcastType = struct {
 	CalledCard:      "called-card",
 	CardPlayed:      "card-played",
 	Chat:            "chat",
-	LastHandStatus:  "last-hand-status",
+	LastHand:        "last-hand",
 	GoneAlone:       "gone-alone",
 	PartnerRevealed: "partner-revealed",
 	SettingsUpdated: "settings-updated",
@@ -100,11 +100,10 @@ func ChatMessage(message string) (name string, data *ChatData) {
 
 type LastHandStatusData struct {
 	PlayerID string `json:"playerId"`
-	LastHand bool   `json:"lastHand"`
 }
 
-func LastHandStatusMessage(playerID string, lastHand bool) (name string, data *LastHandStatusData) {
-	return BroadcastType.LastHandStatus, &LastHandStatusData{PlayerID: playerID, LastHand: lastHand}
+func LastHandMessage(playerID string) (name string, data *LastHandStatusData) {
+	return BroadcastType.LastHand, &LastHandStatusData{PlayerID: playerID}
 }
 
 type GameOverData struct {

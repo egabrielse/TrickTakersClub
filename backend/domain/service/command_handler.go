@@ -116,12 +116,14 @@ func HandleEndGameCommand(t *TableWorker, clientID string, data interface{}) {
 	}
 }
 
-func HandleToggleLastHandCommand(t *TableWorker, clientID string, data interface{}) {
+func HandleCallLastHandCommand(t *TableWorker, clientID string, data interface{}) {
 	if t.Game == nil {
 		t.DirectMessage(msg.ErrorMessage(clientID, "game has not been initialized"))
+	} else if t.Game.IsLastHand() {
+		t.DirectMessage(msg.ErrorMessage(clientID, "last hand already called"))
 	} else {
-		lastHand := t.Game.ToggleLastHand(clientID)
-		t.BroadcastMessage(msg.LastHandStatusMessage(clientID, lastHand))
+		t.Game.CallLastHand()
+		t.BroadcastMessage(msg.LastHandMessage(clientID))
 	}
 }
 
