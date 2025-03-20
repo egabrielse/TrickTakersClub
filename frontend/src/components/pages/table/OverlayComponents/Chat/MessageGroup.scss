@@ -33,7 +33,10 @@
         gap: 2px;
         width: 100%;
         font-size: 14px;
-        padding-left: 2rem;
         word-break: break-all;
+
+        >span {
+            padding-left: 2rem;
+        }
     }
 }

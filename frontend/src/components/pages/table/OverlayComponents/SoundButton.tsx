@@ -10,7 +10,7 @@ export default function SoundButton() {
 
   const onClick = () => {
     dispatch(
-      settingsSlice.actions.asyncSaveUserSettings({
+      settingsSlice.actions.asyncUpdateSettings({
         ...settings,
         soundOn: !settings.soundOn,
       }),

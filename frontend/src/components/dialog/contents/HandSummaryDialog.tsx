@@ -1,11 +1,5 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import {
-  AvatarGroup,
-  Box,
-  Tab,
-  TableContainer,
-  Typography,
-} from "@mui/material";
+import { AvatarGroup, Box, Tab, Typography } from "@mui/material";
 import { useState } from "react";
 import { SCORING_METHOD } from "../../../constants/game";
 import { HandSummaryDialogParams } from "../../../types/dialog";
@@ -165,9 +159,7 @@ export default function HandSummaryDialog({ props }: HandSummaryDialogParams) {
             <ScoresTable scoreboard={scoreboard} summary={summary} />
           </TabPanel>
           <TabPanel value={PANELS.DETAILS} sx={{ padding: 0 }}>
-            <TableContainer sx={{ maxHeight: 500 }}>
-              <BreakdownTable summary={summary} />
-            </TableContainer>
+            <BreakdownTable summary={summary} />
           </TabPanel>
         </TabContext>
       </DialogBody>

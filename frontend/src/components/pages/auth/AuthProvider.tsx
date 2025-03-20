@@ -30,7 +30,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
             displayName: user.displayName || "",
           }),
         );
-        dispatch(settingsSlice.actions.asyncFetchUserSettings());
+        dispatch(settingsSlice.actions.asyncFetchSettings());
       } else {
         dispatch(authSlice.actions.reset());
       }

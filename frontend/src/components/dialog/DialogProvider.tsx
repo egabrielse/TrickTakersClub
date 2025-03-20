@@ -72,6 +72,7 @@ export default function DialogProvider({ children }: DialogProviderProps) {
           onClose={dialog?.closeable ? closeDialog : undefined}
           open={isOpen}
           slots={{ transition: SlideTransition }}
+          maxWidth="md"
         >
           {renderDialogContent(dialog)}
         </Dialog>

@@ -10,6 +10,7 @@ import MessageGroup from "./MessageGroup";
 
 const MAX_MESSAGE_LENGTH = 60;
 
+// TODO: disable auto scrolling when the user intentionally scroll up the chat
 export default function Chat() {
   const chat = useAppSelector(tableSlice.selectors.chat);
   const { sendChatMsg } = useContext(ConnectionContext);
@@ -17,12 +18,16 @@ export default function Chat() {
   const [value, setValue] = useState("");
   const chatLength = chat.length;
 
-  useEffect(() => {
+  const scrollToBottom = () => {
     const messages = document.getElementById("chat-messages");
     const bottom = document.getElementById("chat-bottom");
     if (messages && bottom) {
       messages.scrollTop = bottom.offsetTop;
     }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
   }, [chatLength]);
 
   const onSubmit = () => {

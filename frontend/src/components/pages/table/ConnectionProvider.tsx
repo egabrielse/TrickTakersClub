@@ -90,12 +90,15 @@ function ConnectionApiProvider({
         dispatch(gameSlice.actions.gameStarted(msg.data));
         break;
       }
-      case BROADCAST_TYPES.LAST_HAND_STATUS: {
-        dispatch(handSlice.actions.updateLastHandStatus(msg.data));
+      case BROADCAST_TYPES.LAST_HAND: {
+        dispatch(handSlice.actions.lastHand());
+        dispatch(handSlice.actions.displayMessage({ ...msg }));
         break;
       }
       case BROADCAST_TYPES.NEW_TRICK:
-        dispatch(handSlice.actions.startNewTrick(msg.data));
+        setTimeout(() => {
+          dispatch(handSlice.actions.startNewTrick(msg.data));
+        }, 1000);
         break;
       case BROADCAST_TYPES.UP_NEXT:
         dispatch(handSlice.actions.upNext(msg.data));
@@ -113,6 +116,7 @@ function ConnectionApiProvider({
           // Only display the message if the player chose to go alone
           // Otherwise the picker probably wants this to remain a secret
           dispatch(handSlice.actions.displayMessage({ ...msg }));
+          dispatch(handSlice.actions.goneAlone());
         }
         break;
       case BROADCAST_TYPES.PARTNER_REVEALED:
@@ -124,13 +128,20 @@ function ConnectionApiProvider({
         break;
       case BROADCAST_TYPES.HAND_DONE: {
         const { scoreboard, summary } = msg.data;
-        dispatch(
-          dialogSlice.actions.openDialog({
-            type: DIALOG_TYPES.HAND_SUMMARY,
-            props: { scoreboard, summary },
-          }),
-        );
         dispatch(gameSlice.actions.handDone(msg.data));
+        // Delay opening summary, to allow players to see the last trick
+        // TODO: there's an opportunity to build a better delay system. Maybe
+        // a queue of delayed actions that can be executed. Delay length
+        // depends on the type of message /  the message's content.
+        setTimeout(() => {
+          dispatch(
+            dialogSlice.actions.openDialog({
+              type: DIALOG_TYPES.HAND_SUMMARY,
+              props: { scoreboard, summary },
+            }),
+          );
+        }, 1000);
+
         break;
       }
       case BROADCAST_TYPES.BLIND_PICKED:
@@ -219,13 +230,10 @@ function ConnectionApiProvider({
   };
 
   /**
-   * Send a command to the table
+   * Send a command to the server worker
    * @param command
    */
   const sendCommand = (command: CommandMessage) => {
-    console.log("Sending command", command);
-    console.log(direct);
-    // Then send the command to the server
     direct?.publish(command.name, command.data);
   };
 

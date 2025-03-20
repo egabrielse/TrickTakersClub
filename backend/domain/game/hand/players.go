@@ -52,7 +52,7 @@ func (p *PlayerHands) RemoveCards(playerID string, cards []*deck.Card) {
 	}
 }
 
-func (p *PlayerHands) HandContains(playerID string, cards []*deck.Card) bool {
+func (p *PlayerHands) Contains(playerID string, cards []*deck.Card) bool {
 	hand := p.Hands[playerID]
 	for _, cardToFind := range cards {
 		found := false

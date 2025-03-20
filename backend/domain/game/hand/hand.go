@@ -123,7 +123,7 @@ func (h *Hand) BuryCards(playerID string, cards []*deck.Card) (*BuryResult, erro
 		return nil, fmt.Errorf("not player's turn")
 	} else if h.Bury.IsComplete() {
 		return nil, fmt.Errorf("bury phase is already complete")
-	} else if ok := h.PlayerHands.HandContains(playerID, cards); !ok {
+	} else if ok := h.PlayerHands.Contains(playerID, cards); !ok {
 		return nil, fmt.Errorf("player does not possess all the cards")
 	} else if len(cards) != BlindSize {
 		return nil, fmt.Errorf("expected %d cards, got %d", BlindSize, len(cards))
@@ -139,28 +139,34 @@ func (h *Hand) BuryCards(playerID string, cards []*deck.Card) (*BuryResult, erro
 		} else if h.Settings.CallMethod == CallMethod.JackOfDiamonds {
 			// Partner is automatically the player holding the jack of diamonds
 			h.Phase = HandPhase.Call
-			jod := &deck.Card{Suit: deck.CardSuit.Diamond, Rank: deck.CardRank.Jack}
-			if partnerID := h.PlayerHands.WhoHas(jod); partnerID == playerID {
-				// Picker has the jack of diamonds and must therefore go alone
-				result, _ := h.GoAlone(playerID, true)
-				return &BuryResult{
-					Bury:          cards,
-					GoAloneResult: result,
-				}, nil
-			} else {
-				result, _ := h.CallPartner(playerID, jod)
-				return &BuryResult{
-					Bury:       cards,
-					CallResult: result,
-				}, nil
+			jacks := []*deck.Card{
+				{Suit: deck.CardSuit.Diamond, Rank: deck.CardRank.Jack},
+				{Suit: deck.CardSuit.Heart, Rank: deck.CardRank.Jack},
+				{Suit: deck.CardSuit.Spade, Rank: deck.CardRank.Jack},
+				{Suit: deck.CardSuit.Club, Rank: deck.CardRank.Jack},
 			}
+			for _, j := range jacks {
+				if !h.PlayerHands.Contains(playerID, []*deck.Card{j}) && !h.Bury.Contains([]*deck.Card{j}) {
+					// Found a jack that the player does not have in their hand or bury.
+					// The player who has this jack is the partner.
+					result, _ := h.CallPartner(playerID, j)
+					return &BuryResult{
+						Bury:       cards,
+						CallResult: result,
+					}, nil
+				}
+			}
+			// Picker has all jacks, and therefore must go alone
+			result, _ := h.GoAlone(playerID, true)
+			return &BuryResult{
+				Bury:          cards,
+				GoAloneResult: result,
+			}, nil
 		} else {
 			// Move onto the call phase
 			h.Phase = HandPhase.Call
 		}
-		return &BuryResult{
-			Bury: cards,
-		}, nil
+		return &BuryResult{Bury: cards}, nil
 	}
 }
 
@@ -202,7 +208,7 @@ func (h *Hand) PlayCard(playerID string, card *deck.Card) (*PlayCardResult, erro
 		return nil, fmt.Errorf("not in the call phase")
 	} else if playerID != h.WhoIsNext() {
 		return nil, fmt.Errorf("not player's turn")
-	} else if !h.PlayerHands.HandContains(playerID, []*deck.Card{card}) {
+	} else if !h.PlayerHands.Contains(playerID, []*deck.Card{card}) {
 		return nil, fmt.Errorf("player does not possess the card")
 	} else {
 		result := &PlayCardResult{PlayedCard: card}

@@ -95,8 +95,6 @@ export default function HomePage() {
           error={formik.touched.tableId && Boolean(formik.errors.tableId)}
           helperText={formik.touched.tableId && formik.errors.tableId}
           onPaste={(e) => {
-            console.log(e.clipboardData);
-            console.log(location);
             if (e.clipboardData) {
               const text = e.clipboardData.getData("text");
               const prefix = location.origin + "/" + SEGMENTS.TABLE + "/";

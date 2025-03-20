@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { BLIND_SIZE, HAND_PHASE } from "../../../../constants/game";
 import { BROADCAST_TYPES } from "../../../../constants/message";
 import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
-import selectors from "../../../../store/selectors";
+import { selectIsUpNext } from "../../../../store/selectors";
 import handSlice from "../../../../store/slices/hand.slice";
 import { UpdateMessages } from "../../../../types/game";
 import PrintedCard from "../../../common/PrintedCard";
@@ -84,6 +84,15 @@ const renderUpdateMessage = (update: UpdateMessages) => {
       );
     case BROADCAST_TYPES.NO_PICK_HAND:
       return "Everyone passed on the blind!";
+    case BROADCAST_TYPES.LAST_HAND:
+      return (
+        <>
+          <ProfileProvider uid={update.data.playerId}>
+            <ProfilePic size="small" />
+          </ProfileProvider>
+          &nbsp;called last hand!
+        </>
+      );
     default:
       return null;
   }
@@ -94,7 +103,7 @@ export default function GameUpdates() {
   const updates = useAppSelector(handSlice.selectors.updates);
   const upNextId = useAppSelector(handSlice.selectors.upNextId);
   const phase = useAppSelector(handSlice.selectors.phase);
-  const isUpNext = useAppSelector(selectors.isUpNext);
+  const isUpNext = useAppSelector(selectIsUpNext);
   const [nextUpdate, setNextUpdate] = useState<UpdateMessages | null>(null);
 
   useEffect(() => {

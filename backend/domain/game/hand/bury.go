@@ -20,6 +20,22 @@ func (b *Bury) BuryCards(cards []*deck.Card) {
 	b.Cards = cards
 }
 
+func (b *Bury) Contains(cards []*deck.Card) bool {
+	for _, cardToFind := range cards {
+		found := false
+		for _, buriedCard := range b.Cards {
+			if *cardToFind == *buriedCard {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return false
+		}
+	}
+	return true
+}
+
 func (b *Bury) CountPoints() (points int) {
 	if !b.IsComplete() {
 		return 0

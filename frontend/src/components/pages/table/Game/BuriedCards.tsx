@@ -1,7 +1,7 @@
-import { Typography } from "@mui/material";
 import { useEffect } from "react";
 import { useAppSelector } from "../../../../store/hooks";
 import handSlice from "../../../../store/slices/hand.slice";
+import { countCardPoints } from "../../../../utils/card";
 import PlayingCard from "../../../common/PlayingCard";
 import "./BuriedCards.scss";
 
@@ -33,9 +33,11 @@ export default function BuriedCards() {
   }
   return (
     <>
-      <Typography className="BuriedCardsLabel" variant="body1" color="white">
+      <span className="BuriedCardsLabel">
         BURIED CARDS
-      </Typography>
+        <br />
+        {`(${countCardPoints(bury)}pts)`}
+      </span>
       {bury.map((card) => (
         <PlayingCard
           id={`card-${card.suit}-${card.rank}`}

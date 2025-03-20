@@ -90,7 +90,10 @@ export default function Variations() {
 
       <h4>Leasters</h4>
       <ul>
-        <li>The hand is played as a free-for-all with no picker.</li>
+        <li>
+          The hand is played as a free-for-all with no picker. The blind is set
+          aside and given to the player that takes the last trick.
+        </li>
         <li>
           Of the players that take at least one trick, whoever takes the least
           amount of points wins. If there is a tie for least points, the player
@@ -107,7 +110,8 @@ export default function Variations() {
       <ul>
         <li>
           Like Leasters, this variant is played as a free-for-all with no
-          picker.
+          picker. And just like in leasters, the blind is set aside for the
+          taker of the last trick.
         </li>
         <li>
           The goal of Mosters is to <i>not</i> take the most points. The player

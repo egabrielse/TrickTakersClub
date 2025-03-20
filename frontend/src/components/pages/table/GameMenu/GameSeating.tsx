@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import { PLAYER_COUNT } from "../../../../constants/game";
 import { COMMAND_TYPES } from "../../../../constants/message";
 import { useAppSelector } from "../../../../store/hooks";
-import selectors from "../../../../store/selectors";
+import { selectIsHost, selectIsSeated } from "../../../../store/selectors";
 import tableSlice from "../../../../store/slices/table.slice";
 import ConnectionContext from "../ConnectionContext";
 import NameTag from "../OverlayComponents/NameTag";
@@ -16,8 +16,8 @@ import LinkButton from "./LinkButton";
 export default function GameSeating() {
   const { sendCommand } = useContext(ConnectionContext);
   const seating = useAppSelector(tableSlice.selectors.seating);
-  const isHost = useAppSelector(selectors.isHost);
-  const isSeated = useAppSelector(selectors.isSeated);
+  const isHost = useAppSelector(selectIsHost);
+  const isSeated = useAppSelector(selectIsSeated);
   const [pending, setPending] = useState(false);
 
   const renderSeats = () => {

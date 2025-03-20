@@ -5,12 +5,14 @@ import (
 )
 
 type Settings struct {
-	SoundOn bool `json:"soundOn"`
+	SoundOn  bool `json:"soundOn"`
+	ChatOpen bool `json:"chatOpen"`
 }
 
 func NewDefaultSettingsEntity() *Settings {
 	return &Settings{
-		SoundOn: true,
+		SoundOn:  true,
+		ChatOpen: true,
 	}
 }
 

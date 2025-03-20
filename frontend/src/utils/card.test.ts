@@ -1,5 +1,5 @@
 import { expect, suite, test } from 'vitest';
-import { compareCards, countCardPoints, getCardBack, getCardFace, handContainsCard, isTrumpCard, sortCards } from './card';
+import { compareCards, countCardPoints, getCardBack, getCardFace, hasCard, isTrumpCard, sortCards } from './card';
 import { TEST_CARDS, TEST_FAIL_CARDS, TEST_TRUMP_CARDS } from '../constants/test';
 import { CARD_RANK, CARD_SUIT } from '../constants/card';
 
@@ -112,7 +112,7 @@ suite('sortCards', () => {
     });
 });
 
-suite('handContainsCard', () => {
+suite('hasCard', () => {
     const hand = [
         { rank: CARD_RANK.SEVEN, suit: CARD_SUIT.DIAMOND },
         { rank: CARD_RANK.TEN, suit: CARD_SUIT.HEART },
@@ -125,12 +125,12 @@ suite('handContainsCard', () => {
 
     test('hand does not contain card', () => {
         const card = { rank: CARD_RANK.SEVEN, suit: CARD_SUIT.CLUB };
-        expect(handContainsCard(hand, card)).toBe(false);
+        expect(hasCard(hand, card)).toBe(false);
     });
 
     test('hand contains card', () => {
         const card = { rank: CARD_RANK.ACE, suit: CARD_SUIT.CLUB };
-        expect(handContainsCard(hand, card)).toBe(true);
+        expect(hasCard(hand, card)).toBe(true);
     });
 });
 

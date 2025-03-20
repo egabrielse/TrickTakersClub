@@ -159,7 +159,7 @@ export const sortCards = (a: Card, b: Card) => {
 /**
  * Returns true if the hand contains the card, false otherwise.
  */
-export const handContainsCard = (hand: Card[], card: Card) => {
+export const hasCard = (hand: Card[], card: Card) => {
     return hand.some((c) => c.rank === card.rank && c.suit === card.suit);
 };
 

@@ -93,8 +93,8 @@ func (t *TableWorker) HandleCommands(message *ably.Message) {
 		HandleStartGameCommand(t, message.ClientID, message.Data)
 	case msg.CommandType.EndGame:
 		HandleEndGameCommand(t, message.ClientID, message.Data)
-	case msg.CommandType.ToggleLastHand:
-		HandleToggleLastHandCommand(t, message.ClientID, message.Data)
+	case msg.CommandType.CallLastHand:
+		HandleCallLastHandCommand(t, message.ClientID, message.Data)
 	case msg.CommandType.Pick:
 		HandlePickCommand(t, message.ClientID, message.Data)
 	case msg.CommandType.Pass:

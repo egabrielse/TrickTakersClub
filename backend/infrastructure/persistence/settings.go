@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-const SettingsCollection = "user_settings"
+const SettingsCollection = "settings"
 
 type SettingsRepoImplementation struct {
 	db *firestore.Client

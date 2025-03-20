@@ -1,6 +1,6 @@
-import { useEffect, useMemo } from "react";
-import { HAND_SIZE } from "../../../../constants/game";
+import { useEffect } from "react";
 import { useAppSelector } from "../../../../store/hooks";
+import { selectCardsInHandCounts } from "../../../../store/selectors";
 import handSlice from "../../../../store/slices/hand.slice";
 import PlayingCard from "../../../common/PlayingCard";
 import PlayingCardFan from "../../../common/PlayingCardFan";
@@ -15,11 +15,7 @@ export default function OpponentHand({
   position,
 }: OpponentHandProps) {
   const upNextId = useAppSelector(handSlice.selectors.upNextId);
-  const tricks = useAppSelector(handSlice.selectors.tricks);
-  const countOfCardsPlayed = useMemo(
-    () => tricks.filter((trick) => playerId in trick.cards).length,
-    [playerId, tricks],
-  );
+  const cardsInHand = useAppSelector(selectCardsInHandCounts);
 
   useEffect(() => {
     const element = document.getElementById(`opponent-hand-${playerId}`);
@@ -27,22 +23,22 @@ export default function OpponentHand({
       element.style.position = "absolute";
       switch (position) {
         case "left":
-          element.style.left = "0px";
+          element.style.left = "-2rem";
           element.style.top = "50%";
           element.style.rotate = "90deg";
           break;
         case "top-left":
           element.style.left = "33%";
-          element.style.top = "0px";
+          element.style.top = "-2rem";
           element.style.rotate = "180deg";
           break;
         case "top-right":
           element.style.right = "33%";
-          element.style.top = "0px";
+          element.style.top = "-2rem";
           element.style.rotate = "180deg";
           break;
         case "right":
-          element.style.right = "0px";
+          element.style.right = "-2rem";
           element.style.top = "50%";
           element.style.rotate = "270deg";
           break;
@@ -54,7 +50,7 @@ export default function OpponentHand({
 
   return (
     <PlayingCardFan id={`opponent-hand-${playerId}`}>
-      {Array(HAND_SIZE - countOfCardsPlayed)
+      {Array(cardsInHand[playerId])
         .fill("back")
         .map((card, index) => (
           <PlayingCard
@@ -62,6 +58,7 @@ export default function OpponentHand({
             key={`card-${index}-${playerId}`}
             card={card}
             disabled={upNextId !== playerId}
+            height={160}
           />
         ))}
     </PlayingCardFan>

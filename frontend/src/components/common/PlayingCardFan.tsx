@@ -26,7 +26,7 @@ export default function PlayingCardFan({
 
     children.forEach((child, index) => {
       const increment = angle / (count + 1);
-      const transform = `translate(-50%, -66%) rotate(${-offset + increment * (index + 1)}deg)`;
+      const transform = `translate(-50%, -100%) rotate(${-offset + increment * (index + 1)}deg)`;
       const element = document.getElementById(child.props.id as string);
       if (element) {
         element.style.position = "absolute";

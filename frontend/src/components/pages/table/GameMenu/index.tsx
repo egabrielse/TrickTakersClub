@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { PLAYER_COUNT } from "../../../../constants/game";
 import { COMMAND_TYPES } from "../../../../constants/message";
 import { useAppSelector } from "../../../../store/hooks";
-import selectors from "../../../../store/selectors";
+import { selectIsHost } from "../../../../store/selectors";
 import tableSlice from "../../../../store/slices/table.slice";
 import ActionButton from "../../../common/ActionButton";
 import ConnectionContext from "../ConnectionContext";
@@ -14,7 +14,7 @@ import "./index.scss";
 export default function GameMenu() {
   const { sendCommand } = useContext(ConnectionContext);
   const seating = useAppSelector(tableSlice.selectors.seating);
-  const isHost = useAppSelector(selectors.isHost);
+  const isHost = useAppSelector(selectIsHost);
   const tableFull = seating.length === PLAYER_COUNT;
 
   const startGame = () => {

@@ -19,6 +19,11 @@ export default function NameTag({ playerId }: NameTagProps) {
   const pickerId = useAppSelector(handSlice.selectors.pickerId);
   const partnerId = useAppSelector(handSlice.selectors.partnerId);
   const calledCard = useAppSelector(handSlice.selectors.calledCard);
+  const goneAlone = useAppSelector(handSlice.selectors.goneAlone);
+  const isHost = playerId === hostId;
+  const isDealer = playerId === dealerId;
+  const isPicker = playerId === pickerId;
+  const isPartner = playerId === partnerId;
 
   return (
     <ProfileProvider uid={playerId}>
@@ -26,18 +31,21 @@ export default function NameTag({ playerId }: NameTagProps) {
         <ProfilePic size="medium" />
         <div className="NameTag-Name">
           <DisplayName />
-          <div className="NameTag-Name-Flares">
-            {hostId === playerId && <RoleFlare role="host" />}
-            {dealerId === playerId && <RoleFlare role="dealer" />}
-            {pickerId === playerId && <RoleFlare role="picker" />}
-            {partnerId === playerId && <RoleFlare role="partner" />}
-            {pickerId === playerId && calledCard && (
-              <Flare color="purple">
-                CALLED&nbsp;
-                <PrintedCard suit={calledCard.suit} rank={calledCard.rank} />
-              </Flare>
-            )}
-          </div>
+          {(isHost || isDealer || isPicker || isPartner) && (
+            <div className="NameTag-Name-Flares">
+              {isHost && <RoleFlare role="host" />}
+              {isDealer && <RoleFlare role="dealer" />}
+              {isPicker && <RoleFlare role="picker" />}
+              {isPartner && <RoleFlare role="partner" />}
+              {isPicker && calledCard && (
+                <Flare color="purple">
+                  CALLED&nbsp;
+                  <PrintedCard suit={calledCard.suit} rank={calledCard.rank} />
+                </Flare>
+              )}
+              {isPicker && goneAlone && <Flare color="purple">ALONE</Flare>}
+            </div>
+          )}
         </div>
       </div>
     </ProfileProvider>

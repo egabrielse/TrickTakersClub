@@ -39,7 +39,7 @@ export default function AccountPage() {
             control={<Switch checked={settings.soundOn} />}
             onClick={() =>
               dispatch(
-                settingsSlice.actions.asyncSaveUserSettings({
+                settingsSlice.actions.asyncUpdateSettings({
                   ...settings,
                   soundOn: !settings.soundOn,
                 }),
