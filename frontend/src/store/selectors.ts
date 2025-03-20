@@ -71,7 +71,6 @@ export const selectIsSeated = createSelector([
 
 /**
  * Returns a list of playable cards for the user.
- * TODO: Need to have a better logic for this function. Seems to have many bugs...
  */
 export const selectPlayableCards = createSelector([
     selectIsUpNext,
@@ -82,6 +81,7 @@ export const selectPlayableCards = createSelector([
     handSlice.selectors.leadingCard,
     handSlice.selectors.partnerRevealed,
 ], (isUpNext, isPicker, isPartner, hand, calledCard, leadingCard, partnerRevealed) => {
+    // TODO: Need to have a better logic for this function.
     if (!isUpNext) {
         return [];
     }
@@ -99,6 +99,13 @@ export const selectPlayableCards = createSelector([
         // (except the partner, who cannot play the called card)
         if (isPartner && !partnerRevealed) {
             return hand.filter((card) => card.suit !== calledCard?.suit || isTrumpCard(card));
+        } else if (isPicker && calledCard && !partnerRevealed) {
+            // Picker has a partner and partner has not been revealed
+            // Picker must retain at least one fail suit card of the called card, until it is led
+            const count = hand.filter((card) => card.suit === calledCard.suit && !isTrumpCard(card)).length;
+            if (count === 1) {
+                return hand.filter((card) => card.suit !== calledCard.suit || isTrumpCard(card));
+            }
         }
         return hand;
     } else if (cardsThatFollowSuit.length > 0) {
@@ -114,10 +121,9 @@ export const selectPlayableCards = createSelector([
         // Picker must retain at least one fail suit card of the called card, until it is led
         const count = hand.filter((card) => card.suit === calledCard.suit && !isTrumpCard(card)).length;
         if (count === 1) {
-            return hand.filter((card) => card.suit !== calledCard.suit && isTrumpCard(card));
-        } else {
-            return hand;
+            return hand.filter((card) => card.suit !== calledCard.suit || isTrumpCard(card));
         }
+        return hand;
     } else {
         return hand;
     }
