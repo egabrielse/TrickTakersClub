@@ -28,42 +28,46 @@ export default function Game() {
       {phase === HAND_PHASE.PICK && <Blind />}
       {phase === HAND_PHASE.CALL && isUpNext && <CallAnAce />}
       {phase === HAND_PHASE.PLAY && <Trick />}
+      {noPickHand && <NoPickHandDisplay />}
       <GameUpdates />
+      <Bury />
+      <TrickPile />
       {playerOrder.map((playerId, index) =>
         index === 0 ? (
-          <>
-            <PlayerHand key={`hand-${playerId}`} />
-            <Bury />
-            <TrickPile />
-          </>
+          <PlayerHand key={`hand-${playerId}`} />
         ) : (
-          <>
-            <OpponentHand
-              key={`hand-${playerId}`}
-              playerId={playerId}
-              position={
-                index === 1
-                  ? "left"
-                  : index === 2
-                    ? "top-left"
-                    : index === 3
-                      ? "top-right"
-                      : "right"
-              }
-            />
-            <OpponentTrickPile
-              playerId={playerId}
-              position={
-                index === 1
-                  ? "left"
-                  : index === 2
-                    ? "top-left"
-                    : index === 3
-                      ? "top-right"
-                      : "right"
-              }
-            />
-          </>
+          <OpponentHand
+            key={`hand-${playerId}`}
+            playerId={playerId}
+            position={
+              index === 1
+                ? "left"
+                : index === 2
+                  ? "top-left"
+                  : index === 3
+                    ? "top-right"
+                    : "right"
+            }
+          />
+        ),
+      )}
+      {playerOrder.map((playerId, index) =>
+        index === 0 ? (
+          <TrickPile key={`trick-pile${playerId}`} />
+        ) : (
+          <OpponentTrickPile
+            key={`trick-pile${playerId}`}
+            playerId={playerId}
+            position={
+              index === 1
+                ? "left"
+                : index === 2
+                  ? "top-left"
+                  : index === 3
+                    ? "top-right"
+                    : "right"
+            }
+          />
         ),
       )}
       {playerOrder.map((playerId, index) => (
@@ -83,7 +87,6 @@ export default function Game() {
           }
         />
       ))}
-      {noPickHand && <NoPickHandDisplay />}
     </>
   );
 }
