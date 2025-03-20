@@ -61,6 +61,7 @@ export default function TablePage() {
         <ExpandingButton
           id={"top-right"}
           title="Scoreboard"
+          tooltip="Scoreboard"
           expandedIcon={<CloseIcon />}
           collapsedIcon={<FormatListNumberedIcon />}
         >
@@ -69,6 +70,7 @@ export default function TablePage() {
       )}
       <ExpandingButton
         id={"bottom-right"}
+        title="Chat"
         expandedIcon={<CloseIcon />}
         collapsedIcon={<ChatIcon />}
         notification={!chatOpen ? chatLength - seenMessageCount : undefined}

@@ -75,7 +75,7 @@ const handSlice = createSlice({
             state.lastHand = lastHand || {};
             state.hand = [...(hand || [])].sort(sortCards);
             state.bury = bury || [];
-            state.goneAlone = phase === HAND_PHASE.PLAY && Boolean(calledCard);
+            state.goneAlone = phase === HAND_PHASE.PLAY && Boolean(!calledCard);
             state.currentTrick = tricks.length > 0 ? tricks[tricks.length - 1] : null;
             state.completedTricks = tricks.length > 0 ? tricks.slice(0, -1) : [];
             state.updates = [];

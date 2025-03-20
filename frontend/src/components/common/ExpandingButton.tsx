@@ -9,7 +9,8 @@ type ExpandingButtonProps = {
   expandedIcon?: React.ReactNode;
   collapsedIcon?: React.ReactNode;
   defaultExpanded?: boolean;
-  title?: string;
+  title: string;
+  tooltip?: string;
   notification?: boolean | number;
   onToggleExpanded?: (expanded: boolean) => void;
 };
@@ -21,6 +22,7 @@ export default function ExpandingButton({
   collapsedIcon,
   defaultExpanded,
   title,
+  tooltip,
   notification = false,
   onToggleExpanded = () => {},
 }: ExpandingButtonProps) {
@@ -66,7 +68,7 @@ export default function ExpandingButton({
           {badgeContent}
         </div>
       )}
-      <Tooltip title={expanded ? undefined : title}>
+      <Tooltip title={expanded ? undefined : tooltip}>
         <div className="ExpandingButton-Button" onClick={toggleExpanded}>
           {expanded ? expandedIcon : collapsedIcon}
         </div>
