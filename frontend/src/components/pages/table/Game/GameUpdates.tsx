@@ -79,7 +79,11 @@ const renderUpdateMessage = (update: UpdateMessages) => {
           <ProfileProvider uid={update.data.playerId}>
             <ProfilePic size="small" />
           </ProfileProvider>
-          &nbsp;took the trick!
+          {update.data.blind ? (
+            <>&nbsp;took the trick the blind!&nbsp;</>
+          ) : (
+            <>&nbsp;took the trick!&nbsp;</>
+          )}
         </>
       );
     case BROADCAST_TYPES.NO_PICK_HAND:

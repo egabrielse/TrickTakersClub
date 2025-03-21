@@ -14,7 +14,7 @@ type BreakdownTableProps = {
 };
 
 export default function BreakdownTable({ summary }: BreakdownTableProps) {
-  const { pickerId, tricks, bury, scoringMethod } = summary;
+  const { pickerId, tricks, bury, blind, scoringMethod } = summary;
   return (
     <div className="BreakdownTable">
       <table style={{ minWidth: 500 }}>
@@ -103,6 +103,39 @@ export default function BreakdownTable({ summary }: BreakdownTableProps) {
               </td>
             </tr>
           ))}
+
+          {scoringMethod !== SCORING_METHOD.STANDARD && (
+            <tr>
+              <td>
+                <i>blind</i>
+              </td>
+              <td>
+                <Box display="flex" alignItems="center" gap="0.25rem">
+                  <ProfileProvider uid={getTakerId(tricks[tricks.length - 1])}>
+                    <ProfilePic size="small" />
+                    <DisplayName />
+                  </ProfileProvider>
+                </Box>
+              </td>
+              <td>
+                <Typography variant="h6">
+                  {countCardPoints(Object.values(blind))}
+                </Typography>
+              </td>
+              <td>
+                {blind.map((card, index) => (
+                  <>
+                    <PrintedCard
+                      key={`summary-${card.rank}-${card.suit}`}
+                      rank={card.rank}
+                      suit={card.suit}
+                    />
+                    {index < Object.values(blind).length - 1 && " "}
+                  </>
+                ))}
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

@@ -79,7 +79,7 @@ export interface TimeoutMessage extends Message {
 
 export interface TrickWonMessage extends Message {
     name: typeof BROADCAST_TYPES.TRICK_WON;
-    data: { playerId: string };
+    data: { playerId: string, blind?: Card[] };
 }
 
 export interface HandDoneMessage extends Message {
