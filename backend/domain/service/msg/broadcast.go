@@ -169,11 +169,12 @@ func TimeoutMessage() (name string, data *TimeoutData) {
 }
 
 type TrickWonData struct {
-	PlayerID string `json:"playerId"`
+	PlayerID string       `json:"playerId"`
+	Blind    []*deck.Card `json:"blind"`
 }
 
-func TrickWonMessage(playerId string) (name string, data *TrickWonData) {
-	return BroadcastType.TrickWon, &TrickWonData{PlayerID: playerId}
+func TrickWonMessage(playerId string, blind []*deck.Card) (name string, data *TrickWonData) {
+	return BroadcastType.TrickWon, &TrickWonData{PlayerID: playerId, Blind: blind}
 }
 
 type HandDoneData struct {

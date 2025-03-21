@@ -50,6 +50,7 @@ export type HandSummary = {
     opponentIds: string[];
     tricks: Trick[];
     bury: Card[];
+    blind: Card[];
     payouts: Record<string, number>;
     payoutMultipliers: string[]
     pointsWon: Record<string, number>;

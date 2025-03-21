@@ -11,6 +11,7 @@ type HandSummary struct {
 	OpponentIDs       []string       `json:"opponentIds"`       // IDs of the picker's opponents
 	Tricks            []*Trick       `json:"tricks"`            // Summaries of the tricks played
 	Bury              []*deck.Card   `json:"bury"`              // Buried Cards
+	Blind             []*deck.Card   `json:"blind"`             // Blind Cards (leasters or mosters)
 	Payouts           map[string]int `json:"payouts"`           // Map of player IDs to their payouts
 	PayoutMultipliers []string       `json:"payoutMultipliers"` // List of multipliers applied to the payouts
 	Scores            map[string]int `json:"scores"`            // Map of player IDs to their total scores
@@ -33,6 +34,7 @@ func NewHandSummary(playerIDs []string) *HandSummary {
 		OpponentIDs:       []string{},
 		Tricks:            []*Trick{},
 		Bury:              []*deck.Card{},
+		Blind:             []*deck.Card{},
 		Payouts:           payouts,
 		PayoutMultipliers: []string{},
 		PointsWon:         pointsWon,

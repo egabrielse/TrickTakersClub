@@ -261,7 +261,12 @@ func (h *Hand) SummarizeHand() (*HandSummary, error) {
 
 	// Calculate the hand summary
 	var payouts map[string]int
-	if h.Blind.PickerID == "" {
+	if h.Blind.IsNoPickHand() {
+		// Count up the points in the blind and add to the taker of the last trick
+		lastTakerID := h.Tricks[len(h.Tricks)-1].GetTakerID()
+		sum.Blind = h.Blind.Cards
+		blindPoints := deck.CountPoints(h.Blind.Cards)
+		pointsWon[lastTakerID] += blindPoints
 		if h.Settings.NoPickMethod == NoPickMethod.Leasters {
 			// Leasters Hand (No Picker)
 			payouts, sum.Winners = scoring.ScoreLeastersHand(pointsWon, tricksWon)

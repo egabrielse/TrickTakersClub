@@ -25,7 +25,7 @@ export default function Game() {
 
   return (
     <>
-      {phase === HAND_PHASE.PICK && <Blind />}
+      {(phase === HAND_PHASE.PICK || noPickHand) && <Blind />}
       {phase === HAND_PHASE.CALL && isUpNext && <CallAnAce />}
       {phase === HAND_PHASE.PLAY && <Trick />}
       {noPickHand && <NoPickHandDisplay />}

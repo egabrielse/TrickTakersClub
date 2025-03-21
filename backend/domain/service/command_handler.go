@@ -236,14 +236,20 @@ func HandlePlayCardCommand(t *TableWorker, clientID string, data interface{}) {
 				t.BroadcastMessage(msg.PartnerRevealedMessage(result.PartnerID))
 			}
 			if result.TrickComplete {
-				// Trick is complete, let all players know who took the trick
-				t.BroadcastMessage(msg.TrickWonMessage(result.TakerID))
 				if !result.HandComplete {
+					t.BroadcastMessage(msg.TrickWonMessage(result.TakerID, nil))
 					// Trick is complete, but hand is not, start the next trick
 					newTrick := currentHand.GetCurrentTrick()
 					t.BroadcastMessage(msg.NewTrickMessage(newTrick.TurnOrder))
 					t.BroadcastMessage(msg.UpNextMessage(t.Game.GetUpNext()))
 				} else {
+					if currentHand.Blind.IsNoPickHand() {
+						// Include the blind in the trick won message if a no pick hand
+						// Player that takes the last trick also takes the blind in leasters/mosters
+						t.BroadcastMessage(msg.TrickWonMessage(result.TakerID, currentHand.Blind.Cards))
+					} else {
+						t.BroadcastMessage(msg.TrickWonMessage(result.TakerID, nil))
+					}
 					// Hand is complete, summarize the hand for players
 					scoreboard := t.Game.TallyScores()
 					if summary, err := currentHand.SummarizeHand(); utils.LogOnError(err) {
