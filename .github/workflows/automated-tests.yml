@@ -13,11 +13,11 @@ jobs:
     permissions:
       pull-requests: read
     outputs:
-      backend: ${{ steps.filter.outputs.backend }}
       frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.filter.outputs.backend }}
     steps:
       - uses: dorny/paths-filter@v3
-        id: changes
+        id: filter
         with:
           filters: |
             frontend:
