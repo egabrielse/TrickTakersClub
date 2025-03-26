@@ -153,7 +153,7 @@ export default function LoginPage(): ReactNode {
               variant="contained"
               disabled={!formik.isValid}
             >
-              Sign In!
+              Login!
             </Button>
           </div>
         </form>
