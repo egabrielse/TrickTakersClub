@@ -16,8 +16,12 @@ import HeaderLayout from "./layout/HeaderLayout";
 import RootLayout from "./layout/RootLayout";
 import RulesPage from "./pages//rules/RulesPage";
 import AccountPage from "./pages/account/AccountPage";
+import AuthenticatedRouter from "./pages/auth/AuthenticatedRouter";
 import AuthProvider from "./pages/auth/AuthProvider";
+import LoginPage from "./pages/auth/LoginPage";
 import PrivateRoutes from "./pages/auth/PrivateRoutes";
+import RegisterPage from "./pages/auth/RegisterPage";
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import ErrorBoundary from "./pages/error/ErrorBoundary";
 import ErrorPage from "./pages/error/ErrorPage";
 import HomePage from "./pages/home/HomePage";
@@ -33,6 +37,11 @@ const router = createBrowserRouter(
         <Route path={PATHS.RULES} element={<RulesPage />} />
         <Route element={<PrivateRoutes />}>
           <Route path={PATHS.ACCOUNT} element={<AccountPage />} />
+        </Route>
+        <Route element={<AuthenticatedRouter />}>
+          <Route path={PATHS.LOGIN} element={<LoginPage />} />
+          <Route path={PATHS.REGISTER} element={<RegisterPage />} />
+          <Route path={PATHS.RESET_PASSWORD} element={<ResetPasswordPage />} />
         </Route>
       </Route>
       <Route element={<PrivateRoutes />}>

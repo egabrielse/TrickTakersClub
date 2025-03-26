@@ -9,9 +9,6 @@ import ConfirmExitDialog from "./contents/ConfirmExitDialog";
 import ErrorDialog from "./contents/ErrorDialog";
 import GameSummaryDialog from "./contents/GameSummaryDialog";
 import HandSummaryDialog from "./contents/HandSummaryDialog";
-import LoginDialog from "./contents/LoginDialog";
-import RegisterDialog from "./contents/RegisterDialog";
-import ResetPassDialog from "./contents/ResetPasswordDialog";
 
 type DialogProviderProps = {
   children: ReactNode;
@@ -25,12 +22,6 @@ export default function DialogProvider({ children }: DialogProviderProps) {
   const renderDialogContent = (dialog: DialogParams) => {
     if (!isOpen || dialog === null) return null;
     switch (dialog?.type) {
-      case DIALOG_TYPES.LOGIN:
-        return <LoginDialog {...dialog} />;
-      case DIALOG_TYPES.REGISTER:
-        return <RegisterDialog {...dialog} />;
-      case DIALOG_TYPES.RESET:
-        return <ResetPassDialog {...dialog} />;
       case DIALOG_TYPES.ERROR:
         return <ErrorDialog {...dialog} />;
       case DIALOG_TYPES.CONFIRM_EXIT:

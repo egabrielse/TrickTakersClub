@@ -41,12 +41,7 @@ export default function HomePage() {
   const handlePlay = () => {
     setLoading(true);
     if (!isAuthenticated) {
-      dispatch(
-        dialogSlice.actions.openDialog({
-          type: DIALOG_TYPES.LOGIN,
-          closeable: true,
-        }),
-      );
+      navigate(PATHS.LOGIN);
       setLoading(false);
     } else {
       createTable()
