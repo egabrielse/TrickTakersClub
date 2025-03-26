@@ -10,7 +10,7 @@ test('getCardFace', () => {
 });
 
 test('getCardBack', () => {
-    expect(getCardBack()).toBe('/cards/back-1.svg');
+    expect(getCardBack()).toBe('/cards/back-2.svg');
 });
 
 suite('isTrumpCard', () => {
