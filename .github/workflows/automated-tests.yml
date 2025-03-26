@@ -10,6 +10,10 @@ jobs:
   changes:
     name: Files Changed
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      checks: write
     outputs:
       backend: ${{ steps.filter.outputs.backend }}
       frontend: ${{ steps.filter.outputs.frontend }}
