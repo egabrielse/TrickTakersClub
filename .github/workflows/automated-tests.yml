@@ -27,7 +27,7 @@ jobs:
               - "backend/**"
 
   frontend-tests:
-    name: frontend-tests
+    name: Frontend
     runs-on: ubuntu-latest
     # Only run if the frontend code has changed
     if: ${{ needs.changes.outputs.frontend == 'true' }}
@@ -48,7 +48,7 @@ jobs:
         run: npm run test
 
   backend-tests:
-    name: Tests
+    name: Backend
     runs-on: ubuntu-latest
     # Only run if the backend code has changed
     if: ${{ needs.changes.outputs.backend == 'true' }}
