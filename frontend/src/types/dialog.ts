@@ -19,17 +19,6 @@ export interface GameSummaryDialogParams extends BaseDialogParams {
     props: { scoreboard: Scoreboard };
 }
 
-export interface RegisterDialogParams extends BaseDialogParams {
-    type: typeof DIALOG_TYPES.REGISTER;
-}
-export interface LoginDialogParams extends BaseDialogParams {
-    type: typeof DIALOG_TYPES.LOGIN;
-}
-
-export interface ResetPasswordDialogParams extends BaseDialogParams {
-    type: typeof DIALOG_TYPES.RESET;
-}
-
 export interface ErrorDialogParams extends BaseDialogParams {
     type: typeof DIALOG_TYPES.ERROR;
     props: { title: string; message: string };
@@ -40,9 +29,6 @@ export interface ConfirmExitDialogParams extends BaseDialogParams {
 }
 
 export type DialogParams =
-    | RegisterDialogParams
-    | LoginDialogParams
-    | ResetPasswordDialogParams
     | ErrorDialogParams
     | ConfirmExitDialogParams
     | GameSummaryDialogParams

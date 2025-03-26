@@ -16,7 +16,7 @@ export default function PrivateRoutes() {
     if (initialized && !isAuthenticated) {
       navigate(PATHS.LOGIN, {
         replace: true,
-        state: { from: location.pathname },
+        state: { redirectPath: location.pathname },
       });
     }
   }, [navigate, initialized, isAuthenticated, location.pathname]);
