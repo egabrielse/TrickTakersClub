@@ -1,4 +1,4 @@
-import { Divider, Paper, TextField, Typography } from "@mui/material";
+import { Divider, Paper, TextField } from "@mui/material";
 import { useFormik } from "formik";
 import { useState } from "react";
 import { useNavigate } from "react-router";
@@ -11,7 +11,7 @@ import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
 import dialogSlice from "../../../store/slices/dialog.slice";
 import ActionButton from "../../common/ActionButton";
-import AppLogo from "../../common/AppLogo";
+import PageTopper from "../../common/PageTopper";
 import "./HomePage.scss";
 
 const validationSchema = yup.object({
@@ -65,51 +65,98 @@ export default function HomePage() {
   };
 
   return (
-    <Paper className="HomePage">
-      <AppLogo size="xxlarge" color="white" />
-      <Typography variant="h2" color="white">
-        Trick Takers Club
-      </Typography>
-      <ActionButton
-        label="Host Table"
-        onClick={handlePlay}
-        disabled={loading}
+    <div className="HomePage">
+      <PageTopper
+        pre="Welcome to"
+        title="Trick Takers Club"
+        post={import.meta.env.VITE_REF_NAME}
       />
-      <Divider orientation="horizontal" color="white" />
-      <form
-        onSubmit={formik.handleSubmit}
-        style={{ width: "100%", display: "flex", flexDirection: "column" }}
-      >
-        <TextField
-          id="tableId"
-          name="tableId"
-          label="Invite Code"
-          size="medium"
-          value={formik.values.tableId}
-          onChange={formik.handleChange}
-          error={formik.touched.tableId && Boolean(formik.errors.tableId)}
-          helperText={formik.touched.tableId && formik.errors.tableId}
-          onPaste={(e) => {
-            if (e.clipboardData) {
-              const text = e.clipboardData.getData("text");
-              const prefix = location.origin + "/" + SEGMENTS.TABLE + "/";
-              if (text.startsWith(prefix)) {
-                e.preventDefault();
-                formik.setFieldValue(
-                  "tableId",
-                  text.substring(text.lastIndexOf("/") + 1),
-                );
-              }
-            }
-          }}
-        />
-        <ActionButton
-          color="secondary"
-          label="Join Table"
-          disabled={loading}
-          type="submit"
-        />
-      </form>
-    </Paper>
+      <div className="HomePage-Tiles">
+        <Paper className="HomePage-Tiles-Tile">
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "stretch",
+              justifyContent: "center",
+              gap: "1rem",
+              flex: 1,
+            }}
+          >
+            <div className="HomePage-Tiles-Tile-Header">
+              <h1>PLAY SHEEPSHEAD!</h1>
+            </div>
+            <ActionButton
+              label="Host Table"
+              onClick={handlePlay}
+              disabled={loading}
+            />
+            <Divider orientation="horizontal" color="white" />
+            <form
+              onSubmit={formik.handleSubmit}
+              style={{ display: "flex", flexDirection: "column" }}
+            >
+              <TextField
+                id="tableId"
+                name="tableId"
+                label="Invite Code"
+                size="medium"
+                value={formik.values.tableId}
+                onChange={formik.handleChange}
+                error={formik.touched.tableId && Boolean(formik.errors.tableId)}
+                helperText={formik.touched.tableId && formik.errors.tableId}
+                onPaste={(e) => {
+                  if (e.clipboardData) {
+                    const text = e.clipboardData.getData("text");
+                    const prefix = location.origin + "/" + SEGMENTS.TABLE + "/";
+                    if (text.startsWith(prefix)) {
+                      e.preventDefault();
+                      formik.setFieldValue(
+                        "tableId",
+                        text.substring(text.lastIndexOf("/") + 1),
+                      );
+                    }
+                  }
+                }}
+              />
+              <ActionButton
+                color="secondary"
+                label="Join Table"
+                disabled={loading}
+                type="submit"
+              />
+            </form>
+          </div>
+        </Paper>
+        <Paper className="HomePage-Tiles-Tile">
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "1rem",
+              flex: 1,
+            }}
+          >
+            <iframe
+              width="560"
+              height="315"
+              src="https://www.youtube.com/embed/pIbIIEHAM68?si=6V0VaRaWOGZhUVIA"
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
+          </div>
+        </Paper>
+        <Paper className="HomePage-Tiles-Tile">
+          Trick Takers Club is a place to play Sheepshead online with friends.
+          This site is a work in progress and is being developed by a single
+          person in their free time. I'm excited to continue adding new features
+          and improving the site.
+        </Paper>
+      </div>
+    </div>
   );
 }

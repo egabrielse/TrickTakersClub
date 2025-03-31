@@ -1,3 +1,7 @@
+import { CARD_RANK, CARD_SUIT } from "../../../../constants/card";
+import PlayingCard from "../../../common/PlayingCard";
+import PlayingCardList from "../../../common/PlayingCardList";
+
 export default function OverviewSection() {
   return (
     <>
@@ -64,6 +68,42 @@ export default function OverviewSection() {
               <span className="red">J♥ J♦</span>
               &nbsp;
               <span className="red">A♦ 10♦ K♦ 9♦ 8♦ 7♦</span>
+            </li>
+          </ul>
+        </li>
+        <li>
+          When playing Sheepshead on Trick Takers Club, you'll notice that Trump
+          Cards are have a yellowish color, to make them easier to identify.
+          <ul>
+            <li>
+              Trump Suit Cards:
+              <PlayingCardList>
+                <PlayingCard
+                  height={100}
+                  id="trump-1"
+                  card={{ suit: CARD_SUIT.DIAMOND, rank: CARD_RANK.EIGHT }}
+                />
+                <PlayingCard
+                  height={100}
+                  id="trump-2"
+                  card={{ suit: CARD_SUIT.CLUB, rank: CARD_RANK.QUEEN }}
+                />
+              </PlayingCardList>
+            </li>
+            <li>
+              Fail Suit Cards:
+              <PlayingCardList>
+                <PlayingCard
+                  height={100}
+                  id="fail-1"
+                  card={{ suit: CARD_SUIT.CLUB, rank: CARD_RANK.EIGHT }}
+                />
+                <PlayingCard
+                  height={100}
+                  id="fail-2"
+                  card={{ suit: CARD_SUIT.SPADE, rank: CARD_RANK.KING }}
+                />
+              </PlayingCardList>
             </li>
           </ul>
         </li>

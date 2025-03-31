@@ -1,7 +1,7 @@
 .ScrollableSection {
     display: flex;
     flex-direction: column;
-    margin: 2rem 0;
+    margin: 0 0 2rem 0;
     border: 1px solid white;
     border-radius: 8px;
     background-color: #74a65e !important;
@@ -14,7 +14,9 @@
         background-color: white;
         padding: 1rem;
         position: sticky;
+        z-index: 1;
         text-transform: uppercase;
+        box-shadow: 0 0 5px 0 white;
         top: 0;
 
         >* {

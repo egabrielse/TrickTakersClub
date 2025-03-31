@@ -11,9 +11,7 @@ export default function PageTopper({ pre, post, title }: PageTopperProps) {
     <div className="PageTopper">
       <div className="PageTopper-Title">
         <h3>{pre || ""}</h3>
-        <div style={{ fontSize: 72, color: "white" }}>
-          {title.toUpperCase()}
-        </div>
+        <span>{title.toUpperCase()}</span>
         <h4>{post || ""}</h4>
       </div>
     </div>
