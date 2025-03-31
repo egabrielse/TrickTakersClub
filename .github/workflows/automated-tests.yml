@@ -16,7 +16,20 @@ jobs:
       frontend: ${{ steps.filter.outputs.frontend }}
       backend: ${{ steps.filter.outputs.backend }}
     steps:
-      - uses: dorny/paths-filter@v3
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Debug Git Repository
+        run: |
+          pwd
+          ls -la
+          git status
+        continue-on-error: true
+
+      - name: Detect Changes in Code
+        uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
@@ -34,6 +47,13 @@ jobs:
     if: ${{ needs.changes.outputs.frontend == 'true' }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Debug Git Repository
+        run: |
+          pwd
+          ls -la
+          git status
+        continue-on-error: true
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -56,6 +76,13 @@ jobs:
     if: ${{ needs.changes.outputs.backend == 'true' }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Debug Git Repository
+        run: |
+          pwd
+          ls -la
+          git status
+        continue-on-error: true
 
       - name: Set up Go
         uses: actions/setup-go@v4
