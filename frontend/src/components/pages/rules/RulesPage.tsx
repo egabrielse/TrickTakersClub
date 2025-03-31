@@ -27,9 +27,12 @@ const SECTIONS = {
 export default function RulesPage() {
   return (
     <div className="RulesPage">
-      <ScrollableContainer
-        header={<PageTopper title="Sheepshead" pre="How to play" />}
-      >
+      <ScrollableContainer>
+        <PageTopper
+          pre="How to play"
+          title="Sheepshead"
+          post="The Official Card Game of Wisconsin"
+        />
         <ScrollableSection
           id={SECTIONS.OVERVIEW}
           title="Overview"

@@ -11,7 +11,12 @@ import NavigationTabs from "./NavigationTabs";
 
 export default function HeaderBar() {
   return (
-    <AppBar className="HeaderBar" position="static">
+    <AppBar
+      className="HeaderBar"
+      position="static"
+      elevation={5}
+      sx={{ zIndex: 5 }}
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Box sx={{ flexGrow: 1, display: { xs: "flex", sm: "none" } }}>
