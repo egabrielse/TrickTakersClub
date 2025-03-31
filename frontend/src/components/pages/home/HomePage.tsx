@@ -154,7 +154,7 @@ export default function HomePage() {
           Trick Takers Club is a place to play Sheepshead online with friends.
           This site is a work in progress and is being developed by a single
           person in their free time. I'm excited to continue adding new features
-          and improving the site.
+          and improving the site. REMOVE THIS.
         </Paper>
       </div>
     </div>
