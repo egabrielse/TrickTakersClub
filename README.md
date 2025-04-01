@@ -9,4 +9,13 @@
 
 ___
 
-Sheepshead is a 5-player, <a target="_blank" href="https://en.wikipedia.org/wiki/Trick-taking_game#Point-trick_games"> point-trick-taking </a> card game, played with a Piquet deck. This deck is a subset of a standard 52 card, French-suited deck, consisting of 32 cards: 7-10s, Jacks, Queens, Kings, and Aces.
+Sheepshead is a 5-player, <a target="_blank" href="https://en.wikipedia.org/wiki/Trick-taking_game#Point-trick_games"> point-trick-taking </a> card game. It's played with a Piquet pack, which  is a subset of the standard 52-card, French-suited deck, consisting of 32 cards: 7-10s, Jacks, Queens, Kings, and Aces.
+
+### Showcase
+TODO: video of gameplay
+
+### Architecture Diagram
+TODO: Add architecture diagram and explain the planned redesign (include redesign diagram as well).
+
+### Environment Setup
+TODO: Instructions for running locally
