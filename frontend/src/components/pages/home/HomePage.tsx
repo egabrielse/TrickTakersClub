@@ -72,6 +72,12 @@ export default function HomePage() {
         post={import.meta.env.VITE_REF_NAME}
       />
       <div className="HomePage-Tiles">
+        <Paper className="HomePage-Tiles-Tile" elevation={3}>
+          Hello! Trick Takers Club is a place to play Sheepshead online with
+          friends. This site is a work in progress and is being developed by a
+          single person in their free time. I'm excited to continue adding new
+          features and improving the site.
+        </Paper>
         <Paper className="HomePage-Tiles-Tile">
           <div
             style={{
@@ -140,8 +146,8 @@ export default function HomePage() {
             }}
           >
             <iframe
-              width="560"
-              height="315"
+              width="100%"
+              style={{ aspectRatio: "16 / 9", minWidth: "400px" }}
               src="https://www.youtube.com/embed/pIbIIEHAM68?si=6V0VaRaWOGZhUVIA"
               title="YouTube video player"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -149,12 +155,6 @@ export default function HomePage() {
               allowFullScreen
             />
           </div>
-        </Paper>
-        <Paper className="HomePage-Tiles-Tile">
-          Hello! Trick Takers Club is a place to play Sheepshead online with
-          friends. This site is a work in progress and is being developed by a
-          single person in their free time. I'm excited to continue adding new
-          features and improving the site.
         </Paper>
       </div>
     </div>

@@ -1,19 +1,19 @@
 type ShapesIconProps = {
   size?: number;
-  stroke?: string;
+  color?: string;
   rotate?: number;
 };
 
 export default function ShapesIcon({
   size = 24,
-  stroke = "#000000",
+  color = "#000000",
   rotate = 0,
 }: ShapesIconProps) {
   return (
     <svg height={size} viewBox="0 0 512 512" transform={`rotate(${rotate})`}>
       <g transform="matrix(1.25 0 0 1.25 127.9128440367 365)">
         <path
-          stroke={stroke}
+          stroke={color}
           strokeWidth={24}
           strokeDasharray="none"
           strokeLinecap="butt"
@@ -30,7 +30,7 @@ export default function ShapesIcon({
       </g>
       <g transform="matrix(1.25 0 0 1.2499999844 385 367.8367346939)">
         <path
-          stroke={stroke}
+          stroke={color}
           strokeWidth={24}
           strokeDasharray="none"
           strokeLinecap="butt"
@@ -47,7 +47,7 @@ export default function ShapesIcon({
       </g>
       <g transform="matrix(1.3355651776 0 0 1.3355664069 254.2460329017 119.0402971142)">
         <path
-          stroke={stroke}
+          stroke={color}
           strokeWidth={24}
           strokeDasharray="none"
           strokeLinecap="butt"

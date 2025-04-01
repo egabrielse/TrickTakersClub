@@ -5,7 +5,6 @@ import CardsIcon from "../../common/icons/CardsIcon";
 import DealerIcon from "../../common/icons/DealerIcon";
 import Hand from "../../common/icons/Hand";
 import ShapesIcon from "../../common/icons/ShapesIcon";
-import ScrollableContainer from "../../common/scrollable/ScrollableContainer";
 import ScrollableSection from "../../common/scrollable/ScrollableSection";
 import "./RulesPage.scss";
 import Dealing from "./sections/Dealing";
@@ -27,55 +26,54 @@ const SECTIONS = {
 export default function RulesPage() {
   return (
     <div className="RulesPage">
-      <ScrollableContainer>
-        <PageTopper
-          pre="How to play"
-          title="Sheepshead"
-          post="The Official Card Game of Wisconsin"
-        />
-        <ScrollableSection
-          id={SECTIONS.OVERVIEW}
-          title="Overview"
-          icon={<PreviewIcon />}
-        >
-          <Overview />
-        </ScrollableSection>
-        <ScrollableSection
-          id={SECTIONS.DEALING}
-          title="Dealing"
-          icon={<DealerIcon />}
-        >
-          <Dealing />
-        </ScrollableSection>
-        <ScrollableSection
-          id={SECTIONS.PICKING}
-          title="Picking"
-          icon={<CardsIcon />}
-        >
-          <Picking />
-        </ScrollableSection>
-        <ScrollableSection
-          id={SECTIONS.PLAYING}
-          title="Playing"
-          icon={<Hand />}
-        >
-          <Playing />
-        </ScrollableSection>
-        <ScrollableSection
-          id={SECTIONS.PLAYING}
-          title="Scoring"
-          icon={<ScoreBoardIcon />}
-        >
-          <Scoring />
-        </ScrollableSection>
-        <ScrollableSection
-          id={SECTIONS.VARIATIONS}
-          title="Variations"
-          icon={<ShapesIcon />}
-        >
-          <Variations />
-        </ScrollableSection>
-      </ScrollableContainer>
+      <PageTopper
+        pre="How to Play"
+        title="Sheepshead"
+        post="The Official Card Game of Wisconsin"
+      />
+
+      <ScrollableSection
+        id={SECTIONS.OVERVIEW}
+        title="Overview"
+        icon={<PreviewIcon htmlColor="#fff" />}
+      >
+        <Overview />
+      </ScrollableSection>
+      <ScrollableSection
+        id={SECTIONS.DEALING}
+        title="Dealing"
+        icon={<DealerIcon color="#fff" />}
+      >
+        <Dealing />
+      </ScrollableSection>
+      <ScrollableSection
+        id={SECTIONS.PICKING}
+        title="Picking"
+        icon={<CardsIcon color="#fff" />}
+      >
+        <Picking />
+      </ScrollableSection>
+      <ScrollableSection
+        id={SECTIONS.PLAYING}
+        title="Playing"
+        icon={<Hand color="#fff" />}
+      >
+        <Playing />
+      </ScrollableSection>
+      <ScrollableSection
+        id={SECTIONS.PLAYING}
+        title="Scoring"
+        icon={<ScoreBoardIcon htmlColor="#fff" />}
+      >
+        <Scoring />
+      </ScrollableSection>
+      <ScrollableSection
+        id={SECTIONS.VARIATIONS}
+        title="Variations"
+        icon={<ShapesIcon color="#fff" />}
+      >
+        <Variations />
+      </ScrollableSection>
     </div>
   );
 }

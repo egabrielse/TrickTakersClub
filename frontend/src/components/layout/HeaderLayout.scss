@@ -3,14 +3,15 @@
     flex-direction: column;
     height: 100vh;
     width: 100vw;
+    overflow: hidden;
 
     &-Content {
         flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        justify-content: stretch;
+        padding: 0 1rem;
+        width: calc(100% - 2rem);
         min-width: 300px;
-        overflow: hidden;
+        max-width: 1000px;
+        margin: 0 auto;
+        overflow: auto;
     }
 }

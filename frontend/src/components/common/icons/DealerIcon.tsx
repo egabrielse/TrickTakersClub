@@ -1,19 +1,19 @@
 type DealerIconProps = {
   size?: number;
-  fill?: string;
+  color?: string;
   rotate?: number;
 };
 
 export default function DealerIcon({
   size = 24,
-  fill = "#000000",
+  color = "#000000",
   rotate = 0,
 }: DealerIconProps) {
   return (
     <svg height={size} viewBox="0 0 512 512" transform={`rotate(${rotate})`}>
       <g>
         <path
-          fill={fill}
+          fill={color}
           d="M438.41,404.336c-12.321-18.452-31.032-28.649-48.621-35.278c-8.81-3.315-17.434-5.766-25.027-7.84
             c-7.58-2.066-14.175-3.81-18.605-5.475c-7.749-2.875-15.934-6.606-21.645-10.62c-2.851-1.987-5.051-4.037-6.324-5.781
             c-1.288-1.791-1.638-3.024-1.654-4.101c0-7.454,0-16.763,0-29.025c9.914-11.037,24.155-28.13,30.008-55.23
@@ -51,7 +51,7 @@ export default function DealerIcon({
             C436.411,454.656,436.277,457.539,436.041,460.516z"
         />
         <polygon
-          fill={fill}
+          fill={color}
           points="221.286,353.103 221.286,396.26 256.254,380.636 291.221,396.26 291.221,353.103 256.254,368.727 	"
         />
       </g>

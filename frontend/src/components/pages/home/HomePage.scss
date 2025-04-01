@@ -1,10 +1,6 @@
 .HomePage {
     display: flex;
     flex-direction: column;
-    height: calc(100% - 2rem);
-    width: calc(100% - 4rem);
-    padding: 0 2rem 2rem 2rem;
-    overflow: scroll;
 
     &-Tiles {
         display: flex;
