@@ -29,7 +29,7 @@ export default function RulesPage() {
       <PageTopper
         pre="How to Play"
         title="Sheepshead"
-        post="The Official Card Game of Wisconsin"
+        post="The Unofficial Card Game of Wisconsin"
       />
 
       <ScrollableSection
