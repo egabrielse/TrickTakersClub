@@ -154,6 +154,11 @@ export const theme = createTheme({
             },
         },
         MuiPaper: {
+            styleOverrides: {
+                root: {
+                    boxShadow: "1px 1px 4px rgba(0, 0, 0, 0.5)",
+                },
+            },
             defaultProps: {
                 variant: "outlined",
             },

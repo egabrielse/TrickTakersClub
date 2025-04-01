@@ -1,11 +1,11 @@
 type CardsIconProps = {
   size?: number;
-  stroke?: string;
+  color?: string;
 };
 
 export default function CardsIcon({
   size = 24,
-  stroke = "#000000",
+  color = "#000000",
 }: CardsIconProps) {
   return (
     <svg
@@ -14,7 +14,7 @@ export default function CardsIcon({
       viewBox="0 0 16 16"
       version="1.1"
       fill="none"
-      stroke={stroke}
+      stroke={color}
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth="1"

@@ -9,24 +9,20 @@
     &-Header {
         display: flex;
         align-items: center;
-        gap: 1rem;
         border-radius: 5px 5px 0 0;
-        background-color: white;
+        background-color: #74a65e;
+        border-bottom: 1px solid white;
         padding: 1rem;
-        position: sticky;
         z-index: 1;
+        gap: 1rem;
         text-transform: uppercase;
-        box-shadow: 0 0 5px 0 white;
+        position: sticky;
         top: 0;
-
-        >* {
-            color: black;
-        }
     }
 
     &-Body {
         overflow: hidden;
-        padding: 0 1rem 1rem 1rem;
+        padding: 0 1rem 1rem 2rem;
 
         font-size: large;
 
