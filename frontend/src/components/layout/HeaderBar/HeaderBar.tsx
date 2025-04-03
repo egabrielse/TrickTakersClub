@@ -2,14 +2,21 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import AppLogo from "../../common/AppLogo";
+import { useNavigate } from "react-router";
+import { PATHS } from "../../../constants/url";
+import HeaderLogo from "../../common/HeaderLogo";
 import AccountToolbar from "./AccountToolbar";
 import "./HeaderBar.scss";
 import NavigationDropdown from "./NavigationDropdown";
 import NavigationTabs from "./NavigationTabs";
 
 export default function HeaderBar() {
+  const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    navigate(PATHS.HOME);
+  };
+
   return (
     <AppBar
       className="HeaderBar"
@@ -24,14 +31,7 @@ export default function HeaderBar() {
           </Box>
 
           <Box sx={{ flexGrow: { xs: 1, sm: 0 }, display: "flex" }}>
-            <AppLogo size="large" />
-            <Typography variant="h6" sx={{ lineHeight: 0.75 }}>
-              &nbsp;TRICK
-              <br />
-              TAKERS
-              <br />
-              &nbsp;&nbsp;CLUB
-            </Typography>
+            <HeaderLogo />
           </Box>
 
           <Box sx={{ flexGrow: 1, display: { xs: "none", sm: "flex" } }}>
