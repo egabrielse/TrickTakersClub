@@ -107,7 +107,7 @@ export default function PlayerHand() {
           id={`card-${card.suit}-${card.rank}`}
           key={`card-${card.suit}-${card.rank}`}
           card={card}
-          height={275}
+          height={250}
           highlighted={selectedCard === card}
           disabled={!canClickCard(card)}
           onClick={canClickCard(card) ? () => clickCard(card) : undefined}
