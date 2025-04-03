@@ -1,5 +1,3 @@
-import Flare from "../../../common/Flare";
-
 export default function Variations() {
   return (
     <>
@@ -45,9 +43,7 @@ export default function Variations() {
           The partner is automatically the player holding the Jack of Diamonds.
         </li>
         <li>
-          <b>
-            Call Up <Flare color="orange">Not Yet Supported</Flare>:&nbsp;
-          </b>
+          <b>Call Up:&nbsp;</b>
           If the picker has the Jack of Diamonds in their hand or bury, they
           must "call up" to the Jack of Hearts. If the Jack of Hearts is also
           held, then they must call up to the Jack of Spades, and then to the
@@ -57,17 +53,6 @@ export default function Variations() {
       </ul>
 
       <h3>Scoring</h3>
-
-      <h4>
-        Blitzing <Flare color="orange">Not Yet Supported</Flare>
-      </h4>
-      <ul>
-        <li>
-          <i>Before</i> the blind is picked up, the picker may reveal that they
-          have the two red queens or the two black queens in their hand.
-        </li>
-        <li>Blitzing doubles the payouts for the hand.</li>
-      </ul>
 
       <h4>Double on the Bump</h4>
       <ul>
@@ -116,18 +101,6 @@ export default function Variations() {
         <li>
           The goal of Mosters is to <i>not</i> take the most points. The player
           that takes the most points loses the hand.
-        </li>
-      </ul>
-
-      <h4>
-        Doublers <Flare color="orange">Not Yet Supported</Flare>
-      </h4>
-      <ul>
-        <li>The hand is redealt by the same dealer, and played normally.</li>
-        <li>Payouts are doubled.</li>
-        <li>
-          This rule is compounding, meaning that if there is again a no-pick
-          scenario, the scores are quadrupled, then hextupled, and so on.
         </li>
       </ul>
     </>
