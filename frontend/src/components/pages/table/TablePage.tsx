@@ -11,6 +11,7 @@ import ExpandingButton from "../../common/ExpandingButton";
 import HeaderLogo from "../../common/HeaderLogo";
 import Game from "./Game";
 import GameMenu from "./GameMenu";
+import LinkButton from "./GameMenu/LinkButton";
 import ActiveGameSettings from "./OverlayComponents/ActiveGameSettings";
 import Chat from "./OverlayComponents/Chat";
 import EndGameButton from "./OverlayComponents/EndGameButton";
@@ -56,6 +57,7 @@ export default function TablePage() {
         {inProgress && <SoundButton />}
         {inProgress && isHost && <EndGameButton />}
         {inProgress && <LastHandButton />}
+        {inProgress && <LinkButton variant="paper" />}
       </div>
       {inProgress && (
         <ExpandingButton

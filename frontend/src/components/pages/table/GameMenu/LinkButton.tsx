@@ -4,8 +4,13 @@ import { Button, Tooltip } from "@mui/material";
 import { useState } from "react";
 import { useAppSelector } from "../../../../store/hooks";
 import tableSlice from "../../../../store/slices/table.slice";
+import PaperButton from "../../../common/PaperButton";
 
-export default function LinkButton() {
+type LinkButtonProps = {
+  variant?: "default" | "paper";
+};
+
+export default function LinkButton({ variant = "default" }: LinkButtonProps) {
   const tableId = useAppSelector(tableSlice.selectors.tableId);
   const [copied, setCopied] = useState(false);
 
@@ -19,16 +24,27 @@ export default function LinkButton() {
   return (
     <Tooltip title={copied ? "Copied!" : "Copy link to table"}>
       <>
-        <Button
-          id="link-button"
-          name="link-button"
-          startIcon={copied ? <CheckIcon /> : <ContentCopyIcon />}
-          onClick={copyLink}
-          style={{ fontSize: "0.75rem" }}
-          color="secondary"
-        >
-          Copy Invite Code
-        </Button>
+        {variant === "paper" ? (
+          <PaperButton
+            id="paper-link-button"
+            name="paper-link-button"
+            startIcon={copied ? <CheckIcon /> : <ContentCopyIcon />}
+            onClick={copyLink}
+          >
+            Invite Code
+          </PaperButton>
+        ) : (
+          <Button
+            id="link-button"
+            name="link-button"
+            startIcon={copied ? <CheckIcon /> : <ContentCopyIcon />}
+            onClick={copyLink}
+            style={{ fontSize: "0.75rem" }}
+            color="secondary"
+          >
+            Copy Invite Code
+          </Button>
+        )}
       </>
     </Tooltip>
   );
