@@ -1,0 +1,48 @@
+.FeaturesList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+
+    &-Header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        h1 {
+            margin: 0;
+        }
+
+        >div {
+            display: flex;
+            gap: 1rem;
+        }
+    }
+
+
+    ul {
+        column-gap: 1.5em;
+        row-gap: 0.5rem;
+        column-width: 250px;
+
+        li {
+            list-style: outside;
+            padding-left: 0.5rem;
+            list-style-type: "\1f6e0";
+
+            &.checked {
+                list-style-type: "\2705";
+            }
+
+            +li {
+                margin: 0.5rem 0;
+            }
+
+        }
+
+        b {
+            font-size: 20px;
+            margin-left: 1rem;
+        }
+    }
+}

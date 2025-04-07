@@ -22,7 +22,7 @@ export default function TrickPointCounter({ points }: TrickPointCounterProps) {
           cx="100"
           cy="100"
           r="49"
-          fill="#91c37a"
+          fill="#74a65e"
           stroke="white"
           strokeWidth="2"
         />

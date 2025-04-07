@@ -12,6 +12,7 @@ import authSlice from "../../../store/slices/auth.slice";
 import dialogSlice from "../../../store/slices/dialog.slice";
 import ActionButton from "../../common/ActionButton";
 import PageTopper from "../../common/PageTopper";
+import FeaturesList from "./FeaturesList";
 import "./HomePage.scss";
 
 const validationSchema = yup.object({
@@ -73,10 +74,10 @@ export default function HomePage() {
       />
       <div className="HomePage-Tiles">
         <Paper className="HomePage-Tiles-Tile">
-          Hello! Trick Takers Club is a place to play Sheepshead online with
-          friends. This site is a work in progress and is being developed by a
-          single person in their free time. I'm excited to continue adding new
-          features and improving the site.
+          Hello! Welcome to Trick Takers Club, a place to play Sheepshead online
+          with friends. This site is a work in progress and is being developed
+          by a single person in their free time. I'm excited to continue adding
+          new features and improving the site.
         </Paper>
         <Paper className="HomePage-Tiles-Tile">
           <div
@@ -147,7 +148,7 @@ export default function HomePage() {
           >
             <iframe
               width="100%"
-              style={{ aspectRatio: "16 / 9", minWidth: "400px" }}
+              className="HomePage-Tiles-Tile-Video"
               src="https://www.youtube.com/embed/pIbIIEHAM68?si=6V0VaRaWOGZhUVIA"
               title="YouTube video player"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -155,6 +156,9 @@ export default function HomePage() {
               allowFullScreen
             />
           </div>
+        </Paper>
+        <Paper className="HomePage-Tiles-Tile">
+          <FeaturesList />
         </Paper>
       </div>
     </div>
