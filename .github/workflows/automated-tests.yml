@@ -28,7 +28,7 @@ jobs:
               - "backend/**"
 
   frontend-tests:
-    name: Frontend
+    name: Frontend Tests
     needs: changes
     runs-on: ubuntu-latest
     # Only run if the frontend code has changed
@@ -45,12 +45,16 @@ jobs:
         working-directory: ./frontend
         run: npm install
 
+      - name: Build Frontend
+        working-directory: ./frontend
+        run: npm run build
+
       - name: Run Vitest
         working-directory: ./frontend
         run: npm run test
 
   backend-tests:
-    name: Backend
+    name: Backend Tests
     needs: changes
     runs-on: ubuntu-latest
     # Only run if the backend code has changed
