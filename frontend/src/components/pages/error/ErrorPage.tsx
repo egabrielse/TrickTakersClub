@@ -5,7 +5,6 @@ import { ErrorResponse, isRouteErrorResponse } from "react-router";
 import { ErrorPageAction } from "../../../types/error";
 import "./ErrorPage.scss";
 
-// Test Change
 type ErrorPageProps = {
   error: Error | ErrorResponse | AxiosError | unknown;
   actions?: ErrorPageAction[];
