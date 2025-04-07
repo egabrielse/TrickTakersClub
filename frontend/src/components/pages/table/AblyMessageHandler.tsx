@@ -9,11 +9,13 @@ import { ReactNode, useRef, useState } from "react";
 import { DIALOG_TYPES } from "../../../constants/dialog";
 import { BROADCAST_TYPES, DIRECT_TYPES } from "../../../constants/message";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import authSlice from "../../../store/slices/auth.slice";
 import dialogSlice from "../../../store/slices/dialog.slice";
 import gameSlice from "../../../store/slices/game.slice";
 import handSlice from "../../../store/slices/hand.slice";
 import settingsSlice from "../../../store/slices/settings.slice";
 import tableSlice from "../../../store/slices/table.slice";
+import { TableFullError } from "../../../types/error";
 import {
   BroadcastMessage,
   ChatMessage,
@@ -45,6 +47,9 @@ export default function AblyMessageHandler({
   const soundOn = useAppSelector(settingsSlice.selectors.soundOn);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState<string>("");
+  const uid = useAppSelector(authSlice.selectors.uid);
+  const inProgress = useAppSelector(gameSlice.selectors.inProgress);
+  const seating = useAppSelector(tableSlice.selectors.seating);
 
   // Alert other users to the presence of this user
   usePresence(broadcastName);
@@ -254,6 +259,8 @@ export default function AblyMessageHandler({
 
   if (connectionState === "connecting" || !initialized) {
     return <LoadingOverlay text="Connecting to table" />;
+  } else if (inProgress && !seating.includes(uid)) {
+    throw new TableFullError();
   } else {
     return (
       <>
