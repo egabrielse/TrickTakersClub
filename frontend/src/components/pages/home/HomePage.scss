@@ -28,6 +28,17 @@
                     margin: 0;
                 }
             }
+
+            &-Video {
+                aspect-ratio: 16 / 9;
+                width: 100%;
+                min-width: 500px;
+
+
+                @media screen and (max-width: 650px) {
+                    min-width: 200px;
+                }
+            }
         }
     }
 
