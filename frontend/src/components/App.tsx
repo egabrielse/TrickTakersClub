@@ -64,13 +64,7 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <MobileView>
-        <ErrorPage
-          error={
-            new DeviceNotSupportedError(
-              "Trick Takers Club is not yet supported on mobile devices. Please use a desktop browser.",
-            )
-          }
-        />
+        <ErrorPage error={new DeviceNotSupportedError()} />
       </MobileView>
       <BrowserView>
         <Provider store={store}>

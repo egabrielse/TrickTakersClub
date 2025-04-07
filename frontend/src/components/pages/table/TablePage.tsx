@@ -8,15 +8,16 @@ import gameSlice from "../../../store/slices/game.slice";
 import settingsSlice from "../../../store/slices/settings.slice";
 import tableSlice from "../../../store/slices/table.slice";
 import ExpandingButton from "../../common/ExpandingButton";
+import HeaderLogo from "../../common/HeaderLogo";
 import Game from "./Game";
 import GameMenu from "./GameMenu";
+import LinkButton from "./GameMenu/LinkButton";
 import ActiveGameSettings from "./OverlayComponents/ActiveGameSettings";
 import Chat from "./OverlayComponents/Chat";
 import EndGameButton from "./OverlayComponents/EndGameButton";
 import LastHandButton from "./OverlayComponents/LastHandButton";
 import ScoreboardDisplay from "./OverlayComponents/ScoreboardDisplay";
 import SoundButton from "./OverlayComponents/SoundButton";
-import TableHeader from "./OverlayComponents/TableHeader";
 import "./TablePage.scss";
 
 export default function TablePage() {
@@ -49,13 +50,14 @@ export default function TablePage() {
     <div className="TablePage">
       {inProgress ? <Game /> : <GameMenu />}
       <div id="top-left">
-        <TableHeader />
+        <HeaderLogo />
         <ActiveGameSettings />
       </div>
       <div id="bottom-left">
         {inProgress && <SoundButton />}
         {inProgress && isHost && <EndGameButton />}
         {inProgress && <LastHandButton />}
+        {inProgress && <LinkButton variant="paper" />}
       </div>
       {inProgress && (
         <ExpandingButton

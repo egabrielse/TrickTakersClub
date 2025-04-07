@@ -13,12 +13,10 @@ export default function OverviewSection() {
         >
           point-trick-taking
         </a>{" "}
-        game, typically played with 5 players. While there exist variations with
-        other numbers of players, these rules will assume a 5-handed game. The
-        goal is of the game is to get 61 points by winning tricks. It's played
-        with a Piquet pack. This pack is a subset of the standard 52-card,
-        French-suited deck, consisting of 32 cards: 7-10s, Jacks, Queens, Kings,
-        and Aces.
+        card game, typically played with 5 players and a deck of 32 cards:
+        7-10s, Jacks, Queens, Kings, and Aces. While there are many variations
+        to the game, the rules below will assume a 5-handed game and will only
+        describe variations currently supported by Trick Takers Club.
       </p>
       <p>
         The following rules are compiled from{" "}
@@ -73,7 +71,7 @@ export default function OverviewSection() {
         </li>
         <li>
           When playing Sheepshead on Trick Takers Club, you'll notice that Trump
-          Cards are have a yellowish color, to make them easier to identify.
+          Cards are have a yellowish color to make them easier to identify.
           <ul>
             <li>
               Trump Suit Cards:

@@ -2,17 +2,12 @@ import { Button, Paper, Typography } from "@mui/material";
 import { AxiosError, HttpStatusCode, isAxiosError } from "axios";
 import { ReactNode } from "react";
 import { ErrorResponse, isRouteErrorResponse } from "react-router";
+import { ErrorPageAction } from "../../../types/error";
 import "./ErrorPage.scss";
-
-type Action = {
-  icon?: ReactNode;
-  label: string;
-  onClick: () => void;
-};
 
 type ErrorPageProps = {
   error: Error | ErrorResponse | AxiosError | unknown;
-  actions?: Action[];
+  actions?: ErrorPageAction[];
 };
 
 export default function ErrorPage({

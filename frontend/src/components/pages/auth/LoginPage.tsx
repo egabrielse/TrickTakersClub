@@ -125,6 +125,7 @@ export default function LoginPage(): ReactNode {
                   : " "
               }
             />
+            <DialogErrorMessage error={errMsg} clearError={handleClearError} />
             <Link
               component="button"
               variant="body1"
@@ -136,7 +137,6 @@ export default function LoginPage(): ReactNode {
             >
               Forgot your password?
             </Link>
-            <DialogErrorMessage error={errMsg} clearError={handleClearError} />
           </div>
           <div className="Form-Footer">
             <Button
