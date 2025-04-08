@@ -95,7 +95,7 @@ I'm currently reworking the architecture of the app, because a flaw was discover
 5. This means a server instance with an active game session could get terminated if it stops receiving traffic, leaving players in the lurch.
 
 ### The Workaround (Temporary)
-For now, the minimum and maximum number of server instances is set to be the same. This way no instance get prematurely terminated. However, this isn't a long term solution, because it also means the application cannot be scaled up. It's also less cost effective. Since this app is not yet fully launched and isn't receiving much traffic other than from testers, this is not a critical problem, but it needs to be resolved before going public. 
+For now, the minimum and maximum number of server instances is set to be the same. This way no instance get prematurely terminated. However, this isn't a long term solution, because it also means the application cannot be scaled up. It's also less cost effective. Since Trick Takers Club has not yet been launched publicly, the site isn't receiving much traffic other than from testers, so this is not a critical problem, but it needs to be resolved before going public. 
 
 ### The Redesign
 1. Replace Ably with direct Websocket connections between the server and the user clients. So long as there exists an open WS connection, the instance is considered active and will not be scaled down.
