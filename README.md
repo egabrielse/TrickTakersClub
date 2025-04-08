@@ -16,9 +16,11 @@
 
 ___
 
-🐑 Sheepshead <a href="https://en.wikipedia.org/wiki/Trick-taking_game#Point-trick_games"> point-trick-taking </a> card game, typically played with five players. It's played with a Piquet pack, which  is a subset of the standard 52-card, French-suited deck, consisting of 32 cards: 7-10s, Jacks, Queens, Kings, and Aces.
+# 🐑 Sheepshead
 
-To learn more about Sheepshead and hot to play it, checkout the following links:
+Sheepshead <a href="https://en.wikipedia.org/wiki/Trick-taking_game#Point-trick_games"> point-trick-taking </a> card game, descended from the game Bavarian Schafkopf (sheep head in German). Likely a result of its strong German heritage, Wisconsin is home to the most Sheepshead players.
+<br/><br/>
+Typically played with five player and with a deck of 32 cards: 7-10s, Jacks, Queens, Kings, and Aces. The goal of Sheepshead is to win the most points. Each card has a point value that is different from the card's strength. In total there are 120 points at play, and the player or players that take the most points win the hand. Although Sheepshead has a strong base of players, it's not as widely known as other trick based games like Euchre. This may partially be due to the games unconventional rules, which make the learning curve a little steeper. To learn more about Sheepshead and how to play it, checkout the following links:
 <br/>
 <p align="center" width="100%" vertical>
 <a href="https://tricktakers.club/rules">Trick Takers Club Rules</a> ~ <a href="https://en.wikipedia.org/wiki/Sheepshead_(card_game)">Wikipedia Page</a> ~ <a href="https://www.sheepsheadrules.com/home">Sheepshead Rules!</a> ~ <a href="https://www.sheepshead.org/rules/">Sheepshead.org</a>
@@ -39,10 +41,10 @@ ___
 # 🏗️ Architecture
 - **Frontend** is built with React and Vite as the build tool. Uses a mix of custom and <a href="https://mui.com/">Material-UI</a> components.
 - **Backend** is written in Golang.
-- Both the frontend and backend are deployed on <img
+- Both the frontend and backend are deployed on <a href="https://cloud.google.com/run?hl=en"><img
     src="https://github.com/user-attachments/assets/456e4df7-bd09-4f4a-b5a7-b01edafc27ee"
     height="16px"
-  /> Google Cloud Run (serverless container hosting). This was chosen as it's cost effective and automatically manages scaling.
+  /> Google Cloud Run</a> (serverless container hosting). This was chosen as it's cost effective and automatically manages scaling.
 - <a href="https://firebase.google.com/products/firestore"><img
     src="https://github.com/user-attachments/assets/d32bdcd3-ac05-4d9a-9905-11e265217001"
     height="16px"
@@ -118,7 +120,3 @@ For now, the minimum and maximum number of server instances is set to be the sam
     align="center"
   />
 </p>
-
-
-# 💻 Environment Setup
-TODO: Instructions for running locally
