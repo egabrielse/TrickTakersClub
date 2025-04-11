@@ -15,6 +15,12 @@
 </p>
 
 ___
+<p align="center" width="100%" vertical>
+  <img src="https://github.com/egabrielse/TrickTakersClub/actions/workflows/automated-tests.yml/badge.svg" />
+  <img src="https://github.com/egabrielse/TrickTakersClub/actions/workflows/google-cloudrun-docker.yml/badge.svg?ref=v0.0.4" />
+</p>
+
+___
 
 # 🐑 Sheepshead
 
