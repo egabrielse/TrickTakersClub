@@ -93,6 +93,8 @@ ___
 # 🚧 Architecture Redesign
 I'm currently reworking the architecture of the app, because a flaw was discovered after deploying to Google Cloud Run.
 
+**_Note: See [issue #90](https://github.com/egabrielse/TrickTakersClub/issues/90) for updates on this redesign_**
+
 ### The Flaw - Current Architecture is Not Scalable
 1. Gameplay is managed by the Game Manager (GM), which is a goroutine that runs on the server.
 2. Google Cloud Run is serverless, meaning server management is handled automatically by Google. This includes scaling...
