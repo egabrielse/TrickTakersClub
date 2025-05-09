@@ -58,7 +58,7 @@ const router = createBrowserRouter(
   ),
 );
 
-axios.defaults.baseURL = import.meta.env.VITE_BACKEND_HOST;
+axios.defaults.baseURL = import.meta.env.VITE_CORE_SERVICE_URL;
 
 export default function App() {
   return (
