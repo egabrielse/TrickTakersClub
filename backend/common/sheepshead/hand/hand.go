@@ -2,9 +2,9 @@ package hand
 
 import (
 	"fmt"
-	"main/domain/game/deck"
-	"main/domain/game/scoring"
-	"main/utils"
+	"sheepshead/deck"
+	"sheepshead/scoring"
+	"sheepshead/utils"
 )
 
 type Hand struct {

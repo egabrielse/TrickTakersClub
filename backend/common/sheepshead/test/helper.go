@@ -2,8 +2,8 @@ package test
 
 import (
 	"fmt"
-	"main/domain/game/deck"
 	"math/rand"
+	"sheepshead/deck"
 )
 
 func CreateListOfPlayers(numPlayers int) []string {

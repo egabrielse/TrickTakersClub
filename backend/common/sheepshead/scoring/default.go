@@ -1,8 +1,8 @@
 package scoring
 
 import (
-	"main/utils"
 	"math"
+	"sheepshead/utils"
 )
 
 // DefaultScoringFunc is the default scoring function for a hand of Game

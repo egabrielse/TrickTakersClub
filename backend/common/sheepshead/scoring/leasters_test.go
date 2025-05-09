@@ -1,7 +1,7 @@
 package scoring
 
 import (
-	"main/utils"
+	"sheepshead/utils"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

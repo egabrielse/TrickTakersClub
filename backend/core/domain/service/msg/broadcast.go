@@ -1,9 +1,9 @@
 package msg
 
 import (
-	"main/domain/game/deck"
-	"main/domain/game/hand"
-	"main/domain/game/scoring"
+	"sheepshead/deck"
+	"sheepshead/hand"
+	"sheepshead/scoring"
 )
 
 var BroadcastType = struct {

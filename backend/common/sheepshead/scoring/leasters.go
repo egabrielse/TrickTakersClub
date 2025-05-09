@@ -1,7 +1,7 @@
 package scoring
 
 import (
-	"main/utils"
+	"sheepshead/utils"
 )
 
 func ScoreLeastersHand(

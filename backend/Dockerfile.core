@@ -1,0 +1,27 @@
+# Build Stage
+FROM golang:1.24
+
+WORKDIR /app
+
+# Create necessary directories
+RUN mkdir -p /core
+RUN mkdir -p /common/sheepshead
+
+# Copy only the necessary files for dependency resolution
+COPY ./core/go.mod ./core/go.sum ./core/
+COPY ./common/sheepshead/go.mod ./common/sheepshead/go.sum ./core/
+WORKDIR /app/core
+RUN go mod download
+
+# Copy the entire application
+WORKDIR /app
+COPY ./core ./core
+COPY ./common/sheepshead ./common/sheepshead
+
+# Build the application binary
+WORKDIR /app/core
+RUN go build -o /binary
+
+EXPOSE 8080
+
+CMD [ "/binary" ]

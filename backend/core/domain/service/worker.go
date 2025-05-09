@@ -3,11 +3,11 @@ package service
 import (
 	"context"
 	"main/domain/entity"
-	"main/domain/game"
-	"main/domain/game/hand"
 	"main/domain/repository"
 	"main/domain/service/msg"
 	"main/utils"
+	"sheepshead"
+	"sheepshead/hand"
 	"time"
 
 	"github.com/ably/ably-go/ably"
@@ -17,7 +17,7 @@ import (
 // TableWorker represents the service for controlling the table
 type TableWorker struct {
 	Table         *entity.TableEntity
-	Game          *game.Game
+	Game          *sheepshead.Game
 	SeatedPlayers []string
 	GameSettings  *hand.GameSettings
 	LastUpdate    time.Time

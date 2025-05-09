@@ -1,8 +1,8 @@
 package hand
 
 import (
-	"main/domain/game/deck"
-	"main/utils"
+	"sheepshead/deck"
+	"sheepshead/utils"
 )
 
 type PlayerHands struct {

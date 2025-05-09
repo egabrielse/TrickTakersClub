@@ -1,10 +1,10 @@
 package service
 
 import (
-	"main/domain/game"
-	"main/domain/game/hand"
 	"main/domain/service/msg"
 	"main/utils"
+	"sheepshead"
+	"sheepshead/hand"
 )
 
 func HandleUpdateCallingMethod(t *TableWorker, clientID string, data interface{}) {
@@ -87,7 +87,7 @@ func HandleStartGameCommand(t *TableWorker, clientID string, data interface{}) {
 		t.DirectMessage(msg.ErrorMessage(clientID, "not enough players"))
 	} else {
 		// Start a new game
-		t.Game = game.NewGame(t.SeatedPlayers, t.GameSettings)
+		t.Game = sheepshead.NewGame(t.SeatedPlayers, t.GameSettings)
 		// Announce the start of the game
 		t.BroadcastMessage(msg.GameStartedMessage(t.Game.PlayerOrder))
 		currentHand := t.Game.GetCurrentHand()

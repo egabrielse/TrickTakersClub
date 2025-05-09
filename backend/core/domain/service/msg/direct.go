@@ -1,10 +1,10 @@
 package msg
 
 import (
-	"main/domain/game"
-	"main/domain/game/deck"
-	"main/domain/game/hand"
-	"main/domain/game/scoring"
+	"sheepshead"
+	"sheepshead/deck"
+	"sheepshead/hand"
+	"sheepshead/scoring"
 )
 
 var DirectType = struct {
@@ -82,7 +82,7 @@ type InitializeData struct {
 	NoPickHand  bool               `json:"noPickHand"`
 }
 
-func InitializeMessage(tableID, hostID, clientID string, seating []string, settings *hand.GameSettings, game *game.Game) (string, string, *InitializeData) {
+func InitializeMessage(tableID, hostID, clientID string, seating []string, settings *hand.GameSettings, game *sheepshead.Game) (string, string, *InitializeData) {
 	data := &InitializeData{}
 	data.PlayerID = clientID
 	data.HostID = hostID

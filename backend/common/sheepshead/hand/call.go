@@ -1,6 +1,6 @@
 package hand
 
-import "main/domain/game/deck"
+import "sheepshead/deck"
 
 type Call struct {
 	Alone      bool       `json:"alone"`

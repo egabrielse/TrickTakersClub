@@ -1,6 +1,6 @@
 package scoring
 
-import "main/utils"
+import "sheepshead/utils"
 
 // ScoreMostersHand scores a hand of Mosters
 // In mosters, the player(s) with the most points is the loser and pays the other players

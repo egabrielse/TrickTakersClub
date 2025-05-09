@@ -1,6 +1,6 @@
 package hand
 
-import "main/domain/game/deck"
+import "sheepshead/deck"
 
 type Blind struct {
 	Index     int          `json:"index"`     // Index of the player who picked the blind

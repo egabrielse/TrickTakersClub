@@ -2,8 +2,8 @@ version: '3.7'
 services:
   core:
     build:
-      dockerfile: Dockerfile
-      context: ./backend/core
+      context: ./backend
+      dockerfile: Dockerfile.core
     depends_on:
       - firebase
     environment:

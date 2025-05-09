@@ -1,11 +1,9 @@
-package game
+package sheepshead
 
 import (
-	"main/domain/game/hand"
-	"main/domain/game/scoring"
-	"main/utils"
-
-	"github.com/sirupsen/logrus"
+	"sheepshead/hand"
+	"sheepshead/scoring"
+	"sheepshead/utils"
 )
 
 type Game struct {
@@ -56,14 +54,11 @@ func (g *Game) TallyScores() scoring.Scoreboard {
 	scoreboard := scoring.NewScoreboard(g.PlayerOrder)
 	for _, hand := range g.Hands {
 		if hand.IsComplete() {
-			if summary, err := hand.SummarizeHand(); err != nil {
-				logrus.Warn(err)
-			} else {
-				scoreboard.TallyHand(
-					summary.Payouts,
-					summary.Winners,
-				)
-			}
+			summary, _ := hand.SummarizeHand()
+			scoreboard.TallyHand(
+				summary.Payouts,
+				summary.Winners,
+			)
 		}
 	}
 	return scoreboard

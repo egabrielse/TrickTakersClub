@@ -15,16 +15,3 @@ func MapValues[K comparable, V any](m map[K]V) []V {
 	}
 	return values
 }
-
-type MapEntry[K comparable, V any] struct {
-	Key   K
-	Value V
-}
-
-func MapEntries[K comparable, V any](m map[K]V) []MapEntry[K, V] {
-	entries := make([]MapEntry[K, V], 0, len(m))
-	for k, v := range m {
-		entries = append(entries, MapEntry[K, V]{k, v})
-	}
-	return entries
-}

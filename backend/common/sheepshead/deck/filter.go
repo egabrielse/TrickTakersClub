@@ -1,6 +1,6 @@
 package deck
 
-import "main/utils"
+import "sheepshead/utils"
 
 func FilterForSuit(cards []*Card, suit string) (filtered []*Card) {
 	if suit == CardSuit.Diamond {

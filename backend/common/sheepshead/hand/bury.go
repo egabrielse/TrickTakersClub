@@ -1,6 +1,6 @@
 package hand
 
-import "main/domain/game/deck"
+import "sheepshead/deck"
 
 type Bury struct {
 	Cards []*deck.Card `json:"cards"` // Cards in the bury

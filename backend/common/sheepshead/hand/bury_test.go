@@ -1,7 +1,7 @@
 package hand
 
 import (
-	"main/domain/game/deck"
+	"sheepshead/deck"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

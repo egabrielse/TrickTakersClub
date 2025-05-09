@@ -2,7 +2,7 @@ package hand
 
 import (
 	"fmt"
-	"main/utils"
+	"sheepshead/utils"
 )
 
 type GameSettings struct {

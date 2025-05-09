@@ -2,7 +2,7 @@ package msg
 
 import (
 	"encoding/json"
-	"main/domain/game/deck"
+	"sheepshead/deck"
 )
 
 // Commands are messages sent by users to
