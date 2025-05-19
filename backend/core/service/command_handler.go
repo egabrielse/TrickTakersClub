@@ -1,7 +1,7 @@
 package service
 
 import (
-	"main/domain/service/msg"
+	"main/service/msg"
 	"main/utils"
 	"sheepshead"
 	"sheepshead/hand"

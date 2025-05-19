@@ -1,9 +1,9 @@
 package handlers
 
 import (
+	"database/entity"
+	"database/repository"
 	"io"
-	"main/domain/entity"
-	"main/domain/repository"
 	"main/utils"
 	"net/http"
 

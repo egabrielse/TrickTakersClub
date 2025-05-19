@@ -1,8 +1,8 @@
-package persistence
+package implementation
 
 import (
 	"context"
-	"main/domain/entity"
+	"database/entity"
 
 	"cloud.google.com/go/firestore"
 	"github.com/sirupsen/logrus"

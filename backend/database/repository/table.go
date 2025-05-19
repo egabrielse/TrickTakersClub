@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"main/domain/entity"
+	"database/entity"
 )
 
 type TableRepo interface {

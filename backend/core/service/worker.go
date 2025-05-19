@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"main/domain/entity"
-	"main/domain/repository"
-	"main/domain/service/msg"
+	"database/entity"
+	"database/repository"
+	"main/service/msg"
 	"main/utils"
 	"sheepshead"
 	"sheepshead/hand"
