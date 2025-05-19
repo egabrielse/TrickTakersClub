@@ -1,10 +1,9 @@
 version: '3.7'
 services:
-  # Golang backend
-  backend:
+  core:
     build:
-      dockerfile: Dockerfile
       context: ./backend
+      dockerfile: Dockerfile.core
     depends_on:
       - firebase
     environment:
@@ -17,7 +16,7 @@ services:
       - BROWSER_ORIGIN=http://localhost:5173
       - ABLY_API_KEY=${ABLY_DEV_API_KEY}
       - SERVER_WORKER_TIMEOUT=1800s
-    image: backend
+    image: core
     ports:
       - "8080:8080"
 
@@ -35,9 +34,9 @@ services:
         - FIREBASE_MESSAGING_SENDER_ID=demo-messageing-sender-id
         - FIREBASE_APP_ID=demo-app-id
         - FIREBASE_MEASUREMENT_ID=demo-measurement-id
-        - BACKEND_HOST=http://localhost:8080
+        - CORE_SERVICE_URL=http://localhost:8080
     depends_on:
-      - backend
+      - core
     image: frontend
     ports:
       - "5173:5173"
