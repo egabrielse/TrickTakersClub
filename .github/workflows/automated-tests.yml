@@ -28,7 +28,7 @@ jobs:
               - "backend/core/**"
 
   frontend-tests:
-    name: Frontend
+    name: Frontend Tests
     needs: changes
     runs-on: ubuntu-latest
     # Only run if the frontend code has changed
