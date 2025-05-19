@@ -2,7 +2,7 @@ module main
 
 go 1.24.0
 
-replace sheepshead => ../common/sheepshead
+replace sheepshead => ../sheepshead
 
 require (
 	cloud.google.com/go/firestore v1.15.0
