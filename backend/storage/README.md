@@ -2,8 +2,6 @@
 
 This module provides the data models that are persisted by the application and defines how they should be accessed. It is organized into several packages, each with a specific responsibility:
 
-## Packages
-
 ### Entity
 
 The `entity` package contains structs that are persisted in a database. These structs represent the core data models for the application.
