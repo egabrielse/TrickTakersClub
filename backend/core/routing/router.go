@@ -1,9 +1,9 @@
-package api
+package routing
 
 import (
-	"main/api/handlers"
-	"main/api/middleware"
-	"main/api/middleware/decorators"
+	"main/routing/handlers"
+	"main/routing/middleware"
+	"main/routing/middleware/decorators"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"

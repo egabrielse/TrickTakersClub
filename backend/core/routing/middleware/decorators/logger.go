@@ -1,7 +1,7 @@
 package decorators
 
 import (
-	"main/api/middleware"
+	"main/routing/middleware"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"

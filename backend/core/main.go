@@ -4,7 +4,7 @@ import (
 	"common/clients"
 	"common/env"
 	"common/logging"
-	"main/api"
+	"main/routing"
 	"net/http"
 	"storage/implementation"
 	"storage/repository"
@@ -33,7 +33,7 @@ func main() {
 	repository.InitSettingsRepo(implementation.NewSettingsRepoImplementation(store))
 
 	// Initialize router
-	router := api.InitRouter()
+	router := routing.InitRouter()
 
 	// Start listening for requests
 	port := ":" + env.GetEnvironmentVariable("PORT")
