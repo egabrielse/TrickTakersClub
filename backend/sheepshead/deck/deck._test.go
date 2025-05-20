@@ -13,7 +13,8 @@ func TestNewDeck(t *testing.T) {
 
 func TestDraw(t *testing.T) {
 	deck := NewDeck()
-	cards := deck.Draw(5)
+	cards := deck.Draw(12)
+
 	if len(deck.Cards) != 27 {
 		t.Errorf("Expected 27 cards, got %d", len(deck.Cards))
 	}
