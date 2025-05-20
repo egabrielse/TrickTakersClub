@@ -2,7 +2,7 @@ package implementation
 
 import (
 	"context"
-	"database/entity"
+	"storage/entity"
 
 	"cloud.google.com/go/firestore"
 	"github.com/sirupsen/logrus"

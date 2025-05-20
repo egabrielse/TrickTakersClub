@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"main/infrastructure"
+	"common/clients"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -21,15 +21,15 @@ func HealthCheck(r *http.Request, p httprouter.Params) (code int, body any) {
 		Firestore:    false,
 	}
 
-	if auth := infrastructure.GetFirebaseAuth(); auth != nil {
+	if auth := clients.GetFirebaseAuthClient(); auth != nil {
 		statuses.FirebaseAuth = true
 	}
 
-	if store := infrastructure.GetFirebaseStore(); store != nil {
+	if store := clients.GetFirebaseStoreClient(); store != nil {
 		statuses.Ably = true
 	}
 
-	if ably := infrastructure.GetAblyClient(); ably != nil {
+	if ably := clients.GetAblyRestClient(); ably != nil {
 		statuses.Firestore = true
 	}
 

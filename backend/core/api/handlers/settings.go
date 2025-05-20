@@ -1,11 +1,11 @@
 package handlers
 
 import (
-	"database/entity"
-	"database/repository"
+	"common/logging"
 	"io"
-	"main/utils"
 	"net/http"
+	"storage/entity"
+	"storage/repository"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -32,7 +32,7 @@ func SaveSettings(r *http.Request, p httprouter.Params) (code int, body any) {
 func GetSettings(r *http.Request, p httprouter.Params) (code int, body any) {
 	UID := p.ByName("uid")
 	repo := repository.GetSettingsRepo()
-	if entity, err := repo.Get(r.Context(), UID); utils.LogOnError(err) {
+	if entity, err := repo.Get(r.Context(), UID); logging.LogOnError(err) {
 		return http.StatusInternalServerError, nil
 	} else {
 		return http.StatusOK, entity

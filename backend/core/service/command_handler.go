@@ -1,6 +1,7 @@
 package service
 
 import (
+	"common/logging"
 	"main/service/msg"
 	"main/utils"
 	"sheepshead"
@@ -12,7 +13,7 @@ func HandleUpdateCallingMethod(t *TableWorker, clientID string, data interface{}
 		t.DirectMessage(msg.ErrorMessage(clientID, "only the host can update settings"))
 	} else if t.Game != nil {
 		t.DirectMessage(msg.ErrorMessage(clientID, "game already in progress"))
-	} else if params, err := msg.ExtractParams[msg.UpdateCallingMethodParams](data); utils.LogOnError(err) {
+	} else if params, err := msg.ExtractParams[msg.UpdateCallingMethodParams](data); logging.LogOnError(err) {
 		t.DirectMessage(msg.ErrorMessage(clientID, "invalid settings payload"))
 	} else {
 		if err := t.GameSettings.SetCallingMethod(params.CallingMethod); err != nil {
@@ -28,7 +29,7 @@ func HandleUpdateNoPickResolution(t *TableWorker, clientID string, data interfac
 		t.DirectMessage(msg.ErrorMessage(clientID, "only the host can update settings"))
 	} else if t.Game != nil {
 		t.DirectMessage(msg.ErrorMessage(clientID, "game already in progress"))
-	} else if params, err := msg.ExtractParams[msg.UpdateNoPickResolutionParams](data); utils.LogOnError(err) {
+	} else if params, err := msg.ExtractParams[msg.UpdateNoPickResolutionParams](data); logging.LogOnError(err) {
 		t.DirectMessage(msg.ErrorMessage(clientID, "invalid settings payload"))
 	} else {
 		if err := t.GameSettings.SetNoPickResolution(params.NoPickResolution); err != nil {
@@ -44,7 +45,7 @@ func HandleUpdateDoubleOnTheBump(t *TableWorker, clientID string, data interface
 		t.DirectMessage(msg.ErrorMessage(clientID, "only the host can update settings"))
 	} else if t.Game != nil {
 		t.DirectMessage(msg.ErrorMessage(clientID, "game already in progress"))
-	} else if params, err := msg.ExtractParams[msg.UpdateDoubleOnTheBumpParams](data); utils.LogOnError(err) {
+	} else if params, err := msg.ExtractParams[msg.UpdateDoubleOnTheBumpParams](data); logging.LogOnError(err) {
 		t.DirectMessage(msg.ErrorMessage(clientID, "invalid settings payload"))
 	} else {
 		t.GameSettings.SetDoubleOnTheBump(params.DoubleOnTheBump)
@@ -132,7 +133,7 @@ func HandlePickCommand(t *TableWorker, clientID string, data interface{}) {
 		t.DirectMessage(msg.ErrorMessage(clientID, "game not in progress"))
 	} else {
 		currentHand := t.Game.GetCurrentHand()
-		if result, err := currentHand.Pick(clientID); utils.LogOnError(err) {
+		if result, err := currentHand.Pick(clientID); logging.LogOnError(err) {
 			t.DirectMessage(msg.ErrorMessage(clientID, err.Error()))
 		} else {
 			t.BroadcastMessage(msg.BlindPickedMessage(clientID, false))
@@ -147,7 +148,7 @@ func HandlePassCommand(t *TableWorker, clientID string, data interface{}) {
 		t.DirectMessage(msg.ErrorMessage(clientID, "game not in progress"))
 	} else {
 		currentHand := t.Game.GetCurrentHand()
-		if result, err := currentHand.Pass(clientID); utils.LogOnError(err) {
+		if result, err := currentHand.Pass(clientID); logging.LogOnError(err) {
 			t.DirectMessage(msg.ErrorMessage(clientID, err.Error()))
 		} else {
 			if result.PickResult != nil {
@@ -166,11 +167,11 @@ func HandlePassCommand(t *TableWorker, clientID string, data interface{}) {
 func HandleBuryCommand(t *TableWorker, clientID string, data interface{}) {
 	if t.Game == nil {
 		t.DirectMessage(msg.ErrorMessage(clientID, "game not in progress"))
-	} else if params, err := msg.ExtractParams[msg.BuryCommandParams](data); utils.LogOnError(err) {
+	} else if params, err := msg.ExtractParams[msg.BuryCommandParams](data); logging.LogOnError(err) {
 		t.DirectMessage(msg.ErrorMessage(clientID, "invalid settings payload"))
 	} else {
 		currentHand := t.Game.GetCurrentHand()
-		if result, err := currentHand.BuryCards(clientID, params.Cards); utils.LogOnError(err) {
+		if result, err := currentHand.BuryCards(clientID, params.Cards); logging.LogOnError(err) {
 			t.DirectMessage(msg.ErrorMessage(clientID, err.Error()))
 		} else {
 			t.DirectMessage(msg.BuriedCardsMessage(clientID, result.Bury))
@@ -191,11 +192,11 @@ func HandleBuryCommand(t *TableWorker, clientID string, data interface{}) {
 func HandleCallCommand(t *TableWorker, clientID string, data interface{}) {
 	if t.Game == nil {
 		t.DirectMessage(msg.ErrorMessage(clientID, "game not in progress"))
-	} else if params, err := msg.ExtractParams[msg.CallCommandParams](data); utils.LogOnError(err) {
+	} else if params, err := msg.ExtractParams[msg.CallCommandParams](data); logging.LogOnError(err) {
 		t.DirectMessage(msg.ErrorMessage(clientID, "invalid settings payload"))
 	} else {
 		currentHand := t.Game.GetCurrentHand()
-		if result, err := currentHand.CallPartner(clientID, params.Card); utils.LogOnError(err) {
+		if result, err := currentHand.CallPartner(clientID, params.Card); logging.LogOnError(err) {
 			t.DirectMessage(msg.ErrorMessage(clientID, err.Error()))
 		} else {
 			t.BroadcastMessage(msg.CalledCardMessage(result.CalledCard))
@@ -211,7 +212,7 @@ func HandleGoAloneCommand(t *TableWorker, clientID string, data interface{}) {
 		t.DirectMessage(msg.ErrorMessage(clientID, "game not in progress"))
 	} else {
 		currentHand := t.Game.GetCurrentHand()
-		if result, err := currentHand.GoAlone(clientID, false); utils.LogOnError(err) {
+		if result, err := currentHand.GoAlone(clientID, false); logging.LogOnError(err) {
 			t.DirectMessage(msg.ErrorMessage(clientID, err.Error()))
 		} else {
 			t.BroadcastMessage(msg.GoneAloneMessage(result.Forced))
@@ -223,11 +224,11 @@ func HandleGoAloneCommand(t *TableWorker, clientID string, data interface{}) {
 func HandlePlayCardCommand(t *TableWorker, clientID string, data interface{}) {
 	if t.Game == nil {
 		t.DirectMessage(msg.ErrorMessage(clientID, "game not in progress"))
-	} else if params, err := msg.ExtractParams[msg.PlayCardCommandParams](data); utils.LogOnError(err) {
+	} else if params, err := msg.ExtractParams[msg.PlayCardCommandParams](data); logging.LogOnError(err) {
 		t.DirectMessage(msg.ErrorMessage(clientID, "invalid settings payload"))
 	} else {
 		currentHand := t.Game.GetCurrentHand()
-		if result, err := currentHand.PlayCard(clientID, params.Card); utils.LogOnError(err) {
+		if result, err := currentHand.PlayCard(clientID, params.Card); logging.LogOnError(err) {
 			t.DirectMessage(msg.ErrorMessage(clientID, err.Error()))
 		} else {
 			t.BroadcastMessage(msg.CardPlayedMessage(clientID, result.PlayedCard))
@@ -252,7 +253,7 @@ func HandlePlayCardCommand(t *TableWorker, clientID string, data interface{}) {
 					}
 					// Hand is complete, summarize the hand for players
 					scoreboard := t.Game.TallyScores()
-					if summary, err := currentHand.SummarizeHand(); utils.LogOnError(err) {
+					if summary, err := currentHand.SummarizeHand(); logging.LogOnError(err) {
 						t.DirectMessage(msg.ErrorMessage(clientID, err.Error()))
 					} else {
 						t.BroadcastMessage(msg.HandDoneMessage(summary, scoreboard))

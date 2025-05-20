@@ -1,8 +1,7 @@
-package infrastructure
+package clients
 
 import (
 	"context"
-	"main/utils"
 
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go/v4"
@@ -14,8 +13,7 @@ var firebaseAuth *auth.Client
 var firebaseStore *firestore.Client
 
 // InitFirebaseApp initializes the Firebase app
-func InitFirebaseApp() {
-	projectID := utils.GetEnvironmentVariable("FIREBASE_PROJECT_ID")
+func InitFirebaseClients(projectID string) {
 	config := &firebase.Config{ProjectID: projectID}
 	app, err := firebase.NewApp(context.Background(), config)
 	if err != nil {
@@ -24,24 +22,24 @@ func InitFirebaseApp() {
 	}
 	// Initialize Firebase auth client
 	if auth, err := app.Auth(context.Background()); err != nil {
-		logrus.Fatal("Error Fetching Auth Client: ", err)
+		logrus.Fatal("Error Connecting to Firebase Auth: ", err)
 	} else {
 		firebaseAuth = auth
 	}
 
 	// Initialize Firestore client
 	if store, err := app.Firestore(context.Background()); err != nil {
-		logrus.Fatal("Error Fetching Firestore Client: ", err)
+		logrus.Fatal("Error Connecting to Firestore: ", err)
 	} else {
 		firebaseStore = store
 	}
 }
 
 // GetFirebaseAuth returns the Firebase auth client
-func GetFirebaseAuth() *auth.Client {
+func GetFirebaseAuthClient() *auth.Client {
 	return firebaseAuth
 }
 
-func GetFirebaseStore() *firestore.Client {
+func GetFirebaseStoreClient() *firestore.Client {
 	return firebaseStore
 }

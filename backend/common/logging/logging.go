@@ -1,4 +1,4 @@
-package utils
+package logging
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ func ConfigureLogger() {
 	logrus.SetFormatter(&logrus.TextFormatter{
 		ForceColors: true,
 		CallerPrettyfier: func(f *runtime.Frame) (string, string) {
-			return "", fmt.Sprintf("%s:%d", f.File[4:], f.Line)
+			return "", fmt.Sprintf("%s:%d", f.File, f.Line)
 		},
 	})
 	logrus.SetReportCaller(true)

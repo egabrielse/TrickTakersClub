@@ -1,6 +1,6 @@
-# The Database Module
+# The Storage Module
 
-This module provides the data models for the application.
+This module provides the data models that are persisted by the application and defines how they should be accessed. It is organized into several packages, each with a specific responsibility:
 
 ## Packages
 

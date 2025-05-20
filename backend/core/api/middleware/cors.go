@@ -1,14 +1,14 @@
 package middleware
 
 import (
-	"main/utils"
+	"common/env"
 	"net/http"
 
 	"github.com/rs/cors"
 )
 
 func SetupCors() *cors.Cors {
-	browserOrigin := utils.GetEnvironmentVariable("BROWSER_ORIGIN")
+	browserOrigin := env.GetEnvironmentVariable("BROWSER_ORIGIN")
 	cors := cors.New(cors.Options{
 		AllowedOrigins: []string{browserOrigin},
 		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPatch, http.MethodPut, http.MethodOptions},
