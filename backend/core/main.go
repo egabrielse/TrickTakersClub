@@ -1,39 +1,42 @@
 package main
 
 import (
+	"common/clients"
+	"common/env"
+	"common/logging"
 	"main/api"
-	"main/domain/repository"
-	"main/infrastructure"
-	"main/infrastructure/persistence"
-	"main/utils"
 	"net/http"
+	"storage/implementation"
+	"storage/repository"
 
 	"github.com/sirupsen/logrus"
 )
 
 func main() {
 	// Load environment variables
-	utils.LoadEnvironmentVariables()
+	env.LoadEnvironmentVariables()
 
 	// Configure logger
-	utils.ConfigureLogger()
+	logging.ConfigureLogger()
 
 	// Initialize Firebase app
-	infrastructure.InitFirebaseApp()
+	projectID := env.GetEnvironmentVariable("FIREBASE_PROJECT_ID")
+	clients.InitFirebaseClients(projectID)
 
 	// Initialize Ably client
-	infrastructure.InitAblyRestClient()
+	key := env.GetEnvironmentVariable("ABLY_API_KEY")
+	clients.InitAblyRestClient(key)
 
 	// Instantiate the Firestore-based repository implementations
-	store := infrastructure.GetFirebaseStore()
-	repository.InitTableRepo(persistence.NewTableRepoImplementation(store))
-	repository.InitSettingsRepo(persistence.NewSettingsRepoImplementation(store))
+	store := clients.GetFirebaseStoreClient()
+	repository.InitTableRepo(implementation.NewTableRepoImplementation(store))
+	repository.InitSettingsRepo(implementation.NewSettingsRepoImplementation(store))
 
 	// Initialize router
 	router := api.InitRouter()
 
 	// Start listening for requests
-	port := ":" + utils.GetEnvironmentVariable("PORT")
+	port := ":" + env.GetEnvironmentVariable("PORT")
 	logrus.Infof("Listening on port %s", port)
 	logrus.Fatal(http.ListenAndServe(port, *router))
 }

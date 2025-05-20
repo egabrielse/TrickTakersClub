@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"main/domain/entity"
+	"storage/entity"
 )
 
 type SettingsRepo interface {

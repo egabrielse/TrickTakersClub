@@ -1,8 +1,8 @@
 package decorators
 
 import (
+	"common/clients"
 	"main/api/middleware"
-	"main/infrastructure"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -17,7 +17,7 @@ func TokenAuthentication(handler middleware.RequestHandler) middleware.RequestHa
 			return http.StatusUnauthorized, "Missing authorization header"
 		}
 		tokenString = tokenString[len("Bearer "):]
-		auth := infrastructure.GetFirebaseAuth()
+		auth := clients.GetFirebaseAuthClient()
 		if token, err := auth.VerifyIDToken(r.Context(), tokenString); err != nil {
 			logrus.Error(err)
 			return http.StatusUnauthorized, "Invalid token"

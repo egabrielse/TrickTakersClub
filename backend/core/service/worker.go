@@ -1,13 +1,14 @@
 package service
 
 import (
+	"common/env"
+	"common/logging"
 	"context"
-	"main/domain/entity"
-	"main/domain/repository"
-	"main/domain/service/msg"
-	"main/utils"
+	"main/service/msg"
 	"sheepshead"
 	"sheepshead/hand"
+	"storage/entity"
+	"storage/repository"
 	"time"
 
 	"github.com/ably/ably-go/ably"
@@ -29,14 +30,14 @@ type TableWorker struct {
 
 func NewTableWorker(table *entity.TableEntity) (*TableWorker, error) {
 	ctx := context.Background()
-	key := utils.GetEnvironmentVariable("ABLY_API_KEY")
+	key := env.GetEnvironmentVariable("ABLY_API_KEY")
 
 	options := []ably.ClientOption{
 		ably.WithKey(key),
 		ably.WithAutoConnect(false),
 		ably.WithEchoMessages(false),
 	}
-	if ablyClient, err := ably.NewRealtime(options...); utils.LogOnError(err) {
+	if ablyClient, err := ably.NewRealtime(options...); logging.LogOnError(err) {
 		return nil, err
 	} else {
 		return &TableWorker{
@@ -137,7 +138,7 @@ func (t *TableWorker) UnregisterClient(clientID string, connectionID string) {
 
 // StartService starts a goroutine for the table service and begins listening for messages
 func (t *TableWorker) StartService() {
-	serverWorkerTimeout := utils.GetEnvironmentVariable("SERVER_WORKER_TIMEOUT")
+	serverWorkerTimeout := env.GetEnvironmentVariable("SERVER_WORKER_TIMEOUT")
 	// Convert the timeout duration to integer
 	timeoutDuration, err := time.ParseDuration(serverWorkerTimeout)
 	if err != nil {
@@ -153,7 +154,7 @@ func (t *TableWorker) StartService() {
 			t.AblyClient.Close()
 			tableRepo := repository.GetTableRepo()
 			err := tableRepo.Delete(t.Ctx, t.Table.ID)
-			utils.LogOnError(err)
+			logging.LogOnError(err)
 		}()
 
 		t.AblyClient.Connection.OnAll(func(change ably.ConnectionStateChange) {
@@ -165,7 +166,7 @@ func (t *TableWorker) StartService() {
 			t.Channel.SubscribeAll(t.Ctx, t.HandleMessages)
 
 			// Check for clients already present at the table
-			if set, err := t.Channel.Presence.Get(t.Ctx); utils.LogOnError(err) {
+			if set, err := t.Channel.Presence.Get(t.Ctx); logging.LogOnError(err) {
 				logrus.Error("Failed to get presence set")
 			} else {
 				for _, presence := range set {
