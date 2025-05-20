@@ -25,7 +25,11 @@ jobs:
             frontend:
               - "frontend/**"
             core:
+              # TODO: Make separate tests for each module
               - "backend/core/**"
+              - "backend/sheepshead/**"
+              - "backend/common/**"
+              - "backend/storage/**"
 
   frontend-tests:
     name: Frontend Tests
