@@ -1,17 +1,17 @@
 package decorators
 
 import (
+	"common/request"
 	"net/http"
-	"play/routing/middleware"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/sirupsen/logrus"
 )
 
-func RequestLogging(handler middleware.RequestHandler) middleware.RequestHandler {
-	return func(r *http.Request, p httprouter.Params) (int, any) {
+func RequestLogging(handler request.RequestHandler) request.RequestHandler {
+	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) (int, any) {
 		// Call the inner handler function to get the response status code and body.
-		status, body := handler(r, p)
+		status, body := handler(w, r, p)
 
 		// Log request information (not including parameters, which could contain sensitive information).
 		logrus.WithFields(logrus.Fields{

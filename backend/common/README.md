@@ -17,3 +17,7 @@ The `list` package contains functions for manipulating and inspecting arrays/sli
 ### Logging
 
 The `logging` package contains functions to help creating logs.
+
+### Request
+
+The `request` package contains interfaces, middleware, and decorators that help with defining routing.

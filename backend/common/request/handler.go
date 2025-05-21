@@ -1,4 +1,4 @@
-package middleware
+package request
 
 import (
 	"encoding/json"
@@ -8,7 +8,7 @@ import (
 )
 
 // RequestHandler is a function that handles an HTTP request and returns a response code and body.
-type RequestHandler func(r *http.Request, p httprouter.Params) (status int, body any)
+type RequestHandler func(w http.ResponseWriter, r *http.Request, p httprouter.Params) (status int, body any)
 
 // RequestHandlerDecorator is a function that takes a RequestHandler and returns a new RequestHandler.
 type RequestHandlerDecorator func(RequestHandler) RequestHandler
@@ -25,16 +25,20 @@ func HandleWith(handler RequestHandler, decorators ...RequestHandlerDecorator) h
 	// Return base httprouter.Handle function, which handles writing the response.
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		// Call handler
-		status, body := handler(r, p)
+		status, body := handler(w, r, p)
 
-		// Marshal response body.
-		if marshalledBody, err := json.Marshal(body); err != nil {
-			// Error marshalling response.
-			status = http.StatusInternalServerError
-		} else {
-			// Construct response from returned code and body.
-			w.WriteHeader(status)
-			w.Write(marshalledBody)
+		// If the status code is not switching protocols, write the response.
+		// Switching protocols is used for WebSocket connections, which do not return a body.
+		if status != http.StatusSwitchingProtocols {
+			// Marshal response body.
+			if marshalledBody, err := json.Marshal(body); err != nil {
+				// Error marshalling response.
+				status = http.StatusInternalServerError
+			} else {
+				// Construct response from returned code and body.
+				w.WriteHeader(status)
+				w.Write(marshalledBody)
+			}
 		}
 	}
 }

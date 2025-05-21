@@ -6,7 +6,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func NewGame(r *http.Request, p httprouter.Params) (code int, body any) {
+func NewGame(w http.ResponseWriter, r *http.Request, p httprouter.Params) (code int, body any) {
 	// TODO: Implement
 	// 1. Create a new game entity in redis.
 	// 2. Create a new game session worker (SessionWorker) for the game.
@@ -15,7 +15,7 @@ func NewGame(r *http.Request, p httprouter.Params) (code int, body any) {
 	return http.StatusOK, nil
 }
 
-func ReviveGame(r *http.Request, p httprouter.Params) (code int, body any) {
+func ReviveGame(w http.ResponseWriter, r *http.Request, p httprouter.Params) (code int, body any) {
 	// TODO: Implement
 	// 1. Get the session ID from the URL parameters.
 	// 2. Check if the session ID exists in redis.

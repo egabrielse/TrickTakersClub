@@ -7,6 +7,7 @@ require (
 	firebase.google.com/go/v4 v4.15.2
 	github.com/ably/ably-go v1.2.22
 	github.com/joho/godotenv v1.5.1
+	github.com/julienschmidt/httprouter v1.3.0
 	github.com/redis/go-redis/v9 v9.8.0
 	github.com/sirupsen/logrus v1.9.3
 )

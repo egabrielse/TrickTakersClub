@@ -1,12 +1,14 @@
 package routing
 
 import (
+	"common/env"
+	"common/request"
+	"common/request/decorators"
 	"net/http"
 	"play/routing/handlers"
-	"play/routing/middleware"
-	"play/routing/middleware/decorators"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/rs/cors"
 )
 
 func InitRouter() *http.Handler {
@@ -15,14 +17,28 @@ func InitRouter() *http.Handler {
 
 	// 2. Define routes and their handlers
 	// -> Connect route
-	router.GET("/play/v1/connect/:sessionId", handlers.Connect)
+	router.GET("/play/v1/connect/:sessionId", request.HandleWith(handlers.Connect))
 
 	// -> Game routes
-	router.POST("/play/v1/create", middleware.HandleWith(handlers.NewGame, decorators.RequestLogging, decorators.TokenAuthentication))
-	router.POST("/play/v1/revive/:sessionId", middleware.HandleWith(handlers.ReviveGame, decorators.RequestLogging, decorators.TokenAuthentication))
+	router.POST("/play/v1/create", request.HandleWith(
+		handlers.NewGame,
+		decorators.RequestLogging,
+		decorators.TokenAuthentication,
+	))
+	router.POST("/play/v1/revive/:sessionId", request.HandleWith(
+		handlers.ReviveGame,
+		decorators.RequestLogging,
+		decorators.TokenAuthentication,
+	))
 
 	// 3. Add CORS middleware
-	routerWithCORS := middleware.SetupCors().Handler(router)
+	allowedOrigin := env.GetEnvironmentVariable("ALLOWED_ORIGIN")
+	cors := cors.New(cors.Options{
+		AllowedOrigins: []string{allowedOrigin},
+		AllowedMethods: []string{http.MethodPost, http.MethodGet},
+		AllowedHeaders: []string{"Content-Type", "Authorization"},
+	})
+	routerWithCORS := cors.Handler(router)
 
 	// 4. Return initialized router
 	return &routerWithCORS
