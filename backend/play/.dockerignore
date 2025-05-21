@@ -1,0 +1,2 @@
+# Ignore environment files. Env variables are passed in via docker-compose
+.env
