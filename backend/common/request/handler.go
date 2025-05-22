@@ -7,6 +7,8 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+const ResponseWriteHandled = 0
+
 // RequestHandler is a function that handles an HTTP request and returns a response code and body.
 type RequestHandler func(w http.ResponseWriter, r *http.Request, p httprouter.Params) (status int, body any)
 
@@ -27,9 +29,9 @@ func HandleWith(handler RequestHandler, decorators ...RequestHandlerDecorator) h
 		// Call handler
 		status, body := handler(w, r, p)
 
-		// If the status code is not switching protocols, write the response.
-		// Switching protocols is used for WebSocket connections, which do not return a body.
-		if status != http.StatusSwitchingProtocols {
+		// Only write response if the returned status code is positive.
+		// A returned status of zero or less indicates the handler is writing its own response.
+		if status > 0 {
 			// Marshal response body.
 			if marshalledBody, err := json.Marshal(body); err != nil {
 				// Error marshalling response.
