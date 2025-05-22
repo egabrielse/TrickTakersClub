@@ -1,0 +1,33 @@
+# Build Stage
+FROM golang:1.24-alpine
+
+WORKDIR /app
+
+# Create necessary directories
+RUN mkdir -p /play
+RUN mkdir -p /common
+RUN mkdir -p /storage
+RUN mkdir -p /sheepshead
+
+# Copy only the necessary files for dependency resolution
+COPY ./play/go.mod ./play/go.sum ./play/
+COPY ./common/go.mod ./common/go.sum ./play/
+COPY ./storage/go.mod ./storage/go.sum ./play/
+COPY ./sheepshead/go.mod ./sheepshead/go.sum ./play/
+WORKDIR /app/play
+RUN go mod download
+
+# Copy over entire application
+WORKDIR /app
+COPY ./play ./play
+COPY ./common ./common
+COPY ./storage ./storage
+COPY ./sheepshead ./sheepshead
+
+# Build the application binary
+WORKDIR /app/play
+RUN go build -o /binary
+
+EXPOSE 7070
+
+CMD [ "/binary" ]

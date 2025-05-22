@@ -14,7 +14,7 @@ type CreateTableResponseBody struct {
 	ID string `json:"id"`
 }
 
-func CreateTable(r *http.Request, p httprouter.Params) (code int, body any) {
+func CreateTable(w http.ResponseWriter, r *http.Request, p httprouter.Params) (code int, body any) {
 	uid := p.ByName("uid")
 	repo := repository.GetTableRepo()
 	if tableEntity, err := entity.NewTableEntity(uid); err != nil {
@@ -29,7 +29,7 @@ func CreateTable(r *http.Request, p httprouter.Params) (code int, body any) {
 	}
 }
 
-func GetTable(r *http.Request, p httprouter.Params) (code int, body any) {
+func GetTable(w http.ResponseWriter, r *http.Request, p httprouter.Params) (code int, body any) {
 	repo := repository.GetTableRepo()
 	if table, err := repo.Get(r.Context(), p.ByName("id")); logging.LogOnError(err) {
 		return http.StatusNotFound, nil
@@ -38,7 +38,7 @@ func GetTable(r *http.Request, p httprouter.Params) (code int, body any) {
 	}
 }
 
-func DeleteTable(r *http.Request, p httprouter.Params) (code int, body any) {
+func DeleteTable(w http.ResponseWriter, r *http.Request, p httprouter.Params) (code int, body any) {
 	repo := repository.GetTableRepo()
 	if err := repo.Delete(r.Context(), p.ByName("id")); logging.LogOnError(err) {
 		return http.StatusNotFound, nil

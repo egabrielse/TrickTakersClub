@@ -2,7 +2,7 @@ package decorators
 
 import (
 	"common/clients"
-	"main/api/middleware"
+	"common/request"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -10,8 +10,8 @@ import (
 )
 
 // TokenAuthentication is a decorator that checks if the request has a valid token
-func TokenAuthentication(handler middleware.RequestHandler) middleware.RequestHandler {
-	return func(r *http.Request, p httprouter.Params) (int, any) {
+func TokenAuthentication(handler request.RequestHandler) request.RequestHandler {
+	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) (int, any) {
 		tokenString := r.Header.Get("Authorization")
 		if tokenString == "" {
 			return http.StatusUnauthorized, "Missing authorization header"
@@ -26,7 +26,7 @@ func TokenAuthentication(handler middleware.RequestHandler) middleware.RequestHa
 				Key:   "uid",
 				Value: token.UID,
 			})
-			return handler(r, p)
+			return handler(w, r, p)
 		}
 	}
 }

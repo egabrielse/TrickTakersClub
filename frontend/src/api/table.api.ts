@@ -10,7 +10,7 @@ export async function createTable() {
         throw new Error("User not logged in");
     } else {
         const idToken = await auth.currentUser.getIdToken();
-        const response = await axios.post<CreateTableResponse>(`/api/v1/table`, null, {
+        const response = await axios.post<CreateTableResponse>(`/api/core/v1/table`, null, {
             headers: {
                 Authorization: `Bearer ${idToken}`,
             },
@@ -29,7 +29,7 @@ export async function fetchTable(tableId: string) {
         throw new Error("User not logged in");
     } else {
         const idToken = await auth.currentUser.getIdToken();
-        const response = await axios.get<FetchTableResponse>(`/api/v1/table/${tableId}`, {
+        const response = await axios.get<FetchTableResponse>(`/api/core/v1/table/${tableId}`, {
             headers: {
                 Authorization: `Bearer ${idToken}`,
             },

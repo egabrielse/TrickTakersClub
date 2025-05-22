@@ -14,7 +14,7 @@ type HealthCheckResponseBody struct {
 }
 
 // HealthCheck is a handler function that returns the health status of the application
-func HealthCheck(r *http.Request, p httprouter.Params) (code int, body any) {
+func HealthCheck(w http.ResponseWriter, r *http.Request, p httprouter.Params) (code int, body any) {
 	statuses := HealthCheckResponseBody{
 		FirebaseAuth: false,
 		Ably:         false,

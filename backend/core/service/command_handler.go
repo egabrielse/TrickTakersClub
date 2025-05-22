@@ -1,9 +1,9 @@
 package service
 
 import (
+	"common/list"
 	"common/logging"
 	"main/service/msg"
-	"main/utils"
 	"sheepshead"
 	"sheepshead/hand"
 )
@@ -69,10 +69,10 @@ func HandleStandUpCommand(t *TableWorker, clientID string, data interface{}) {
 		t.DirectMessage(msg.ErrorMessage(clientID, "host cannot stand up"))
 	} else if t.Game != nil {
 		t.DirectMessage(msg.ErrorMessage(clientID, "game already in progress"))
-	} else if !utils.Contains(t.SeatedPlayers, clientID) {
+	} else if !list.Contains(t.SeatedPlayers, clientID) {
 		t.DirectMessage(msg.ErrorMessage(clientID, "not a player"))
 	} else {
-		t.SeatedPlayers = utils.Filter(t.SeatedPlayers, func(v string) bool {
+		t.SeatedPlayers = list.Filter(t.SeatedPlayers, func(v string) bool {
 			return v != clientID
 		})
 		t.BroadcastMessage(msg.StoodUpMessage(clientID))
