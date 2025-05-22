@@ -14,7 +14,7 @@ type AblyAuthResponseBody struct {
 }
 
 // AblyAuth generates an Ably token request for the given user ID
-func AblyAuth(r *http.Request, p httprouter.Params) (code int, body any) {
+func AblyAuth(w http.ResponseWriter, r *http.Request, p httprouter.Params) (code int, body any) {
 	uid := p.ByName("uid")
 	ablyClient := clients.GetAblyRestClient()
 	if token, err := ablyClient.Auth.CreateTokenRequest(&ably.TokenParams{ClientID: uid}); logging.LogOnError(err) {

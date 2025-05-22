@@ -13,7 +13,7 @@ type GetUserResponseBody struct {
 	User *auth.UserInfo `json:"user"`
 }
 
-func GetUserByID(r *http.Request, p httprouter.Params) (code int, body any) {
+func GetUserByID(w http.ResponseWriter, r *http.Request, p httprouter.Params) (code int, body any) {
 	uid := p.ByName("id")
 	client := clients.GetFirebaseAuthClient()
 	if userRecord, err := client.GetUser(r.Context(), uid); logging.LogOnError(err) {

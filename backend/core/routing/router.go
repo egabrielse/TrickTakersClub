@@ -1,12 +1,14 @@
 package routing
 
 import (
+	"common/env"
+	"common/request"
+	"common/request/decorators"
 	"main/routing/handlers"
-	"main/routing/middleware"
-	"main/routing/middleware/decorators"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/rs/cors"
 )
 
 func InitRouter() *http.Handler {
@@ -15,25 +17,62 @@ func InitRouter() *http.Handler {
 
 	// 2. Define routes and their handlers
 	// -> Ably routes
-	router.GET("/api/core/v1/ably/token", middleware.HandleWith(handlers.AblyAuth, decorators.RequestLogging, decorators.TokenAuthentication))
+	router.GET("/api/core/v1/ably/token", request.HandleWith(
+		handlers.AblyAuth,
+		decorators.RequestLogging,
+		decorators.TokenAuthentication,
+	))
 
 	// -> Index routes
-	router.GET("/api/core/v1", middleware.HandleWith(handlers.HealthCheck, decorators.RequestLogging))
+	router.GET("/api/core/v1", request.HandleWith(
+		handlers.HealthCheck,
+		decorators.RequestLogging,
+	))
 
 	// -> Table routes
-	router.POST("/api/core/v1/table", middleware.HandleWith(handlers.CreateTable, decorators.RequestLogging, decorators.TokenAuthentication))
-	router.GET("/api/core/v1/table/:id", middleware.HandleWith(handlers.GetTable, decorators.RequestLogging, decorators.TokenAuthentication))
-	router.DELETE("/api/core/v1/table/:id", middleware.HandleWith(handlers.DeleteTable, decorators.RequestLogging, decorators.TokenAuthentication))
+	router.POST("/api/core/v1/table", request.HandleWith(
+		handlers.CreateTable,
+		decorators.RequestLogging,
+		decorators.TokenAuthentication,
+	))
+	router.GET("/api/core/v1/table/:id", request.HandleWith(
+		handlers.GetTable,
+		decorators.RequestLogging,
+		decorators.TokenAuthentication,
+	))
+	router.DELETE("/api/core/v1/table/:id", request.HandleWith(
+		handlers.DeleteTable,
+		decorators.RequestLogging,
+		decorators.TokenAuthentication,
+	))
 
 	// -> User routes
-	router.GET("/api/core/v1/user/:id", middleware.HandleWith(handlers.GetUserByID, decorators.RequestLogging, decorators.TokenAuthentication))
+	router.GET("/api/core/v1/user/:id", request.HandleWith(
+		handlers.GetUserByID,
+		decorators.RequestLogging,
+		decorators.TokenAuthentication,
+	))
 
 	// -> User settings routes
-	router.PUT("/api/core/v1/settings", middleware.HandleWith(handlers.SaveSettings, decorators.RequestLogging, decorators.TokenAuthentication))
-	router.GET("/api/core/v1/settings", middleware.HandleWith(handlers.GetSettings, decorators.RequestLogging, decorators.TokenAuthentication))
+	router.PUT("/api/core/v1/settings", request.HandleWith(
+		handlers.SaveSettings,
+		decorators.RequestLogging,
+		decorators.TokenAuthentication,
+	))
+	router.GET("/api/core/v1/settings", request.HandleWith(
+		handlers.GetSettings,
+		decorators.RequestLogging,
+		decorators.TokenAuthentication,
+	))
 
-	// 3. Add CORS middleware
-	routerWithCORS := middleware.SetupCors().Handler(router)
+	// 3. Add CORS request
+	allowedOrigin := env.GetEnvironmentVariable("ALLOWED_ORIGIN")
+	cors := cors.New(cors.Options{
+		AllowedOrigins: []string{allowedOrigin},
+		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPatch, http.MethodPut, http.MethodOptions},
+		AllowedHeaders: []string{"Content-Type", "Authorization"},
+	})
+	routerWithCORS := cors.Handler(router)
 
 	// 4. Return initialized router
 	return &routerWithCORS

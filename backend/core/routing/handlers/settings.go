@@ -14,7 +14,7 @@ type CreateSettingsResponseBody struct {
 	Settings entity.Settings `json:"settings"`
 }
 
-func SaveSettings(r *http.Request, p httprouter.Params) (code int, body any) {
+func SaveSettings(w http.ResponseWriter, r *http.Request, p httprouter.Params) (code int, body any) {
 	UID := p.ByName("uid")
 	repo := repository.GetSettingsRepo()
 	entity := &entity.Settings{}
@@ -29,7 +29,7 @@ func SaveSettings(r *http.Request, p httprouter.Params) (code int, body any) {
 	}
 }
 
-func GetSettings(r *http.Request, p httprouter.Params) (code int, body any) {
+func GetSettings(w http.ResponseWriter, r *http.Request, p httprouter.Params) (code int, body any) {
 	UID := p.ByName("uid")
 	repo := repository.GetSettingsRepo()
 	if entity, err := repo.Get(r.Context(), UID); logging.LogOnError(err) {
