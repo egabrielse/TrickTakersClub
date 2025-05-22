@@ -1,5 +1,16 @@
 version: '3.7'
 services:
+  local-proxy:
+    build:
+      context: ./local-proxy
+      dockerfile: Dockerfile
+    depends_on:
+      - frontend
+      - core
+      - play
+    image: local-proxy
+    ports:
+      - "80:80"
   core:
     build:
       context: ./backend
@@ -13,12 +24,31 @@ services:
       - FIRESTORE_EMULATOR_HOST=firebase:8088
       - FIREBASE_PROJECT_ID=demo-tricktakersclub
       - FIREBASE_API_KEY=demo-api-key
-      - BROWSER_ORIGIN=http://localhost:5173
+      - ALLOWED_ORIGIN=http://localhost:5173
       - ABLY_API_KEY=${ABLY_DEV_API_KEY}
       - SERVER_WORKER_TIMEOUT=1800s
     image: core
     ports:
       - "8080:8080"
+
+  play:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.play
+    depends_on:
+      - firebase
+    environment:
+      - ENV=development
+      - PORT=7070
+      - FIREBASE_AUTH_EMULATOR_HOST=firebase:9099
+      - FIRESTORE_EMULATOR_HOST=firebase:8088
+      - FIREBASE_PROJECT_ID=demo-tricktakersclub
+      - FIREBASE_API_KEY=demo-api-key
+      - ALLOWED_ORIGIN=http://localhost:5173
+      - ABLY_API_KEY=${ABLY_DEV_API_KEY}
+    image: play
+    ports:
+      - "7070:7070"
 
   # React app bootstrapped with Vite and served with Nginx
   frontend:
@@ -31,12 +61,11 @@ services:
         - FIREBASE_AUTH_DOMAIN=demo-tricktakersclub.firebaseapp.com
         - FIREBASE_PROJECT_ID=demo-tricktakersclub
         - FIREBASE_STORAGE_BUCKET=demo-tricktakersclub.appspot.com
-        - FIREBASE_MESSAGING_SENDER_ID=demo-messageing-sender-id
+        - FIREBASE_MESSAGING_SENDER_ID=demo-messaging-sender-id
         - FIREBASE_APP_ID=demo-app-id
         - FIREBASE_MEASUREMENT_ID=demo-measurement-id
-        - CORE_SERVICE_URL=http://localhost:8080
     depends_on:
-      - core
+      - firebase
     image: frontend
     ports:
       - "5173:5173"

@@ -1,5 +1,4 @@
 import { ThemeProvider } from "@mui/material/styles";
-import axios from "axios";
 import { BrowserView, MobileView } from "react-device-detect";
 import { Provider } from "react-redux";
 import {
@@ -57,8 +56,6 @@ const router = createBrowserRouter(
     </Route>,
   ),
 );
-
-axios.defaults.baseURL = import.meta.env.VITE_CORE_SERVICE_URL;
 
 export default function App() {
   return (

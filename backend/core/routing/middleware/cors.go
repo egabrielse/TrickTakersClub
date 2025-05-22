@@ -8,9 +8,9 @@ import (
 )
 
 func SetupCors() *cors.Cors {
-	browserOrigin := env.GetEnvironmentVariable("BROWSER_ORIGIN")
+	allowedOrigin := env.GetEnvironmentVariable("ALLOWED_ORIGIN")
 	cors := cors.New(cors.Options{
-		AllowedOrigins: []string{browserOrigin},
+		AllowedOrigins: []string{allowedOrigin},
 		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPatch, http.MethodPut, http.MethodOptions},
 		AllowedHeaders: []string{"Content-Type", "Authorization"},
 	})

@@ -14,7 +14,7 @@ func NewConnectionUpgrader() *websocket.Upgrader {
 		CheckOrigin: func(r *http.Request) bool {
 			// Only allow connections from the specified browser origin
 			requestOrigin := r.Header.Get("Origin")
-			allowedOrigin := env.GetEnvironmentVariable("BROWSER_ORIGIN")
+			allowedOrigin := env.GetEnvironmentVariable("ALLOWED_ORIGIN")
 			return requestOrigin == allowedOrigin
 		},
 	}
