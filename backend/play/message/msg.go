@@ -24,11 +24,7 @@ func NewMessage(senderID string, receiverID string, msgType string, payload json
 }
 
 func (m *Message) IsBroadcast() bool {
-	return m.ReceiverID == ""
-}
-
-func (m *Message) SetReceiver(receiverID string) {
-	m.ReceiverID = receiverID
+	return m.ReceiverID == BroadcastMessage
 }
 
 func (m *Message) MarshalBinary() (data []byte, err error) {

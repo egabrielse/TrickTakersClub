@@ -97,7 +97,7 @@ func (c *Client) writePump() {
 				logrus.Info("Client: Closing Due to Inactivity")
 				c.conn.WriteMessage(websocket.CloseMessage, []byte("Closed due to inactivity"))
 				return
-			} else if message.ReceiverID != "*" && message.ReceiverID != c.clientID {
+			} else if message.IsBroadcast() && message.ReceiverID != c.clientID {
 				logrus.Infof("Client: Ignoring Message for Another Client: %s", message.ReceiverID)
 				continue
 			} else if err := c.conn.WriteJSON(message); err != nil {
