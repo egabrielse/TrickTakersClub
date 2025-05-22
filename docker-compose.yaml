@@ -1,5 +1,6 @@
 version: '3.7'
 services:
+  # LOCAL PROXY
   local-proxy:
     build:
       context: ./local-proxy
@@ -11,6 +12,8 @@ services:
     image: local-proxy
     ports:
       - "80:80"
+  
+  # CORE SERVICE
   core:
     build:
       context: ./backend
@@ -31,26 +34,31 @@ services:
     ports:
       - "8080:8080"
 
+  # PLAY SERVICE
   play:
     build:
       context: ./backend
       dockerfile: Dockerfile.play
     depends_on:
       - firebase
+      - redis
     environment:
       - ENV=development
       - PORT=7070
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_USER=redis-user
+      - REDIS_PASS=redis-password
       - FIREBASE_AUTH_EMULATOR_HOST=firebase:9099
       - FIRESTORE_EMULATOR_HOST=firebase:8088
       - FIREBASE_PROJECT_ID=demo-tricktakersclub
       - FIREBASE_API_KEY=demo-api-key
       - ALLOWED_ORIGIN=http://localhost:5173
-      - ABLY_API_KEY=${ABLY_DEV_API_KEY}
     image: play
     ports:
       - "7070:7070"
 
-  # React app bootstrapped with Vite and served with Nginx
+  # FRONTEND SERVICE
   frontend:
     build:
       dockerfile: Dockerfile
@@ -63,14 +71,22 @@ services:
         - FIREBASE_STORAGE_BUCKET=demo-tricktakersclub.appspot.com
         - FIREBASE_MESSAGING_SENDER_ID=demo-messaging-sender-id
         - FIREBASE_APP_ID=demo-app-id
-        - FIREBASE_MEASUREMENT_ID=demo-measurement-id
     depends_on:
       - firebase
     image: frontend
     ports:
       - "5173:5173"
 
-  # Firebase emulator
+  # REDIS SERVICE
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --loglevel warning
+
+  # FIREBASE EMULATOR
   firebase:
     build: 
       dockerfile: Dockerfile
@@ -85,4 +101,6 @@ services:
 
 volumes:
   firebase-data:
+    driver: local
+  redis-data:
     driver: local
