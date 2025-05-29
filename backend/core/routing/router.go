@@ -66,7 +66,7 @@ func InitRouter() *http.Handler {
 	))
 
 	// 3. Add CORS request
-	allowedOrigin := env.GetEnvironmentVariable("ALLOWED_ORIGIN")
+	allowedOrigin := env.GetEnvVar("ALLOWED_ORIGIN")
 	cors := cors.New(cors.Options{
 		AllowedOrigins: []string{allowedOrigin},
 		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPatch, http.MethodPut, http.MethodOptions},

@@ -14,17 +14,17 @@ import (
 
 func main() {
 	// Load environment variables
-	env.LoadEnvironmentVariables()
+	env.LoadEnvFile()
 
 	// Configure logger
 	logging.ConfigureLogger()
 
 	// Initialize Firebase app
-	projectID := env.GetEnvironmentVariable("FIREBASE_PROJECT_ID")
+	projectID := env.GetEnvVar("FIREBASE_PROJECT_ID")
 	clients.InitFirebaseClients(projectID)
 
 	// Initialize Ably client
-	key := env.GetEnvironmentVariable("ABLY_API_KEY")
+	key := env.GetEnvVar("ABLY_API_KEY")
 	clients.InitAblyRestClient(key)
 
 	// Instantiate the Firestore-based repository implementations
@@ -36,7 +36,7 @@ func main() {
 	router := routing.InitRouter()
 
 	// Start listening for requests
-	port := ":" + env.GetEnvironmentVariable("PORT")
+	port := ":" + env.GetEnvVar("PORT")
 	logrus.Infof("Listening on port %s", port)
 	logrus.Fatal(http.ListenAndServe(port, *router))
 }

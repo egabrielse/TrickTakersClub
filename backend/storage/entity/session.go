@@ -1,74 +1,118 @@
 package entity
 
 import (
-	"common/list"
 	"encoding/json"
 	"fmt"
+	"sheepshead"
 	"sheepshead/hand"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 type Session struct {
-	ID           string             `json:"id" redis:"id"`                     // unique ID of the session
-	HostID       string             `json:"hostId" redis:"hostId"`             // ID of the host player
-	PlayerIDs    []string           `json:"playerIds" redis:"playerIds"`       // list of player IDs
-	Created      int64              `json:"created" redis:"created"`           // timestamp in milliseconds
-	PassCode     string             `json:"passCode" redis:"passCode"`         // optional 5 digit code
-	GameSettings *hand.GameSettings `json:"gameSettings" redis:"gameSettings"` // game settings
-	GameStarted  bool               `json:"gameStarted" redis:"gameStarted"`   // true if the game has started
+	ID           string               `json:"id" redis:"id"`                     // unique ID of the session
+	HostID       string               `json:"hostId" redis:"hostId"`             // ID of the host player
+	Presence     map[string]time.Time `json:"presence" redis:"presence"`         // IDs of players mapped to the last ping
+	Created      time.Time            `json:"created" redis:"created"`           // timestamp in milliseconds
+	LastUpdated  time.Time            `json:"lastUpdated" redis:"lastUpdated"`   // timestamp in milliseconds
+	Private      bool                 `json:"private" redis:"private"`           // true if the session is private
+	PassCode     string               `json:"passCode" redis:"passCode"`         // passcode for private sessions
+	GameSettings *hand.GameSettings   `json:"gameSettings" redis:"gameSettings"` // game settings used to create a new game
+	Game         *sheepshead.Game     `json:"-" redis:"-"`                       // current game being played in the session
 }
 
-func NewSession(hostID string, passCode string, gameSettings *hand.GameSettings) *Session {
+func NewSession(hostID string) *Session {
 	return &Session{
 		ID:           uuid.NewString(),
 		HostID:       hostID,
-		PlayerIDs:    []string{hostID},
-		Created:      0,
-		PassCode:     passCode,
-		GameSettings: gameSettings,
-		GameStarted:  false,
+		Presence:     map[string]time.Time{},
+		Created:      time.Now(),
+		LastUpdated:  time.Now(),
+		Private:      false,
+		PassCode:     "",
+		GameSettings: hand.NewGameSettings(),
+		Game:         nil,
 	}
 }
 
-func (s *Session) SetPassCode(passCode string) {
+func (s *Session) SetPublic() {
+	s.PassCode = ""
+	s.Private = false
+}
+
+func (s *Session) SetPrivate(passCode string) {
 	s.PassCode = passCode
+	s.Private = true
+}
+
+func (s *Session) GameInProgress() bool {
+	return s.Game != nil
+}
+
+func (s *Session) KeepAlive(playerID string) {
+	s.Presence[playerID] = time.Now()
 }
 
 func (s *Session) Join(playerID string) error {
-	if len(s.PlayerIDs) >= hand.PlayerCount {
+	if _, ok := s.Presence[playerID]; ok {
+		// Player already in session, just update the timestamp
+		s.KeepAlive(playerID)
+		return nil
+	} else if len(s.Presence) >= hand.PlayerCount {
 		return fmt.Errorf("session is full")
-	} else if list.Contains(s.PlayerIDs, playerID) {
-		return nil // Player already in session, no need to add again
 	}
-	s.PlayerIDs = append(s.PlayerIDs, playerID)
+	s.KeepAlive(playerID)
 	return nil
 }
 
-func (s *Session) Leave(playerID string) error {
-	if s.GameStarted {
-		return fmt.Errorf("game has already started")
-	} else if playerID == s.HostID {
-		return fmt.Errorf("host cannot leave the session")
+func (s *Session) Leave(playerID string) {
+	delete(s.Presence, playerID)
+}
+
+func (s *Session) ListPresence() []string {
+	presenceList := make([]string, 0, len(s.Presence))
+	for playerID := range s.Presence {
+		presenceList = append(presenceList, playerID)
 	}
-	s.PlayerIDs = list.Filter(s.PlayerIDs, func(id string) bool {
-		return id != playerID
-	})
-	return nil
+	return presenceList
+}
+
+func (s *Session) CleanupStalePresence(duration time.Duration) {
+	now := time.Now()
+	for k, v := range s.Presence {
+		if now.Sub(v) > duration {
+			delete(s.Presence, k)
+		}
+	}
 }
 
 func (s *Session) IsReadyToStart() bool {
-	return len(s.PlayerIDs) >= hand.PlayerCount && !s.GameStarted
+	return len(s.Presence) >= hand.PlayerCount && !s.GameInProgress()
 }
 
-func (s *Session) StartGame() error {
-	if s.GameStarted {
-		return fmt.Errorf("game has already started")
-	} else if len(s.PlayerIDs) < hand.PlayerCount {
-		return fmt.Errorf("not enough players to start the game")
+func (s *Session) StartGame(gameID string) (*sheepshead.Game, error) {
+	if s.GameInProgress() {
+		return nil, fmt.Errorf("game has already started")
+	} else if len(s.Presence) < hand.PlayerCount {
+		return nil, fmt.Errorf("not enough players to start the game")
 	}
-	s.GameStarted = true
-	return nil
+	players := make([]string, 0, len(s.Presence))
+	for playerID := range s.Presence {
+		players = append(players, playerID)
+	}
+	s.Game = sheepshead.NewGame(s.ID, players, s.GameSettings)
+	return s.Game, nil
+}
+
+func (s *Session) ResumeGame(game *sheepshead.Game) (*sheepshead.Game, error) {
+	if s.GameInProgress() {
+		return nil, fmt.Errorf("game has already started")
+	}
+	s.Game = game
+	// Reset the session ID to match the game ID
+	s.ID = game.ID
+	return s.Game, nil
 }
 
 func (s *Session) MarshalBinary() ([]byte, error) {

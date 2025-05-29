@@ -30,7 +30,7 @@ type TableWorker struct {
 
 func NewTableWorker(table *entity.TableEntity) (*TableWorker, error) {
 	ctx := context.Background()
-	key := env.GetEnvironmentVariable("ABLY_API_KEY")
+	key := env.GetEnvVar("ABLY_API_KEY")
 
 	options := []ably.ClientOption{
 		ably.WithKey(key),
@@ -138,7 +138,7 @@ func (t *TableWorker) UnregisterClient(clientID string, connectionID string) {
 
 // StartService starts a goroutine for the table service and begins listening for messages
 func (t *TableWorker) StartService() {
-	serverWorkerTimeout := env.GetEnvironmentVariable("SERVER_WORKER_TIMEOUT")
+	serverWorkerTimeout := env.GetEnvVar("SERVER_WORKER_TIMEOUT")
 	// Convert the timeout duration to integer
 	timeoutDuration, err := time.ParseDuration(serverWorkerTimeout)
 	if err != nil {

@@ -6,6 +6,8 @@ import (
 	"main/service/msg"
 	"sheepshead"
 	"sheepshead/hand"
+
+	"github.com/google/uuid"
 )
 
 func HandleUpdateCallingMethod(t *TableWorker, clientID string, data interface{}) {
@@ -88,7 +90,7 @@ func HandleStartGameCommand(t *TableWorker, clientID string, data interface{}) {
 		t.DirectMessage(msg.ErrorMessage(clientID, "not enough players"))
 	} else {
 		// Start a new game
-		t.Game = sheepshead.NewGame(t.SeatedPlayers, t.GameSettings)
+		t.Game = sheepshead.NewGame(uuid.NewString(), t.SeatedPlayers, t.GameSettings)
 		// Announce the start of the game
 		t.BroadcastMessage(msg.GameStartedMessage(t.Game.PlayerOrder))
 		currentHand := t.Game.GetCurrentHand()

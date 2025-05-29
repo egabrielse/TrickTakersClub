@@ -26,9 +26,9 @@ func (imp *SessionRepoRedisImplementation) Exists(ctx context.Context, sessionID
 	}
 }
 
-func (imp *SessionRepoRedisImplementation) Set(ctx context.Context, entity *entity.Session) error {
+func (imp *SessionRepoRedisImplementation) Set(ctx context.Context, entity *entity.Session, expiration time.Duration) error {
 	key := SessionRepoRedisKeyPrefix + entity.ID
-	if err := imp.db.Set(ctx, key, entity, 0).Err(); err != nil {
+	if err := imp.db.Set(ctx, key, entity, expiration).Err(); err != nil {
 		return err
 	}
 	return nil
@@ -70,14 +70,6 @@ func (imp *SessionRepoRedisImplementation) GetAll(ctx context.Context) ([]*entit
 func (imp *SessionRepoRedisImplementation) SetExpiration(ctx context.Context, sessionID string, expiration time.Duration) error {
 	key := SessionRepoRedisKeyPrefix + sessionID
 	if err := imp.db.Expire(ctx, key, expiration).Err(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (imp *SessionRepoRedisImplementation) SetExpirationAt(ctx context.Context, sessionID string, expiration time.Duration) error {
-	key := SessionRepoRedisKeyPrefix + sessionID
-	if err := imp.db.ExpireAt(ctx, key, time.Now().Add(expiration)).Err(); err != nil {
 		return err
 	}
 	return nil

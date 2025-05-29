@@ -1,22 +1,25 @@
 package sheepshead
 
 import (
+	"encoding/json"
 	"sheepshead/hand"
 	"sheepshead/scoring"
 	"sheepshead/utils"
 )
 
 type Game struct {
-	DealerIndex int                `json:"dealerIndex"` // Index of the dealer
-	Hands       []*hand.Hand       `json:"hands"`       // Hands played
-	PlayerOrder []string           `json:"playerOrder"` // Order of players at the table
-	Settings    *hand.GameSettings `json:"settings"`    // Game settings
-	LastHand    bool               `json:"lastHand"`    // True if it's the last hand of the game
+	ID          string             `json:"id" redis:"id"`                   // Id of the game
+	DealerIndex int                `json:"dealerIndex" redis:"id"`          // Index of the dealer
+	Hands       []*hand.Hand       `json:"hands" redis:"hands"`             // Hands played
+	PlayerOrder []string           `json:"playerOrder" redis:"playerOrder"` // Order of players at the table
+	Settings    *hand.GameSettings `json:"settings" redis:"settings"`       // Game settings
+	LastHand    bool               `json:"lastHand" redis:"lastHand"`       // True if it's the last hand of the game
 }
 
 // Creates a new Game and initializes the first hand
-func NewGame(playerOrder []string, settings *hand.GameSettings) *Game {
+func NewGame(ID string, playerOrder []string, settings *hand.GameSettings) *Game {
 	return &Game{
+		ID:          ID,
 		DealerIndex: 0,
 		Hands:       []*hand.Hand{hand.NewHand(playerOrder, settings)},
 		PlayerOrder: playerOrder,
@@ -70,4 +73,12 @@ func (g *Game) CallLastHand() {
 
 func (g *Game) IsLastHand() bool {
 	return g.LastHand
+}
+
+func (g *Game) MarshalBinary() ([]byte, error) {
+	return json.Marshal(g)
+}
+
+func (g *Game) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, g)
 }

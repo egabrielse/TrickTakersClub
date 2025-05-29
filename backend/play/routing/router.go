@@ -29,14 +29,9 @@ func InitRouter() *http.Handler {
 		decorators.RequestLogging,
 		decorators.TokenAuthentication,
 	))
-	router.POST("/api/play/v1/revive/:sessionId", request.HandleWith(
-		handlers.ReviveGame,
-		decorators.RequestLogging,
-		decorators.TokenAuthentication,
-	))
 
 	// 3. Add CORS middleware
-	allowedOrigin := env.GetEnvironmentVariable("ALLOWED_ORIGIN")
+	allowedOrigin := env.GetEnvVar("ALLOWED_ORIGIN")
 	cors := cors.New(cors.Options{
 		AllowedOrigins: []string{allowedOrigin},
 		AllowedMethods: []string{http.MethodPost, http.MethodGet},

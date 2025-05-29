@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 	"encoding/json"
-	"play/message"
+	"play/app/msg"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -16,7 +16,7 @@ type Client struct {
 	conn      *websocket.Conn
 	ctx       context.Context
 	cancel    context.CancelFunc
-	msgChan   chan *message.Message
+	msgChan   chan *msg.Message
 }
 
 func NewClient(clientID string, sessionID string, conn *websocket.Conn) *Client {
@@ -27,7 +27,7 @@ func NewClient(clientID string, sessionID string, conn *websocket.Conn) *Client 
 		conn:      conn,
 		ctx:       ctx,
 		cancel:    cancel,
-		msgChan:   make(chan *message.Message, bufferSize),
+		msgChan:   make(chan *msg.Message, bufferSize),
 	}
 }
 
@@ -60,7 +60,7 @@ func (c *Client) readPump() {
 		c.cancel()
 	}()
 	for {
-		var message *message.Message
+		var message *msg.Message
 		if _, rawMsg, err := c.conn.ReadMessage(); err != nil {
 			logrus.Errorf("Client: Read Error: %v", err)
 			return
