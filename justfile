@@ -1,8 +1,11 @@
 start +CONTAINERS="":
-	docker compose up --detach --build {{CONTAINERS}}
+	docker-compose up --detach --build {{CONTAINERS}}
 
-stop:
-	docker compose down
+stop +CONTAINERS:
+	docker-compose stop {{CONTAINERS}}
+
+end:
+	docker-compose down
 
 branch BRANCH_NAME:
 	# 1. Pull latest changes
@@ -13,7 +16,7 @@ branch BRANCH_NAME:
 	git push --set-upstream origin {{BRANCH_NAME}}
 
 
-cleanup:
+clean:
 	# 1. Make sure we are on the main branch
 	git checkout main 
 	# 2. Delete all branches except main

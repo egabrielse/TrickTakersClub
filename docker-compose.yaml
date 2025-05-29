@@ -47,8 +47,7 @@ services:
       - PORT=7070
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - REDIS_USER=redis-user
-      - REDIS_PASS=redis-password
+      - REDIS_PASS=password
       - FIREBASE_AUTH_EMULATOR_HOST=firebase:9099
       - FIRESTORE_EMULATOR_HOST=firebase:8088
       - FIREBASE_PROJECT_ID=demo-tricktakersclub
@@ -60,23 +59,25 @@ services:
 
   # FRONTEND SERVICE
   frontend:
-    build:
-      dockerfile: Dockerfile
-      context: ./frontend
-      args:
-        - FIREBASE_AUTH_EMULATOR_HOST=http://127.0.0.1:9099
-        - FIREBASE_API_KEY=demo-api-key
-        - FIREBASE_AUTH_DOMAIN=demo-tricktakersclub.firebaseapp.com
-        - FIREBASE_PROJECT_ID=demo-tricktakersclub
-        - FIREBASE_STORAGE_BUCKET=demo-tricktakersclub.appspot.com
-        - FIREBASE_MESSAGING_SENDER_ID=demo-messaging-sender-id
-        - FIREBASE_APP_ID=demo-app-id
     depends_on:
       - firebase
-    image: frontend
+    image: node:alpine
     ports:
       - "5173:5173"
-
+    volumes:
+      - ./frontend:/frontend
+      - node_modules:/frontend/node_modules
+    working_dir: /frontend
+    command: sh -c "npm install && npm run dev -- --host"
+    environment:
+      - VITE_FIREBASE_AUTH_EMULATOR_HOST=http://127.0.0.1:9099
+      - VITE_FIREBASE_API_KEY=demo-api-key
+      - VITE_FIREBASE_AUTH_DOMAIN=demo-tricktakersclub.firebaseapp.com
+      - VITE_FIREBASE_PROJECT_ID=demo-tricktakersclub
+      - VITE_FIREBASE_STORAGE_BUCKET=demo-tricktakersclub.appspot.com
+      - VITE_FIREBASE_MESSAGING_SENDER_ID=demo-messaging-sender-id
+      - VITE_FIREBASE_APP_ID=demo-app-id
+      
   # REDIS SERVICE
   redis:
     image: redis:alpine
@@ -84,7 +85,7 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
-    command: redis-server --loglevel warning
+    command: redis-server --loglevel warning --requirepass "password"
 
   # FIREBASE EMULATOR
   firebase:
@@ -103,4 +104,6 @@ volumes:
   firebase-data:
     driver: local
   redis-data:
+    driver: local
+  node_modules:
     driver: local
