@@ -20,7 +20,7 @@ func InitRouter() *http.Handler {
 	router.GET("/api/play/v1/connect/:sessionId", request.HandleWith(
 		handlers.Connect,
 		decorators.RequestLogging,
-		decorators.UrlParamAuthentication,
+		decorators.ParamAuthentication,
 	))
 
 	// -> Game routes

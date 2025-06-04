@@ -31,12 +31,12 @@ func TokenAuthentication(handler request.RequestHandler) request.RequestHandler 
 	}
 }
 
-// UrlParamAuthentication is a decorator that checks if the request has a valid token in the URL parameters
+// ParamAuthentication is a decorator that checks if the request has a valid token in the URL parameters
 // Websockets do not have headers, so we need to check the token in the URL parameters
-func UrlParamAuthentication(handler request.RequestHandler) request.RequestHandler {
+func ParamAuthentication(handler request.RequestHandler) request.RequestHandler {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) (int, any) {
 		token := r.URL.Query().Get("token")
-		logrus.Info("UrlParamAuthentication: token from URL params:", token)
+		logrus.Info("ParamAuthentication: token from URL params:", token)
 		if token == "" {
 			return http.StatusUnauthorized, "Missing token"
 		}
