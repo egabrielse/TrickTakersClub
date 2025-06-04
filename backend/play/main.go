@@ -26,9 +26,8 @@ func main() {
 	// Initialize Redis client
 	redisHost := env.GetEnvVar("REDIS_HOST")
 	redisPort := env.GetEnvVar("REDIS_PORT")
-	redisUser := env.GetEnvVar("REDIS_USER")
 	redisPass := env.GetEnvVar("REDIS_PASS")
-	rdb := clients.InitRedisClient(redisHost, redisPort, redisUser, redisPass)
+	rdb := clients.InitRedisClient(redisHost, redisPort, redisPass)
 
 	// Initialize storage repositories
 	repository.InitSessionRepo(implementation.NewSessionRepoRedisImplementation(rdb))

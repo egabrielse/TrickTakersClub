@@ -23,7 +23,9 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import ErrorBoundary from "./pages/error/ErrorBoundary";
 import ErrorPage from "./pages/error/ErrorPage";
+import GamePage from "./pages/game/GamePage";
 import HomePage from "./pages/home/HomePage";
+import LobbyPage from "./pages/lobby/LobbyPage";
 import ConnectionProvider from "./pages/table/ConnectionProvider";
 import TablePage from "./pages/table/TablePage";
 
@@ -34,9 +36,13 @@ const router = createBrowserRouter(
         <Route index element={<HomePage />} />
         <Route path={PATHS.HOME} element={<HomePage />} />
         <Route path={PATHS.RULES} element={<RulesPage />} />
+
         <Route element={<PrivateRoutes />}>
+          <Route path={PATHS.LOBBY} element={<LobbyPage />} />
+          <Route path={PATHS.SESSION} element={<GamePage />} />
           <Route path={PATHS.ACCOUNT} element={<AccountPage />} />
         </Route>
+
         <Route element={<AuthenticatedRouter />}>
           <Route path={PATHS.LOGIN} element={<LoginPage />} />
           <Route path={PATHS.REGISTER} element={<RegisterPage />} />

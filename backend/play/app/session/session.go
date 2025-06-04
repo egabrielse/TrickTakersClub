@@ -83,15 +83,11 @@ func (sw *SessionWorker) StartWorker() {
 				if err := json.Unmarshal([]byte(redisMessage.Payload), &message); err != nil {
 					logrus.Errorf("Connection: error unmarshalling redis message payload: %v", err)
 					continue
+				} else if message.SenderID == msg.SessionWorkerID {
+					continue // Ignore messages sent by the worker itself
 				} else if message.ReceiverID != msg.BroadcastRecipient && message.ReceiverID != msg.SessionWorkerID {
-					continue // Ignore messages not meant for this worker
-				} else if message.MessageType == msg.MessageType.Pong {
-					// Handle pong messages here to avoid setting the last updated time
-					// Simply being connected does not count as activity
-					PongHandler(sw, message)
+					continue // Ignore messages not meant for the worker
 				} else {
-					// Update the last updated time for the session
-					sw.session.LastUpdated = time.Now()
 					switch message.MessageType {
 					case msg.MessageType.Enter:
 						EnterHandler(sw, message)
@@ -99,9 +95,19 @@ func (sw *SessionWorker) StartWorker() {
 						LeaveHandler(sw, message)
 					case msg.MessageType.Chat:
 						// Do nothing
+					case msg.MessageType.Pong:
+						PongHandler(sw, message)
+						// Immediately continue to avoid resetting the session last updated field
+						continue
 					default:
 						logrus.Warnf("Unknown message type: %s", message.MessageType)
+						// If the message type is unknown, we can log it and continue
+						// Continue immediately to avoid resetting the session last updated field
+						continue
 					}
+					// Update the last updated time for the session
+					// Note: If a certain message type should not update this field, it needs to immediately continue
+					sw.session.LastUpdated = time.Now()
 				}
 
 			case <-ticker.C:
@@ -110,6 +116,8 @@ func (sw *SessionWorker) StartWorker() {
 					logrus.Infof("Session worker %s timed out", sw.session.ID)
 					sw.sendMessage(msg.NewTimeoutMessage())
 					return
+				} else {
+					logrus.Infof("Session %s still alive", sw.session.ID)
 				}
 				// Ping connected clients to keep the session alive
 				sw.sendMessage(msg.NewPingMessage())

@@ -7,7 +7,7 @@ stop +CONTAINERS:
 	docker-compose stop {{CONTAINERS}}
 
 # Stop all containers
-stop all:
+halt:
 	docker-compose down
 
 # Create a new branch from the current branch

@@ -11,15 +11,13 @@ import (
 )
 
 type Session struct {
-	ID           string               `json:"id" redis:"id"`                     // unique ID of the session
-	HostID       string               `json:"hostId" redis:"hostId"`             // ID of the host player
-	Presence     map[string]time.Time `json:"presence" redis:"presence"`         // IDs of players mapped to the last ping
-	Created      time.Time            `json:"created" redis:"created"`           // timestamp in milliseconds
-	LastUpdated  time.Time            `json:"lastUpdated" redis:"lastUpdated"`   // timestamp in milliseconds
-	Private      bool                 `json:"private" redis:"private"`           // true if the session is private
-	PassCode     string               `json:"passCode" redis:"passCode"`         // passcode for private sessions
-	GameSettings *hand.GameSettings   `json:"gameSettings" redis:"gameSettings"` // game settings used to create a new game
-	Game         *sheepshead.Game     `json:"-" redis:"-"`                       // current game being played in the session
+	ID           string               `json:"id"`           // unique ID of the session
+	HostID       string               `json:"hostId"`       // ID of the host player
+	Presence     map[string]time.Time `json:"presence"`     // IDs of players mapped to the last ping
+	Created      time.Time            `json:"created"`      // timestamp in milliseconds
+	LastUpdated  time.Time            `json:"-"`            // timestamp in milliseconds
+	GameSettings *hand.GameSettings   `json:"gameSettings"` // game settings used to create a new game
+	Game         *sheepshead.Game     `json:"-"`            // current game being played in the session
 }
 
 func NewSession(hostID string) *Session {
@@ -29,21 +27,9 @@ func NewSession(hostID string) *Session {
 		Presence:     map[string]time.Time{},
 		Created:      time.Now(),
 		LastUpdated:  time.Now(),
-		Private:      false,
-		PassCode:     "",
 		GameSettings: hand.NewGameSettings(),
 		Game:         nil,
 	}
-}
-
-func (s *Session) SetPublic() {
-	s.PassCode = ""
-	s.Private = false
-}
-
-func (s *Session) SetPrivate(passCode string) {
-	s.PassCode = passCode
-	s.Private = true
 }
 
 func (s *Session) GameInProgress() bool {
@@ -101,7 +87,7 @@ func (s *Session) StartGame(gameID string) (*sheepshead.Game, error) {
 	for playerID := range s.Presence {
 		players = append(players, playerID)
 	}
-	s.Game = sheepshead.NewGame(s.ID, players, s.GameSettings)
+	s.Game = sheepshead.NewGame(s.ID, s.HostID, players, s.GameSettings)
 	return s.Game, nil
 }
 
@@ -120,5 +106,10 @@ func (s *Session) MarshalBinary() ([]byte, error) {
 }
 
 func (s *Session) UnmarshalBinary(data []byte) error {
-	return json.Unmarshal(data, s)
+	if err := json.Unmarshal(data, s); err != nil {
+		return fmt.Errorf("failed to unmarshal session: %w", err)
+	}
+	// Update LastUpdated to current time after unmarshalling
+	s.LastUpdated = time.Now()
+	return nil
 }
