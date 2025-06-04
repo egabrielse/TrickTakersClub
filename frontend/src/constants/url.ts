@@ -1,7 +1,8 @@
 export const SEGMENTS = {
   ACCOUNT: "account",
   HOME: "",
-  LOBBY: "lobby",
+  SESSION: "session",
+  BROWSER: "browser",
   RULES: "rules",
   TABLE: "table",
   LOGIN: "login",
@@ -11,8 +12,8 @@ export const SEGMENTS = {
 
 export const PATHS = {
   ROOT: "/",
-  LOBBY: `/${SEGMENTS.LOBBY}`,
-  SESSION: `/${SEGMENTS.LOBBY}/:sessionId`,
+  BROWSER: `/${SEGMENTS.BROWSER}`,
+  SESSION: `/${SEGMENTS.SESSION}/:sessionId`,
   ACCOUNT: `/${SEGMENTS.ACCOUNT}`,
   HOME: `/${SEGMENTS.HOME}`,
   RULES: `/${SEGMENTS.RULES}`,

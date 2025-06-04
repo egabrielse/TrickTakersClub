@@ -8,7 +8,7 @@ import "./ActionButton.scss";
 type ActionButtonProps = {
   color?: "primary" | "secondary";
   onClick?: () => void;
-  disabled: boolean;
+  disabled?: boolean;
   label: string;
   type?: "button" | "submit" | "reset";
 };
@@ -16,7 +16,7 @@ type ActionButtonProps = {
 export default function ActionButton({
   color = "primary",
   onClick,
-  disabled,
+  disabled = false,
   label,
   type = "button",
 }: ActionButtonProps) {

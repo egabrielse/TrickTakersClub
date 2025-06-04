@@ -1,3 +1,4 @@
+import HomeIcon from "@mui/icons-material/Home";
 import {
   Box,
   Button,
@@ -14,7 +15,7 @@ import { PATHS } from "../../../constants/url";
 import { Session } from "../../../types/session";
 import SessionsTable from "./SessionsTable";
 
-export default function LobbyPage() {
+export default function BrowserPage() {
   const navigate = useNavigate();
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -52,7 +53,6 @@ export default function LobbyPage() {
     } finally {
       setLoading(false);
     }
-    loadSessions();
   };
 
   return (
@@ -64,13 +64,14 @@ export default function LobbyPage() {
           alignItems="center"
           mb={2}
         >
-          <Typography variant="h5">Lobby</Typography>
+          <Typography variant="h5">SESSION BROWSER</Typography>
           <Button
             variant="contained"
             color="primary"
             onClick={handleCreateSession}
+            startIcon={<HomeIcon />}
           >
-            Create Session
+            Host Session
           </Button>
         </Stack>
         {loading ? (

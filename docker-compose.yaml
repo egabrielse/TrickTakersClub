@@ -52,7 +52,7 @@ services:
       - FIRESTORE_EMULATOR_HOST=firebase:8088
       - FIREBASE_PROJECT_ID=demo-tricktakersclub
       - FIREBASE_API_KEY=demo-api-key
-      - ALLOWED_ORIGIN=http://localhost:5173
+      - ALLOWED_ORIGIN=http://localhost
     image: play
     ports:
       - "7070:7070"

@@ -13,9 +13,9 @@ func NewConnectionUpgrader() *websocket.Upgrader {
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
 		CheckOrigin: func(r *http.Request) bool {
-			logrus.Infof("WebSocket connection from %s", r.Header.Get("Origin"))
 			requestOrigin := r.Header.Get("Origin")
 			allowedOrigin := env.GetEnvVar("ALLOWED_ORIGIN")
+			logrus.Infof("Allowed: %s, Request: %s", allowedOrigin, requestOrigin)
 			return requestOrigin == allowedOrigin
 		},
 	}
