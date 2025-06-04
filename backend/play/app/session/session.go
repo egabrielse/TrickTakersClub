@@ -51,10 +51,10 @@ func (sw *SessionWorker) StartWorker() {
 		gameRepo := repository.GetGameRepo()
 
 		// Get environment variables
-		workerTimeout := env.GetEnvVarAsDuration("SESSION_WORKER_TIMEOUT", DefaultTimeout)
-		gameExpiration := env.GetEnvVarAsDuration("GAME_EXPIRATION_DURATION", DefaultGameExpiration)
-		sessionExpiration := env.GetEnvVarAsDuration("SESSION_EXPIRATION_DURATION", DefaultSessionExpiration)
-		presenceExpiration := env.GetEnvVarAsDuration("PRESENCE_EXPIRATION_DURATION", DefaultPresenceExpiration)
+		workerTimeout := env.GetEnvVarAsDuration("SESSION_WORKER_TIMEOUT", defaultTimeout)
+		gameExpiration := env.GetEnvVarAsDuration("GAME_EXPIRATION_DURATION", defaultGameExpiration)
+		sessionExpiration := env.GetEnvVarAsDuration("SESSION_EXPIRATION_DURATION", defaultSessionExpiration)
+		presenceExpiration := env.GetEnvVarAsDuration("PRESENCE_EXPIRATION_DURATION", defaultPresenceExpiration)
 
 		// Create record in redis so the session is discoverable
 		sessionRepo.Set(sw.ctx, sw.session, sessionExpiration)
@@ -63,7 +63,7 @@ func (sw *SessionWorker) StartWorker() {
 		channel := sw.rdb.Subscribe(sw.ctx, sw.session.ID)
 
 		// Set up a ticker to periodically check the session status
-		ticker := time.NewTicker(TickerDuration)
+		ticker := time.NewTicker(tickerDuration)
 
 		defer func() {
 			logrus.Infof("Cleanup for session worker %s", sw.session.ID)
