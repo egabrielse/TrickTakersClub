@@ -19,7 +19,8 @@ func NewSessionRepoRedisImplementation(db *redis.Client) *SessionRepoRedisImplem
 }
 
 func (imp *SessionRepoRedisImplementation) Exists(ctx context.Context, sessionID string) (bool, error) {
-	if count, err := imp.db.Exists(ctx, sessionID).Result(); err != nil {
+	key := SessionRepoRedisKeyPrefix + sessionID
+	if count, err := imp.db.Exists(ctx, key).Result(); err != nil {
 		return false, err
 	} else {
 		return count > 0, nil
@@ -35,7 +36,8 @@ func (imp *SessionRepoRedisImplementation) Set(ctx context.Context, entity *enti
 }
 
 func (imp *SessionRepoRedisImplementation) Get(ctx context.Context, sessionID string) (*entity.Session, error) {
-	if data, err := imp.db.Get(ctx, sessionID).Bytes(); err != nil {
+	key := SessionRepoRedisKeyPrefix + sessionID
+	if data, err := imp.db.Get(ctx, key).Bytes(); err != nil {
 		return nil, err
 	} else {
 		entity := &entity.Session{}

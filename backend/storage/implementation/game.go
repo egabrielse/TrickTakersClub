@@ -19,7 +19,8 @@ func NewGameRepoRedisImplementation(db *redis.Client) *GameRepoRedisImplementati
 }
 
 func (imp *GameRepoRedisImplementation) Exists(ctx context.Context, gameID string) (bool, error) {
-	if count, err := imp.db.Exists(ctx, gameID).Result(); err != nil {
+	key := GameRepoRedisKeyPrefix + gameID
+	if count, err := imp.db.Exists(ctx, key).Result(); err != nil {
 		return false, err
 	} else {
 		return count > 0, nil
@@ -35,7 +36,8 @@ func (imp *GameRepoRedisImplementation) Set(ctx context.Context, entity *sheepsh
 }
 
 func (imp *GameRepoRedisImplementation) Get(ctx context.Context, gameID string) (*sheepshead.Game, error) {
-	if data, err := imp.db.Get(ctx, gameID).Bytes(); err != nil {
+	key := GameRepoRedisKeyPrefix + gameID
+	if data, err := imp.db.Get(ctx, key).Bytes(); err != nil {
 		return nil, err
 	} else {
 		entity := &sheepshead.Game{}

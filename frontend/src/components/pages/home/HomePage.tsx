@@ -19,7 +19,7 @@ export default function HomePage() {
     navigate(PATHS.SESSION.replace(":sessionId", sessionId));
   };
 
-  const navigateToSessionBrowser = () => {
+  const navigateToBrowser = () => {
     navigate(PATHS.BROWSER);
   };
 
@@ -69,17 +69,17 @@ export default function HomePage() {
               <h1>PLAY SHEEPSHEAD!</h1>
             </div>
             <ActionButton
-              label="Host Session"
+              label="Host Game"
               onClick={handleCreateSession}
               disabled={loading}
             />
             <Divider orientation="horizontal" color="white" />
             <ActionButton
               color="secondary"
-              label="Browse Open Sessions"
+              label="Browse Open Games"
               disabled={loading}
               type="submit"
-              onClick={navigateToSessionBrowser}
+              onClick={navigateToBrowser}
             />
           </div>
         </Paper>
