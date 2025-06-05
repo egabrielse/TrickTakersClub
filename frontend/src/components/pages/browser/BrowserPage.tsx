@@ -8,7 +8,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { createSession, fetchSessionList } from "../../../api/session.api";
 import { PATHS } from "../../../constants/url";
@@ -20,6 +20,14 @@ export default function BrowserPage() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const stopPolling = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
 
   const loadSessions = useCallback(async () => {
     try {
@@ -27,6 +35,7 @@ export default function BrowserPage() {
       setSessions(response);
     } catch (error) {
       setError("Failed to fetch sessions. Please try again later.");
+      stopPolling();
     } finally {
       setLoading(false);
     }
@@ -36,8 +45,8 @@ export default function BrowserPage() {
     // Initial load of sessions
     setLoading(true);
     loadSessions();
-    const interval = setInterval(loadSessions, 5000);
-    return () => clearInterval(interval);
+    intervalRef.current = setInterval(loadSessions, 5000);
+    return () => stopPolling();
   }, [loadSessions]);
 
   const navigateToSession = (sessionId: string) => {

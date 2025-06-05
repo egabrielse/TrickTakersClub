@@ -48,8 +48,8 @@ export default function SessionsTable({ sessions }: SessionTableProps) {
                 onClick={() => navigateToSession(session.id)}
               >
                 <TableCell>{Object.keys(session.presence).length}/5</TableCell>
-                <TableCell align="right">{session.hostId}</TableCell>
-                <TableCell align="right">
+                <TableCell>{session.hostId}</TableCell>
+                <TableCell>
                   {session.gameSettings.doubleOnTheBump && (
                     <Chip
                       key="double-on-bump"
