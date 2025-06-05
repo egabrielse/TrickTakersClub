@@ -83,19 +83,19 @@ func (sw *SessionWorker) StartWorker() {
 				if err := json.Unmarshal([]byte(redisMessage.Payload), &message); err != nil {
 					logrus.Errorf("Connection: error unmarshalling redis message payload: %v", err)
 					continue
-				} else if message.SenderID == msg.SessionWorkerID {
+				} else if message.SenderID == msg.AppID {
 					continue // Ignore messages sent by the worker itself
-				} else if message.ReceiverID != msg.BroadcastRecipient && message.ReceiverID != msg.SessionWorkerID {
+				} else if !message.IsBroadcast() && message.ReceiverID != msg.AppID {
 					continue // Ignore messages not meant for the worker
 				} else {
 					switch message.MessageType {
-					case msg.MessageType.Enter:
+					case msg.MessageTypeEnter:
 						EnterHandler(sw, message)
-					case msg.MessageType.Leave:
+					case msg.MessageTypeLeave:
 						LeaveHandler(sw, message)
-					case msg.MessageType.Chat:
+					case msg.MessageTypeChat:
 						// Do nothing
-					case msg.MessageType.Pong:
+					case msg.MessageTypePong:
 						PongHandler(sw, message)
 						// Immediately continue to avoid resetting the session last updated field
 						continue
@@ -113,11 +113,11 @@ func (sw *SessionWorker) StartWorker() {
 			case <-ticker.C:
 				if time.Since(sw.session.LastUpdated) >= workerTimeout {
 					// Stop the service if no activity is detected for a certain duration
-					logrus.Infof("Session worker %s timed out", sw.session.ID)
+					logrus.Infof("Session: worker %s timed out", sw.session.ID)
 					sw.sendMessage(msg.NewTimeoutMessage())
 					return
 				} else {
-					logrus.Infof("Session %s still alive", sw.session.ID)
+					logrus.Infof("Session: %s still alive", sw.session.ID)
 				}
 				// Ping connected clients to keep the session alive
 				sw.sendMessage(msg.NewPingMessage())

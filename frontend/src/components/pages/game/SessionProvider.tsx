@@ -1,8 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router";
+import { CONNECTION_STATUS } from "../../../constants/socket";
 import auth from "../../../firebase/auth";
 import authSlice from "../../../store/slices/auth.slice";
+import { ConnectionStatus } from "../../../types/socket";
+import SessionContext from "./SessionContext";
 
 export default function SessionProvider({
   children,
@@ -12,6 +15,9 @@ export default function SessionProvider({
   const { sessionId } = useParams<{ sessionId: string }>();
   const wsRef = useRef<WebSocket | null>(null);
   const token = useSelector(authSlice.selectors.token);
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>(
+    CONNECTION_STATUS.DISCONNECTED,
+  );
 
   useEffect(() => {
     if (!sessionId) return;
@@ -19,6 +25,7 @@ export default function SessionProvider({
       console.error("User not authenticated");
       throw new Error("User not authenticated");
     }
+    setConnectionStatus(CONNECTION_STATUS.CONNECTING);
     const host = window.location.hostname;
     const port = window.location.port ? `:${window.location.port}` : "";
     const protocol = window.location.protocol === "https:" ? "wss" : "ws";
@@ -28,14 +35,17 @@ export default function SessionProvider({
 
     ws.onopen = () => {
       console.log("WebSocket connected");
+      setConnectionStatus(CONNECTION_STATUS.CONNECTED);
     };
 
     ws.onclose = () => {
       console.log("WebSocket disconnected");
+      setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
     };
 
     ws.onerror = (error) => {
       console.error("WebSocket error:", error);
+      setConnectionStatus(CONNECTION_STATUS.ERROR);
     };
 
     ws.onmessage = (event) => {
@@ -46,7 +56,11 @@ export default function SessionProvider({
     return () => {
       ws.close();
     };
-  }, [sessionId]);
+  }, [sessionId, token]);
 
-  return children;
+  return (
+    <SessionContext.Provider value={{ connectionStatus }}>
+      {children}
+    </SessionContext.Provider>
+  );
 }

@@ -1,11 +1,23 @@
 package msg
 
+func NewEnterMessage(senderID string) *Message {
+	return NewMessage(senderID, AppID, MessageTypeEnter, nil)
+}
+
+func NewLeaveMessage(senderID string) *Message {
+	return NewMessage(senderID, AppID, MessageTypeLeave, nil)
+}
+
 func NewPingMessage() *Message {
-	return NewMessage(SessionWorkerID, BroadcastRecipient, MessageType.Ping, nil)
+	return NewMessage(AppID, BroadcastRecipient, MessageTypePing, nil)
+}
+
+func NewPongMessage(senderID string) *Message {
+	return NewMessage(senderID, AppID, MessageTypePong, nil)
 }
 
 func NewTimeoutMessage() *Message {
-	return NewMessage(SessionWorkerID, BroadcastRecipient, MessageType.Ping, nil)
+	return NewMessage(AppID, BroadcastRecipient, MessageTypeTimeout, nil)
 }
 
 func NewWelcomeMessage(receiverID string, sessionID string, hostID string, presence []string) *Message {
@@ -14,16 +26,15 @@ func NewWelcomeMessage(receiverID string, sessionID string, hostID string, prese
 		SessionID: sessionID,
 		Presence:  presence,
 	}
-	return NewMessage(SessionWorkerID, receiverID, MessageType.Welcome, payload)
+	return NewMessage(AppID, receiverID, MessageTypeWelcome, payload)
 }
 
 func NewPresenceMessage(presence []string) *Message {
-	payload := &PresencePayload{
+	return NewMessage(AppID, BroadcastRecipient, MessageTypePresence, &PresencePayload{
 		Presence: presence,
-	}
-	return NewMessage(SessionWorkerID, BroadcastRecipient, MessageType.Presence, payload)
+	})
 }
 
 func NewErrorMessage(message string) *Message {
-	return NewMessage(SessionWorkerID, BroadcastRecipient, MessageType.Ping, &ErrorMessage{Message: message})
+	return NewMessage(AppID, BroadcastRecipient, MessageTypePing, &ErrorMessage{Message: message})
 }

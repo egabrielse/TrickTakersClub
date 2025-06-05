@@ -29,7 +29,7 @@ func (m *Message) IsBroadcast() bool {
 }
 
 func (m *Message) IsAction() bool {
-	return m.ReceiverID == SessionWorkerID
+	return m.ReceiverID == AppID
 }
 
 func (m *Message) MarshalBinary() (data []byte, err error) {

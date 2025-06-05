@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"common/clients"
 	"common/request"
 	"net/http"
 	"play/app/client"
@@ -26,9 +27,10 @@ func Connect(w http.ResponseWriter, r *http.Request, p httprouter.Params) (int, 
 		if err != nil {
 			return http.StatusInternalServerError, err
 		}
+		rdb := clients.GetRedisClient()
 		// Create a new socket and connect it.
-		socket := client.NewClient(uid, sessionID, conn)
-		socket.Connect()
+		client := client.NewClientWorker(uid, sessionID, rdb, conn)
+		client.StartWorker()
 		// Return ResponseWriteHandled to indicate response writing is handled
 		return request.ResponseWriteHandled, nil
 	}
