@@ -23,6 +23,9 @@ services:
     environment:
       - ENV=development
       - PORT=8080
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASS=password
       - FIREBASE_AUTH_EMULATOR_HOST=firebase:9099
       - FIRESTORE_EMULATOR_HOST=firebase:8088
       - FIREBASE_PROJECT_ID=demo-tricktakersclub

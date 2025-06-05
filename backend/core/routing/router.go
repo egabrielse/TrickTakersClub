@@ -29,6 +29,20 @@ func InitRouter() *http.Handler {
 		decorators.RequestLogging,
 	))
 
+	// -> Game routes
+	router.GET("/api/core/v1/game", request.HandleWith(
+		handlers.FetchSavedGameList,
+		decorators.RequestLogging,
+		decorators.TokenAuthentication,
+	))
+
+	// -> Session routes
+	router.GET("/api/core/v1/session", request.HandleWith(
+		handlers.FetchSessionList,
+		decorators.RequestLogging,
+		decorators.TokenAuthentication,
+	))
+
 	// -> Table routes
 	router.POST("/api/core/v1/table", request.HandleWith(
 		handlers.CreateTable,

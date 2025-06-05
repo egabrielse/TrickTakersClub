@@ -16,14 +16,12 @@ func InitRouter() *http.Handler {
 	router := httprouter.New()
 
 	// 2. Define routes and their handlers
-	// -> Connect route
 	router.GET("/api/play/v1/connect/:sessionId", request.HandleWith(
 		handlers.Connect,
 		decorators.RequestLogging,
 		decorators.ParamAuthentication,
 	))
 
-	// -> Game routes
 	router.POST("/api/play/v1/session", request.HandleWith(
 		handlers.NewGameSession,
 		decorators.RequestLogging,
@@ -32,18 +30,6 @@ func InitRouter() *http.Handler {
 
 	router.POST("/api/play/v1/session/:gameId", request.HandleWith(
 		handlers.ReviveGame,
-		decorators.RequestLogging,
-		decorators.TokenAuthentication,
-	))
-
-	router.GET("/api/play/v1/session", request.HandleWith(
-		handlers.FetchSessionList,
-		decorators.RequestLogging,
-		decorators.TokenAuthentication,
-	))
-
-	router.GET("/api/play/v1/game", request.HandleWith(
-		handlers.FetchSavedGameList,
 		decorators.RequestLogging,
 		decorators.TokenAuthentication,
 	))

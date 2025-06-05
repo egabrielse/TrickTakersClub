@@ -32,6 +32,16 @@ func main() {
 	repository.InitTableRepo(implementation.NewTableRepoImplementation(store))
 	repository.InitSettingsRepo(implementation.NewSettingsRepoImplementation(store))
 
+	// Initialize Redis client
+	redisHost := env.GetEnvVar("REDIS_HOST")
+	redisPort := env.GetEnvVar("REDIS_PORT")
+	redisPass := env.GetEnvVar("REDIS_PASS")
+	rdb := clients.InitRedisClient(redisHost, redisPort, redisPass)
+
+	// Initialize redis-based storage repositories
+	repository.InitSessionRepo(implementation.NewSessionRepoRedisImplementation(rdb))
+	repository.InitGameRepo(implementation.NewGameRepoRedisImplementation(rdb))
+
 	// Initialize router
 	router := routing.InitRouter()
 

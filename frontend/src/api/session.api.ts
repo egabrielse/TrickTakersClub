@@ -45,21 +45,7 @@ export async function fetchSessionList() {
         throw new Error("User not logged in");
     } else {
         const idToken = await auth.currentUser.getIdToken();
-        const response = await axios.get<FetchSessionListResponse>(`/api/play/v1/session`, {
-            headers: {
-                Authorization: `Bearer ${idToken}`,
-            },
-        });
-        return response.data;
-    }
-}
-
-export async function fetchSavedGameList() {
-    if (!auth.currentUser) {
-        throw new Error("User not logged in");
-    } else {
-        const idToken = await auth.currentUser.getIdToken();
-        const response = await axios.get<FetchSessionListResponse>(`/api/play/v1/game`, {
+        const response = await axios.get<FetchSessionListResponse>(`/api/core/v1/session`, {
             headers: {
                 Authorization: `Bearer ${idToken}`,
             },
