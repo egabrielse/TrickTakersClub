@@ -35,7 +35,7 @@ func NewClientWorker(clientID string, sessionID string, rdb *redis.Client, conn 
 // sendMessageOnChannel sends a message on the Redis channel associated with the session.
 func (c *ClientWorker) sendMessageOnChannel(message *msg.Message) (int64, error) {
 	// Marshal the message into bytes
-	if bytes, err := message.MarshalJSON(); err != nil {
+	if bytes, err := json.Marshal(message); err != nil {
 		logrus.Errorf("Client (%s): %v", c.clientID, err)
 		return 0, err
 	} else if result, err := c.rdb.Publish(context.Background(), c.sessionID, bytes).Result(); err != nil {

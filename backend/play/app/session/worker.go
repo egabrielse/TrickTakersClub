@@ -30,7 +30,7 @@ func NewSessionWorker(session *entity.Session) *SessionWorker {
 
 func (sw *SessionWorker) sendMessage(message *msg.Message) int64 {
 	// Marshal the message into bytes
-	if bytes, err := message.MarshalJSON(); err != nil {
+	if bytes, err := json.Marshal(message); err != nil {
 		logrus.Errorf("Session (%s): %v", sw.session.ID, err)
 		return 0
 	} else if result, err := sw.rdb.Publish(context.Background(), sw.session.ID, bytes).Result(); err != nil {
@@ -61,7 +61,7 @@ func (sw *SessionWorker) StartWorker() {
 		channel := sw.rdb.Subscribe(sw.ctx, sw.session.ID)
 
 		// Set up a ticker to periodically check the session status
-		ticker := time.NewTicker(tickerDuration)
+		ticker := time.NewTicker(sessionExpiration / 3)
 
 		defer func() {
 			logrus.Infof("Session (%s): stopping", sw.session.ID)
