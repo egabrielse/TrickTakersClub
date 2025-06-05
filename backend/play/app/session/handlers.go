@@ -15,14 +15,7 @@ func EnterHandler(sw *SessionWorker, message *msg.Message) {
 		sw.sendMessage(errorMessage)
 		return
 	} else {
-		// On successful join, send state of session to the new player.
-		welcome := msg.NewWelcomeMessage(
-			message.SenderID,
-			sw.session.ID,
-			sw.session.HostID,
-			sw.session.ListPresence(),
-		)
-		sw.sendMessage(welcome)
+		// TODO: On successful join, send welcome message with session details.
 	}
 }
 

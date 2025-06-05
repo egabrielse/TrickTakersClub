@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"common/list"
 	"encoding/json"
 	"fmt"
 	"sheepshead"
@@ -41,7 +42,9 @@ func (s *Session) KeepAlive(playerID string) {
 }
 
 func (s *Session) Join(playerID string) error {
-	if _, ok := s.Presence[playerID]; ok {
+	if s.GameInProgress() && !list.Contains(s.Game.PlayerOrder, playerID) {
+		return fmt.Errorf("game in progress, closed to new players")
+	} else if _, ok := s.Presence[playerID]; ok {
 		// Player already in session, just update the timestamp
 		s.KeepAlive(playerID)
 		return nil
