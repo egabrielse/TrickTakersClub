@@ -52,3 +52,50 @@ export const BROADCAST_TYPES = {
     UP_NEXT: "up-next",
     NO_PICK_HAND: "no-pick-hand",
 } as const;
+
+export const MESSAGE_TYPES = {
+    // SYSTEM MESSAGES
+    TIMEOUT: "timeout",
+    ERROR: "error",
+    ENTER: "enter",
+    LEAVE: "leave",
+
+    // ACTION MESSAGES
+    UPDATE_SETTINGS: "update-settings",
+    START_GAME: "start-game",
+    END_GAME: "end-game",
+    PICK: "pick",
+    PASS: "pass",
+    BURY: "bury",
+    CALL: "call",
+    GO_ALONE: "go-alone",
+    PLAY_CARD: "play-card",
+    CALL_LAST_HAND: "call-last-hand",
+
+    // EVENT MESSAGES
+    WELCOME: "welcome",
+    SETTINGS_UPDATED: "settings-updated",
+    ENTERED: "entered",
+    LEFT: "left",
+    GAME_ON: "game-on",
+    GAME_OVER: "game-over",
+    BLIND_PICKED: "blind-picked",
+    CALLED_CARD: "called-card",
+    GONE_ALONE: "gone-alone",
+    CARD_PLAYED: "card-played",
+    PARTNER_REVEALED: "partner-revealed",
+    TRICK_WON: "trick-won",
+    HAND_DONE: "hand-done",
+    NEW_TRICK: "new-trick",
+    UP_NEXT: "up-next",
+    NO_PICK_HAND: "no-pick-hand",
+    DEAL_HAND: "deal-hand",
+    PICKED_CARDS: "picked-cards",
+    BURIED_CARDS: "buried-cards",
+    LAST_HAND: "last-hand",
+
+    // MISC MESSAGES
+    CHAT: "chat",
+} as const;
+
+export const BROADCAST_RECEIVER = "*";

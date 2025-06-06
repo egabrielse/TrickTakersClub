@@ -67,13 +67,16 @@ func (s *Session) ListPresence() []string {
 	return presenceList
 }
 
-func (s *Session) CleanupStalePresence(duration time.Duration) {
+func (s *Session) CleanupStalePresence(duration time.Duration) []string {
 	now := time.Now()
+	removed := []string{}
 	for k, v := range s.Presence {
 		if now.Sub(v) > duration {
 			delete(s.Presence, k)
+			removed = append(removed, k)
 		}
 	}
+	return removed
 }
 
 func (s *Session) IsReadyToStart() bool {

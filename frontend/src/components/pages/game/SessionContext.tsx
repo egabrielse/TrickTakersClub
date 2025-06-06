@@ -1,11 +1,18 @@
 import { createContext } from "react";
 import { CONNECTION_STATUS } from "../../../constants/socket";
+import { Message } from "../../../types/message";
 import { ConnectionStatus } from "../../../types/socket";
 
 const SessionContext = createContext<{
-  connectionStatus: ConnectionStatus;
+  status: ConnectionStatus;
+  sendMessage: (message: Message) => void;
+  getNextMessage: () => Message | null;
+  messageCount: number;
 }>({
-  connectionStatus: CONNECTION_STATUS.DISCONNECTED,
+  status: CONNECTION_STATUS.DISCONNECTED,
+  sendMessage: () => {},
+  getNextMessage: () => null,
+  messageCount: 0,
 });
 
 export default SessionContext;

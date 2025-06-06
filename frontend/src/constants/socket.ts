@@ -3,5 +3,4 @@ export const CONNECTION_STATUS = {
     CONNECTED: "connected",
     DISCONNECTED: "disconnected",
     RECONNECTING: "reconnecting",
-    ERROR: "error",
 } as const;

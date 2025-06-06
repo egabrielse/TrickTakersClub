@@ -13,15 +13,26 @@ type Message struct {
 	Timestamp   time.Time       `json:"timestamp"`   // Message timestamp
 }
 
-func NewMessage(senderID string, receiverID string, messageType MessageType, payload interface{}) *Message {
+func NewMessage(messageType MessageType, payload interface{}) *Message {
 	raw, _ := json.Marshal(payload)
 	return &Message{
-		SenderID:    senderID,
-		ReceiverID:  receiverID,
 		MessageType: messageType,
 		Payload:     raw,
 		Timestamp:   time.Now(),
 	}
+}
+
+func (m *Message) SetSenderID(id string) {
+	m.SenderID = id
+}
+
+func (m *Message) SetReceiverID(id string) {
+	m.ReceiverID = id
+}
+
+// IsSender returns true if the message was sent by the given sender ID.
+func (m *Message) IsSender(id string) bool {
+	return m.SenderID == id
 }
 
 // IsRecipient returns true if the message is intended for the given recipient ID.

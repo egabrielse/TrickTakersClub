@@ -28,8 +28,10 @@ func NewSessionWorker(session *entity.Session) *SessionWorker {
 	}
 }
 
-func (sw *SessionWorker) sendMessage(message *msg.Message) int64 {
-	// Marshal the message into bytes
+func (sw *SessionWorker) sendMessage(receiverID string, message *msg.Message) int64 {
+	// Set the sender ID and receiver ID for the message
+	message.SetSenderID(msg.SessionWorkerID)
+	message.SetReceiverID(receiverID)
 	if bytes, err := json.Marshal(message); err != nil {
 		logrus.Errorf("Session (%s): %v", sw.session.ID, err)
 		return 0
@@ -37,8 +39,13 @@ func (sw *SessionWorker) sendMessage(message *msg.Message) int64 {
 		logrus.Errorf("Session (%s): %v", sw.session.ID, err)
 		return 0
 	} else {
+		logrus.Infof("Session (%s): message of type %s sent to %s, received by %d clients", sw.session.ID, message.MessageType, receiverID, result)
 		return result
 	}
+}
+
+func (sw *SessionWorker) broadcastMessage(message *msg.Message) int64 {
+	return sw.sendMessage(msg.BroadcastRecipient, message)
 }
 
 func (sw *SessionWorker) StartWorker() {
@@ -61,7 +68,7 @@ func (sw *SessionWorker) StartWorker() {
 		channel := sw.rdb.Subscribe(sw.ctx, sw.session.ID)
 
 		// Set up a ticker to periodically check the session status
-		ticker := time.NewTicker(sessionExpiration / 3)
+		ticker := time.NewTicker(tickerDuration)
 
 		defer func() {
 			logrus.Infof("Session (%s): stopping", sw.session.ID)
@@ -92,13 +99,13 @@ func (sw *SessionWorker) StartWorker() {
 				} else {
 					switch message.MessageType {
 					case msg.MessageTypeEnter:
-						EnterHandler(sw, message)
+						go EnterHandler(sw, message)
 					case msg.MessageTypeLeave:
-						LeaveHandler(sw, message)
+						go LeaveHandler(sw, message)
 					case msg.MessageTypeChat:
 						// Do nothing - all subscribed clients will receive the chat message
 					case msg.MessageTypePong:
-						PongHandler(sw, message)
+						go PongHandler(sw, message)
 						continue
 					default:
 						logrus.Warnf("Session (%s): Unknown message type: %s", sw.session.ID, message.MessageType)
@@ -113,17 +120,22 @@ func (sw *SessionWorker) StartWorker() {
 				if time.Since(sw.session.LastUpdated) >= workerTimeout {
 					// Stop the service if no activity is detected for a certain duration
 					logrus.Infof("Session (%s): timed out", sw.session.ID)
-					sw.sendMessage(msg.NewTimeoutMessage())
+					sw.broadcastMessage(msg.NewTimeoutMessage())
 					return
 				} else {
 					logrus.Infof("Session (%s): still alive", sw.session.ID)
 				}
-				// Ping connected clients to keep the session alive
-				sw.sendMessage(msg.NewPingMessage())
+				// Ping connected client workers to keep presence up to date
+				sw.broadcastMessage(msg.NewPingMessage())
 				// Cleanup stale presence
-				sw.session.CleanupStalePresence(presenceExpiration)
-				// Send the current presence to all clients
-				sw.sendMessage(msg.NewPresenceMessage(sw.session.ListPresence()))
+				removed := sw.session.CleanupStalePresence(presenceExpiration)
+				if len(removed) > 0 {
+					// Notify clients of any removed players
+					for _, playerID := range removed {
+						logrus.Infof("Session (%s): player %s has been removed due to inactivity", sw.session.ID, playerID)
+						sw.broadcastMessage(msg.NewLeftMessage(playerID))
+					}
+				}
 
 				// Update the session in the redis if no game is started
 				if !sw.session.GameInProgress() {

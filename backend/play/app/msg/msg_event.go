@@ -1,19 +1,107 @@
 package msg
 
 import (
+	"sheepshead"
 	"sheepshead/deck"
 	"sheepshead/hand"
 	"sheepshead/scoring"
 )
 
+type EnteredMessagePayload struct {
+	PlayerID string `json:"playerId"` // ID of the player who entered
+}
+
+func NewEnteredMessage(playerID string) *Message {
+	return NewMessage(
+		MessageTypeEntered,
+		&EnteredMessagePayload{PlayerID: playerID},
+	)
+}
+
+type LeftMessagePayload struct {
+	PlayerID string `json:"playerId"` // ID of the player who left
+}
+
+func NewLeftMessage(playerID string) *Message {
+	return NewMessage(
+		MessageTypeLeft,
+		&LeftMessagePayload{PlayerID: playerID},
+	)
+}
+
+type SettingsUpdatedMessagePayload struct {
+	Settings hand.GameSettings `json:"settings"` // Updated game settings
+}
+
+func NewSettingsUpdatedMessage(settings hand.GameSettings) *Message {
+	return NewMessage(MessageTypeSettingsUpdated, &SettingsUpdatedMessagePayload{
+		Settings: settings,
+	})
+}
+
+type WelcomePayload struct {
+	HostID      string             `json:"hostId"`
+	SessionID   string             `json:"sessionId"`
+	Presence    []string           `json:"presence"`
+	InProgress  bool               `json:"inProgress"`
+	IsLastHand  bool               `json:"isLastHand"`
+	DealerID    string             `json:"dealerId"`
+	Scoreboard  scoring.Scoreboard `json:"scoreboard"`
+	PlayerOrder []string           `json:"playerOrder"`
+	Settings    *hand.GameSettings `json:"settings"`
+	CalledCard  *deck.Card         `json:"calledCard"`
+	Phase       string             `json:"phase"`
+	UpNextID    string             `json:"upNextId"`
+	PickerID    string             `json:"pickerId"`
+	PartnerID   string             `json:"partnerId"`
+	Tricks      []*hand.Trick      `json:"tricks"`
+	Hand        []*deck.Card       `json:"hand"`
+	Bury        []*deck.Card       `json:"bury"`
+	NoPickHand  bool               `json:"noPickHand"`
+}
+
+func NewWelcomeMessage(playerID, hostID, sessionID string, presence []string, settings *hand.GameSettings, game *sheepshead.Game) *Message {
+	payload := &WelcomePayload{}
+	payload.HostID = hostID
+	payload.SessionID = sessionID
+	payload.Presence = presence
+	payload.Settings = settings
+	if game != nil {
+		payload.InProgress = true
+		payload.IsLastHand = game.LastHand
+		payload.IsLastHand = game.IsLastHand()
+		payload.DealerID = game.WhoIsDealer()
+		payload.Scoreboard = game.TallyScores()
+		payload.PlayerOrder = game.PlayerOrder
+		// State related to the current hand
+		currentHand := game.GetCurrentHand()
+		payload.CalledCard = currentHand.Call.GetCalledCard()
+		payload.Phase = currentHand.Phase
+		payload.UpNextID = currentHand.WhoIsNext()
+		payload.PickerID = currentHand.Blind.PickerID
+		payload.PartnerID = currentHand.Call.GetPartnerIfRevealed()
+		payload.Tricks = currentHand.Tricks
+		payload.NoPickHand = currentHand.Blind.IsNoPickHand()
+		// Receiver is a player in the current game, include their hand and bury
+		if hand := currentHand.PlayerHands.GetHand(playerID); hand != nil {
+			payload.Hand = hand
+			if playerID == currentHand.Blind.PickerID {
+				// Only send buried cards to the picker
+				payload.Bury = currentHand.Bury.Cards
+			}
+		}
+	}
+	return NewMessage(MessageTypeWelcome, payload)
+}
+
 type GameOnMessagePayload struct {
 	PlayerOrder []string `json:"playerOrder"` // Order of players in the game
 }
 
-func NewGameOnMessagePayload(playerOrder []string) GameOnMessagePayload {
-	return GameOnMessagePayload{
+func NewGameOnMessage(playerOrder []string) *Message {
+	return NewMessage(MessageTypeGameOn, &GameOnMessagePayload{
 		PlayerOrder: playerOrder,
-	}
+	})
 }
 
 type GameOverMessagePayload struct {
@@ -22,8 +110,6 @@ type GameOverMessagePayload struct {
 
 func NewGameOverMessage(scoreboard scoring.Scoreboard) *Message {
 	return NewMessage(
-		SessionWorkerID,
-		BroadcastRecipient,
 		MessageTypeGameOver,
 		&GameOverMessagePayload{Scoreboard: scoreboard},
 	)
@@ -36,8 +122,6 @@ type BlindPickedMessagePayload struct {
 
 func NewBlindPickedMessage(pickerID string, forcePick bool) *Message {
 	return NewMessage(
-		SessionWorkerID,
-		BroadcastRecipient,
 		MessageTypeBlindPicked,
 		&BlindPickedMessagePayload{PickerID: pickerID, ForcePick: forcePick},
 	)
@@ -50,8 +134,6 @@ type CardCalledMessagePayload struct {
 
 func NewCardCalledMessage(pickerID string, calledCard string) *Message {
 	return NewMessage(
-		SessionWorkerID,
-		BroadcastRecipient,
 		MessageTypeCardCalled,
 		&CardCalledMessagePayload{PickerID: pickerID, CalledCard: calledCard},
 	)
@@ -63,8 +145,6 @@ type GoneAloneMessagePayload struct {
 
 func NewGoneAloneMessage(forced bool) *Message {
 	return NewMessage(
-		SessionWorkerID,
-		BroadcastRecipient,
 		MessageTypeGoneAlone,
 		&GoneAloneMessagePayload{Forced: forced},
 	)
@@ -77,8 +157,6 @@ type CardPlayedMessagePayload struct {
 
 func NewCardPlayedMessage(playerID string, card string) *Message {
 	return NewMessage(
-		SessionWorkerID,
-		BroadcastRecipient,
 		MessageTypeCardPlayed,
 		&CardPlayedMessagePayload{PlayerID: playerID, Card: card},
 	)
@@ -90,8 +168,6 @@ type PartnerRevealedMessagePayload struct {
 
 func NewPartnerRevealedMessage(partnerID string) *Message {
 	return NewMessage(
-		SessionWorkerID,
-		BroadcastRecipient,
 		MessageTypePartnerRevealed,
 		&PartnerRevealedMessagePayload{PartnerID: partnerID},
 	)
@@ -104,8 +180,6 @@ type TrickWonMessagePayload struct {
 
 func NewTrickWonMessage(playerID string, blind []*deck.Card) *Message {
 	return NewMessage(
-		SessionWorkerID,
-		BroadcastRecipient,
 		MessageTypeTrickWon,
 		&TrickWonMessagePayload{PlayerID: playerID, Blind: blind},
 	)
@@ -118,8 +192,6 @@ type HandDoneMessagePayload struct {
 
 func NewHandDoneMessage(summary *hand.HandSummary, scoreboard scoring.Scoreboard) *Message {
 	return NewMessage(
-		SessionWorkerID,
-		BroadcastRecipient,
 		MessageTypeHandDone,
 		&HandDoneMessagePayload{Summary: summary, Scoreboard: scoreboard},
 	)
@@ -131,8 +203,6 @@ type NewTrickMessagePayload struct {
 
 func NewNewTrickMessage(nextTrickOrder []string) *Message {
 	return NewMessage(
-		SessionWorkerID,
-		BroadcastRecipient,
 		MessageTypeNewTrick,
 		&NewTrickMessagePayload{NextTrickOrder: nextTrickOrder},
 	)
@@ -145,8 +215,6 @@ type UpNextMessagePayload struct {
 
 func NewUpNextMessage(playerID string, phase string) *Message {
 	return NewMessage(
-		SessionWorkerID,
-		BroadcastRecipient,
 		MessageTypeUpNext,
 		&UpNextMessagePayload{PlayerID: playerID, Phase: phase},
 	)
@@ -156,8 +224,6 @@ type NoPickHandMessagePayload struct{}
 
 func NewNoPickHandMessage() *Message {
 	return NewMessage(
-		SessionWorkerID,
-		BroadcastRecipient,
 		MessageTypeNoPickHand,
 		&NoPickHandMessagePayload{},
 	)
@@ -167,10 +233,8 @@ type BuriedCardsMessagePayload struct {
 	Cards []*deck.Card `json:"cards"` // Cards that were buried
 }
 
-func NewBuriedCardsMessage(receiverID string, cards []*deck.Card) *Message {
+func NewBuriedCardsMessage(cards []*deck.Card) *Message {
 	return NewMessage(
-		SessionWorkerID,
-		receiverID,
 		MessageTypeBuriedCards,
 		&BuriedCardsMessagePayload{Cards: cards},
 	)
@@ -182,10 +246,8 @@ type DealHandMessagePayload struct {
 	PickOrder []string     `json:"pickOrder"` // Order in which players will pick cards
 }
 
-func NewDealHandMessage(receiverID, dealerID string, cards []*deck.Card, pickOrder []string) *Message {
+func NewDealHandMessage(dealerID string, cards []*deck.Card, pickOrder []string) *Message {
 	return NewMessage(
-		SessionWorkerID,
-		receiverID,
 		MessageTypeDealHand,
 		&DealHandMessagePayload{DealerID: dealerID, Cards: cards, PickOrder: pickOrder},
 	)
@@ -195,11 +257,19 @@ type PickedCardsMessagePayload struct {
 	Cards []*deck.Card `json:"cards"` // Cards picked by the player
 }
 
-func NewPickedCardsMessage(receiverID string, cards []*deck.Card) *Message {
+func NewPickedCardsMessage(cards []*deck.Card) *Message {
 	return NewMessage(
-		SessionWorkerID,
-		receiverID,
 		MessageTypePickedCards,
 		&PickedCardsMessagePayload{Cards: cards},
 	)
+}
+
+type LastHandMessagePayload struct {
+	PlayerID string `json:"playerId"` // ID of the player who called last hand
+}
+
+func NewLastHandMessage(playerID string) *Message {
+	return NewMessage(MessageTypeLastHand, &LastHandMessagePayload{
+		PlayerID: playerID,
+	})
 }

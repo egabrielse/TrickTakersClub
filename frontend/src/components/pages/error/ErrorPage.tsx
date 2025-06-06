@@ -43,6 +43,7 @@ export default function ErrorPage({
         <Typography variant="body1">{getErrorDetails()}</Typography>
         {actions.map((action) => (
           <Button
+            key={action.label}
             onClick={action.onClick}
             children={action.label}
             variant="outlined"

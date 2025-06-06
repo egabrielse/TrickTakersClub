@@ -7,6 +7,7 @@ import authSlice from './slices/auth.slice';
 import userSlice from './slices/user.slice';
 import dialogSlice from './slices/dialog.slice';
 import settingsSlice from './slices/settings.slice';
+import sessionSlice from './slices/session.slice';
 
 const additionalMiddleware: Middleware[] = [];
 
@@ -22,6 +23,7 @@ export const store = configureStore({
         game: gameSlice.reducer,
         table: tableSlice.reducer,
         user: userSlice.reducer,
+        session: sessionSlice.reducer,
         settings: settingsSlice.reducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(additionalMiddleware),

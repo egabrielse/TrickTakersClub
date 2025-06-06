@@ -4,11 +4,16 @@ import "encoding/json"
 
 type MessageType int
 
+// Default message type, used for unrecognized messages
+const MessageTypeUnknown = 0
+
 // ### SYSTEM MESSAGES ###
-// ### Messages that are not directly related to game play.
+// ### Messages used by the client/session workers to communicate with each other.
 const (
-	// Default message type, used for unrecognized messages
-	MessageTypeUnknown MessageType = iota
+	// Client worker is requesting to enter the lobby.
+	MessageTypeEnter MessageType = 1000 + iota
+	// Client worker is notifying the session worker that it is leaving the lobby.
+	MessageTypeLeave
 	// Ping sent by session worker to connected client workers
 	MessageTypePing
 	// Pong sent by client worker to acknowledge ping sent by session worker
@@ -19,32 +24,14 @@ const (
 	MessageTypeError
 )
 
-// ### LOBBY MESSAGES ###
-// ### Messages related to the lobby, such as joining/leaving the game and chat messages.
-const (
-	// User has entered the game.
-	MessageTypeEnter MessageType = iota + 100
-	// User has left the game.
-	MessageTypeLeave
-	// Chat message between players.
-	MessageTypeChat
-	// Sent by the server to newly joined clients to.
-	MessageTypeWelcome
-	// Contains the current presence of players in the game.
-	MessageTypePresence
-	// Sent by host to update the game settings.
-	MessageTypeUpdateSettings
-	// Sent by the server to notify clients of updated game settings.
-	MessageTypeSettingsUpdated
-	// Player has called this as the last hand.
-	MessageTypeLastHand
-)
-
 // ### ACTION MESSAGES ###
-// ### Messages sent by players to perform actions in the game.
+// ### Actions that players can take in the lobby or during the game.
+// ### These are always generated client-side and sent to the server.
 const (
+	// Sent by host to update the game settings.
+	MessageTypeUpdateSettings MessageType = 2000 + iota
 	// Host starts a new game.
-	MessageTypeStartGame MessageType = iota + 200
+	MessageTypeStartGame
 	// Host ends the current game.
 	MessageTypeEndGame
 	// Player picks up the blind.
@@ -59,13 +46,23 @@ const (
 	MessageTypeGoAlone
 	// Player plays a card.
 	MessageTypePlayCard
+	// Player has called this as the last hand.
+	MessageTypeCallLastHand
 )
 
 // ### EVENT MESSAGES ###
-// ### Messages sent by the server to notify clients of game events.
+// ### Messages sent by the server worker to notify clients.
 const (
+	// Sent by the server to newly joined clients to.
+	MessageTypeWelcome MessageType = 3000 + iota
+	// Notifies clients of a new player's presence in the lobby/game.
+	MessageTypeEntered
+	// Notifies clients of a player's departure from the lobby/game.
+	MessageTypeLeft
+	// Sent by the server to notify clients of updated game settings.
+	MessageTypeSettingsUpdated
 	// Game has started.
-	MessageTypeGameOn MessageType = iota + 300
+	MessageTypeGameOn
 	// Game has ended.
 	MessageTypeGameOver
 	// Player has picked up the blind.
@@ -94,39 +91,38 @@ const (
 	MessageTypePickedCards
 	// Cards buried by the picker
 	MessageTypeBuriedCards
+	// Player has called this as the last hand.
+	MessageTypeLastHand
 )
 
+// ### MISC MESSAGES ###
+const (
+	// Chat message between players.
+	MessageTypeChat MessageType = 4000 + iota
+)
+
+// String returns the string representation of the MessageType.
 func (mt MessageType) String() string {
 	switch mt {
-	// ### SYSTEM MESSAGES ###
 	default:
 		return "unknown"
+	// ### SYSTEM MESSAGES ###
 	case MessageTypePing:
 		return "ping"
 	case MessageTypePong:
 		return "pong"
-	case MessageTypeTimeout:
-		return "timeout"
-	case MessageTypeError:
-		return "error"
-	// ### LOBBY MESSAGES ###
 	case MessageTypeEnter:
 		return "enter"
 	case MessageTypeLeave:
 		return "leave"
-	case MessageTypeChat:
-		return "chat"
-	case MessageTypeWelcome:
-		return "welcome"
-	case MessageTypePresence:
-		return "presence"
+	case MessageTypeTimeout:
+		return "timeout"
+	case MessageTypeError:
+		return "error"
+
+	// ### ACTION MESSAGES ###
 	case MessageTypeUpdateSettings:
 		return "update-settings"
-	case MessageTypeSettingsUpdated:
-		return "settings-updated"
-	case MessageTypeLastHand:
-		return "last-hand"
-		// ### ACTION MESSAGES ###
 	case MessageTypeStartGame:
 		return "start-game"
 	case MessageTypeEndGame:
@@ -143,7 +139,18 @@ func (mt MessageType) String() string {
 		return "go-alone"
 	case MessageTypePlayCard:
 		return "play-card"
+	case MessageTypeCallLastHand:
+		return "call-last-hand"
+
 	// ### EVENT MESSAGES ###
+	case MessageTypeEntered:
+		return "entered"
+	case MessageTypeLeft:
+		return "left"
+	case MessageTypeWelcome:
+		return "welcome"
+	case MessageTypeSettingsUpdated:
+		return "settings-updated"
 	case MessageTypeGameOn:
 		return "game-on"
 	case MessageTypeGameOver:
@@ -151,7 +158,7 @@ func (mt MessageType) String() string {
 	case MessageTypeBlindPicked:
 		return "blind-picked"
 	case MessageTypeCardCalled:
-		return "called-card"
+		return "card-called"
 	case MessageTypeGoneAlone:
 		return "gone-alone"
 	case MessageTypeCardPlayed:
@@ -174,96 +181,110 @@ func (mt MessageType) String() string {
 		return "picked-cards"
 	case MessageTypeBuriedCards:
 		return "buried-cards"
+	case MessageTypeLastHand:
+		return "last-hand"
+
+	// ### MISC MESSAGES ###
+	case MessageTypeChat:
+		return "chat"
 	}
 }
 
+// MarshalJSON marshals the MessageType as a JSON string.
 func (mt MessageType) MarshalJSON() ([]byte, error) {
 	return json.Marshal(mt.String())
 }
 
+// UnmarshalJSON unmarshals a JSON string into a MessageType.
 func (mt *MessageType) UnmarshalJSON(data []byte) error {
 	var str string
 	if err := json.Unmarshal(data, &str); err != nil {
 		return err
-	} else {
-		switch str {
-		// ### SYSTEM MESSAGES ###
-		default:
-			*mt = MessageTypeUnknown
-		case "ping":
-			*mt = MessageTypePing
-		case "pong":
-			*mt = MessageTypePong
-		case "timeout":
-			*mt = MessageTypeTimeout
-		case "error":
-			*mt = MessageTypeError
-		// ### LOBBY MESSAGES ###
-		case "enter":
-			*mt = MessageTypeEnter
-		case "leave":
-			*mt = MessageTypeLeave
-		case "chat":
-			*mt = MessageTypeChat
-		case "welcome":
-			*mt = MessageTypeWelcome
-		case "presence":
-			*mt = MessageTypePresence
-		case "update-settings":
-			*mt = MessageTypeUpdateSettings
-		case "settings-updated":
-			*mt = MessageTypeSettingsUpdated
-		case "last-hand":
-			*mt = MessageTypeLastHand
-		// ### ACTION MESSAGES ###
-		case "start-game":
-			*mt = MessageTypeStartGame
-		case "end-game":
-			*mt = MessageTypeEndGame
-		case "pick":
-			*mt = MessageTypePick
-		case "pass":
-			*mt = MessageTypePass
-		case "bury":
-			*mt = MessageTypeBury
-		case "call":
-			*mt = MessageTypeCall
-		case "go-alone":
-			*mt = MessageTypeGoAlone
-		case "play-card":
-			*mt = MessageTypePlayCard
-		// ### EVENT MESSAGES ###
-		case "game-on":
-			*mt = MessageTypeGameOn
-		case "game-over":
-			*mt = MessageTypeGameOver
-		case "blind-picked":
-			*mt = MessageTypeBlindPicked
-		case "called-card":
-			*mt = MessageTypeCardCalled
-		case "gone-alone":
-			*mt = MessageTypeGoneAlone
-		case "card-played":
-			*mt = MessageTypeCardPlayed
-		case "partner-revealed":
-			*mt = MessageTypePartnerRevealed
-		case "trick-won":
-			*mt = MessageTypeTrickWon
-		case "hand-done":
-			*mt = MessageTypeHandDone
-		case "new-trick":
-			*mt = MessageTypeNewTrick
-		case "up-next":
-			*mt = MessageTypeUpNext
-		case "no-pick-hand":
-			*mt = MessageTypeNoPickHand
-		case "deal-hand":
-			*mt = MessageTypeDealHand
-		case "picked-cards":
-			*mt = MessageTypePickedCards
-		case "buried-cards":
-			*mt = MessageTypeBuriedCards
-		}
-		return nil
 	}
+	switch str {
+	// ### SYSTEM MESSAGES ###
+	default:
+		*mt = MessageTypeUnknown
+	case "ping":
+		*mt = MessageTypePing
+	case "pong":
+		*mt = MessageTypePong
+	case "enter":
+		*mt = MessageTypeEnter
+	case "leave":
+		*mt = MessageTypeLeave
+	case "timeout":
+		*mt = MessageTypeTimeout
+	case "error":
+		*mt = MessageTypeError
+
+	// ### ACTION MESSAGES ###
+	case "update-settings":
+		*mt = MessageTypeUpdateSettings
+	case "start-game":
+		*mt = MessageTypeStartGame
+	case "end-game":
+		*mt = MessageTypeEndGame
+	case "pick":
+		*mt = MessageTypePick
+	case "pass":
+		*mt = MessageTypePass
+	case "bury":
+		*mt = MessageTypeBury
+	case "call":
+		*mt = MessageTypeCall
+	case "go-alone":
+		*mt = MessageTypeGoAlone
+	case "play-card":
+		*mt = MessageTypePlayCard
+	case "call-last-hand":
+		*mt = MessageTypeCallLastHand
+
+	// ### EVENT MESSAGES ###
+	case "entered":
+		*mt = MessageTypeEntered
+	case "left":
+		*mt = MessageTypeLeft
+	case "welcome":
+		*mt = MessageTypeWelcome
+	case "settings-updated":
+		*mt = MessageTypeSettingsUpdated
+	case "game-on":
+		*mt = MessageTypeGameOn
+	case "game-over":
+		*mt = MessageTypeGameOver
+	case "blind-picked":
+		*mt = MessageTypeBlindPicked
+	case "card-called":
+		*mt = MessageTypeCardCalled
+	case "gone-alone":
+		*mt = MessageTypeGoneAlone
+	case "card-played":
+		*mt = MessageTypeCardPlayed
+	case "partner-revealed":
+		*mt = MessageTypePartnerRevealed
+	case "trick-won":
+		*mt = MessageTypeTrickWon
+	case "hand-done":
+		*mt = MessageTypeHandDone
+	case "new-trick":
+		*mt = MessageTypeNewTrick
+	case "up-next":
+		*mt = MessageTypeUpNext
+	case "no-pick-hand":
+		*mt = MessageTypeNoPickHand
+	case "deal-hand":
+		*mt = MessageTypeDealHand
+	case "picked-cards":
+		*mt = MessageTypePickedCards
+	case "buried-cards":
+		*mt = MessageTypeBuriedCards
+	case "last-hand":
+		*mt = MessageTypeLastHand
+
+	// ### MISC MESSAGES ###
+	case "chat":
+		*mt = MessageTypeChat
+	}
+	return nil
 }

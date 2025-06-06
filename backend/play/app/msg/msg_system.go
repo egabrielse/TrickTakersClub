@@ -1,15 +1,23 @@
 package msg
 
 func NewPingMessage() *Message {
-	return NewMessage(SessionWorkerID, BroadcastRecipient, MessageTypePing, nil)
+	return NewMessage(MessageTypePing, nil)
 }
 
-func NewPongMessage(senderID string) *Message {
-	return NewMessage(senderID, SessionWorkerID, MessageTypePong, nil)
+func NewPongMessage() *Message {
+	return NewMessage(MessageTypePong, nil)
+}
+
+func NewEnterMessage() *Message {
+	return NewMessage(MessageTypeEnter, nil)
+}
+
+func NewLeaveMessage() *Message {
+	return NewMessage(MessageTypeLeave, nil)
 }
 
 func NewTimeoutMessage() *Message {
-	return NewMessage(SessionWorkerID, BroadcastRecipient, MessageTypeTimeout, nil)
+	return NewMessage(MessageTypeTimeout, nil)
 }
 
 type ErrorMessagePayload struct {
@@ -17,5 +25,5 @@ type ErrorMessagePayload struct {
 }
 
 func NewErrorMessage(message string) *Message {
-	return NewMessage(SessionWorkerID, BroadcastRecipient, MessageTypeError, &ErrorMessagePayload{Message: message})
+	return NewMessage(MessageTypeError, &ErrorMessagePayload{Message: message})
 }
