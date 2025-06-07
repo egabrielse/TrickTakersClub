@@ -28,8 +28,12 @@ const (
 // ### Actions that players can take in the lobby or during the game.
 // ### These are always generated client-side and sent to the server.
 const (
-	// Sent by host to update the game settings.
-	MessageTypeUpdateSettings MessageType = 2000 + iota
+	// Updates the game setting - calling method
+	MessageTypeUpdateCallingMethod MessageType = 2000 + iota
+	// Updates the game setting - bury resolution
+	MessageTypeUpdateDoubleOnTheBump
+	// Updates the game setting - pick resolution
+	MessageTypeUpdateNoPickResolution
 	// Host starts a new game.
 	MessageTypeStartGame
 	// Host ends the current game.
@@ -121,8 +125,12 @@ func (mt MessageType) String() string {
 		return "error"
 
 	// ### ACTION MESSAGES ###
-	case MessageTypeUpdateSettings:
-		return "update-settings"
+	case MessageTypeUpdateCallingMethod:
+		return "update-calling-method"
+	case MessageTypeUpdateDoubleOnTheBump:
+		return "update-double-on-the-bump"
+	case MessageTypeUpdateNoPickResolution:
+		return "update-no-pick-resolution"
 	case MessageTypeStartGame:
 		return "start-game"
 	case MessageTypeEndGame:
@@ -219,8 +227,12 @@ func (mt *MessageType) UnmarshalJSON(data []byte) error {
 		*mt = MessageTypeError
 
 	// ### ACTION MESSAGES ###
-	case "update-settings":
-		*mt = MessageTypeUpdateSettings
+	case "update-calling-method":
+		*mt = MessageTypeUpdateCallingMethod
+	case "update-double-on-the-bump":
+		*mt = MessageTypeUpdateDoubleOnTheBump
+	case "update-no-pick-resolution":
+		*mt = MessageTypeUpdateNoPickResolution
 	case "start-game":
 		*mt = MessageTypeStartGame
 	case "end-game":

@@ -2,11 +2,18 @@ package msg
 
 import (
 	"sheepshead/deck"
-	"sheepshead/hand"
 )
 
-type UpdateSettingsMessagePayload struct {
-	Settings hand.GameSettings `json:"settings"` // New game settings to apply
+type UpdateCallingMethodParams struct {
+	CallingMethod string `json:"callingMethod"`
+}
+
+type UpdateDoubleOnTheBumpParams struct {
+	DoubleOnTheBump bool `json:"doubleOnTheBump"`
+}
+
+type UpdateNoPickResolutionParams struct {
+	NoPickResolution string `json:"noPickResolution"`
 }
 
 type BuryMessagePayload struct {

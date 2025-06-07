@@ -61,7 +61,9 @@ export const MESSAGE_TYPES = {
     LEAVE: "leave",
 
     // ACTION MESSAGES
-    UPDATE_SETTINGS: "update-settings",
+    UPDATE_CALLING_METHOD: "update-calling-method",
+    UPDATE_NO_PICK_RESOLUTION: "update-no-pick-resolution",
+    UPDATE_DOUBLE_ON_THE_BUMP: "update-double-on-the-bump",
     START_GAME: "start-game",
     END_GAME: "end-game",
     PICK: "pick",

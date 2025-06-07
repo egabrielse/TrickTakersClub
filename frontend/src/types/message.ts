@@ -1,6 +1,6 @@
 import { MESSAGE_TYPES } from "../constants/message";
 import { Card } from "./card";
-import { GameSettings, Scoreboard, Trick } from "./game";
+import { CallingMethod, GameSettings, NoPickResolution, Scoreboard, Trick } from "./game";
 
 export type MessageType = typeof MESSAGE_TYPES[keyof typeof MESSAGE_TYPES];
 
@@ -22,10 +22,24 @@ export interface ErrorMessage extends BaseMessage {
     payload: { message: string };
 }
 
-export interface UpdateSettingsMessage extends BaseMessage {
-    messageType: typeof MESSAGE_TYPES.UPDATE_SETTINGS;
+export interface UpdateCallingMethodMessage extends BaseMessage {
+    messageType: typeof MESSAGE_TYPES.UPDATE_CALLING_METHOD;
     payload: {
-        settings: GameSettings;
+        callingMethod: CallingMethod;
+    }
+}
+
+export interface UpdateNoPickResolutionMessage extends BaseMessage {
+    messageType: typeof MESSAGE_TYPES.UPDATE_NO_PICK_RESOLUTION;
+    payload: {
+        noPickResolution: NoPickResolution;
+    }
+}
+
+export interface UpdateDoubleOnTheBumpMessage extends BaseMessage {
+    messageType: typeof MESSAGE_TYPES.UPDATE_DOUBLE_ON_THE_BUMP;
+    payload: {
+        doubleOnTheBump: boolean;
     }
 }
 
