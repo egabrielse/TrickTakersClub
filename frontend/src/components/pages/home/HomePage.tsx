@@ -69,17 +69,17 @@ export default function HomePage() {
               <h1>PLAY SHEEPSHEAD!</h1>
             </div>
             <ActionButton
-              label="Host Game"
-              onClick={handleCreateSession}
-              disabled={loading}
-            />
-            <Divider orientation="horizontal" color="white" />
-            <ActionButton
-              color="secondary"
               label="Browse Open Games"
               disabled={loading}
               type="submit"
               onClick={navigateToBrowser}
+            />
+            <Divider orientation="horizontal" color="white" />
+            <ActionButton
+              color="secondary"
+              label="Host Game"
+              onClick={handleCreateSession}
+              disabled={loading}
             />
           </div>
         </Paper>

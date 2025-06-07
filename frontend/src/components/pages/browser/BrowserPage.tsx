@@ -76,11 +76,11 @@ export default function BrowserPage() {
           <Typography variant="h5">SESSION BROWSER</Typography>
           <Button
             variant="contained"
-            color="primary"
+            color="secondary"
             onClick={handleCreateSession}
             startIcon={<HomeIcon />}
           >
-            Host Session
+            Host Game
           </Button>
         </Stack>
         {loading ? (
