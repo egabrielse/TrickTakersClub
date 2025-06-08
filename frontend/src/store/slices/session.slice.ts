@@ -9,6 +9,7 @@ interface SessionState {
     sessionId: string;
     presence: string[];
     settings: GameSettings;
+    connected: boolean;
 }
 
 const initialState: SessionState = {
@@ -23,6 +24,7 @@ const initialState: SessionState = {
         blitzing: GAME_SETTINGS_DEFAULTS.BLITZING,
         cracking: GAME_SETTINGS_DEFAULTS.CRACKING,
     },
+    connected: false,
 };
 
 
@@ -36,6 +38,7 @@ const sessionSlice = createSlice({
             state.hostId = action.payload.payload.hostId;
             state.presence = action.payload.payload.presence;
             state.settings = action.payload.payload.settings || initialState.settings;
+            state.connected = true;
         },
         pushChatMessage: (state, action: PayloadAction<ChatMessage>) => {
             state.chat.push(action.payload);

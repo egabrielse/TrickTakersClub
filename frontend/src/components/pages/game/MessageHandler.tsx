@@ -4,6 +4,7 @@ import { BROADCAST_RECEIVER, MESSAGE_TYPES } from "../../../constants/message";
 import { useAppDispatch } from "../../../store/hooks";
 import sessionSlice from "../../../store/slices/session.slice";
 import SlideTransition from "../../common/SlideTransition";
+import LoadingOverlay from "../loading/LoadingOverlay";
 import SessionContext from "./SessionContext";
 
 type MessageHandlerProps = {
@@ -13,6 +14,7 @@ export default function MessageHandler({ children }: MessageHandlerProps) {
   const dispatch = useAppDispatch();
   const { getNextMessage, messageCount } = useContext(SessionContext);
   const [snackError, setSnackError] = useState<string>("");
+  const [connected, setConnected] = useState<boolean>(false);
 
   const clearSnackError = () => setSnackError("");
 
@@ -22,6 +24,7 @@ export default function MessageHandler({ children }: MessageHandlerProps) {
       switch (message.messageType) {
         case MESSAGE_TYPES.WELCOME: {
           dispatch(sessionSlice.actions.welcome(message));
+          setConnected(true);
           break;
         }
         case MESSAGE_TYPES.CHAT: {
@@ -45,20 +48,24 @@ export default function MessageHandler({ children }: MessageHandlerProps) {
     }
   }, [dispatch, getNextMessage, messageCount]);
 
-  return (
-    <>
-      {children}
-      <Snackbar
-        open={snackError !== ""}
-        onClose={clearSnackError}
-        TransitionComponent={SlideTransition}
-        autoHideDuration={5000}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert variant="filled" severity="error" onClose={clearSnackError}>
-          {snackError}
-        </Alert>
-      </Snackbar>
-    </>
-  );
+  if (!connected) {
+    return <LoadingOverlay text="Joining session" trailingEllipsis />;
+  } else {
+    return (
+      <>
+        {children}
+        <Snackbar
+          open={snackError !== ""}
+          onClose={clearSnackError}
+          TransitionComponent={SlideTransition}
+          autoHideDuration={5000}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        >
+          <Alert variant="filled" severity="error" onClose={clearSnackError}>
+            {snackError}
+          </Alert>
+        </Snackbar>
+      </>
+    );
+  }
 }

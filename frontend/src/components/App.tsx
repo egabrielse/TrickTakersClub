@@ -41,16 +41,6 @@ const router = createBrowserRouter(
 
         <Route element={<PrivateRoutes />}>
           <Route path={PATHS.BROWSER} element={<BrowserPage />} />
-          <Route
-            path={PATHS.SESSION}
-            element={
-              <SessionProvider>
-                <MessageHandler>
-                  <GamePage />
-                </MessageHandler>
-              </SessionProvider>
-            }
-          />
           <Route path={PATHS.ACCOUNT} element={<AccountPage />} />
         </Route>
 
@@ -61,6 +51,16 @@ const router = createBrowserRouter(
         </Route>
       </Route>
       <Route element={<PrivateRoutes />}>
+        <Route
+          path={PATHS.SESSION}
+          element={
+            <SessionProvider>
+              <MessageHandler>
+                <GamePage />
+              </MessageHandler>
+            </SessionProvider>
+          }
+        />
         <Route
           path={PATHS.TABLE}
           element={
