@@ -15,3 +15,11 @@ func NewEnterMessage() *Message {
 func NewLeaveMessage() *Message {
 	return NewMessage(MessageTypeLeave, nil)
 }
+
+func NewTimeoutMessage() *Message {
+	return NewMessage(MessageTypeTimeout, nil)
+}
+
+func NewSessionFullMessage() *Message {
+	return NewMessage(MessageTypeSessionFull, nil)
+}

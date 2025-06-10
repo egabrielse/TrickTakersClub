@@ -97,23 +97,29 @@ export default function SessionProvider({
     wsRef.current = new WebSocket(getWebSocketUrl(sessionId, token));
 
     wsRef.current.onopen = () => {
-      console.log("WebSocket connected");
       setStatus(CONNECTION_STATUS.CONNECTED);
     };
 
-    wsRef.current.onclose = () => {
-      console.log("WebSocket disconnected");
-      setStatus(CONNECTION_STATUS.DISCONNECTED);
+    wsRef.current.onclose = (event) => {
+      if (event.code === 1000) {
+        // Normal closure
+        setError(new Error(event.reason));
+        setStatus(CONNECTION_STATUS.DISCONNECTED);
+      } else {
+        // Abnormal closure, attempt to reconnect
+        setStatus(CONNECTION_STATUS.RECONNECTING);
+        setTimeout(() => {
+          establishWebsocketConnection();
+        }, 5000); // Retry after 5 seconds
+      }
     };
 
     wsRef.current.onerror = (error) => {
-      console.error("WebSocket error:", error);
-      setError(new Error("WebSocket connection error"));
+      console.error(error);
     };
 
     wsRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log("WebSocket message received:", data);
       setMessages((prevMessages) => [...prevMessages, data]);
     };
   }, [sessionId, token]);

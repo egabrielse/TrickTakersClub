@@ -183,19 +183,6 @@ export default function useMessageHandler() {
             setSnackError(message.data.message);
           }
           break;
-        case EVENT_TYPES.TIMEOUT: {
-          dispatch(
-            dialogSlice.actions.openDialog({
-              type: DIALOG_TYPES.ERROR,
-              props: {
-                title: "Timed Out",
-                message: "The session was inactive for too long.",
-              },
-              closeable: false,
-            }),
-          );
-          break;
-        }
         default: {
           console.warn(
             `Unhandled message type: ${message.messageType} with data:`,

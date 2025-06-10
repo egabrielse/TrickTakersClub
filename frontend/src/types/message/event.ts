@@ -159,8 +159,7 @@ export interface LastHandEvent extends BaseMessage {
 export type EventMessageType = typeof EVENT_TYPES[keyof typeof EVENT_TYPES];
 
 export type EventMessage =
-    TimeoutEvent
-    | ErrorEvent
+    ErrorEvent
     | WelcomeEvent
     | SettingsUpdatedEvent
     | EnteredEvent

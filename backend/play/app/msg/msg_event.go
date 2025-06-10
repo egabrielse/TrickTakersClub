@@ -7,10 +7,6 @@ import (
 	"sheepshead/scoring"
 )
 
-func NewTimeoutMessage() *Message {
-	return NewMessage(MessageTypeTimeout, nil)
-}
-
 type ErrorMessagePayload struct {
 	Message string `json:"message"`
 }
@@ -247,10 +243,10 @@ type UpNextMessagePayload struct {
 	Phase    string `json:"phase"`    // Phase of the game (e.g., "pick", "play", etc.)
 }
 
-func NewUpNextMessage(playerID string, phase string) *Message {
+func NewUpNextMessage(phase string, playerID string) *Message {
 	return NewMessage(
 		MessageTypeUpNext,
-		&UpNextMessagePayload{PlayerID: playerID, Phase: phase},
+		&UpNextMessagePayload{Phase: phase, PlayerID: playerID},
 	)
 }
 

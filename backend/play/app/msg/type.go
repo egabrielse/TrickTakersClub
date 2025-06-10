@@ -18,6 +18,10 @@ const (
 	MessageTypePing
 	// Pong sent by client worker to acknowledge ping sent by session worker
 	MessageTypePong
+	// Timeout message sent by session worker to client workers when the session times out.
+	MessageTypeTimeout
+	// Client worker is denied entry to the session because it is full.
+	MessageTypeSessionFull
 )
 
 // ### COMMAND MESSAGES ###
@@ -53,10 +57,8 @@ const (
 // ### EVENT MESSAGES ###
 // ### Messages sent by the server worker to notify clients.
 const (
-	// Sent by session worker to notify clients of a timeout due to inactivity
-	MessageTypeTimeout MessageType = 3000 + iota
 	// Sent by the server to notify clients of an error.
-	MessageTypeError
+	MessageTypeError MessageType = 3000 + iota
 	// Sent by the server to newly joined clients to.
 	MessageTypeWelcome
 	// Notifies clients of a new player's presence in the lobby/game.
@@ -119,6 +121,10 @@ func (mt MessageType) String() string {
 		return "enter"
 	case MessageTypeLeave:
 		return "leave"
+	case MessageTypeTimeout:
+		return "timeout"
+	case MessageTypeSessionFull:
+		return "session-full"
 
 	// ### COMMAND MESSAGES ###
 	case MessageTypeUpdateCallingMethod:
@@ -147,8 +153,6 @@ func (mt MessageType) String() string {
 		return "call-last-hand"
 
 	// ### EVENT MESSAGES ###
-	case MessageTypeTimeout:
-		return "timeout"
 	case MessageTypeError:
 		return "error"
 	case MessageTypeEntered:
@@ -221,8 +225,12 @@ func (mt *MessageType) UnmarshalJSON(data []byte) error {
 		*mt = MessageTypeEnter
 	case "leave":
 		*mt = MessageTypeLeave
+	case "timeout":
+		*mt = MessageTypeTimeout
+	case "session-full":
+		*mt = MessageTypeSessionFull
 
-	// ### ACTION MESSAGES ###
+	// ### COMMAND MESSAGES ###
 	case "update-calling-method":
 		*mt = MessageTypeUpdateCallingMethod
 	case "update-double-on-the-bump":
@@ -249,8 +257,6 @@ func (mt *MessageType) UnmarshalJSON(data []byte) error {
 		*mt = MessageTypeCallLastHand
 
 	// ### EVENT MESSAGES ###
-	case "timeout":
-		*mt = MessageTypeTimeout
 	case "error":
 		*mt = MessageTypeError
 	case "entered":

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"play/app/msg"
+	"storage/repository"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -58,6 +59,21 @@ func (c *ClientWorker) messageSessionWorker(message *msg.Message) (int64, error)
 	return c.sendMessageOnChannel(message)
 }
 
+// sendCloseMessage sends a close message to the client and closes the connection.
+func (c *ClientWorker) sendCloseMessage(reason string) {
+	logrus.Infof("Client (%s): closing connection: %s", c.clientID, reason)
+	// Send a close frame
+	c.conn.WriteControl(
+		websocket.CloseMessage,
+		websocket.FormatCloseMessage(websocket.CloseNormalClosure, reason),
+		time.Now().Add(time.Second),
+	)
+	// Wait for the handshake to complete
+	time.Sleep(100 * time.Millisecond)
+	// Close the connection
+	c.conn.Close()
+}
+
 // forwardToClient forwards a message received from the redis channel to the client via the websocket connection.
 func (c *ClientWorker) forwardToClient(message *msg.Message) {
 	c.conn.SetWriteDeadline(time.Now().Add(writeWait))
@@ -72,9 +88,17 @@ func (c *ClientWorker) StartWorker() {
 	c.conn.SetPongHandler(c.pongHandler)
 	c.conn.SetReadDeadline(time.Now().Add(pongWait))
 	c.conn.SetWriteDeadline(time.Now().Add(writeWait))
-	// Start the message pumps.
-	go c.readPump()
-	go c.writePump()
+
+	// Check if the session exists in the repository.
+	sessionRepo := repository.GetSessionRepo()
+	if exists, err := sessionRepo.Exists(c.ctx, c.sessionID); err != nil || !exists {
+		// Session does not exist or an error occurred.
+		c.sendCloseMessage("Session not found")
+	} else {
+		// Start the message pumps.
+		go c.readPump()
+		go c.writePump()
+	}
 }
 
 // pongHandler resets the read deadline when a pong message is received from the client.
@@ -98,7 +122,11 @@ func (c *ClientWorker) readPump() {
 	for {
 		var message *msg.Message
 		if _, rawMsg, err := c.conn.ReadMessage(); err != nil {
-			logrus.Errorf("Client (%s): %v", c.clientID, err)
+			if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
+				logrus.Infof("Client (%s): connection closed normally", c.clientID)
+			} else {
+				logrus.Errorf("Client (%s): unexpected close error: %v", c.clientID, err)
+			}
 			return
 		} else if err = json.Unmarshal(rawMsg, &message); err != nil {
 			logrus.Errorf("Client (%s): %v", c.clientID, err)
@@ -116,23 +144,34 @@ func (c *ClientWorker) readPump() {
 func (c *ClientWorker) writePump() {
 	channel := c.rdb.Subscribe(c.ctx, c.sessionID)
 	ticker := time.NewTicker(pingPeriod)
+	connectionTimer := time.NewTimer(10 * time.Second)
 	defer func() {
 		// Write Pump is closing. Perform cleanup.
 		logrus.Infof("Client (%s): closing writePump", c.clientID)
 		// Stop the ticker.
 		ticker.Stop()
-		// Close the socket (thereby stopping readPump).
-		c.conn.Close()
 		// Send a leave message to the channel.
 		c.messageSessionWorker(msg.NewLeaveMessage())
 		// Unsubscribe from the Redis channel.
 		channel.Unsubscribe(c.ctx, c.sessionID)
 	}()
 
+	// Send initial enter request message
+	c.messageSessionWorker(msg.NewEnterMessage())
+
 	for {
 		select {
 		case <-c.ctx.Done():
+			// readPump has closed the context, so we should stop writing.
 			return
+
+		case <-connectionTimer.C:
+			// If after 10 seconds the client is not connected to the session, close the connection.
+			if !c.connected {
+				logrus.Infof("Client (%s): connection timed out, closing connection", c.clientID)
+				c.sendCloseMessage("Connection timed out, please try again.")
+				return
+			}
 
 		case redisMessage := <-channel.Channel():
 			var message *msg.Message
@@ -144,19 +183,27 @@ func (c *ClientWorker) writePump() {
 			} else if !message.IsRecipient(c.clientID) {
 				continue // Ignore messages not meant for the client
 			} else if !c.connected {
+				// CONNECTION LOGIC
 				// Until the client is connected, only handle welcome and ping messages.
-				if message.MessageType == msg.MessageTypePing {
+				switch message.MessageType {
+				case msg.MessageTypePing:
 					// Request to enter the session.
 					logrus.Infof("Client (%s): ping message received, sending enter message", c.clientID)
 					c.messageSessionWorker(msg.NewEnterMessage())
-				} else if message.MessageType == msg.MessageTypeWelcome {
+				case msg.MessageTypeWelcome:
 					// Session worker has sent a welcome message.
 					logrus.Infof("Client (%s): welcome message received", c.clientID)
 					c.connected = true
 					c.forwardToClient(message)
+				case msg.MessageTypeSessionFull:
+					// Session is full, end the connection with a close message.
+					c.sendCloseMessage("Session is full and is closed to new players.")
+					return
 				}
+
 			} else {
-				// Handle different message types.
+				// CONNECTED LOGIC
+				// Once connected to the session, begin handling all messages.
 				switch message.MessageType {
 				case msg.MessageTypePing:
 					// Respond to ping messages with a pong message.
@@ -164,11 +211,8 @@ func (c *ClientWorker) writePump() {
 				case msg.MessageTypePong:
 					// Do nothing
 				case msg.MessageTypeTimeout:
-					// Session timed out, close the connection.
-					logrus.Warnf("Client (%s): session timed out", c.clientID)
-					c.forwardToClient(message)
-					// wait 1 second
-					time.Sleep(1 * time.Second)
+					// End connection to client if the session has timed out.
+					c.sendCloseMessage("Session timed out due to inactivity.")
 					return
 				default:
 					// By default most messages are forwarded to the client.

@@ -17,7 +17,7 @@ func EnterHandler(sw *SessionWorker, message *msg.Message) {
 	logrus.Infof("Session (%s): %s enter message received", sw.session.ID, message.SenderID)
 	if err := sw.session.Join(message.SenderID); err != nil {
 		// If the user cannot join the session, inform them with an error message.
-		sw.sendMessage(message.SenderID, msg.NewErrorMessage(err.Error()))
+		sw.sendMessage(message.SenderID, msg.NewSessionFullMessage())
 		return
 	} else {
 		// Send a welcome message to the new player.
