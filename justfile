@@ -1,6 +1,7 @@
 # Start all or a specific set of containers using Docker Compose
 start +CONTAINERS="":
 	docker-compose up --detach --build {{CONTAINERS}}
+	docker image prune -f
 
 # Stop specific containers
 stop +CONTAINERS:
