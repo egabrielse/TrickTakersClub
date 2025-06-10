@@ -1,15 +1,13 @@
 import CancelIcon from "@mui/icons-material/Cancel";
 import { useContext } from "react";
-import { COMMAND_TYPES } from "../../../../constants/message";
+import { newEndGameCommand } from "../../../../utils/message";
 import PaperButton from "../../../common/PaperButton";
-import ConnectionContext from "../ConnectionContext";
+import SessionContext from "../SessionContext";
 
 export default function EndGameButton() {
-  const { sendCommand } = useContext(ConnectionContext);
+  const { sendCommand } = useContext(SessionContext);
 
-  const onClick = () => {
-    sendCommand({ name: COMMAND_TYPES.END_GAME, data: undefined });
-  };
+  const onClick = () => sendCommand(newEndGameCommand());
 
   return (
     <PaperButton

@@ -5,25 +5,29 @@ import {
 } from "../../../../constants/game";
 import { useAppSelector } from "../../../../store/hooks";
 import gameSlice from "../../../../store/slices/game.slice";
-import tableSlice from "../../../../store/slices/table.slice";
+import sessionSlice from "../../../../store/slices/session.slice";
 
 export default function ActiveGameSettings() {
   const inProgress = useAppSelector(gameSlice.selectors.inProgress);
-  const settings = useAppSelector(tableSlice.selectors.settings);
+  const gameSettings = useAppSelector(sessionSlice.selectors.settings);
 
-  return inProgress && settings ? (
+  return inProgress && gameSettings ? (
     <div>
       <Typography variant="body1">
-        {CALLING_METHODS[settings.callingMethod].LABEL}
+        {CALLING_METHODS[gameSettings.callingMethod].LABEL}
       </Typography>
       <Typography variant="body1">
-        {NO_PICK_RESOLUTIONS[settings.noPickResolution].LABEL}
+        {NO_PICK_RESOLUTIONS[gameSettings.noPickResolution].LABEL}
       </Typography>
-      {settings.doubleOnTheBump && (
+      {gameSettings.doubleOnTheBump && (
         <Typography variant="body1">Double on the Bump</Typography>
       )}
-      {settings.blitzing && <Typography variant="body1">Blitzing</Typography>}
-      {settings.cracking && <Typography variant="body1">Cracking</Typography>}
+      {gameSettings.blitzing && (
+        <Typography variant="body1">Blitzing</Typography>
+      )}
+      {gameSettings.cracking && (
+        <Typography variant="body1">Cracking</Typography>
+      )}
     </div>
   ) : null;
 }

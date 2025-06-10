@@ -139,8 +139,8 @@ func (c *ClientWorker) writePump() {
 			if err := json.Unmarshal([]byte(redisMessage.Payload), &message); err != nil {
 				logrus.Errorf("Client (%s): %v", c.clientID, err)
 				continue
-			} else if message.IsSender(c.clientID) {
-				continue // Ignore messages sent by the client itself.
+			} else if message.IsSender(c.clientID) && message.MessageType != msg.MessageTypeChat {
+				continue // Ignore messages sent by the client itself (except chat messages)
 			} else if !message.IsRecipient(c.clientID) {
 				continue // Ignore messages not meant for the client
 			} else if !c.connected {

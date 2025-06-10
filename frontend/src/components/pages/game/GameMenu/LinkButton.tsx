@@ -3,7 +3,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { Button, Tooltip } from "@mui/material";
 import { useState } from "react";
 import { useAppSelector } from "../../../../store/hooks";
-import tableSlice from "../../../../store/slices/table.slice";
+import sessionSlice from "../../../../store/slices/session.slice";
 import PaperButton from "../../../common/PaperButton";
 
 type LinkButtonProps = {
@@ -11,18 +11,18 @@ type LinkButtonProps = {
 };
 
 export default function LinkButton({ variant = "default" }: LinkButtonProps) {
-  const tableId = useAppSelector(tableSlice.selectors.tableId);
+  const sessionId = useAppSelector(sessionSlice.selectors.sessionId);
   const [copied, setCopied] = useState(false);
 
   const copyLink = () => {
-    navigator.clipboard.writeText(tableId);
+    navigator.clipboard.writeText(sessionId);
     setCopied(true);
     // reset the copied state after 3 seconds
     setTimeout(() => setCopied(false), 3000);
   };
 
   return (
-    <Tooltip title={copied ? "Copied!" : "Copy link to table"}>
+    <Tooltip title={copied ? "Copied!" : "Copy shareable link"}>
       <>
         {variant === "paper" ? (
           <PaperButton

@@ -2,7 +2,7 @@ import { Paper, Slide, Typography } from "@mui/material";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { BLIND_SIZE, HAND_PHASE } from "../../../../constants/game";
-import { BROADCAST_TYPES } from "../../../../constants/message";
+import { EVENT_TYPES } from "../../../../constants/message";
 import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
 import { selectIsUpNext } from "../../../../store/selectors";
 import handSlice from "../../../../store/slices/hand.slice";
@@ -14,8 +14,8 @@ import RoleFlare from "../OverlayComponents/RoleFlare";
 import "./GameUpdates.scss";
 
 const renderUpdateMessage = (update: UpdateMessages) => {
-  switch (update.name) {
-    case BROADCAST_TYPES.BLIND_PICKED:
+  switch (update.messageType) {
+    case EVENT_TYPES.BLIND_PICKED:
       return (
         <>
           <ProfileProvider uid={update.data.playerId}>
@@ -32,7 +32,7 @@ const renderUpdateMessage = (update: UpdateMessages) => {
           )}
         </>
       );
-    case BROADCAST_TYPES.CALLED_CARD:
+    case EVENT_TYPES.CALLED_CARD:
       return (
         <>
           <RoleFlare role="picker" />
@@ -43,14 +43,14 @@ const renderUpdateMessage = (update: UpdateMessages) => {
           />
         </>
       );
-    case BROADCAST_TYPES.GONE_ALONE:
+    case EVENT_TYPES.GONE_ALONE:
       return (
         <>
           <RoleFlare role="picker" />
           &nbsp;is going alone!
         </>
       );
-    case BROADCAST_TYPES.CARD_PLAYED:
+    case EVENT_TYPES.CARD_PLAYED:
       return (
         <>
           <ProfileProvider uid={update.data.playerId}>
@@ -63,7 +63,7 @@ const renderUpdateMessage = (update: UpdateMessages) => {
           />
         </>
       );
-    case BROADCAST_TYPES.PARTNER_REVEALED:
+    case EVENT_TYPES.PARTNER_REVEALED:
       return (
         <>
           <ProfileProvider uid={update.data.playerId}>
@@ -73,7 +73,7 @@ const renderUpdateMessage = (update: UpdateMessages) => {
           <RoleFlare role="partner" />!
         </>
       );
-    case BROADCAST_TYPES.TRICK_WON:
+    case EVENT_TYPES.TRICK_WON:
       return (
         <>
           <ProfileProvider uid={update.data.playerId}>
@@ -86,9 +86,9 @@ const renderUpdateMessage = (update: UpdateMessages) => {
           )}
         </>
       );
-    case BROADCAST_TYPES.NO_PICK_HAND:
+    case EVENT_TYPES.NO_PICK_HAND:
       return "Everyone passed on the blind!";
-    case BROADCAST_TYPES.LAST_HAND:
+    case EVENT_TYPES.LAST_HAND:
       return (
         <>
           <ProfileProvider uid={update.data.playerId}>

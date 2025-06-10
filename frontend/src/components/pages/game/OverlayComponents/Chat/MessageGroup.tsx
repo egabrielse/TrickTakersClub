@@ -1,4 +1,4 @@
-import { ChatMessage } from "../../../../../types/message/broadcast";
+import { ChatMessage } from "../../../../../types/message/misc";
 import DisplayName from "../../../../common/Profile/DisplayName";
 import ProfilePic from "../../../../common/Profile/ProfilePic";
 import ProfileProvider from "../../../../common/Profile/ProfileProvider";
@@ -9,7 +9,7 @@ type MessageGroupProps = {
 };
 
 export default function MessageGroup({ children }: MessageGroupProps) {
-  const { clientId, timestamp } = children[0];
+  const { senderId, timestamp } = children[0];
   const time = new Date(timestamp!).toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",
@@ -18,7 +18,7 @@ export default function MessageGroup({ children }: MessageGroupProps) {
   return (
     <div className="MessageGroup">
       <div className="MessageGroup-ByLine">
-        <ProfileProvider uid={clientId!}>
+        <ProfileProvider uid={senderId!}>
           <span className="MessageGroup-ByLine-Sender">
             <ProfilePic size="small" />
             <DisplayName />

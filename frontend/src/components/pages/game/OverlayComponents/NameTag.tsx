@@ -1,6 +1,6 @@
 import { useAppSelector } from "../../../../store/hooks";
 import handSlice from "../../../../store/slices/hand.slice";
-import tableSlice from "../../../../store/slices/table.slice";
+import sessionSlice from "../../../../store/slices/session.slice";
 import Flare from "../../../common/Flare";
 import PrintedCard from "../../../common/PrintedCard";
 import DisplayName from "../../../common/Profile/DisplayName";
@@ -14,7 +14,7 @@ type NameTagProps = {
 };
 
 export default function NameTag({ playerId }: NameTagProps) {
-  const hostId = useAppSelector(tableSlice.selectors.hostId);
+  const hostId = useAppSelector(sessionSlice.selectors.hostId);
   const dealerId = useAppSelector(handSlice.selectors.dealerId);
   const pickerId = useAppSelector(handSlice.selectors.pickerId);
   const partnerId = useAppSelector(handSlice.selectors.partnerId);

@@ -25,11 +25,8 @@ import BrowserPage from "./pages/browser/BrowserPage";
 import ErrorBoundary from "./pages/error/ErrorBoundary";
 import ErrorPage from "./pages/error/ErrorPage";
 import GamePage from "./pages/game/GamePage";
-import MessageHandler from "./pages/game/MessageHandler";
 import SessionProvider from "./pages/game/SessionProvider";
 import HomePage from "./pages/home/HomePage";
-import ConnectionProvider from "./pages/table/ConnectionProvider";
-import TablePage from "./pages/table/TablePage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -55,18 +52,8 @@ const router = createBrowserRouter(
           path={PATHS.SESSION}
           element={
             <SessionProvider>
-              <MessageHandler>
-                <GamePage />
-              </MessageHandler>
+              <GamePage />
             </SessionProvider>
-          }
-        />
-        <Route
-          path={PATHS.TABLE}
-          element={
-            <ConnectionProvider>
-              <TablePage />
-            </ConnectionProvider>
           }
         />
       </Route>

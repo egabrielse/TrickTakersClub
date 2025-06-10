@@ -1,24 +1,23 @@
 import { useContext } from "react";
-import { COMMAND_TYPES } from "../../../../../constants/message";
 import { useAppSelector } from "../../../../../store/hooks";
 import { selectCallableAces } from "../../../../../store/selectors";
 import { Card, FailSuit } from "../../../../../types/card";
+import {
+  newCallCommand,
+  newGoAloneCommand,
+} from "../../../../../utils/message";
 import PaperButton from "../../../../common/PaperButton";
 import PrintedCard from "../../../../common/PrintedCard";
-import ConnectionContext from "../../ConnectionContext";
+import SessionContext from "../../SessionContext";
 import "./CallAnAce.scss";
 
 export default function CallAnAce() {
-  const { sendCommand } = useContext(ConnectionContext);
+  const { sendCommand } = useContext(SessionContext);
   const callableAces = useAppSelector(selectCallableAces);
 
-  const handleCallCard = (card: Card) => {
-    sendCommand({ name: COMMAND_TYPES.CALL, data: { card } });
-  };
+  const handleCallCard = (card: Card) => sendCommand(newCallCommand({ card }));
 
-  const handleGoAlone = () => {
-    sendCommand({ name: COMMAND_TYPES.GO_ALONE, data: undefined });
-  };
+  const handleGoAlone = () => sendCommand(newGoAloneCommand());
 
   return (
     <div className="CallAnAce">

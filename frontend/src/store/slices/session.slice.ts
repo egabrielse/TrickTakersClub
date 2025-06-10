@@ -1,7 +1,9 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { GameSettings } from "../../types/game";
 import { GAME_SETTINGS_DEFAULTS } from "../../constants/game";
-import { ChatMessage, EnteredMessage, LeftMessage, SettingsUpdatedMessage, WelcomeMessage } from "../../types/message";
+import { ChatMessage } from "../../types/message/misc";
+import { EnteredEvent, LeftEvent, SettingsUpdatedEvent, WelcomeEvent } from "../../types/message/event";
+import { MessageData } from "../../types/message";
 
 interface SessionState {
     chat: ChatMessage[];
@@ -9,7 +11,6 @@ interface SessionState {
     sessionId: string;
     presence: string[];
     settings: GameSettings;
-    connected: boolean;
 }
 
 const initialState: SessionState = {
@@ -24,7 +25,6 @@ const initialState: SessionState = {
         blitzing: GAME_SETTINGS_DEFAULTS.BLITZING,
         cracking: GAME_SETTINGS_DEFAULTS.CRACKING,
     },
-    connected: false,
 };
 
 
@@ -33,29 +33,25 @@ const sessionSlice = createSlice({
     initialState,
     reducers: {
         reset: () => initialState,
-        welcome: (state, action: PayloadAction<WelcomeMessage>) => {
-            state.sessionId = action.payload.payload.sessionId;
-            state.hostId = action.payload.payload.hostId;
-            state.presence = action.payload.payload.presence;
-            state.settings = action.payload.payload.settings || initialState.settings;
-            state.connected = true;
+        welcome: (state, action: PayloadAction<MessageData<WelcomeEvent>>) => {
+            state.sessionId = action.payload.sessionId;
+            state.hostId = action.payload.hostId;
+            state.presence = action.payload.presence;
+            state.settings = action.payload.settings || initialState.settings;
         },
         pushChatMessage: (state, action: PayloadAction<ChatMessage>) => {
             state.chat.push(action.payload);
         },
-        playerEntered: (state, action: PayloadAction<EnteredMessage>) => {
-            if (!state.presence.includes(action.payload.payload.playerId)) {
-                state.presence.push(action.payload.payload.playerId);
+        playerEntered: (state, action: PayloadAction<MessageData<EnteredEvent>>) => {
+            if (!state.presence.includes(action.payload.playerId)) {
+                state.presence.push(action.payload.playerId);
             }
         },
-        playerLeft: (state, action: PayloadAction<LeftMessage>) => {
-            state.presence = state.presence.filter(userId => userId !== action.payload.payload.playerId);
+        playerLeft: (state, action: PayloadAction<MessageData<LeftEvent>>) => {
+            state.presence = state.presence.filter(userId => userId !== action.payload.playerId);
         },
-        settingsUpdated: (state, action: PayloadAction<SettingsUpdatedMessage>) => {
-            state.settings = action.payload.payload.settings;
-        },
-        resetSeating: (state) => {
-            state.presence = [];
+        settingsUpdated: (state, action: PayloadAction<MessageData<SettingsUpdatedEvent>>) => {
+            state.settings = action.payload.settings;
         },
     },
     selectors: {

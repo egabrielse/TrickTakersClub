@@ -1,6 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { HAND_PHASE } from "../../../../constants/game";
-import { COMMAND_TYPES } from "../../../../constants/message";
 import { useAppSelector } from "../../../../store/hooks";
 import {
   selectIsUpNext,
@@ -13,12 +12,13 @@ import {
   PlayCardCommand,
 } from "../../../../types/message/command";
 import { hasCard } from "../../../../utils/card";
+import { newBuryCommand, newPlayCardCommand } from "../../../../utils/message";
 import PlayingCard from "../../../common/PlayingCard";
 import PlayingCardFan from "../../../common/PlayingCardFan";
-import ConnectionContext from "../ConnectionContext";
+import SessionContext from "../SessionContext";
 
 export default function PlayerHand() {
-  const { sendCommand } = useContext(ConnectionContext);
+  const { sendCommand } = useContext(SessionContext);
   const isUpNext = useAppSelector(selectIsUpNext);
   const phase = useAppSelector(handSlice.selectors.phase);
   const playableCards = useAppSelector(selectPlayableCards);
@@ -45,10 +45,7 @@ export default function PlayerHand() {
   const clickCard = useCallback(
     (card: Card) => {
       if (phase === HAND_PHASE.PLAY) {
-        submitCommand({
-          name: COMMAND_TYPES.PLAY_CARD,
-          data: { card },
-        });
+        submitCommand(newPlayCardCommand({ card }));
       } else if (phase === HAND_PHASE.BURY) {
         if (selectedCard === null) {
           // Select first card to bury
@@ -57,10 +54,7 @@ export default function PlayerHand() {
           // Unselected the selected card
           setSelectedCard(null);
         } else {
-          submitCommand({
-            name: COMMAND_TYPES.BURY,
-            data: { cards: [selectedCard, card] },
-          });
+          submitCommand(newBuryCommand({ cards: [selectedCard, card] }));
         }
       }
     },
@@ -89,10 +83,7 @@ export default function PlayerHand() {
       // Automatically submit the last card if it's the only one left
       const lastCard = hand[0];
       setTimeout(() => {
-        submitCommand({
-          name: COMMAND_TYPES.PLAY_CARD,
-          data: { card: lastCard },
-        });
+        submitCommand(newPlayCardCommand({ card: lastCard }));
       }, 500);
     }
   }, [hand, isUpNext, pending, submitCommand]);

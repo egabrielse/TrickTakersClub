@@ -1,28 +1,24 @@
 import { useContext } from "react";
-import { COMMAND_TYPES } from "../../../../../constants/message";
 import { useAppSelector } from "../../../../../store/hooks";
 import { selectIsUpNext } from "../../../../../store/selectors";
 import handSlice from "../../../../../store/slices/hand.slice";
+import { newPassCommand, newPickCommand } from "../../../../../utils/message";
 import PaperButton from "../../../../common/PaperButton";
 import PlayingCard from "../../../../common/PlayingCard";
 import PlayingCardList from "../../../../common/PlayingCardList";
-import ConnectionContext from "../../ConnectionContext";
+import SessionContext from "../../SessionContext";
 import "./Blind.scss";
 
 const BLIND_CARDS = ["back", "back"] as const;
 
 export default function Blind() {
-  const { sendCommand } = useContext(ConnectionContext);
+  const { sendCommand } = useContext(SessionContext);
   const isUpNext = useAppSelector(selectIsUpNext);
   const noPickHand = useAppSelector(handSlice.selectors.noPickHand);
 
-  const handlePick = () => {
-    sendCommand({ name: COMMAND_TYPES.PICK, data: undefined });
-  };
+  const handlePick = () => sendCommand(newPickCommand());
 
-  const handlePass = () => {
-    sendCommand({ name: COMMAND_TYPES.PASS, data: undefined });
-  };
+  const handlePass = () => sendCommand(newPassCommand());
 
   return (
     <div className="Blind">

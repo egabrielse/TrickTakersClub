@@ -7,6 +7,18 @@ import (
 	"sheepshead/scoring"
 )
 
+func NewTimeoutMessage() *Message {
+	return NewMessage(MessageTypeTimeout, nil)
+}
+
+type ErrorMessagePayload struct {
+	Message string `json:"message"`
+}
+
+func NewErrorMessage(message string) *Message {
+	return NewMessage(MessageTypeError, &ErrorMessagePayload{Message: message})
+}
+
 type EnteredMessagePayload struct {
 	PlayerID string `json:"playerId"` // ID of the player who entered
 }
@@ -60,8 +72,31 @@ type WelcomePayload struct {
 	NoPickHand  bool               `json:"noPickHand"`
 }
 
+func NewWelcomePayload() *WelcomePayload {
+	return &WelcomePayload{
+		HostID:      "",
+		SessionID:   "",
+		Presence:    []string{},
+		InProgress:  false,
+		IsLastHand:  false,
+		DealerID:    "",
+		Scoreboard:  scoring.Scoreboard{},
+		PlayerOrder: nil,
+		Settings:    &hand.GameSettings{},
+		CalledCard:  nil,
+		Phase:       "",
+		UpNextID:    "",
+		PickerID:    "",
+		PartnerID:   "",
+		Tricks:      []*hand.Trick{},
+		Hand:        []*deck.Card{},
+		Bury:        []*deck.Card{},
+		NoPickHand:  false,
+	}
+}
+
 func NewWelcomeMessage(playerID, hostID, sessionID string, presence []string, settings *hand.GameSettings, game *sheepshead.Game) *Message {
-	payload := &WelcomePayload{}
+	payload := NewWelcomePayload()
 	payload.HostID = hostID
 	payload.SessionID = sessionID
 	payload.Presence = presence

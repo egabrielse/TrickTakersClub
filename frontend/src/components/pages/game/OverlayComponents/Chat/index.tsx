@@ -2,9 +2,9 @@ import SendIcon from "@mui/icons-material/Send";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { useAppSelector } from "../../../../../store/hooks";
-import tableSlice from "../../../../../store/slices/table.slice";
-import { ChatMessage } from "../../../../../types/message/broadcast";
-import ConnectionContext from "../../ConnectionContext";
+import sessionSlice from "../../../../../store/slices/session.slice";
+import { ChatMessage } from "../../../../../types/message/misc";
+import SessionContext from "../../SessionContext";
 import "./index.scss";
 import MessageGroup from "./MessageGroup";
 
@@ -12,8 +12,8 @@ const MAX_MESSAGE_LENGTH = 60;
 
 // TODO: disable auto scrolling when the user intentionally scroll up the chat
 export default function Chat() {
-  const chat = useAppSelector(tableSlice.selectors.chat);
-  const { sendChatMsg } = useContext(ConnectionContext);
+  const chat = useAppSelector(sessionSlice.selectors.chat);
+  const { sendChatMsg } = useContext(SessionContext);
 
   const [value, setValue] = useState("");
   const chatLength = chat.length;
@@ -46,8 +46,9 @@ export default function Chat() {
               }
               const lastGroup = acc[acc.length - 1];
               const lastMsg = lastGroup[lastGroup.length - 1];
-              const timeDiff = msg.timestamp! - lastMsg.timestamp!;
-              if (msg.clientId === lastMsg.clientId && timeDiff < 60000) {
+              const timeDiff =
+                Date.parse(msg.timestamp!) - Date.parse(lastMsg.timestamp!);
+              if (msg.senderId === lastMsg.senderId && timeDiff < 60000) {
                 lastGroup.push(msg);
               } else {
                 acc.push([msg]);

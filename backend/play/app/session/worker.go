@@ -99,13 +99,13 @@ func (sw *SessionWorker) StartWorker() {
 				} else {
 					switch message.MessageType {
 					case msg.MessageTypeEnter:
-						go EnterHandler(sw, message)
+						EnterHandler(sw, message)
 					case msg.MessageTypeLeave:
-						go LeaveHandler(sw, message)
+						LeaveHandler(sw, message)
 					case msg.MessageTypeChat:
 						// Do nothing - all subscribed clients will receive the chat message
 					case msg.MessageTypePong:
-						go PongHandler(sw, message)
+						PongHandler(sw, message)
 						continue
 					default:
 						logrus.Warnf("Session (%s): Unknown message type: %s", sw.session.ID, message.MessageType)

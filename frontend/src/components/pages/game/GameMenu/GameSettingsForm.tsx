@@ -12,17 +12,21 @@ import {
   CALLING_METHODS,
   NO_PICK_RESOLUTIONS,
 } from "../../../../constants/game";
-import { COMMAND_TYPES } from "../../../../constants/message";
 import { useAppSelector } from "../../../../store/hooks";
 import { selectIsHost } from "../../../../store/selectors";
-import tableSlice from "../../../../store/slices/table.slice";
-import ConnectionContext from "../ConnectionContext";
+import sessionSlice from "../../../../store/slices/session.slice";
+import {
+  newUpdateCallingMethodCommand,
+  newUpdateDoubleOnTheBumpCommand,
+  newUpdateNoPickResolutionCommand,
+} from "../../../../utils/message";
+import SessionContext from "../SessionContext";
 import "./GameSettingsForm.scss";
 
 export default function GameSettingsForm() {
   const isHost = useAppSelector(selectIsHost);
-  const { sendCommand } = useContext(ConnectionContext);
-  const settings = useAppSelector(tableSlice.selectors.settings);
+  const { sendCommand } = useContext(SessionContext);
+  const gameSettings = useAppSelector(sessionSlice.selectors.settings);
   const [pending, setPending] = useState(false);
   const inputDisabled = !isHost || pending;
 
@@ -35,34 +39,25 @@ export default function GameSettingsForm() {
 
   const updateCallingMethod = (value: string) => {
     setPendingWithTimeout();
-    sendCommand({
-      name: COMMAND_TYPES.UPDATE_CALLING_METHOD,
-      data: { callingMethod: value },
-    });
+    sendCommand(newUpdateCallingMethodCommand({ callingMethod: value }));
   };
 
   const updateNoPickResolution = (value: string) => {
     setPendingWithTimeout();
-    sendCommand({
-      name: COMMAND_TYPES.UPDATE_NO_PICK_RESOLUTION,
-      data: { noPickResolution: value },
-    });
+    sendCommand(newUpdateNoPickResolutionCommand({ noPickResolution: value }));
   };
 
   const updateDoubleOnTheBump = (value: boolean) => {
     setPendingWithTimeout();
-    sendCommand({
-      name: COMMAND_TYPES.UPDATE_DOUBLE_ON_THE_BUMP,
-      data: { doubleOnTheBump: value },
-    });
+    sendCommand(newUpdateDoubleOnTheBumpCommand({ doubleOnTheBump: value }));
   };
 
   useEffect(() => {
     // Set pending state to false when settings are loaded
-    if (settings) {
+    if (gameSettings) {
       setPending(false);
     }
-  }, [settings]);
+  }, [gameSettings]);
 
   return (
     <div className="GameSettingsForm">
@@ -72,7 +67,7 @@ export default function GameSettingsForm() {
           <InputLabel margin="dense">Calling Method</InputLabel>
           <Select
             id="callingMethod"
-            value={settings.callingMethod}
+            value={gameSettings.callingMethod}
             fullWidth
             disabled={inputDisabled}
             onChange={(event) => updateCallingMethod(event.target.value)}
@@ -89,7 +84,7 @@ export default function GameSettingsForm() {
           <InputLabel margin="dense">No-Pick Method</InputLabel>
           <Select
             id="noPickResolution"
-            value={settings.noPickResolution}
+            value={gameSettings.noPickResolution}
             fullWidth
             disabled={inputDisabled}
             onChange={(event) => updateNoPickResolution(event.target.value)}
@@ -104,7 +99,7 @@ export default function GameSettingsForm() {
 
         <FormGroup>
           <FormControlLabel
-            control={<Checkbox checked={settings.doubleOnTheBump} />}
+            control={<Checkbox checked={gameSettings.doubleOnTheBump} />}
             onChange={(_, checked) => updateDoubleOnTheBump(checked)}
             label="Double on the Bump"
             disabled={inputDisabled}

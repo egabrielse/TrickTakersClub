@@ -1,6 +1,5 @@
 import { Middleware, configureStore } from '@reduxjs/toolkit';
 import loggerMiddleware from './middleware/logger';
-import tableSlice from './slices/table.slice';
 import gameSlice from './slices/game.slice';
 import handSlice from './slices/hand.slice';
 import authSlice from './slices/auth.slice';
@@ -21,7 +20,6 @@ export const store = configureStore({
         dialog: dialogSlice.reducer,
         hand: handSlice.reducer,
         game: gameSlice.reducer,
-        table: tableSlice.reducer,
         user: userSlice.reducer,
         session: sessionSlice.reducer,
         settings: settingsSlice.reducer,

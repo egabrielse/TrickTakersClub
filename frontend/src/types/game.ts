@@ -5,17 +5,7 @@ import {
     SCORING_METHOD,
 } from "../constants/game";
 import { Card } from "./card";
-import {
-    BlindPickedMessage,
-    CalledCardMessage,
-    CardPlayedMessage,
-    GoneAloneMessage,
-    HandDoneMessage,
-    LastHandMessage,
-    NoPickHandMessage,
-    PartnerRevealedMessage,
-    TrickWonMessage,
-} from "./message/broadcast";
+import { BlindPickedEvent, CalledCardEvent, CardPlayedEvent, GoneAloneEvent, HandDoneEvent, LastHandEvent, NoPickHandEvent, PartnerRevealedEvent, TrickWonEvent } from "./message/event";
 
 export type CallingMethod = typeof CALLING_METHODS[keyof typeof CALLING_METHODS]['ID'];
 
@@ -64,12 +54,12 @@ export type Trick = {
 };
 
 export type UpdateMessages =
-    | BlindPickedMessage
-    | CalledCardMessage
-    | GoneAloneMessage
-    | CardPlayedMessage
-    | PartnerRevealedMessage
-    | TrickWonMessage
-    | HandDoneMessage
-    | NoPickHandMessage
-    | LastHandMessage;
+    BlindPickedEvent
+    | CalledCardEvent
+    | GoneAloneEvent
+    | CardPlayedEvent
+    | PartnerRevealedEvent
+    | TrickWonEvent
+    | HandDoneEvent
+    | NoPickHandEvent
+    | LastHandEvent;

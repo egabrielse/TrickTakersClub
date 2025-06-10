@@ -6,13 +6,12 @@ import PaperButton from "../../../common/PaperButton";
 
 export default function SoundButton() {
   const dispatch = useAppDispatch();
-  const settings = useAppSelector(settingsSlice.selectors.settings);
+  const soundOn = useAppSelector(settingsSlice.selectors.soundOn);
 
   const onClick = () => {
     dispatch(
       settingsSlice.actions.asyncUpdateSettings({
-        ...settings,
-        soundOn: !settings.soundOn,
+        soundOn: !soundOn,
       }),
     );
   };
@@ -21,9 +20,9 @@ export default function SoundButton() {
     <PaperButton
       id="last-hand-button"
       onClick={onClick}
-      startIcon={settings.soundOn ? <VolumeUpIcon /> : <VolumeOffIcon />}
+      startIcon={soundOn ? <VolumeUpIcon /> : <VolumeOffIcon />}
     >
-      {settings.soundOn ? "On" : "Off"}
+      {soundOn ? "On" : "Off"}
     </PaperButton>
   );
 }

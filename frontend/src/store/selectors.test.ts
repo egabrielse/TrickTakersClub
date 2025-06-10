@@ -1,5 +1,5 @@
 import { expect, suite, test } from "vitest"
-import { callableAces, cardsInHandCounts, isHost, isPartner, isPicker, isSeated, isUpNext, playerOrderStartingWithUser, tallyCompletedTricks } from "./selectors";
+import { callableAces, cardsInHandCounts, isHost, isPartner, isPicker, isPresent, isUpNext, playerOrderStartingWithUser, tallyCompletedTricks } from "./selectors";
 import { CARD_RANK, CARD_SUIT } from "../constants/card";
 import { Trick } from "../types/game";
 import { HAND_PHASE } from "../constants/game";
@@ -39,10 +39,10 @@ test('isHost', () => {
     expect(isHost('1', '2')).toBe(false);
 });
 
-test('isSeated', () => {
-    const seating = ['1', '2', '3', '4'];
-    expect(isSeated(seating, '1')).toBe(true);
-    expect(isSeated(seating, '5')).toBe(false);
+test('isPresent', () => {
+    const presence = ['1', '2', '3', '4'];
+    expect(isPresent(presence, '1')).toBe(true);
+    expect(isPresent(presence, '5')).toBe(false);
 });
 
 suite('callableAces', () => {

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"sheepshead"
 	"sheepshead/hand"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -14,6 +15,7 @@ import (
 type Session struct {
 	ID           string               `json:"id"`           // unique ID of the session
 	HostID       string               `json:"hostId"`       // ID of the host player
+	Lock         sync.RWMutex         `json:"-"`            // mutex to protect concurrent access
 	Presence     map[string]time.Time `json:"presence"`     // IDs of players mapped to the last ping
 	Created      time.Time            `json:"created"`      // timestamp in milliseconds
 	LastUpdated  time.Time            `json:"-"`            // timestamp in milliseconds
@@ -38,6 +40,8 @@ func (s *Session) GameInProgress() bool {
 }
 
 func (s *Session) KeepAlive(playerID string) {
+	s.Lock.Lock()
+	defer s.Lock.Unlock()
 	s.Presence[playerID] = time.Now()
 }
 
@@ -60,6 +64,8 @@ func (s *Session) Leave(playerID string) {
 }
 
 func (s *Session) ListPresence() []string {
+	s.Lock.RLock()
+	defer s.Lock.RUnlock()
 	presenceList := make([]string, 0, len(s.Presence))
 	for playerID := range s.Presence {
 		presenceList = append(presenceList, playerID)
@@ -68,6 +74,8 @@ func (s *Session) ListPresence() []string {
 }
 
 func (s *Session) CleanupStalePresence(duration time.Duration) []string {
+	s.Lock.Lock()
+	defer s.Lock.Unlock()
 	now := time.Now()
 	removed := []string{}
 	for k, v := range s.Presence {
@@ -80,10 +88,14 @@ func (s *Session) CleanupStalePresence(duration time.Duration) []string {
 }
 
 func (s *Session) IsReadyToStart() bool {
+	s.Lock.RLock()
+	defer s.Lock.RUnlock()
 	return len(s.Presence) >= hand.PlayerCount && !s.GameInProgress()
 }
 
 func (s *Session) StartGame(gameID string) (*sheepshead.Game, error) {
+	s.Lock.RLock()
+	defer s.Lock.RUnlock()
 	if s.GameInProgress() {
 		return nil, fmt.Errorf("game has already started")
 	} else if len(s.Presence) < hand.PlayerCount {

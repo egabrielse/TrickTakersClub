@@ -3,12 +3,12 @@ import handSlice from "./slices/hand.slice";
 import { countCardPoints, hasCard, isTrumpCard } from "../utils/card";
 import authSlice from "./slices/auth.slice";
 import gameSlice from "./slices/game.slice";
-import tableSlice from "./slices/table.slice";
 import { getTakerId, isTrickDone } from "../utils/game";
 import { CARD_RANK, CARD_SUIT } from "../constants/card";
 import { Card, FailSuit } from "../types/card";
 import { HAND_PHASE, HAND_SIZE } from "../constants/game";
 import { Trick } from "../types/game";
+import sessionSlice from "./slices/session.slice";
 
 /**
  * True if the user is the picker, false otherwise.
@@ -55,19 +55,20 @@ export const isHost = (uid: string, hostId: string) => hostId === uid;
 // Selector for isHost
 export const selectIsHost = createSelector([
     authSlice.selectors.uid,
-    tableSlice.selectors.hostId,
+    sessionSlice.selectors.hostId,
 ], isHost);
 
 /**
- * True if the user is seated at the table, false otherwise.
+ * True if the user is present in the session, false otherwise.
  */
-export const isSeated = (seating: string[], uid: string) => seating.includes(uid);
+export const isPresent = (presence: string[], uid: string) => presence.includes(uid);
 
-// Selector for isSeated
-export const selectIsSeated = createSelector([
-    tableSlice.selectors.seating,
+// Selector for isPresent
+export const selectIsPresent = createSelector([
+    sessionSlice.selectors.presence,
     authSlice.selectors.uid,
-], isSeated);
+], isPresent);
+
 
 /**
  * Returns a list of playable cards for the user.

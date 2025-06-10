@@ -12,7 +12,7 @@ type ExpandingButtonProps = {
   title: string;
   tooltip?: string;
   notification?: boolean | number;
-  onToggleExpanded?: (expanded: boolean) => void;
+  onToggle?: (expanded: boolean) => void;
 };
 
 export default function ExpandingButton({
@@ -24,14 +24,14 @@ export default function ExpandingButton({
   title,
   tooltip,
   notification = false,
-  onToggleExpanded = () => {},
+  onToggle = () => {},
 }: ExpandingButtonProps) {
   const [expanded, setExpanded] = useState(defaultExpanded || false);
   const [renderContent, setRenderContent] = useState(defaultExpanded || false);
 
   const toggleExpanded = () => {
     setExpanded(!expanded);
-    onToggleExpanded(!expanded);
+    onToggle(!expanded);
     if (!expanded) {
       // Instantly render content when expanding
       setRenderContent(true);

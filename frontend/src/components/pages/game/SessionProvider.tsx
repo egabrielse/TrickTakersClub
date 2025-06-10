@@ -2,11 +2,23 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router";
+import {
+  BROADCAST_RECEIVER,
+  SESSION_WORKER_ID,
+} from "../../../constants/message";
 import { CONNECTION_STATUS } from "../../../constants/socket";
 import auth from "../../../firebase/auth";
+import { useAppDispatch } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
-import { Message } from "../../../types/message";
+import gameSlice from "../../../store/slices/game.slice";
+import handSlice from "../../../store/slices/hand.slice";
+import sessionSlice from "../../../store/slices/session.slice";
+import { UnknownMessage } from "../../../types/message/base";
+import { CommandMessage } from "../../../types/message/command";
+import { EventMessage } from "../../../types/message/event";
+import { ChatMessage } from "../../../types/message/misc";
 import { ConnectionStatus } from "../../../types/socket";
+import { newChatMessage } from "../../../utils/message";
 import { getWebSocketUrl } from "../../../utils/socket";
 import ErrorPage from "../error/ErrorPage";
 import LoadingOverlay from "../loading/LoadingOverlay";
@@ -23,21 +35,38 @@ export default function SessionProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const dispatch = useAppDispatch();
   const { sessionId } = useParams<{ sessionId: string }>();
   const wsRef = useRef<WebSocket | null>(null);
   const token = useSelector(authSlice.selectors.token);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const uid = useSelector(authSlice.selectors.uid);
+  const [messages, setMessages] = useState<
+    (EventMessage | ChatMessage | UnknownMessage)[]
+  >([]);
   const [error, setError] = useState<Error | null>(null);
   const [status, setStatus] = useState<ConnectionStatus>(
     CONNECTION_STATUS.DISCONNECTED,
   );
 
   /**
-   * Send a message to the server
+   * Send an action message to the session worker.
    * @param action
    */
-  const sendMessage = (message: Message) => {
+  const sendCommand = (message: CommandMessage) => {
+    message.senderId = uid;
+    message.receiverId = SESSION_WORKER_ID;
     wsRef.current?.send(JSON.stringify(message));
+  };
+
+  /**
+   * Send a chat message to the session worker.
+   * @param message
+   */
+  const sendChatMsg = (message: string) => {
+    const chatMessage = newChatMessage({ message });
+    chatMessage.senderId = uid;
+    chatMessage.receiverId = BROADCAST_RECEIVER;
+    wsRef.current?.send(JSON.stringify(chatMessage));
   };
 
   /**
@@ -102,6 +131,15 @@ export default function SessionProvider({
     };
   }, [establishWebsocketConnection]);
 
+  useEffect(() => {
+    // Reset the state when the component unmounts
+    return () => {
+      dispatch(sessionSlice.actions.reset());
+      dispatch(gameSlice.actions.reset());
+      dispatch(handSlice.actions.reset());
+    };
+  }, [dispatch]);
+
   if (error) {
     return <ErrorPage error={error} actions={[REFRESH_ACTION]} />;
   } else if (status === CONNECTION_STATUS.DISCONNECTED) {
@@ -121,7 +159,8 @@ export default function SessionProvider({
       <SessionContext.Provider
         value={{
           status,
-          sendMessage,
+          sendCommand,
+          sendChatMsg,
           getNextMessage,
           messageCount: messages.length,
         }}

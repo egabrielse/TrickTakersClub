@@ -1,6 +1,6 @@
 import { GameSummaryDialogParams } from "../../../types/dialog";
 import AppLogo from "../../common/AppLogo";
-import ScoreboardDisplay from "../../pages/table/OverlayComponents/ScoreboardDisplay";
+import ScoreboardDisplay from "../../pages/game/OverlayComponents/ScoreboardDisplay";
 import CloseDialogButton from "../components/CloseDialogButton";
 import DialogBody from "../components/DialogBody";
 import DialogHeader from "../components/DialogHeader";

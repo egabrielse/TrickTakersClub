@@ -1,25 +1,23 @@
 import { Divider, Paper, Typography } from "@mui/material";
 import { useContext } from "react";
 import { PLAYER_COUNT } from "../../../../constants/game";
-import { COMMAND_TYPES } from "../../../../constants/message";
 import { useAppSelector } from "../../../../store/hooks";
 import { selectIsHost } from "../../../../store/selectors";
-import tableSlice from "../../../../store/slices/table.slice";
+import sessionSlice from "../../../../store/slices/session.slice";
+import { newStartGameCommand } from "../../../../utils/message";
 import ActionButton from "../../../common/ActionButton";
-import ConnectionContext from "../ConnectionContext";
+import SessionContext from "../SessionContext";
 import GameSeating from "./GameSeating";
 import GameSettingsForm from "./GameSettingsForm";
 import "./index.scss";
 
 export default function GameMenu() {
-  const { sendCommand } = useContext(ConnectionContext);
-  const seating = useAppSelector(tableSlice.selectors.seating);
+  const { sendCommand } = useContext(SessionContext);
+  const presence = useAppSelector(sessionSlice.selectors.presence);
   const isHost = useAppSelector(selectIsHost);
-  const tableFull = seating.length === PLAYER_COUNT;
+  const sessionFull = presence.length === PLAYER_COUNT;
 
-  const startGame = () => {
-    sendCommand({ name: COMMAND_TYPES.START_GAME, data: undefined });
-  };
+  const startGame = () => sendCommand(newStartGameCommand());
 
   return (
     <Paper id="game-menu" className="GameMenu">
@@ -33,11 +31,11 @@ export default function GameMenu() {
         {isHost ? (
           <ActionButton
             onClick={() => startGame()}
-            disabled={!tableFull}
+            disabled={!sessionFull}
             label={"Start Game"}
             color="primary"
           />
-        ) : tableFull ? (
+        ) : sessionFull ? (
           <Typography
             component="span"
             className="loading-text"
