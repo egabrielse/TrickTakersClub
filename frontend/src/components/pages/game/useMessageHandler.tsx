@@ -88,7 +88,7 @@ export default function useMessageHandler() {
           dispatch(handSlice.actions.dealHand(message.data));
           break;
         }
-        case EVENT_TYPES.NEW_TRICK: {
+        case EVENT_TYPES.START_TRICK: {
           setTimeout(() => {
             dispatch(handSlice.actions.startNewTrick(message.data));
           }, 1000);

@@ -93,7 +93,7 @@ func (s *Session) IsReadyToStart() bool {
 	return len(s.Presence) >= hand.PlayerCount && !s.GameInProgress()
 }
 
-func (s *Session) StartGame(gameID string) (*sheepshead.Game, error) {
+func (s *Session) StartGame() (*sheepshead.Game, error) {
 	s.Lock.RLock()
 	defer s.Lock.RUnlock()
 	if s.GameInProgress() {

@@ -42,10 +42,10 @@ func NewLeftMessage(playerID string) *Message {
 }
 
 type SettingsUpdatedMessagePayload struct {
-	Settings hand.GameSettings `json:"settings"` // Updated game settings
+	Settings *hand.GameSettings `json:"settings"` // Updated game settings
 }
 
-func NewSettingsUpdatedMessage(settings hand.GameSettings) *Message {
+func NewSettingsUpdatedMessage(settings *hand.GameSettings) *Message {
 	return NewMessage(MessageTypeSettingsUpdated, &SettingsUpdatedMessagePayload{
 		Settings: settings,
 	})
@@ -163,14 +163,13 @@ func NewBlindPickedMessage(pickerID string, forcePick bool) *Message {
 }
 
 type CardCalledMessagePayload struct {
-	PickerID   string `json:"pickerId"`   // ID of the player who picked
-	CalledCard string `json:"calledCard"` // Card that was called
+	CalledCard *deck.Card `json:"calledCard"` // Card that was called
 }
 
-func NewCardCalledMessage(pickerID string, calledCard string) *Message {
+func NewCardCalledMessage(calledCard *deck.Card) *Message {
 	return NewMessage(
 		MessageTypeCardCalled,
-		&CardCalledMessagePayload{PickerID: pickerID, CalledCard: calledCard},
+		&CardCalledMessagePayload{CalledCard: calledCard},
 	)
 }
 
@@ -186,11 +185,11 @@ func NewGoneAloneMessage(forced bool) *Message {
 }
 
 type CardPlayedMessagePayload struct {
-	PlayerID string `json:"playerId"` // ID of the player who played the card
-	Card     string `json:"card"`     // Card that was played
+	PlayerID string     `json:"playerId"` // ID of the player who played the card
+	Card     *deck.Card `json:"card"`     // Card that was played
 }
 
-func NewCardPlayedMessage(playerID string, card string) *Message {
+func NewCardPlayedMessage(playerID string, card *deck.Card) *Message {
 	return NewMessage(
 		MessageTypeCardPlayed,
 		&CardPlayedMessagePayload{PlayerID: playerID, Card: card},
@@ -232,14 +231,14 @@ func NewHandDoneMessage(summary *hand.HandSummary, scoreboard scoring.Scoreboard
 	)
 }
 
-type NewTrickMessagePayload struct {
+type StartTrickMessagePayload struct {
 	NextTrickOrder []string `json:"nextTrickOrder"` // Order of players for the next trick
 }
 
-func NewNewTrickMessage(nextTrickOrder []string) *Message {
+func NewStartTrickMessage(nextTrickOrder []string) *Message {
 	return NewMessage(
-		MessageTypeNewTrick,
-		&NewTrickMessagePayload{NextTrickOrder: nextTrickOrder},
+		MessageTypeStartTrick,
+		&StartTrickMessagePayload{NextTrickOrder: nextTrickOrder},
 	)
 }
 

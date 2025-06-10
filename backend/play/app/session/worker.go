@@ -48,6 +48,53 @@ func (sw *SessionWorker) broadcastMessage(message *msg.Message) int64 {
 	return sw.sendMessage(msg.BroadcastRecipient, message)
 }
 
+func (sw *SessionWorker) messageRouter(message *msg.Message) {
+	switch message.MessageType {
+	case msg.MessageTypeEnter:
+		EnterHandler(sw, message)
+	case msg.MessageTypeLeave:
+		LeaveHandler(sw, message)
+	case msg.MessageTypePong:
+		PongHandler(sw, message)
+		// Pong messages do not need to refresh the session's last updated timestamp
+		return
+	case msg.MessageTypeUpdateCallingMethod:
+		UpdateCallingMethodHandler(sw, message)
+	case msg.MessageTypeUpdateNoPickResolution:
+		UpdateNoPickResolutionHandler(sw, message)
+	case msg.MessageTypeUpdateDoubleOnTheBump:
+		UpdateDoubleOnTheBumpHandler(sw, message)
+	case msg.MessageTypeStartGame:
+		StartGameHandler(sw, message)
+	case msg.MessageTypeEndGame:
+		EndGameHandler(sw, message)
+	case msg.MessageTypeCallLastHand:
+		CallLastHandHandler(sw, message)
+	case msg.MessageTypePick:
+		PickHandler(sw, message)
+	case msg.MessageTypePass:
+		PassHandler(sw, message)
+	case msg.MessageTypeBury:
+		BuryHandler(sw, message)
+	case msg.MessageTypeCall:
+		CallHandler(sw, message)
+	case msg.MessageTypeGoAlone:
+		GoAloneHandler(sw, message)
+	case msg.MessageTypePlayCard:
+		PlayCardHandler(sw, message)
+	case msg.MessageTypeChat:
+		// Do nothing - all subscribed clients will receive the chat message
+		// But do not return - chat messages count as activity
+	default:
+		logrus.Warnf("Session (%s): Unknown message type: %s", sw.session.ID, message.MessageType)
+		// Unknown messages should not update the session's last updated timestamp
+		return
+	}
+	// Refresh last updated timestamp for the session
+	// Note: Messages that should not refresh this timestamp should "return" before this point
+	sw.session.LastUpdated = time.Now()
+}
+
 func (sw *SessionWorker) StartWorker() {
 	go func() {
 		logrus.Infof("Session (%s): starting up...", sw.session.ID)
@@ -97,23 +144,8 @@ func (sw *SessionWorker) StartWorker() {
 				} else if !message.IsRecipient(msg.SessionWorkerID) {
 					continue // Ignore messages not meant for the session worker
 				} else {
-					switch message.MessageType {
-					case msg.MessageTypeEnter:
-						EnterHandler(sw, message)
-					case msg.MessageTypeLeave:
-						LeaveHandler(sw, message)
-					case msg.MessageTypeChat:
-						// Do nothing - all subscribed clients will receive the chat message
-					case msg.MessageTypePong:
-						PongHandler(sw, message)
-						continue
-					default:
-						logrus.Warnf("Session (%s): Unknown message type: %s", sw.session.ID, message.MessageType)
-						continue
-					}
-					// Refresh last updated timestamp for the session
-					// Note: Messages that should not refresh this timestamp should "continue" before this point
-					sw.session.LastUpdated = time.Now()
+					// Handle the message based on its type
+					sw.messageRouter(message)
 				}
 
 			case <-ticker.C:

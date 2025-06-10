@@ -4,16 +4,16 @@ import (
 	"sheepshead/deck"
 )
 
-type UpdateCallingMethodParams struct {
+type UpdateCallingMethodPayload struct {
 	CallingMethod string `json:"callingMethod"`
 }
 
-type UpdateDoubleOnTheBumpParams struct {
-	DoubleOnTheBump bool `json:"doubleOnTheBump"`
+type UpdateNoPickResolutionPayload struct {
+	NoPickResolution string `json:"noPickResolution"`
 }
 
-type UpdateNoPickResolutionParams struct {
-	NoPickResolution string `json:"noPickResolution"`
+type UpdateDoubleOnTheBumpPayload struct {
+	DoubleOnTheBump bool `json:"doubleOnTheBump"`
 }
 
 type BuryMessagePayload struct {

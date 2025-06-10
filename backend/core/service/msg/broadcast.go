@@ -59,7 +59,7 @@ var BroadcastType = struct {
 	TrickWon:        "trick-won",
 	HandDone:        "hand-done",
 	Timeout:         "timeout",
-	NewTrick:        "new-trick",
+	NewTrick:        "start-trick",
 	UpNext:          "up-next",
 	NoPickHand:      "no-pick-hand",
 }

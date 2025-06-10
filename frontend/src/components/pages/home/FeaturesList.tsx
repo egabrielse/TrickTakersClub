@@ -11,7 +11,10 @@ export default function FeaturesList() {
         </div>
       </div>
       <ul>
-        <b>NUMBER OF PLAYERS</b>
+        <b>PLAYERS</b>
+        <li>
+          AI Opponents to <br /> Practice Against
+        </li>
         <li className="checked">5 Handed</li>
         <li>4 Handed</li>
         <li>3 Handed</li>

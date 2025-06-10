@@ -20,8 +20,8 @@ const (
 	MessageTypePong
 )
 
-// ### ACTION MESSAGES ###
-// ### Actions that players can take in the lobby or during the game.
+// ### COMMAND MESSAGES ###
+// ### Commands are actions players can take in the lobby or during the game.
 // ### These are always generated client-side and sent to the server.
 const (
 	// Updates the game setting - calling method
@@ -84,7 +84,7 @@ const (
 	// Contains the results of the finished hand.
 	MessageTypeHandDone
 	// A new trick has started.
-	MessageTypeNewTrick
+	MessageTypeStartTrick
 	// Info about who's turn it is and what type of turn it is.
 	MessageTypeUpNext
 	// Informs users that the hand is moved into the no-pick scenario.
@@ -120,7 +120,7 @@ func (mt MessageType) String() string {
 	case MessageTypeLeave:
 		return "leave"
 
-	// ### ACTION MESSAGES ###
+	// ### COMMAND MESSAGES ###
 	case MessageTypeUpdateCallingMethod:
 		return "update-calling-method"
 	case MessageTypeUpdateDoubleOnTheBump:
@@ -177,8 +177,8 @@ func (mt MessageType) String() string {
 		return "trick-won"
 	case MessageTypeHandDone:
 		return "hand-done"
-	case MessageTypeNewTrick:
-		return "new-trick"
+	case MessageTypeStartTrick:
+		return "start-trick"
 	case MessageTypeUpNext:
 		return "up-next"
 	case MessageTypeNoPickHand:
@@ -279,8 +279,8 @@ func (mt *MessageType) UnmarshalJSON(data []byte) error {
 		*mt = MessageTypeTrickWon
 	case "hand-done":
 		*mt = MessageTypeHandDone
-	case "new-trick":
-		*mt = MessageTypeNewTrick
+	case "start-trick":
+		*mt = MessageTypeStartTrick
 	case "up-next":
 		*mt = MessageTypeUpNext
 	case "no-pick-hand":

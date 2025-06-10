@@ -34,7 +34,7 @@ export const EVENT_TYPES = {
     PARTNER_REVEALED: "partner-revealed",
     TRICK_WON: "trick-won",
     HAND_DONE: "hand-done",
-    NEW_TRICK: "new-trick",
+    START_TRICK: "start-trick",
     UP_NEXT: "up-next",
     NO_PICK_HAND: "no-pick-hand",
     DEAL_HAND: "deal-hand",

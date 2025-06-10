@@ -109,7 +109,7 @@ export interface HandDoneEvent extends BaseMessage {
 }
 
 export interface NewTrickEvent extends BaseMessage {
-    messageType: typeof EVENT_TYPES.NEW_TRICK;
+    messageType: typeof EVENT_TYPES.START_TRICK;
     data: {
         nextTrickOrder: string[];
     };
