@@ -19,8 +19,6 @@ export default function OpponentTrickPile({
     const element = document.getElementById(`trick-pile-${playerId}`);
     const namePlate = document.getElementById(`name-plate-${playerId}`);
     if (element && namePlate) {
-      const { left, top } = namePlate.getBoundingClientRect();
-      console.log(left, top);
       switch (position) {
         case "left":
           element.style.left = "0px";
