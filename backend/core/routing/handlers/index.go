@@ -9,7 +9,6 @@ import (
 
 type HealthCheckResponseBody struct {
 	FirebaseAuth bool `json:"firebaseAuth"`
-	Ably         bool `json:"ably"`
 	Firestore    bool `json:"firestore"`
 }
 
@@ -17,7 +16,6 @@ type HealthCheckResponseBody struct {
 func HealthCheck(w http.ResponseWriter, r *http.Request, p httprouter.Params) (code int, body any) {
 	statuses := HealthCheckResponseBody{
 		FirebaseAuth: false,
-		Ably:         false,
 		Firestore:    false,
 	}
 
@@ -26,10 +24,6 @@ func HealthCheck(w http.ResponseWriter, r *http.Request, p httprouter.Params) (c
 	}
 
 	if store := clients.GetFirebaseStoreClient(); store != nil {
-		statuses.Ably = true
-	}
-
-	if ably := clients.GetAblyRestClient(); ably != nil {
 		statuses.Firestore = true
 	}
 

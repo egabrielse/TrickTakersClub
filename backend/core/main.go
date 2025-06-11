@@ -23,10 +23,6 @@ func main() {
 	projectID := env.GetEnvVar("FIREBASE_PROJECT_ID")
 	clients.InitFirebaseClients(projectID)
 
-	// Initialize Ably client
-	key := env.GetEnvVar("ABLY_API_KEY")
-	clients.InitAblyRestClient(key)
-
 	// Instantiate the Firestore-based repository implementations
 	store := clients.GetFirebaseStoreClient()
 	repository.InitTableRepo(implementation.NewTableRepoImplementation(store))

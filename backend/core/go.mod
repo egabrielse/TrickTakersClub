@@ -11,8 +11,6 @@ replace sheepshead => ../sheepshead
 require (
 	common v0.0.0-00010101000000-000000000000
 	firebase.google.com/go/v4 v4.15.2
-	github.com/ably/ably-go v1.2.22
-	github.com/google/uuid v1.6.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/rs/cors v1.10.1
 	github.com/sirupsen/logrus v1.9.3
@@ -48,6 +46,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/s2a-go v0.1.8 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.4 // indirect
 	github.com/googleapis/gax-go/v2 v2.14.1 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
@@ -57,7 +56,6 @@ require (
 	github.com/sio/coolname v0.1.0 // indirect
 	github.com/spiffe/go-spiffe/v2 v2.5.0 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
-	github.com/ugorji/go/codec v1.2.12 // indirect
 	github.com/zeebo/errs v1.4.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
 	go.opentelemetry.io/contrib/detectors/gcp v1.34.0 // indirect
@@ -83,5 +81,4 @@ require (
 	google.golang.org/grpc v1.72.1 // indirect
 	google.golang.org/protobuf v1.36.5 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	nhooyr.io/websocket v1.8.17 // indirect
 )

@@ -16,13 +16,6 @@ func InitRouter() *http.Handler {
 	router := httprouter.New()
 
 	// 2. Define routes and their handlers
-	// -> Ably routes
-	router.GET("/api/core/v1/ably/token", request.HandleWith(
-		handlers.AblyAuth,
-		decorators.RequestLogging,
-		decorators.TokenAuthentication,
-	))
-
 	// -> Index routes
 	router.GET("/api/core/v1", request.HandleWith(
 		handlers.HealthCheck,
@@ -39,23 +32,6 @@ func InitRouter() *http.Handler {
 	// -> Session routes
 	router.GET("/api/core/v1/session", request.HandleWith(
 		handlers.FetchSessionList,
-		decorators.RequestLogging,
-		decorators.TokenAuthentication,
-	))
-
-	// -> Table routes
-	router.POST("/api/core/v1/table", request.HandleWith(
-		handlers.CreateTable,
-		decorators.RequestLogging,
-		decorators.TokenAuthentication,
-	))
-	router.GET("/api/core/v1/table/:id", request.HandleWith(
-		handlers.GetTable,
-		decorators.RequestLogging,
-		decorators.TokenAuthentication,
-	))
-	router.DELETE("/api/core/v1/table/:id", request.HandleWith(
-		handlers.DeleteTable,
 		decorators.RequestLogging,
 		decorators.TokenAuthentication,
 	))
