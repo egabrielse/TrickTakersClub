@@ -24,8 +24,4 @@ export const VALIDATION_ERRORS = {
     REQUIRED: "Confirm your password is correct",
     MATCH: "Passwords must match",
   },
-  TABLE_CODE: {
-    REQUIRED: "Table code is required",
-    INVALID: "Table code must be lowercase letters and dashes",
-  },
 };

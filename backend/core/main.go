@@ -24,9 +24,8 @@ func main() {
 	clients.InitFirebaseClients(projectID)
 
 	// Instantiate the Firestore-based repository implementations
-	store := clients.GetFirebaseStoreClient()
-	repository.InitTableRepo(implementation.NewTableRepoImplementation(store))
-	repository.InitSettingsRepo(implementation.NewSettingsRepoImplementation(store))
+	firestore := clients.GetFirebaseStoreClient()
+	repository.InitSettingsRepo(implementation.NewSettingsRepoImplementation(firestore))
 
 	// Initialize Redis client
 	redisHost := env.GetEnvVar("REDIS_HOST")
