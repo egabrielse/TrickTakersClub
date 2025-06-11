@@ -9,7 +9,6 @@ import (
 
 type Game struct {
 	ID          string             `json:"id"`          // Id of the game
-	HostID      string             `json:"hostId"`      // Id of the host player
 	DealerIndex int                `json:"dealerIndex"` // Index of the dealer
 	Hands       []*hand.Hand       `json:"hands"`       // Hands played
 	PlayerOrder []string           `json:"playerOrder"` // Order of players at the table
@@ -18,10 +17,9 @@ type Game struct {
 }
 
 // Creates a new Game and initializes the first hand
-func NewGame(ID string, HostID string, playerOrder []string, settings *hand.GameSettings) *Game {
+func NewGame(ID string, playerOrder []string, settings *hand.GameSettings) *Game {
 	return &Game{
 		ID:          ID,
-		HostID:      HostID,
 		DealerIndex: 0,
 		Hands:       []*hand.Hand{hand.NewHand(playerOrder, settings)},
 		PlayerOrder: playerOrder,

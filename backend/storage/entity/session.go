@@ -115,7 +115,7 @@ func (s *Session) StartGame() (*sheepshead.Game, error) {
 	for playerID := range s.Presence {
 		players = append(players, playerID)
 	}
-	s.Game = sheepshead.NewGame(s.ID, s.HostID, players, s.GameSettings)
+	s.Game = sheepshead.NewGame(s.ID, players, s.GameSettings)
 	s.InProgress = true
 	return s.Game, nil
 }
