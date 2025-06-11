@@ -93,7 +93,7 @@ func (c *ClientWorker) StartWorker() {
 	sessionRepo := repository.GetSessionRepo()
 	if exists, err := sessionRepo.Exists(c.ctx, c.sessionID); err != nil || !exists {
 		// Session does not exist or an error occurred.
-		c.sendCloseMessage("Session not found")
+		c.sendCloseMessage(msg.CloseReasonSessionNotFound)
 	} else {
 		// Start the message pumps.
 		go c.readPump()
@@ -169,7 +169,7 @@ func (c *ClientWorker) writePump() {
 			// If after 10 seconds the client is not connected to the session, close the connection.
 			if !c.connected {
 				logrus.Infof("Client (%s): connection timed out, closing connection", c.clientID)
-				c.sendCloseMessage("Connection timed out, please try again.")
+				c.sendCloseMessage(msg.CloseReasonConnectionTimeout)
 				return
 			}
 
@@ -197,7 +197,7 @@ func (c *ClientWorker) writePump() {
 					c.forwardToClient(message)
 				case msg.MessageTypeSessionFull:
 					// Session is full, end the connection with a close message.
-					c.sendCloseMessage("Session is full and is closed to new players.")
+					c.sendCloseMessage(msg.CloseReasonSessionFull)
 					return
 				}
 
@@ -212,7 +212,7 @@ func (c *ClientWorker) writePump() {
 					// Do nothing
 				case msg.MessageTypeTimeout:
 					// End connection to client if the session has timed out.
-					c.sendCloseMessage("Session timed out due to inactivity.")
+					c.sendCloseMessage(msg.CloseReasonSessionTimeout)
 					return
 				default:
 					// By default most messages are forwarded to the client.

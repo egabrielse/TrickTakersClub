@@ -6,13 +6,20 @@ import {
   BROADCAST_RECEIVER,
   SESSION_WORKER_ID,
 } from "../../../constants/message";
-import { CONNECTION_STATUS } from "../../../constants/socket";
+import { CLOSE_REASON, CONNECTION_STATUS } from "../../../constants/socket";
 import auth from "../../../firebase/auth";
 import { useAppDispatch } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
 import gameSlice from "../../../store/slices/game.slice";
 import handSlice from "../../../store/slices/hand.slice";
 import sessionSlice from "../../../store/slices/session.slice";
+import {
+  ConnectionTimeoutError,
+  ErrorPageError,
+  SessionFullError,
+  SessionNotFoundError,
+  SessionTimeoutError,
+} from "../../../types/error";
 import { UnknownMessage } from "../../../types/message/base";
 import { CommandMessage } from "../../../types/message/command";
 import { EventMessage } from "../../../types/message/event";
@@ -103,7 +110,28 @@ export default function SessionProvider({
     wsRef.current.onclose = (event) => {
       if (event.code === 1000) {
         // Normal closure
-        setError(new Error(event.reason));
+        switch (event.reason) {
+          case CLOSE_REASON.CONNECTION_TIMEOUT:
+            setError(new ConnectionTimeoutError());
+            break;
+          case CLOSE_REASON.SESSION_TIMEOUT:
+            setError(new SessionTimeoutError());
+            break;
+          case CLOSE_REASON.SESSION_NOT_FOUND:
+            setError(new SessionNotFoundError());
+            break;
+          case CLOSE_REASON.SESSION_FULL:
+            setError(new SessionFullError());
+            break;
+          default:
+            setError(
+              new ErrorPageError(
+                "Connection Error",
+                "Error occurred while connecting to the session.",
+              ),
+            );
+            break;
+        }
         setStatus(CONNECTION_STATUS.DISCONNECTED);
       } else {
         // Abnormal closure, attempt to reconnect
