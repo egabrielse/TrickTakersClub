@@ -104,13 +104,17 @@ export default function SessionProvider({
     wsRef.current = new WebSocket(getWebSocketUrl(sessionId, token));
 
     wsRef.current.onopen = () => {
+      console.log("WebSocket connection established");
       setStatus(CONNECTION_STATUS.CONNECTED);
     };
 
     wsRef.current.onclose = (event) => {
       if (event.code === 1000) {
+        console.log("WebSocket closed normally:", event);
         // Normal closure
         switch (event.reason) {
+          case CLOSE_REASON.HANDSHAKE:
+            break; // Do nothing
           case CLOSE_REASON.CONNECTION_TIMEOUT:
             setError(new ConnectionTimeoutError());
             break;
@@ -134,6 +138,8 @@ export default function SessionProvider({
         }
         setStatus(CONNECTION_STATUS.DISCONNECTED);
       } else {
+        console.log("WebSocket closed unexpectedly:", event);
+        console.log("Attempting to reconnect in 5 seconds...");
         // Abnormal closure, attempt to reconnect
         setStatus(CONNECTION_STATUS.RECONNECTING);
         setTimeout(() => {
@@ -160,7 +166,11 @@ export default function SessionProvider({
     establishWebsocketConnection();
     return () => {
       if (wsRef.current) {
-        wsRef.current.close();
+        wsRef.current.close(1000);
+        wsRef.current.onclose = null; // Clear the onclose handler
+        wsRef.current.onerror = null; // Clear the onerror handler
+        wsRef.current.onmessage = null; // Clear the onmessage handler
+        wsRef.current = null; // Clear the WebSocket reference
       }
     };
   }, [establishWebsocketConnection]);

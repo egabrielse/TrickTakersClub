@@ -124,6 +124,7 @@ func (c *ClientWorker) socketPump() {
 		if _, rawMsg, err := c.conn.ReadMessage(); err != nil {
 			if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
 				logrus.Infof("Client (%s): connection closed normally", c.clientID)
+				c.sendCloseMessage(msg.CloseReasonConnectionTimeout)
 			} else {
 				logrus.Errorf("Client (%s): unexpected close error: %v", c.clientID, err)
 			}
@@ -169,7 +170,7 @@ func (c *ClientWorker) redisPump() {
 			// If after 10 seconds the client is not connected to the session, close the connection.
 			if !c.connected {
 				logrus.Infof("Client (%s): connection timed out, closing connection", c.clientID)
-				c.sendCloseMessage(msg.CloseReasonConnectionTimeout)
+				c.sendCloseMessage(msg.CloseReasonHandshake)
 				return
 			}
 

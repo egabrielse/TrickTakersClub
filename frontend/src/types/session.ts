@@ -4,6 +4,8 @@ export type Session = {
     id: string; // unique ID of the session
     hostId: string; // ID of the host player
     presence: Record<string, number>; // IDs of players mapped to the last ping (timestamp in ms)
-    created: number; // timestamp in milliseconds
+    created: string; // timestamp in milliseconds
+    lastUpdated: string; // timestamp in milliseconds of the last update
     gameSettings: GameSettings; // game settings used to create a new game
+    inProgress: boolean; // whether the game is in progress
 };

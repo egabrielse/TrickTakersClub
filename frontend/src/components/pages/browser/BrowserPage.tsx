@@ -11,6 +11,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { createSession, fetchSessionList } from "../../../api/session.api";
+import { PLAYER_COUNT } from "../../../constants/game";
 import { PATHS } from "../../../constants/url";
 import { Session } from "../../../types/session";
 import SessionsTable from "./SessionsTable";
@@ -32,7 +33,14 @@ export default function BrowserPage() {
   const loadSessions = useCallback(async () => {
     try {
       const response = await fetchSessionList();
-      setSessions(response);
+      // Filter out in-progress sessions and sessions with 5 players
+      const openSession = response.filter((session) => {
+        return (
+          !session.inProgress &&
+          Object.keys(session.presence).length < PLAYER_COUNT
+        );
+      });
+      setSessions(openSession);
     } catch (error) {
       setError("Failed to fetch sessions. Please try again later.");
       stopPolling();
