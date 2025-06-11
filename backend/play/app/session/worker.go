@@ -96,92 +96,103 @@ func (sw *SessionWorker) messageRouter(message *msg.Message) {
 }
 
 func (sw *SessionWorker) StartWorker() {
-	go func() {
-		logrus.Infof("Session (%s): starting up...", sw.session.ID)
-		// Get necessary repositories
-		sessionRepo := repository.GetSessionRepo()
-		gameRepo := repository.GetGameRepo()
+	logrus.Infof("Session (%s): starting up...", sw.session.ID)
+	go sw.heartbeat()
+	go sw.redisPump()
+}
 
-		// Get environment variables
-		workerTimeout := env.GetEnvVarAsDuration("SESSION_WORKER_TIMEOUT", defaultTimeout)
-		gameExpiration := env.GetEnvVarAsDuration("GAME_EXPIRATION_DURATION", defaultGameExpiration)
-		sessionExpiration := env.GetEnvVarAsDuration("SESSION_EXPIRATION_DURATION", defaultSessionExpiration)
-		presenceExpiration := env.GetEnvVarAsDuration("PRESENCE_EXPIRATION_DURATION", defaultPresenceExpiration)
+// heartbeat checks the session status and keeps it alive in Redis.
+func (sw *SessionWorker) heartbeat() {
+	// Get necessary repositories
+	sessionRepo := repository.GetSessionRepo()
+	gameRepo := repository.GetGameRepo()
 
-		// Create record in redis so the session is discoverable
-		sessionRepo.Set(sw.ctx, sw.session, sessionExpiration)
+	// Get environment variables
+	workerTimeout := env.GetEnvVarAsDuration("SESSION_WORKER_TIMEOUT", defaultTimeout)
+	gameExpiration := env.GetEnvVarAsDuration("GAME_EXPIRATION_DURATION", defaultGameExpiration)
+	sessionExpiration := env.GetEnvVarAsDuration("SESSION_EXPIRATION_DURATION", defaultSessionExpiration)
+	presenceExpiration := env.GetEnvVarAsDuration("PRESENCE_EXPIRATION_DURATION", defaultPresenceExpiration)
 
-		// Subscribe to the Redis channel for this session
-		channel := sw.rdb.Subscribe(sw.ctx, sw.session.ID)
+	// Create record in redis so the session is discoverable
+	sessionRepo.Set(sw.ctx, sw.session, sessionExpiration)
 
-		// Set up a ticker to periodically check the session status
-		ticker := time.NewTicker(tickerDuration)
+	// Set up a ticker to periodically check the session status
+	ticker := time.NewTicker(tickerDuration)
 
-		defer func() {
-			logrus.Infof("Session (%s): stopping", sw.session.ID)
-			// Stop the ticker
-			ticker.Stop()
-			// Unsubscribe from the Redis channel
-			channel.Unsubscribe(sw.ctx, sw.session.ID)
-			// If there is an active game, save it to redis
-			if sw.session.GameInProgress() {
-				gameRepo.Set(sw.ctx, sw.session.Game, gameExpiration)
+	defer func() {
+		logrus.Infof("Session (%s): stopping heartbeat", sw.session.ID)
+		// Stop the ticker
+		ticker.Stop()
+		// If there is an active game, save it to redis
+		if sw.session.GameInProgress() {
+			gameRepo.Set(sw.ctx, sw.session.Game, gameExpiration)
+		}
+		// Delete the session from the repository
+		sessionRepo.Delete(sw.ctx, sw.session.ID)
+	}()
+
+	for {
+		select {
+		case <-sw.ctx.Done():
+			return
+		case <-ticker.C:
+			if time.Since(sw.session.LastUpdated) >= workerTimeout {
+				// Stop the service if no activity is detected for a certain duration
+				logrus.Infof("Session (%s): timed out", sw.session.ID)
+				sw.broadcastMessage(msg.NewTimeoutMessage())
+				return
+			} else {
+				logrus.Infof("Session (%s): still alive", sw.session.ID)
 			}
-			// Delete the session from the repository
-			sessionRepo.Delete(sw.ctx, sw.session.ID)
-		}()
-
-		for {
-			select {
-			case redisMessage := <-channel.Channel():
-				var message *msg.Message
-				if err := json.Unmarshal([]byte(redisMessage.Payload), &message); err != nil {
-					logrus.Errorf("Session (%s): %v", sw.session.ID, err)
-					// Ignore messages that cannot be unmarshalled, assume error is not on the worker side
-					continue
-				} else if message.SenderID == msg.SessionWorkerID {
-					continue // Ignore messages sent by the worker itself
-				} else if !message.IsRecipient(msg.SessionWorkerID) {
-					continue // Ignore messages not meant for the session worker
-				} else {
-					// Handle the message based on its type
-					sw.messageRouter(message)
+			// Ping connected client workers to keep presence up to date
+			sw.broadcastMessage(msg.NewPingMessage())
+			// Cleanup stale presence
+			removed := sw.session.CleanupStalePresence(presenceExpiration)
+			if len(removed) > 0 {
+				// Notify clients of any removed players
+				for _, playerID := range removed {
+					logrus.Infof("Session (%s): player %s has been removed due to inactivity", sw.session.ID, playerID)
+					sw.broadcastMessage(msg.NewLeftMessage(playerID))
 				}
-
-			case <-ticker.C:
-				if time.Since(sw.session.LastUpdated) >= workerTimeout {
-					// Stop the service if no activity is detected for a certain duration
-					logrus.Infof("Session (%s): timed out", sw.session.ID)
-					sw.broadcastMessage(msg.NewTimeoutMessage())
-					return
-				} else {
-					logrus.Infof("Session (%s): still alive", sw.session.ID)
-				}
-				// Ping connected client workers to keep presence up to date
-				sw.broadcastMessage(msg.NewPingMessage())
-				// Cleanup stale presence
-				removed := sw.session.CleanupStalePresence(presenceExpiration)
-				if len(removed) > 0 {
-					// Notify clients of any removed players
-					for _, playerID := range removed {
-						logrus.Infof("Session (%s): player %s has been removed due to inactivity", sw.session.ID, playerID)
-						sw.broadcastMessage(msg.NewLeftMessage(playerID))
-					}
-				}
-
-				// Update the session in the redis if no game is started
-				if !sw.session.GameInProgress() {
-					err := sessionRepo.Set(sw.ctx, sw.session, time.Second*15)
-					if err != nil {
-						// If we fail to update the session, we should stop the worker as it is undiscoverable
-						logrus.Errorf("Session (%s): %v", sw.session.ID, err)
-						return
-					}
-				}
-			case <-sw.ctx.Done():
-				logrus.Infof("Session (%s): context done", sw.session.ID)
+			}
+			// Update the session in Redis so it can be discovered by other players and workers
+			if err := sessionRepo.Set(sw.ctx, sw.session, 3*tickerDuration); err != nil {
+				logrus.Errorf("Session (%s): %v", sw.session.ID, err)
 				return
 			}
 		}
+	}
+}
+
+// redisPump listens for messages on the Redis channel for this session and routes them to the appropriate handler.
+func (sw *SessionWorker) redisPump() {
+	// Subscribe to the Redis channel for this session
+	channel := sw.rdb.Subscribe(sw.ctx, sw.session.ID)
+
+	defer func() {
+		logrus.Infof("Session (%s): stopping", sw.session.ID)
+		// Unsubscribe from the Redis channel
+		channel.Unsubscribe(sw.ctx, sw.session.ID)
 	}()
+
+	for {
+		select {
+		case <-sw.ctx.Done():
+			return
+		case redisMessage := <-channel.Channel():
+			var message *msg.Message
+			if err := json.Unmarshal([]byte(redisMessage.Payload), &message); err != nil {
+				logrus.Errorf("Session (%s): %v", sw.session.ID, err)
+				// Ignore messages that cannot be unmarshalled, assume error is not on the worker side
+				continue
+			} else if message.SenderID == msg.SessionWorkerID {
+				continue // Ignore messages sent by the worker itself
+			} else if !message.IsRecipient(msg.SessionWorkerID) {
+				continue // Ignore messages not meant for the session worker
+			} else {
+				// Handle the message based on its type
+				sw.messageRouter(message)
+			}
+		}
+	}
 }

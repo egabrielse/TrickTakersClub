@@ -96,8 +96,8 @@ func (c *ClientWorker) StartWorker() {
 		c.sendCloseMessage(msg.CloseReasonSessionNotFound)
 	} else {
 		// Start the message pumps.
-		go c.readPump()
-		go c.writePump()
+		go c.socketPump()
+		go c.redisPump()
 	}
 }
 
@@ -111,12 +111,12 @@ func (c *ClientWorker) pongHandler(string) error {
 	return nil
 }
 
-// readPump reads messages from the websocket connection and handles them.
-func (c *ClientWorker) readPump() {
+// socketPump reads messages from the websocket connection and handles them.
+func (c *ClientWorker) socketPump() {
 	defer func() {
-		// Read Pump is closing. Perform cleanup.
-		logrus.Infof("Client (%s): closing readPump", c.clientID)
-		// Cancel the context (thereby stopping writePump).
+		// Socket Pump is closing. Perform cleanup.
+		logrus.Infof("Client (%s): closing socketPump", c.clientID)
+		// Cancel the context (thereby stopping redisPump).
 		c.cancel()
 	}()
 	for {
@@ -140,14 +140,14 @@ func (c *ClientWorker) readPump() {
 	}
 }
 
-// writePump writes messages to the websocket connection from the Redis channel and handles pings.
-func (c *ClientWorker) writePump() {
+// redisPump listens for messages on the Redis channel associated with the session.
+func (c *ClientWorker) redisPump() {
 	channel := c.rdb.Subscribe(c.ctx, c.sessionID)
 	ticker := time.NewTicker(pingPeriod)
 	connectionTimer := time.NewTimer(10 * time.Second)
 	defer func() {
-		// Write Pump is closing. Perform cleanup.
-		logrus.Infof("Client (%s): closing writePump", c.clientID)
+		// Redis Pump is closing. Perform cleanup.
+		logrus.Infof("Client (%s): closing redisPump", c.clientID)
 		// Stop the ticker.
 		ticker.Stop()
 		// Send a leave message to the channel.
