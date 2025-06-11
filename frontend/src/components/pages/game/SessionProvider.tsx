@@ -1,12 +1,14 @@
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import {
   BROADCAST_RECEIVER,
   SESSION_WORKER_ID,
 } from "../../../constants/message";
 import { CLOSE_REASON, CONNECTION_STATUS } from "../../../constants/socket";
+import { PATHS } from "../../../constants/url";
 import auth from "../../../firebase/auth";
 import { useAppDispatch } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
@@ -42,6 +44,7 @@ export default function SessionProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { sessionId } = useParams<{ sessionId: string }>();
   const wsRef = useRef<WebSocket | null>(null);
@@ -185,7 +188,18 @@ export default function SessionProvider({
   }, [dispatch]);
 
   if (error) {
-    return <ErrorPage error={error} actions={[REFRESH_ACTION]} />;
+    return (
+      <ErrorPage
+        error={error}
+        actions={[
+          {
+            label: "Browse Other Sessions",
+            onClick: () => navigate(PATHS.BROWSER),
+            icon: <ArrowBackIcon />,
+          },
+        ]}
+      />
+    );
   } else if (status === CONNECTION_STATUS.DISCONNECTED) {
     return (
       <ErrorPage
