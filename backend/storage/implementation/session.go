@@ -27,9 +27,9 @@ func (imp *SessionRepoRedisImplementation) Exists(ctx context.Context, sessionID
 	}
 }
 
-func (imp *SessionRepoRedisImplementation) Set(ctx context.Context, entity *entity.Session, expiration time.Duration) error {
-	key := SessionRepoRedisKeyPrefix + entity.ID
-	if err := imp.db.Set(ctx, key, entity, expiration).Err(); err != nil {
+func (imp *SessionRepoRedisImplementation) Set(ctx context.Context, ent *entity.Session, expiration time.Duration) error {
+	key := SessionRepoRedisKeyPrefix + ent.ID
+	if err := imp.db.Set(ctx, key, ent, expiration).Err(); err != nil {
 		return err
 	}
 	return nil
@@ -40,11 +40,11 @@ func (imp *SessionRepoRedisImplementation) Get(ctx context.Context, sessionID st
 	if data, err := imp.db.Get(ctx, key).Bytes(); err != nil {
 		return nil, err
 	} else {
-		entity := &entity.Session{}
-		if err := entity.UnmarshalBinary(data); err != nil {
+		ent := &entity.Session{}
+		if err := ent.UnmarshalBinary(data); err != nil {
 			return nil, err
 		}
-		return entity, nil
+		return ent, nil
 	}
 }
 
@@ -58,11 +58,11 @@ func (imp *SessionRepoRedisImplementation) GetAll(ctx context.Context) ([]*entit
 			if data, err := imp.db.Get(ctx, key).Bytes(); err != nil {
 				return nil, err
 			} else {
-				entity := &entity.Session{}
-				if err := entity.UnmarshalBinary(data); err != nil {
+				ent := &entity.Session{}
+				if err := ent.UnmarshalBinary(data); err != nil {
 					return nil, err
 				}
-				sessions = append(sessions, entity)
+				sessions = append(sessions, ent)
 			}
 		}
 		return sessions, nil

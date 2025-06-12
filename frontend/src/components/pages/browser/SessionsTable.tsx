@@ -25,6 +25,7 @@ type SessionTableProps = {
 };
 
 export default function SessionsTable({ sessions }: SessionTableProps) {
+  console.log("SessionsTable", sessions);
   const navigate = useNavigate();
 
   const navigateToSession = (sessionId: string) => {
@@ -105,6 +106,14 @@ export default function SessionsTable({ sessions }: SessionTableProps) {
                           ].LABEL
                         }
                         sx={{ backgroundColor: "#fcc200", color: "#fff" }}
+                        size="small"
+                      />
+                    )}
+                    {session.gameSettings.doubleOnTheBump && (
+                      <Chip
+                        key="double-on-the-bump"
+                        label={"Double on the Bump"}
+                        sx={{ backgroundColor: "red", color: "#fff" }}
                         size="small"
                       />
                     )}

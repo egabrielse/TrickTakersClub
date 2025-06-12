@@ -33,15 +33,14 @@ func ReviveGame(w http.ResponseWriter, r *http.Request, p httprouter.Params) (co
 	uid := p.ByName("uid")
 	gameID := p.ByName("gameId")
 	gameRepo := repository.GetGameRepo()
-
 	if game, err := gameRepo.Get(r.Context(), gameID); err == redis.Nil {
 		return http.StatusNotFound, nil
 	} else if err != nil {
-		return http.StatusInternalServerError, nil
+		return http.StatusInternalServerError, err
 	} else {
 		// Create a new session worker for the game.
 		entity := entity.NewSession(uid)
-		entity.ResumeGame(game)
+		entity.ResumeGame(&game.Game)
 		worker := session.NewSessionWorker(entity)
 		// Start the session worker.
 		worker.StartWorker()

@@ -1,5 +1,5 @@
 import { expect, suite, test } from "vitest"
-import { callableAces, cardsInHandCounts, isHost, isPartner, isPicker, isPresent, isUpNext, playerOrderStartingWithUser, tallyCompletedTricks } from "./selectors";
+import { callableAces, cardsInHandCounts, isHost, isPartner, isPicker, isPresent, isUpNext, seatingStartingWithUser, tallyCompletedTricks } from "./selectors";
 import { CARD_RANK, CARD_SUIT } from "../constants/card";
 import { Trick } from "../types/game";
 import { HAND_PHASE } from "../constants/game";
@@ -98,25 +98,25 @@ suite('callableAces', () => {
     });
 });
 
-suite('playerOrderStartingWithUser', () => {
+suite('seatingStartingWithUser', () => {
     test('returns correct order', () => {
-        const playerOrder = ['1', '2', '3', '4', '5'];
+        const seating = ['1', '2', '3', '4', '5'];
         const uid = '3';
-        const result = playerOrderStartingWithUser(playerOrder, uid);
+        const result = seatingStartingWithUser(seating, uid);
         expect(result).toEqual(['3', '4', '5', '1', '2']);
     });
 
     test('uid not in player order', () => {
-        const playerOrder = ['1', '2', '3', '4', '5'];
+        const seating = ['1', '2', '3', '4', '5'];
         const uid = '6';
-        const result = playerOrderStartingWithUser(playerOrder, uid);
+        const result = seatingStartingWithUser(seating, uid);
         expect(result).toEqual(['1', '2', '3', '4', '5']);
     });
 });
 
 suite('tallyCompletedTricks', () => {
     test('returns correct tally', () => {
-        const playerOrder = ['1', '2', '3'];
+        const seating = ['1', '2', '3'];
         const completedTricks: Trick[] = [
             {
                 turnOrder: ['1', '2', '3'],
@@ -146,7 +146,7 @@ suite('tallyCompletedTricks', () => {
                 },
             },
         ];
-        const result = tallyCompletedTricks(playerOrder, completedTricks);
+        const result = tallyCompletedTricks(seating, completedTricks);
         expect(result).toEqual({
             1: [0, 0],
             2: [2, 46],
@@ -155,7 +155,7 @@ suite('tallyCompletedTricks', () => {
     });
 
     test('ignores unfinished tricks', () => {
-        const playerOrder = ['1', '2', '3'];
+        const seating = ['1', '2', '3'];
         const completedTricks: Trick[] = [
             {
                 turnOrder: ['1', '2', '3'],
@@ -175,7 +175,7 @@ suite('tallyCompletedTricks', () => {
                 },
             },
         ];
-        const result = tallyCompletedTricks(playerOrder, completedTricks);
+        const result = tallyCompletedTricks(seating, completedTricks);
         expect(result).toEqual({
             1: [0, 0],
             2: [1, 21],
@@ -185,10 +185,10 @@ suite('tallyCompletedTricks', () => {
 });
 
 suite('cardsInHandCounts', () => {
-    const playerOrder = ['1', '2', '3'];
+    const seating = ['1', '2', '3'];
     test('all players start with 6 cards', () => {
         const currentTrick = { turnOrder: ['1', '2', '3'], cards: {} };
-        expect(cardsInHandCounts(playerOrder, 0, currentTrick, HAND_PHASE.PICK, "")).toEqual({
+        expect(cardsInHandCounts(seating, 0, currentTrick, HAND_PHASE.PICK, "")).toEqual({
             '1': 6,
             '2': 6,
             '3': 6,
@@ -198,13 +198,13 @@ suite('cardsInHandCounts', () => {
     test('picker has 8 cards during bury phase', () => {
         const currentTrick = { turnOrder: ['1', '2', '3'], cards: {} };
         // During bury phase, picker has 2 extra cards (the picked blind) in their hand.
-        expect(cardsInHandCounts(playerOrder, 0, currentTrick, HAND_PHASE.BURY, "2")).toEqual({
+        expect(cardsInHandCounts(seating, 0, currentTrick, HAND_PHASE.BURY, "2")).toEqual({
             '1': 6,
             '2': 8,
             '3': 6,
         });
         // Bury phase is over --> back to 6 cards.
-        expect(cardsInHandCounts(playerOrder, 0, currentTrick, HAND_PHASE.PLAY, "2")).toEqual({
+        expect(cardsInHandCounts(seating, 0, currentTrick, HAND_PHASE.PLAY, "2")).toEqual({
             '1': 6,
             '2': 6,
             '3': 6,
@@ -213,19 +213,19 @@ suite('cardsInHandCounts', () => {
 
     test('subtract cards played in completed tricks', () => {
         const currentTrick = { turnOrder: ['1', '2', '3'], cards: {} };
-        expect(cardsInHandCounts(playerOrder, 1, currentTrick, HAND_PHASE.PLAY, "")).toEqual({
+        expect(cardsInHandCounts(seating, 1, currentTrick, HAND_PHASE.PLAY, "")).toEqual({
             '1': 5,
             '2': 5,
             '3': 5,
         });
 
-        expect(cardsInHandCounts(playerOrder, 2, currentTrick, HAND_PHASE.PLAY, "")).toEqual({
+        expect(cardsInHandCounts(seating, 2, currentTrick, HAND_PHASE.PLAY, "")).toEqual({
             '1': 4,
             '2': 4,
             '3': 4,
         });
 
-        expect(cardsInHandCounts(playerOrder, 4, currentTrick, HAND_PHASE.PLAY, "")).toEqual({
+        expect(cardsInHandCounts(seating, 4, currentTrick, HAND_PHASE.PLAY, "")).toEqual({
             '1': 2,
             '2': 2,
             '3': 2,
@@ -239,7 +239,7 @@ suite('cardsInHandCounts', () => {
                 '2': { suit: CARD_SUIT.DIAMOND, rank: CARD_RANK.TEN },
             }
         };
-        expect(cardsInHandCounts(playerOrder, 1, currentTrick, HAND_PHASE.PLAY, "")).toEqual({
+        expect(cardsInHandCounts(seating, 1, currentTrick, HAND_PHASE.PLAY, "")).toEqual({
             '1': 4,
             '2': 4,
             '3': 5,

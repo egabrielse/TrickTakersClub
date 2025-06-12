@@ -1,5 +1,6 @@
 import { Paper } from "@mui/material";
 import { useEffect } from "react";
+import EmptySeat from "../OverlayComponents/EmptySeat";
 import NameTag from "../OverlayComponents/NameTag";
 import "./PlayerNamePlate.scss";
 
@@ -13,7 +14,7 @@ export default function PlayerNamePlate({
   position,
 }: PlayerNamePlateProps) {
   useEffect(() => {
-    const seat = document.getElementById(`name-plate-${playerId}`);
+    const seat = document.getElementById(`name-plate-${position}`);
     if (seat) {
       seat.style.position = "absolute";
       switch (position) {
@@ -55,12 +56,12 @@ export default function PlayerNamePlate({
 
   return (
     <div
-      key={`name-plate-${playerId}`}
-      id={`name-plate-${playerId}`}
+      key={`name-plate-${position}`}
+      id={`name-plate-${position}`}
       className="PlayerNamePlate"
     >
       <Paper>
-        <NameTag playerId={playerId} />
+        {playerId === "" ? <EmptySeat /> : <NameTag playerId={playerId} />}
       </Paper>
     </div>
   );

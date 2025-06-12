@@ -26,12 +26,11 @@ func EnterHandler(sw *SessionWorker, message *msg.Message) {
 			message.SenderID,
 			sw.session.HostID,
 			sw.session.ID,
-			sw.session.ListPresence(),
-			sw.session.GameSettings,
+			sw.session.ListPresentPlayers(),
 			sw.session.Game,
 		))
 		logrus.Infof("Session (%s): %s has joined the session", sw.session.ID, message.SenderID)
-		enterMsg := msg.NewEnteredMessage(message.SenderID)
+		enterMsg := msg.NewEnteredMessage(message.SenderID, sw.session.Game.Seating)
 		// Notify all clients of new player joining the session.
 		sw.broadcastMessage(enterMsg)
 	}
@@ -40,21 +39,21 @@ func EnterHandler(sw *SessionWorker, message *msg.Message) {
 func LeaveHandler(sw *SessionWorker, message *msg.Message) {
 	sw.session.Leave(message.SenderID)
 	// Notify all clients that a player has left the session.
-	sw.broadcastMessage(msg.NewLeftMessage(message.SenderID))
+	sw.broadcastMessage(msg.NewLeftMessage(message.SenderID, sw.session.Game.Seating))
 }
 
 func UpdateCallingMethodHandler(sw *SessionWorker, message *msg.Message) {
 	if sw.session.HostID != message.SenderID {
 		sw.sendMessage(message.SenderID, msg.NewErrorMessage("only the host can update settings"))
-	} else if sw.session.Game != nil {
+	} else if sw.session.Game.HasGameStarted() {
 		sw.sendMessage(message.SenderID, msg.NewErrorMessage("game already in progress"))
 	} else if params, err := utils.UnmarshalTo[msg.UpdateCallingMethodPayload](message.Data); logging.LogOnError(err) {
 		sw.sendMessage(message.SenderID, msg.NewErrorMessage("invalid settings payload"))
 	} else {
-		if err := sw.session.GameSettings.SetCallingMethod(params.CallingMethod); err != nil {
+		if err := sw.session.Game.Settings.SetCallingMethod(params.CallingMethod); err != nil {
 			sw.sendMessage(message.SenderID, msg.NewErrorMessage(err.Error()))
 		} else {
-			sw.broadcastMessage(msg.NewSettingsUpdatedMessage(sw.session.GameSettings))
+			sw.broadcastMessage(msg.NewSettingsUpdatedMessage(sw.session.Game.Settings))
 		}
 	}
 }
@@ -62,15 +61,15 @@ func UpdateCallingMethodHandler(sw *SessionWorker, message *msg.Message) {
 func UpdateNoPickResolutionHandler(sw *SessionWorker, message *msg.Message) {
 	if sw.session.HostID != message.SenderID {
 		sw.sendMessage(message.SenderID, msg.NewErrorMessage("only the host can update settings"))
-	} else if sw.session.Game != nil {
+	} else if sw.session.Game.HasGameStarted() {
 		sw.sendMessage(message.SenderID, msg.NewErrorMessage("game already in progress"))
 	} else if params, err := utils.UnmarshalTo[msg.UpdateNoPickResolutionPayload](message.Data); logging.LogOnError(err) {
 		sw.sendMessage(message.SenderID, msg.NewErrorMessage("invalid settings payload"))
 	} else {
-		if err := sw.session.GameSettings.SetNoPickResolution(params.NoPickResolution); err != nil {
+		if err := sw.session.Game.Settings.SetNoPickResolution(params.NoPickResolution); err != nil {
 			sw.sendMessage(message.SenderID, msg.NewErrorMessage(err.Error()))
 		} else {
-			sw.broadcastMessage(msg.NewSettingsUpdatedMessage(sw.session.GameSettings))
+			sw.broadcastMessage(msg.NewSettingsUpdatedMessage(sw.session.Game.Settings))
 		}
 	}
 }
@@ -78,31 +77,27 @@ func UpdateNoPickResolutionHandler(sw *SessionWorker, message *msg.Message) {
 func UpdateDoubleOnTheBumpHandler(sw *SessionWorker, message *msg.Message) {
 	if sw.session.HostID != message.SenderID {
 		sw.sendMessage(message.SenderID, msg.NewErrorMessage("only the host can update settings"))
-	} else if sw.session.Game != nil {
+	} else if sw.session.Game.HasGameStarted() {
 		sw.sendMessage(message.SenderID, msg.NewErrorMessage("game already in progress"))
 	} else if params, err := utils.UnmarshalTo[msg.UpdateDoubleOnTheBumpPayload](message.Data); logging.LogOnError(err) {
 		sw.sendMessage(message.SenderID, msg.NewErrorMessage("invalid settings payload"))
 	} else {
-		sw.session.GameSettings.SetDoubleOnTheBump(params.DoubleOnTheBump)
-		sw.broadcastMessage(msg.NewSettingsUpdatedMessage(sw.session.GameSettings))
+		sw.session.Game.Settings.SetDoubleOnTheBump(params.DoubleOnTheBump)
+		sw.broadcastMessage(msg.NewSettingsUpdatedMessage(sw.session.Game.Settings))
 	}
 }
 
 func StartGameHandler(sw *SessionWorker, message *msg.Message) {
 	if message.SenderID != sw.session.HostID {
 		sw.sendMessage(message.SenderID, msg.NewErrorMessage("only the host can start the game"))
-	} else if sw.session.Game != nil {
-		sw.sendMessage(message.SenderID, msg.NewErrorMessage("game already in progress"))
-	} else if len(sw.session.Presence) < hand.PlayerCount {
-		sw.sendMessage(message.SenderID, msg.NewErrorMessage("not enough players"))
+	} else if err := sw.session.StartGame(); err != nil {
+		sw.sendMessage(message.SenderID, msg.NewErrorMessage(err.Error()))
 	} else {
-		// Start a new game
-		sw.session.StartGame()
 		// Announce the start of the game
-		sw.broadcastMessage(msg.NewGameOnMessage(sw.session.Game.PlayerOrder))
+		sw.broadcastMessage(msg.NewGameOnMessage(sw.session.Game.Seating))
 		currentHand := sw.session.Game.GetCurrentHand()
 		// Deal hands to players
-		for _, playerID := range sw.session.Game.PlayerOrder {
+		for _, playerID := range sw.session.Game.Seating {
 			sw.sendMessage(playerID, msg.NewDealHandMessage(
 				sw.session.Game.WhoIsDealer(),
 				currentHand.PlayerHands.GetHand(playerID),
@@ -120,7 +115,7 @@ func EndGameHandler(sw *SessionWorker, message *msg.Message) {
 		sw.sendMessage(message.SenderID, msg.NewErrorMessage("game has not been initialized"))
 	} else {
 		sw.broadcastMessage(msg.NewGameOverMessage(sw.session.Game.TallyScores()))
-		sw.session.Game = nil
+		sw.session.ResetGame()
 	}
 }
 
@@ -274,7 +269,7 @@ func PlayCardHandler(sw *SessionWorker, message *msg.Message) {
 						//  Otherwise, start a new hand
 						sw.session.Game.StartNewHand()
 						currentHand = sw.session.Game.GetCurrentHand()
-						for _, playerID := range sw.session.Game.PlayerOrder {
+						for _, playerID := range sw.session.Game.Seating {
 							sw.sendMessage(playerID, msg.NewDealHandMessage(
 								sw.session.Game.WhoIsDealer(),
 								currentHand.PlayerHands.GetHand(playerID),

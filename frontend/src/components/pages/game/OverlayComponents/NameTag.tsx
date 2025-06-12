@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { useAppSelector } from "../../../../store/hooks";
 import handSlice from "../../../../store/slices/hand.slice";
 import sessionSlice from "../../../../store/slices/session.slice";
@@ -20,14 +21,18 @@ export default function NameTag({ playerId }: NameTagProps) {
   const partnerId = useAppSelector(handSlice.selectors.partnerId);
   const calledCard = useAppSelector(handSlice.selectors.calledCard);
   const goneAlone = useAppSelector(handSlice.selectors.goneAlone);
+  const presence = useAppSelector(sessionSlice.selectors.presence);
+  const isPresent = presence.includes(playerId);
   const isHost = playerId === hostId;
   const isDealer = playerId === dealerId;
   const isPicker = playerId === pickerId;
   const isPartner = playerId === partnerId;
 
+  console.log(`Player ${playerId} is present: ${isPresent}`);
+
   return (
     <ProfileProvider uid={playerId}>
-      <div className="NameTag">
+      <div className={classNames("NameTag", { disconnected: !isPresent })}>
         <ProfilePic size="medium" />
         <div className="NameTag-Name">
           <DisplayName />

@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { useAppSelector } from "../../../../../store/hooks";
-import { selectPlayerOrderStartingWithUser } from "../../../../../store/selectors";
+import { selectSeatingStartingWithUser } from "../../../../../store/selectors";
 import handSlice from "../../../../../store/slices/hand.slice";
 import { countCardPoints } from "../../../../../utils/card";
 import PlayingCard from "../../../../common/PlayingCard";
 import TrickPointCounter from "./TrickPointCounter";
 
 export default function Trick() {
-  const playerOrder = useAppSelector(selectPlayerOrderStartingWithUser);
+  const seating = useAppSelector(selectSeatingStartingWithUser);
   const currentTrick = useAppSelector(handSlice.selectors.currentTrick);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export default function Trick() {
             playedCard.style.left = "50%";
             playedCard.style.transform = "translate(-50%, 10%)";
             playedCard.style.transformOrigin = "top left";
-            switch (playerOrder.indexOf(playerId)) {
+            switch (seating.indexOf(playerId)) {
               case 0:
                 break;
               case 1:
@@ -45,7 +45,7 @@ export default function Trick() {
         }
       });
     }
-  }, [currentTrick, playerOrder]);
+  }, [currentTrick, seating]);
 
   return (
     <>

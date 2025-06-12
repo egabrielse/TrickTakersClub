@@ -5,11 +5,10 @@ import {
 } from "../../../../constants/game";
 import { useAppSelector } from "../../../../store/hooks";
 import gameSlice from "../../../../store/slices/game.slice";
-import sessionSlice from "../../../../store/slices/session.slice";
 
 export default function ActiveGameSettings() {
   const inProgress = useAppSelector(gameSlice.selectors.inProgress);
-  const gameSettings = useAppSelector(sessionSlice.selectors.settings);
+  const gameSettings = useAppSelector(gameSlice.selectors.settings);
 
   return inProgress && gameSettings ? (
     <div>

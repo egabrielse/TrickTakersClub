@@ -9,7 +9,7 @@ import (
 
 type Hand struct {
 	HandsPlayed int           `json:"handsPlayed"` // Number of hands played
-	PlayerOrder []string      `json:"playerOrder"` // Order of players at the table starting with the dealer
+	HandOrder   []string      `json:"handOrder"`   // Order of players at the table starting with the dealer
 	Phase       string        `json:"phase"`       // Phase of the hand
 	PlayerHands *PlayerHands  `json:"playerHands"` // Players
 	Blind       *Blind        `json:"blind"`       // Blind Phase
@@ -19,10 +19,10 @@ type Hand struct {
 	Settings    *GameSettings `json:"settings"`    // Game settings
 }
 
-func NewHand(playerOrder []string, settings *GameSettings) *Hand {
+func NewHand(handOrder []string, settings *GameSettings) *Hand {
 	// Turn order starts with the player to the left of the dealer
-	leftOfDealer := playerOrder[1]
-	turnOrder := utils.RelistStartingWith(playerOrder, leftOfDealer)
+	leftOfDealer := handOrder[1]
+	turnOrder := utils.RelistStartingWith(handOrder, leftOfDealer)
 	deck := deck.NewDeck()
 	playerHands := NewPlayerHands(turnOrder)
 	for index := range turnOrder {
@@ -30,7 +30,7 @@ func NewHand(playerOrder []string, settings *GameSettings) *Hand {
 		playerHands.SetHand(playerID, deck.Draw(HandSize))
 	}
 	return &Hand{
-		PlayerOrder: playerOrder,
+		HandOrder:   handOrder,
 		Phase:       HandPhase.Pick,
 		PlayerHands: playerHands,
 		Blind:       NewBlind(turnOrder, deck.Draw(BlindSize)),
@@ -102,7 +102,7 @@ func (h *Hand) Pass(playerID string) (*PassResult, error) {
 		return nil, fmt.Errorf("picking phase is already complete")
 	} else {
 		h.Blind.Pass()
-		dealerID := h.PlayerOrder[0]
+		dealerID := h.HandOrder[0]
 		if h.Settings.NoPickMethod == NoPickMethod.ScrewTheDealer && dealerID == h.WhoIsNext() {
 			result, _ := h.Pick(dealerID)
 			return &PassResult{PickResult: result}, nil
@@ -230,7 +230,7 @@ func (h *Hand) PlayCard(playerID string, card *deck.Card) (*PlayCardResult, erro
 			} else {
 				// If the hand is not yet complete, start the next trick
 				takerID := currentTrick.GetTakerID()
-				newTrickOrder := utils.RelistStartingWith(h.PlayerOrder, takerID)
+				newTrickOrder := utils.RelistStartingWith(h.HandOrder, takerID)
 				newTrick := NewTrick(newTrickOrder)
 				h.Tricks = append(h.Tricks, newTrick)
 			}
@@ -243,13 +243,13 @@ func (h *Hand) SummarizeHand() (*HandSummary, error) {
 	if !h.IsComplete() {
 		return nil, fmt.Errorf("hand is not complete")
 	}
-	sum := NewHandSummary(h.PlayerOrder)
+	sum := NewHandSummary(h.HandOrder)
 	sum.Tricks = h.Tricks
 	// Count up the points won from tricks and the number of tricks each player won
 	pointsWon := map[string]int{}
 	tricksWon := map[string]int{}
-	for index := range h.PlayerOrder {
-		playerID := h.PlayerOrder[index]
+	for index := range h.HandOrder {
+		playerID := h.HandOrder[index]
 		pointsWon[playerID] = 0
 		tricksWon[playerID] = 0
 	}
@@ -283,7 +283,7 @@ func (h *Hand) SummarizeHand() (*HandSummary, error) {
 		sum.ScoringMethod = "standard"
 		sum.PickerID = h.Blind.PickerID
 		sum.PartnerID = h.Call.PartnerID
-		sum.OpponentIDs = utils.Filter(h.PlayerOrder, func(id string) bool {
+		sum.OpponentIDs = utils.Filter(h.HandOrder, func(id string) bool {
 			return id != sum.PickerID && id != sum.PartnerID
 		})
 		// Count up the points in the bury and add to the picker's points

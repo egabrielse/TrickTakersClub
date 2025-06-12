@@ -7,7 +7,6 @@ import sessionSlice from "../../../../store/slices/session.slice";
 import { newStartGameCommand } from "../../../../utils/message";
 import ActionButton from "../../../common/ActionButton";
 import SessionContext from "../SessionContext";
-import GameSeating from "./GameSeating";
 import GameSettingsForm from "./GameSettingsForm";
 import "./index.scss";
 
@@ -21,11 +20,7 @@ export default function GameMenu() {
 
   return (
     <Paper id="game-menu" className="GameMenu">
-      <div className="GameMenu-Top">
-        <GameSettingsForm />
-        <Divider orientation="vertical" flexItem />
-        <GameSeating />
-      </div>
+      <GameSettingsForm />
       <Divider orientation="horizontal" flexItem />
       <div className="GameMenu-Bottom">
         {isHost ? (

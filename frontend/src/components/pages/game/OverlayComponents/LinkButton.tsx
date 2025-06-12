@@ -2,6 +2,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { Button, Tooltip } from "@mui/material";
 import { useState } from "react";
+import { PATHS } from "../../../../constants/url";
 import { useAppSelector } from "../../../../store/hooks";
 import sessionSlice from "../../../../store/slices/session.slice";
 import PaperButton from "../../../common/PaperButton";
@@ -15,7 +16,8 @@ export default function LinkButton({ variant = "default" }: LinkButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const copyLink = () => {
-    navigator.clipboard.writeText(sessionId);
+    const url = `${window.location.origin}/${PATHS.SESSION}/${sessionId}`;
+    navigator.clipboard.writeText(url);
     setCopied(true);
     // reset the copied state after 3 seconds
     setTimeout(() => setCopied(false), 3000);

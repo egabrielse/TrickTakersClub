@@ -22,4 +22,8 @@
             width: max-content;
         }
     }
+
+    &.disconnected {
+        opacity: 0.5;
+    }
 }

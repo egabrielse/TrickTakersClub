@@ -8,7 +8,7 @@ import {
 } from "../../types/game";
 import { sortCards } from "../../utils/card";
 import { MessageData } from "../../types/message";
-import { BlindPickedEvent, BuriedCardsEvent, CalledCardEvent, CardPlayedEvent, DealHandEvent, NewTrickEvent, PartnerRevealedEvent, PickedCardsEvent, UpNextEvent, WelcomeEvent } from "../../types/message/event";
+import { BlindPickedEvent, BuriedCardsEvent, CardCalledEvent, CardPlayedEvent, DealHandEvent, NewTrickEvent, PartnerRevealedEvent, PickedCardsEvent, UpNextEvent, WelcomeEvent } from "../../types/message/event";
 
 interface HandState {
     dealerId: string;
@@ -125,7 +125,7 @@ const handSlice = createSlice({
         },
         calledCard: (
             state,
-            action: PayloadAction<MessageData<CalledCardEvent>>,
+            action: PayloadAction<MessageData<CardCalledEvent>>,
         ) => {
             state.calledCard = action.payload.card;
         },

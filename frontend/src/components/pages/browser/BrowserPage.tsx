@@ -36,7 +36,7 @@ export default function BrowserPage() {
       // Filter out in-progress sessions and sessions with 5 players
       const openSession = response.filter((session) => {
         return (
-          !session.inProgress &&
+          !session.gameInProgress &&
           Object.keys(session.presence).length < PLAYER_COUNT
         );
       });

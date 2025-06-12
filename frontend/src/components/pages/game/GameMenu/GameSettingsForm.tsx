@@ -14,7 +14,7 @@ import {
 } from "../../../../constants/game";
 import { useAppSelector } from "../../../../store/hooks";
 import { selectIsHost } from "../../../../store/selectors";
-import sessionSlice from "../../../../store/slices/session.slice";
+import gameSlice from "../../../../store/slices/game.slice";
 import {
   newUpdateCallingMethodCommand,
   newUpdateDoubleOnTheBumpCommand,
@@ -26,7 +26,7 @@ import "./GameSettingsForm.scss";
 export default function GameSettingsForm() {
   const isHost = useAppSelector(selectIsHost);
   const { sendCommand } = useContext(SessionContext);
-  const gameSettings = useAppSelector(sessionSlice.selectors.settings);
+  const gameSettings = useAppSelector(gameSlice.selectors.settings);
   const [pending, setPending] = useState(false);
   const inputDisabled = !isHost || pending;
 

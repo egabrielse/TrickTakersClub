@@ -32,7 +32,7 @@ const renderUpdateMessage = (update: UpdateMessages) => {
           )}
         </>
       );
-    case EVENT_TYPES.CALLED_CARD:
+    case EVENT_TYPES.CARD_CALLED:
       return (
         <>
           <RoleFlare role="picker" />

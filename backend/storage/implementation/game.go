@@ -2,7 +2,7 @@ package implementation
 
 import (
 	"context"
-	"sheepshead"
+	"storage/entity"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -27,42 +27,42 @@ func (imp *GameRepoRedisImplementation) Exists(ctx context.Context, gameID strin
 	}
 }
 
-func (imp *GameRepoRedisImplementation) Set(ctx context.Context, entity *sheepshead.Game, expiration time.Duration) error {
-	key := GameRepoRedisKeyPrefix + entity.ID
-	if err := imp.db.Set(ctx, key, entity, expiration).Err(); err != nil {
+func (imp *GameRepoRedisImplementation) Set(ctx context.Context, ent *entity.GameRecord, expiration time.Duration) error {
+	key := GameRepoRedisKeyPrefix + ent.ID
+	if err := imp.db.Set(ctx, key, ent, expiration).Err(); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (imp *GameRepoRedisImplementation) Get(ctx context.Context, gameID string) (*sheepshead.Game, error) {
+func (imp *GameRepoRedisImplementation) Get(ctx context.Context, gameID string) (*entity.GameRecord, error) {
 	key := GameRepoRedisKeyPrefix + gameID
 	if data, err := imp.db.Get(ctx, key).Bytes(); err != nil {
 		return nil, err
 	} else {
-		entity := &sheepshead.Game{}
-		if err := entity.UnmarshalBinary(data); err != nil {
+		ent := &entity.GameRecord{}
+		if err := ent.UnmarshalBinary(data); err != nil {
 			return nil, err
 		}
-		return entity, nil
+		return ent, nil
 	}
 }
 
-func (imp *GameRepoRedisImplementation) GetAll(ctx context.Context) ([]*sheepshead.Game, error) {
+func (imp *GameRepoRedisImplementation) GetAll(ctx context.Context) ([]*entity.GameRecord, error) {
 	pattern := GameRepoRedisKeyPrefix + "*"
 	if keys, err := imp.db.Keys(ctx, pattern).Result(); err != nil {
 		return nil, err
 	} else {
-		games := make([]*sheepshead.Game, 0)
+		games := make([]*entity.GameRecord, 0)
 		for _, key := range keys {
 			if data, err := imp.db.Get(ctx, key).Bytes(); err != nil {
 				return nil, err
 			} else {
-				entity := &sheepshead.Game{}
-				if err := entity.UnmarshalBinary(data); err != nil {
+				ent := &entity.GameRecord{}
+				if err := ent.UnmarshalBinary(data); err != nil {
 					return nil, err
 				}
-				games = append(games, entity)
+				games = append(games, ent)
 			}
 		}
 		return games, nil

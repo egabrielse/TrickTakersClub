@@ -23,7 +23,7 @@ export interface WelcomeEvent extends BaseMessage {
         isLastHand: boolean;
         dealerId: string;
         scoreboard: Scoreboard;
-        playerOrder: string[];
+        seating: string[];
         settings?: GameSettings;
         calledCard?: Card;
         upNextId: string;
@@ -48,6 +48,7 @@ export interface EnteredEvent extends BaseMessage {
     messageType: typeof EVENT_TYPES.ENTERED;
     data: {
         playerId: string;
+        seating: string[];
     }
 }
 
@@ -55,13 +56,14 @@ export interface LeftEvent extends BaseMessage {
     messageType: typeof EVENT_TYPES.LEFT;
     data: {
         playerId: string;
+        seating: string[];
     }
 }
 
 export interface GameOnEvent extends BaseMessage {
     messageType: typeof EVENT_TYPES.GAME_ON;
     data: {
-        playerOrder: string[];
+        seating: string[];
     };
 }
 
@@ -75,8 +77,8 @@ export interface BlindPickedEvent extends BaseMessage {
     data: { playerId: string, forcePick: boolean };
 }
 
-export interface CalledCardEvent extends BaseMessage {
-    messageType: typeof EVENT_TYPES.CALLED_CARD;
+export interface CardCalledEvent extends BaseMessage {
+    messageType: typeof EVENT_TYPES.CARD_CALLED;
     data: { card: Card };
 }
 
@@ -165,7 +167,7 @@ export type EventMessage =
     | EnteredEvent
     | LeftEvent
     | BlindPickedEvent
-    | CalledCardEvent
+    | CardCalledEvent
     | CardPlayedEvent
     | LastHandEvent
     | GameOverEvent

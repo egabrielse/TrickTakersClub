@@ -2,7 +2,7 @@ import { HAND_PHASE } from "../../../../constants/game";
 import { useAppSelector } from "../../../../store/hooks";
 import {
   selectIsUpNext,
-  selectPlayerOrderStartingWithUser,
+  selectSeatingStartingWithUser,
 } from "../../../../store/selectors";
 import handSlice from "../../../../store/slices/hand.slice";
 import NoPickHandDisplay from "../OverlayComponents/NoPickHandDisplay";
@@ -14,13 +14,12 @@ import GameUpdates from "./GameUpdates";
 import OpponentHand from "./OpponentHand";
 import OpponentTrickPile from "./OpponentTrickPile";
 import PlayerHand from "./PlayerHand";
-import PlayerNamePlate from "./PlayerNamePlate";
 import TrickPile from "./TrickPile";
 
 export default function Game() {
   const isUpNext = useAppSelector(selectIsUpNext);
   const phase = useAppSelector(handSlice.selectors.phase);
-  const playerOrder = useAppSelector(selectPlayerOrderStartingWithUser);
+  const seating = useAppSelector(selectSeatingStartingWithUser);
   const noPickHand = useAppSelector(handSlice.selectors.noPickHand);
 
   return (
@@ -32,7 +31,7 @@ export default function Game() {
       <GameUpdates />
       <Bury />
       <TrickPile />
-      {playerOrder.map((playerId, index) =>
+      {seating.map((playerId, index) =>
         index === 0 ? (
           <PlayerHand key={`hand-${playerId}`} />
         ) : (
@@ -51,7 +50,7 @@ export default function Game() {
           />
         ),
       )}
-      {playerOrder.map((playerId, index) =>
+      {seating.map((playerId, index) =>
         index === 0 ? (
           <TrickPile key={`trick-pile${playerId}`} />
         ) : (
@@ -70,23 +69,6 @@ export default function Game() {
           />
         ),
       )}
-      {playerOrder.map((playerId, index) => (
-        <PlayerNamePlate
-          key={`name-tag-${playerId}`}
-          playerId={playerId}
-          position={
-            index === 0
-              ? "bottom"
-              : index === 1
-                ? "left"
-                : index === 2
-                  ? "top-left"
-                  : index === 3
-                    ? "top-right"
-                    : "right"
-          }
-        />
-      ))}
     </>
   );
 }

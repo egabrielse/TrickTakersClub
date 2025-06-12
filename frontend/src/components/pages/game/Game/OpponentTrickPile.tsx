@@ -17,8 +17,7 @@ export default function OpponentTrickPile({
 
   useEffect(() => {
     const element = document.getElementById(`trick-pile-${playerId}`);
-    const namePlate = document.getElementById(`name-plate-${playerId}`);
-    if (element && namePlate) {
+    if (element) {
       switch (position) {
         case "left":
           element.style.left = "0px";

@@ -124,8 +124,9 @@ func (sw *SessionWorker) heartbeat() {
 		// Stop the ticker
 		ticker.Stop()
 		// If there is an active game, save it to redis
-		if sw.session.GameInProgress() {
-			gameRepo.Set(sw.ctx, sw.session.Game, gameExpiration)
+		if sw.session.Game.HasGameStarted() {
+			record := entity.NewGameRecord(sw.session.ID, sw.session.HostID, *sw.session.Game)
+			gameRepo.Set(sw.ctx, record, gameExpiration)
 		}
 		// Delete the session from the repository
 		sessionRepo.Delete(sw.ctx, sw.session.ID)
@@ -152,7 +153,7 @@ func (sw *SessionWorker) heartbeat() {
 				// Notify clients of any removed players
 				for _, playerID := range removed {
 					logrus.Infof("Session (%s): player %s has been removed due to inactivity", sw.session.ID, playerID)
-					sw.broadcastMessage(msg.NewLeftMessage(playerID))
+					sw.broadcastMessage(msg.NewLeftMessage(playerID, sw.session.ListPresentPlayers()))
 				}
 			}
 			// Update the session in Redis so it can be discovered by other players and workers

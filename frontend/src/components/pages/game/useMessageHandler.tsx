@@ -49,10 +49,12 @@ export default function useMessageHandler() {
         }
         case EVENT_TYPES.ENTERED: {
           dispatch(sessionSlice.actions.playerEntered(message.data));
+          dispatch(gameSlice.actions.playerEntered(message.data));
           break;
         }
         case EVENT_TYPES.LEFT: {
           dispatch(sessionSlice.actions.playerLeft(message.data));
+          dispatch(gameSlice.actions.playerLeft(message.data));
           break;
         }
         case MISC_TYPES.CHAT: {
@@ -61,7 +63,7 @@ export default function useMessageHandler() {
           break;
         }
         case EVENT_TYPES.SETTINGS_UPDATED: {
-          dispatch(sessionSlice.actions.settingsUpdated(message.data));
+          dispatch(gameSlice.actions.settingsUpdated(message.data));
           break;
         }
         case EVENT_TYPES.GAME_ON: {
@@ -112,7 +114,7 @@ export default function useMessageHandler() {
           dispatch(handSlice.actions.buriedCards(message.data));
           break;
         }
-        case EVENT_TYPES.CALLED_CARD:
+        case EVENT_TYPES.CARD_CALLED:
           dispatch(handSlice.actions.calledCard(message.data));
           dispatch(handSlice.actions.displayMessage({ ...message }));
           break;

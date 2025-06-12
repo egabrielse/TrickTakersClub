@@ -16,24 +16,26 @@ func NewErrorMessage(message string) *Message {
 }
 
 type EnteredMessagePayload struct {
-	PlayerID string `json:"playerId"` // ID of the player who entered
+	PlayerID string   `json:"playerId"` // ID of the player who entered
+	Seating  []string `json:"seating"`  // Current seating arrangement
 }
 
-func NewEnteredMessage(playerID string) *Message {
+func NewEnteredMessage(playerID string, seating []string) *Message {
 	return NewMessage(
 		MessageTypeEntered,
-		&EnteredMessagePayload{PlayerID: playerID},
+		&EnteredMessagePayload{PlayerID: playerID, Seating: seating},
 	)
 }
 
 type LeftMessagePayload struct {
-	PlayerID string `json:"playerId"` // ID of the player who left
+	PlayerID string   `json:"playerId"` // ID of the player who left
+	Seating  []string `json:"seating"`  // Current seating arrangement
 }
 
-func NewLeftMessage(playerID string) *Message {
+func NewLeftMessage(playerID string, seating []string) *Message {
 	return NewMessage(
 		MessageTypeLeft,
-		&LeftMessagePayload{PlayerID: playerID},
+		&LeftMessagePayload{PlayerID: playerID, Seating: seating},
 	)
 }
 
@@ -48,64 +50,63 @@ func NewSettingsUpdatedMessage(settings *hand.GameSettings) *Message {
 }
 
 type WelcomePayload struct {
-	HostID      string             `json:"hostId"`
-	SessionID   string             `json:"sessionId"`
-	Presence    []string           `json:"presence"`
-	InProgress  bool               `json:"inProgress"`
-	IsLastHand  bool               `json:"isLastHand"`
-	DealerID    string             `json:"dealerId"`
-	Scoreboard  scoring.Scoreboard `json:"scoreboard"`
-	PlayerOrder []string           `json:"playerOrder"`
-	Settings    *hand.GameSettings `json:"settings"`
-	CalledCard  *deck.Card         `json:"calledCard"`
-	Phase       string             `json:"phase"`
-	UpNextID    string             `json:"upNextId"`
-	PickerID    string             `json:"pickerId"`
-	PartnerID   string             `json:"partnerId"`
-	Tricks      []*hand.Trick      `json:"tricks"`
-	Hand        []*deck.Card       `json:"hand"`
-	Bury        []*deck.Card       `json:"bury"`
-	NoPickHand  bool               `json:"noPickHand"`
+	HostID     string             `json:"hostId"`
+	SessionID  string             `json:"sessionId"`
+	Presence   []string           `json:"presence"`
+	InProgress bool               `json:"inProgress"`
+	IsLastHand bool               `json:"isLastHand"`
+	DealerID   string             `json:"dealerId"`
+	Scoreboard scoring.Scoreboard `json:"scoreboard"`
+	Seating    []string           `json:"seating"`
+	Settings   *hand.GameSettings `json:"settings"`
+	CalledCard *deck.Card         `json:"calledCard"`
+	Phase      string             `json:"phase"`
+	UpNextID   string             `json:"upNextId"`
+	PickerID   string             `json:"pickerId"`
+	PartnerID  string             `json:"partnerId"`
+	Tricks     []*hand.Trick      `json:"tricks"`
+	Hand       []*deck.Card       `json:"hand"`
+	Bury       []*deck.Card       `json:"bury"`
+	NoPickHand bool               `json:"noPickHand"`
 }
 
 func NewWelcomePayload() *WelcomePayload {
 	return &WelcomePayload{
-		HostID:      "",
-		SessionID:   "",
-		Presence:    []string{},
-		InProgress:  false,
-		IsLastHand:  false,
-		DealerID:    "",
-		Scoreboard:  scoring.Scoreboard{},
-		PlayerOrder: nil,
-		Settings:    &hand.GameSettings{},
-		CalledCard:  nil,
-		Phase:       "",
-		UpNextID:    "",
-		PickerID:    "",
-		PartnerID:   "",
-		Tricks:      []*hand.Trick{},
-		Hand:        []*deck.Card{},
-		Bury:        []*deck.Card{},
-		NoPickHand:  false,
+		HostID:     "",
+		SessionID:  "",
+		Presence:   []string{},
+		InProgress: false,
+		IsLastHand: false,
+		DealerID:   "",
+		Scoreboard: scoring.Scoreboard{},
+		Seating:    nil,
+		Settings:   &hand.GameSettings{},
+		CalledCard: nil,
+		Phase:      "",
+		UpNextID:   "",
+		PickerID:   "",
+		PartnerID:  "",
+		Tricks:     []*hand.Trick{},
+		Hand:       []*deck.Card{},
+		Bury:       []*deck.Card{},
+		NoPickHand: false,
 	}
 }
 
-func NewWelcomeMessage(playerID, hostID, sessionID string, presence []string, settings *hand.GameSettings, game *sheepshead.Game) *Message {
+func NewWelcomeMessage(playerID, hostID, sessionID string, presence []string, game *sheepshead.Game) *Message {
 	payload := NewWelcomePayload()
 	payload.HostID = hostID
 	payload.SessionID = sessionID
 	payload.Presence = presence
-	payload.Settings = settings
-	if game != nil {
-		payload.InProgress = true
-		payload.IsLastHand = game.LastHand
-		payload.IsLastHand = game.IsLastHand()
-		payload.DealerID = game.WhoIsDealer()
-		payload.Scoreboard = game.TallyScores()
-		payload.PlayerOrder = game.PlayerOrder
-		// State related to the current hand
-		currentHand := game.GetCurrentHand()
+	payload.InProgress = game.HasGameStarted()
+	payload.Settings = game.Settings
+	payload.IsLastHand = game.IsLastHand()
+	payload.DealerID = game.WhoIsDealer()
+	payload.Scoreboard = game.TallyScores()
+	payload.Seating = game.Seating
+	// State related to the current hand
+	currentHand := game.GetCurrentHand()
+	if currentHand != nil {
 		payload.CalledCard = currentHand.Call.GetCalledCard()
 		payload.Phase = currentHand.Phase
 		payload.UpNextID = currentHand.WhoIsNext()
@@ -126,12 +127,12 @@ func NewWelcomeMessage(playerID, hostID, sessionID string, presence []string, se
 }
 
 type GameOnMessagePayload struct {
-	PlayerOrder []string `json:"playerOrder"` // Order of players in the game
+	Seating []string `json:"seating"` // Order of players in the game
 }
 
-func NewGameOnMessage(playerOrder []string) *Message {
+func NewGameOnMessage(seating []string) *Message {
 	return NewMessage(MessageTypeGameOn, &GameOnMessagePayload{
-		PlayerOrder: playerOrder,
+		Seating: seating,
 	})
 }
 
@@ -147,25 +148,25 @@ func NewGameOverMessage(scoreboard scoring.Scoreboard) *Message {
 }
 
 type BlindPickedMessagePayload struct {
-	PickerID  string `json:"pickerId"`  // ID of the player who picked
+	PlayerID  string `json:"playerId"`  // ID of the player who picked
 	ForcePick bool   `json:"forcePick"` // Indicates if the picker was forced to pick
 }
 
-func NewBlindPickedMessage(pickerID string, forcePick bool) *Message {
+func NewBlindPickedMessage(playerID string, forcePick bool) *Message {
 	return NewMessage(
 		MessageTypeBlindPicked,
-		&BlindPickedMessagePayload{PickerID: pickerID, ForcePick: forcePick},
+		&BlindPickedMessagePayload{PlayerID: playerID, ForcePick: forcePick},
 	)
 }
 
 type CardCalledMessagePayload struct {
-	CalledCard *deck.Card `json:"calledCard"` // Card that was called
+	Card *deck.Card `json:"card"` // Card that was called
 }
 
-func NewCardCalledMessage(calledCard *deck.Card) *Message {
+func NewCardCalledMessage(card *deck.Card) *Message {
 	return NewMessage(
 		MessageTypeCardCalled,
-		&CardCalledMessagePayload{CalledCard: calledCard},
+		&CardCalledMessagePayload{Card: card},
 	)
 }
 
@@ -193,13 +194,13 @@ func NewCardPlayedMessage(playerID string, card *deck.Card) *Message {
 }
 
 type PartnerRevealedMessagePayload struct {
-	PartnerID string `json:"partnerId"` // ID of the player who revealed their partner
+	PlayerID string `json:"playerId"` // ID of the player who revealed their partner
 }
 
-func NewPartnerRevealedMessage(partnerID string) *Message {
+func NewPartnerRevealedMessage(playerID string) *Message {
 	return NewMessage(
 		MessageTypePartnerRevealed,
-		&PartnerRevealedMessagePayload{PartnerID: partnerID},
+		&PartnerRevealedMessagePayload{PlayerID: playerID},
 	)
 }
 

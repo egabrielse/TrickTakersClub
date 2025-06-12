@@ -28,7 +28,7 @@ export const EVENT_TYPES = {
     GAME_ON: "game-on",
     GAME_OVER: "game-over",
     BLIND_PICKED: "blind-picked",
-    CALLED_CARD: "called-card",
+    CARD_CALLED: "card-called",
     GONE_ALONE: "gone-alone",
     CARD_PLAYED: "card-played",
     PARTNER_REVEALED: "partner-revealed",

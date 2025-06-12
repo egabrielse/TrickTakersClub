@@ -158,30 +158,30 @@ export const selectCallableAces = createSelector([
 /**
  * Returns the player order starting with the user.
  */
-export const playerOrderStartingWithUser = (playerOrder: string[], uid: string) => {
-    const index = playerOrder.indexOf(uid);
+export const seatingStartingWithUser = (seating: string[], uid: string) => {
+    const index = seating.indexOf(uid);
     if (index === -1) {
-        return playerOrder
+        return seating
     }
-    return [...playerOrder.slice(index), ...playerOrder.slice(0, index)];
+    return [...seating.slice(index), ...seating.slice(0, index)];
 }
 
-// Selector for playerOrderStartingWithUser
-export const selectPlayerOrderStartingWithUser = createSelector([
-    gameSlice.selectors.playerOrder,
+// Selector for seatingStartingWithUser
+export const selectSeatingStartingWithUser = createSelector([
+    gameSlice.selectors.seating,
     authSlice.selectors.uid,
-], playerOrderStartingWithUser);
+], seatingStartingWithUser);
 
 
 /**
  * Sums the number of tricks and points won by each player.
- * @param playerOrder list of player IDs
+ * @param seating list of player IDs
  * @param completedTricks list of completed tricks to tally
  * @return Map of player IDs to [number of tricks won, total points won]
  */
-export const tallyCompletedTricks = (playerOrder: string[], completedTricks: Trick[]) => {
+export const tallyCompletedTricks = (seating: string[], completedTricks: Trick[]) => {
     const count: Record<string, [number, number]> = {};
-    playerOrder.forEach((playerId) => {
+    seating.forEach((playerId) => {
         count[playerId] = [0, 0];
     });
     completedTricks.filter((trick) => isTrickDone(trick)).forEach((trick) => {
@@ -197,7 +197,7 @@ export const tallyCompletedTricks = (playerOrder: string[], completedTricks: Tri
 
 // Selector for tallyCompletedTricks
 export const selectTallyCompletedTricks = createSelector([
-    gameSlice.selectors.playerOrder,
+    gameSlice.selectors.seating,
     handSlice.selectors.completedTricks,
 ], tallyCompletedTricks);
 
@@ -206,10 +206,10 @@ export const selectTallyCompletedTricks = createSelector([
  * Calculates the number of cards left in each player's hand.
  * @returns Map of player IDs to the number of cards left in their hand
  */
-export const cardsInHandCounts = (playerOrder: string[], completedTricks: number, currentTrick: Trick | null, phase: string, pickerId: string | undefined) => {
+export const cardsInHandCounts = (seating: string[], completedTricks: number, currentTrick: Trick | null, phase: string, pickerId: string | undefined) => {
     // Calculate how many cards each player has left in their hand
     const handCounts: Record<string, number> = {};
-    playerOrder.forEach((playerId) => {
+    seating.forEach((playerId) => {
         // Each player starts with 6 cards
         handCounts[playerId] = HAND_SIZE;
         // Subtract cards played in completed tricks
@@ -228,7 +228,7 @@ export const cardsInHandCounts = (playerOrder: string[], completedTricks: number
 
 // Selector for cardsInHandCounts
 export const selectCardsInHandCounts = createSelector([
-    gameSlice.selectors.playerOrder,
+    gameSlice.selectors.seating,
     handSlice.selectors.countOfCompletedTricks,
     handSlice.selectors.currentTrick,
     handSlice.selectors.phase,

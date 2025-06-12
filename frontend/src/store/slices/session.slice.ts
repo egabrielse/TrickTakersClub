@@ -1,8 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { GameSettings } from "../../types/game";
-import { GAME_SETTINGS_DEFAULTS } from "../../constants/game";
 import { ChatMessage } from "../../types/message/misc";
-import { EnteredEvent, LeftEvent, SettingsUpdatedEvent, WelcomeEvent } from "../../types/message/event";
+import { EnteredEvent, LeftEvent, WelcomeEvent } from "../../types/message/event";
 import { MessageData } from "../../types/message";
 
 interface SessionState {
@@ -10,7 +8,6 @@ interface SessionState {
     hostId: string;
     sessionId: string;
     presence: string[];
-    settings: GameSettings;
 }
 
 const initialState: SessionState = {
@@ -18,13 +15,6 @@ const initialState: SessionState = {
     hostId: "",
     sessionId: "",
     presence: [],
-    settings: {
-        callingMethod: GAME_SETTINGS_DEFAULTS.CALLING_METHODS.ID,
-        noPickResolution: GAME_SETTINGS_DEFAULTS.NO_PICK_RESOLUTIONS.ID,
-        doubleOnTheBump: GAME_SETTINGS_DEFAULTS.DOUBLE_ON_THE_BUMP,
-        blitzing: GAME_SETTINGS_DEFAULTS.BLITZING,
-        cracking: GAME_SETTINGS_DEFAULTS.CRACKING,
-    },
 };
 
 
@@ -37,7 +27,6 @@ const sessionSlice = createSlice({
             state.sessionId = action.payload.sessionId;
             state.hostId = action.payload.hostId;
             state.presence = action.payload.presence;
-            state.settings = action.payload.settings || initialState.settings;
         },
         pushChatMessage: (state, action: PayloadAction<ChatMessage>) => {
             state.chat.push(action.payload);
@@ -50,9 +39,6 @@ const sessionSlice = createSlice({
         playerLeft: (state, action: PayloadAction<MessageData<LeftEvent>>) => {
             state.presence = state.presence.filter(userId => userId !== action.payload.playerId);
         },
-        settingsUpdated: (state, action: PayloadAction<MessageData<SettingsUpdatedEvent>>) => {
-            state.settings = action.payload.settings;
-        },
     },
     selectors: {
         chat: (state: SessionState) => state.chat,
@@ -60,7 +46,6 @@ const sessionSlice = createSlice({
         hostId: (state: SessionState) => state.hostId,
         sessionId: (state: SessionState) => state.sessionId,
         presence: (state: SessionState) => state.presence,
-        settings: (state: SessionState) => state.settings,
     }
 });
 

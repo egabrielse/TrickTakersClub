@@ -6,6 +6,6 @@ export type Session = {
     presence: Record<string, number>; // IDs of players mapped to the last ping (timestamp in ms)
     created: string; // timestamp in milliseconds
     lastUpdated: string; // timestamp in milliseconds of the last update
-    gameSettings: GameSettings; // game settings used to create a new game
-    inProgress: boolean; // whether the game is in progress
+    gameInProgress: boolean; // whether the game is in progress
+    gameSettings: GameSettings; // settings for the game
 };
