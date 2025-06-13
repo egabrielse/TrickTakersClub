@@ -114,7 +114,7 @@ func (sw *SessionWorker) heartbeat() {
 	presenceExpiration := env.GetEnvVarAsDuration("PRESENCE_EXPIRATION_DURATION", defaultPresenceExpiration)
 
 	// Create record in redis so the session is discoverable
-	sessionRepo.Set(sw.ctx, sw.session, sessionExpiration)
+	sessionRepo.Set(sw.ctx, entity.NewSessionRecord(sw.session), tickerDuration*3)
 
 	// Set up a ticker to periodically check the session status
 	ticker := time.NewTicker(tickerDuration)
@@ -156,8 +156,14 @@ func (sw *SessionWorker) heartbeat() {
 					sw.broadcastMessage(msg.NewLeftMessage(playerID, sw.session.ListPresentPlayers()))
 				}
 			}
+
+			var keepSessionAliveDuration = 3 * tickerDuration
+			if sw.session.Game.HasGameStarted() {
+				// If a game is in progress, extend the session expiration to account for pauses in the game
+				keepSessionAliveDuration = sessionExpiration
+			}
 			// Update the session in Redis so it can be discovered by other players and workers
-			if err := sessionRepo.Set(sw.ctx, sw.session, 3*tickerDuration); err != nil {
+			if err := sessionRepo.Set(sw.ctx, entity.NewSessionRecord(sw.session), keepSessionAliveDuration); err != nil {
 				logrus.Errorf("Session (%s): %v", sw.session.ID, err)
 				return
 			}

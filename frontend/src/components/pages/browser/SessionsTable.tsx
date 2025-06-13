@@ -2,7 +2,6 @@ import HomeIcon from "@mui/icons-material/Home";
 import PersonIcon from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {
-  Chip,
   Stack,
   Table,
   TableBody,
@@ -12,25 +11,43 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useNavigate } from "react-router";
-import { CALLING_METHODS, NO_PICK_RESOLUTIONS } from "../../../constants/game";
-import { PATHS } from "../../../constants/url";
+import { useEffect, useState } from "react";
+import { PLAYER_COUNT } from "../../../constants/game";
+import { useAppSelector } from "../../../store/hooks";
+import authSlice from "../../../store/slices/auth.slice";
 import { Session } from "../../../types/session";
-import DisplayName from "../../common/Profile/DisplayName";
-import ProfilePic from "../../common/Profile/ProfilePic";
-import ProfileProvider from "../../common/Profile/ProfileProvider";
+import SessionTableRow from "./SessionTableRow";
 
 type SessionTableProps = {
   sessions: Session[];
 };
 
 export default function SessionsTable({ sessions }: SessionTableProps) {
-  console.log("SessionsTable", sessions);
-  const navigate = useNavigate();
+  const uid = useAppSelector(authSlice.selectors.uid);
+  // Sessions where the user is a player in an active game
+  // Or the player is the host (regardless of if the game is in progress)
+  const [mySessions, setMySessions] = useState<Session[]>([]);
+  // Sessions that are open for the user to join
+  const [openSessions, setOpenSessions] = useState<Session[]>([]);
 
-  const navigateToSession = (sessionId: string) => {
-    navigate(PATHS.SESSION.replace(":sessionId", sessionId));
-  };
+  useEffect(() => {
+    const newSessions = [];
+    const newMySessions = [];
+    for (const session of sessions) {
+      if (session.gameInProgress && session.gameSeating.includes(uid)) {
+        // Game in progress and user is seated in it
+        newMySessions.push(session);
+      } else if (session.hostId === uid) {
+        // User is host
+        newMySessions.push(session);
+      } else if (Object.keys(session.presence).length < PLAYER_COUNT) {
+        // Game not started and has open seats
+        newSessions.push(session);
+      }
+    }
+    setOpenSessions(newSessions);
+    setMySessions(newMySessions);
+  }, [sessions, uid]);
 
   return (
     <TableContainer>
@@ -40,87 +57,59 @@ export default function SessionsTable({ sessions }: SessionTableProps) {
             <TableCell>
               <Stack direction="row" spacing={1} alignItems="center">
                 <PersonIcon />
-                <span>Players</span>
+                <Typography variant="subtitle1">Players</Typography>
               </Stack>
             </TableCell>
             <TableCell>
               <Stack direction="row" spacing={1} alignItems="center">
                 <HomeIcon />
-                <span>Host</span>
+                <Typography variant="subtitle1">Host</Typography>
               </Stack>
             </TableCell>
             <TableCell>
               <Stack direction="row" spacing={1} alignItems="center">
                 <SettingsIcon />
-                <span>Game Settings</span>
+                <Typography variant="subtitle1">Game Settings</Typography>
               </Stack>
             </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {Object.keys(sessions).length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={3} align="center">
-                No active sessions found.
-              </TableCell>
-            </TableRow>
-          ) : (
-            sessions.map((session) => (
-              <TableRow
-                key={session.id}
-                hover
-                onClick={() => navigateToSession(session.id)}
-              >
-                <TableCell>
-                  <Typography variant="body1">
-                    {Object.keys(session.presence).length}/5
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <ProfileProvider uid={session.hostId}>
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <ProfilePic size="small" />
-                      <DisplayName />
-                    </Stack>
-                  </ProfileProvider>
-                </TableCell>
-                <TableCell>
-                  <Stack direction="row" spacing={1}>
-                    {session.gameSettings.callingMethod && (
-                      <Chip
-                        key="calling-method"
-                        label={
-                          CALLING_METHODS[session.gameSettings.callingMethod]
-                            .LABEL
-                        }
-                        sx={{ backgroundColor: "blue", color: "#fff" }}
-                        size="small"
-                      />
-                    )}
-                    {session.gameSettings.noPickResolution && (
-                      <Chip
-                        key="no-pick-resolution"
-                        label={
-                          NO_PICK_RESOLUTIONS[
-                            session.gameSettings.noPickResolution
-                          ].LABEL
-                        }
-                        sx={{ backgroundColor: "#fcc200", color: "#fff" }}
-                        size="small"
-                      />
-                    )}
-                    {session.gameSettings.doubleOnTheBump && (
-                      <Chip
-                        key="double-on-the-bump"
-                        label={"Double on the Bump"}
-                        sx={{ backgroundColor: "red", color: "#fff" }}
-                        size="small"
-                      />
-                    )}
-                  </Stack>
+          {mySessions.length > 0 && (
+            <>
+              <TableRow>
+                <TableCell
+                  size="small"
+                  colSpan={3}
+                  sx={{ backgroundColor: "rgba(255,255,255,0.1)" }}
+                >
+                  <Typography variant="body2">My Sessions</Typography>
                 </TableCell>
               </TableRow>
+              {mySessions.map((session) => (
+                <SessionTableRow key={session.id} session={session} />
+              ))}
+              <TableRow>
+                <TableCell
+                  size="small"
+                  colSpan={3}
+                  sx={{ backgroundColor: "rgba(255,255,255,0.1)" }}
+                >
+                  <Typography variant="body2">Open Sessions</Typography>
+                </TableCell>
+              </TableRow>
+            </>
+          )}
+          {openSessions.length > 0 ? (
+            openSessions.map((session) => (
+              <SessionTableRow key={session.id} session={session} />
             ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={3} align="center">
+                No open sessions found to join.
+              </TableCell>
+            </TableRow>
           )}
         </TableBody>
       </Table>

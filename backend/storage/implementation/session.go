@@ -27,7 +27,7 @@ func (imp *SessionRepoRedisImplementation) Exists(ctx context.Context, sessionID
 	}
 }
 
-func (imp *SessionRepoRedisImplementation) Set(ctx context.Context, ent *entity.Session, expiration time.Duration) error {
+func (imp *SessionRepoRedisImplementation) Set(ctx context.Context, ent *entity.SessionRecord, expiration time.Duration) error {
 	key := SessionRepoRedisKeyPrefix + ent.ID
 	if err := imp.db.Set(ctx, key, ent, expiration).Err(); err != nil {
 		return err
@@ -35,12 +35,12 @@ func (imp *SessionRepoRedisImplementation) Set(ctx context.Context, ent *entity.
 	return nil
 }
 
-func (imp *SessionRepoRedisImplementation) Get(ctx context.Context, sessionID string) (*entity.Session, error) {
+func (imp *SessionRepoRedisImplementation) Get(ctx context.Context, sessionID string) (*entity.SessionRecord, error) {
 	key := SessionRepoRedisKeyPrefix + sessionID
 	if data, err := imp.db.Get(ctx, key).Bytes(); err != nil {
 		return nil, err
 	} else {
-		ent := &entity.Session{}
+		ent := &entity.SessionRecord{}
 		if err := ent.UnmarshalBinary(data); err != nil {
 			return nil, err
 		}
@@ -48,17 +48,17 @@ func (imp *SessionRepoRedisImplementation) Get(ctx context.Context, sessionID st
 	}
 }
 
-func (imp *SessionRepoRedisImplementation) GetAll(ctx context.Context) ([]*entity.Session, error) {
+func (imp *SessionRepoRedisImplementation) GetAll(ctx context.Context) ([]*entity.SessionRecord, error) {
 	pattern := SessionRepoRedisKeyPrefix + "*"
 	if keys, err := imp.db.Keys(ctx, pattern).Result(); err != nil {
 		return nil, err
 	} else {
-		sessions := make([]*entity.Session, 0)
+		sessions := make([]*entity.SessionRecord, 0)
 		for _, key := range keys {
 			if data, err := imp.db.Get(ctx, key).Bytes(); err != nil {
 				return nil, err
 			} else {
-				ent := &entity.Session{}
+				ent := &entity.SessionRecord{}
 				if err := ent.UnmarshalBinary(data); err != nil {
 					return nil, err
 				}

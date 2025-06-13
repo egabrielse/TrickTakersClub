@@ -13,15 +13,13 @@ import (
 
 // Session represents a game session, including the host, players, and game state.
 type Session struct {
-	ID             string               `json:"id"`             // unique ID of the session
-	HostID         string               `json:"hostId"`         // ID of the host player
-	Presence       map[string]time.Time `json:"presence"`       // IDs of players mapped to the last ping
-	Created        time.Time            `json:"created"`        // timestamp in milliseconds
-	LastUpdated    time.Time            `json:"lastUpdated"`    // timestamp in milliseconds
-	GameInProgress bool                 `json:"gameInProgress"` // extracted from Session.Game - true if a game is currently in progress
-	GameSettings   *hand.GameSettings   `json:"gameSettings"`   // extracted from Session.Game - settings for the game
-	Game           *sheepshead.Game     `json:"-"`              // current game being played in the session
-	mux            sync.RWMutex         `json:"-"`              // mutex to protect concurrent access
+	ID          string               `json:"id"`          // unique ID of the session
+	HostID      string               `json:"hostId"`      // ID of the host player
+	Presence    map[string]time.Time `json:"presence"`    // IDs of players mapped to the last ping
+	Created     time.Time            `json:"created"`     // timestamp in milliseconds
+	LastUpdated time.Time            `json:"lastUpdated"` // timestamp in milliseconds
+	Game        *sheepshead.Game     `json:"-"`           // current game being played in the session
+	mux         sync.RWMutex         `json:"-"`           // mutex to protect concurrent access
 }
 
 func NewSession(hostID string) *Session {
@@ -155,23 +153,33 @@ func (s *Session) ResetGame() {
 	}
 }
 
-func (s *Session) MarshalBinary() ([]byte, error) {
-	// Lock the mutex for reading
-	s.mux.RLock()
-	defer s.mux.RUnlock()
-	return json.Marshal(&Session{
-		ID:             s.ID,
-		HostID:         s.HostID,
-		Presence:       s.Presence,
-		Created:        s.Created,
-		LastUpdated:    s.LastUpdated,
-		GameSettings:   s.Game.Settings,
-		GameInProgress: s.Game.HasGameStarted(),
-	})
+type SessionRecord struct {
+	Session
+	GameInProgress bool              `json:"gameInProgress"` // true if a game is currently in progress
+	GameSettings   hand.GameSettings `json:"gameSettings"`   // settings for the game
+	GameSeating    []string          `json:"gameSeating"`    // IDs of players in the game
 }
 
-func (s *Session) UnmarshalBinary(data []byte) error {
-	// Note: If unmarshalling a SessionRecord, we will not have the Game field populated.
-	// And the saved GameSettings and GameInProgress will be ignored.
-	return json.Unmarshal(data, s)
+func NewSessionRecord(s *Session) *SessionRecord {
+	return &SessionRecord{
+		Session: Session{
+			ID:          s.ID,
+			HostID:      s.HostID,
+			Presence:    s.Presence,
+			Created:     s.Created,
+			LastUpdated: s.LastUpdated,
+		},
+		GameInProgress: s.Game.HasGameStarted(),
+		GameSettings:   *s.Game.Settings,
+		GameSeating:    s.Game.Seating,
+	}
+}
+
+func (sr *SessionRecord) MarshalBinary() ([]byte, error) {
+	// Lock the mutex for reading
+	return json.Marshal(sr)
+}
+
+func (sr *SessionRecord) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, sr)
 }

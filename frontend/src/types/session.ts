@@ -8,4 +8,5 @@ export type Session = {
     lastUpdated: string; // timestamp in milliseconds of the last update
     gameInProgress: boolean; // whether the game is in progress
     gameSettings: GameSettings; // settings for the game
+    gameSeating: string[]; // IDs of players in the order they are seated
 };

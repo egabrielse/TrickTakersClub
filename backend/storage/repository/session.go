@@ -10,9 +10,9 @@ var sessionRepo SessionRepo
 
 type SessionRepo interface {
 	Exists(ctx context.Context, sessionID string) (bool, error)
-	Get(ctx context.Context, sessionID string) (*entity.Session, error)
-	GetAll(ctx context.Context) ([]*entity.Session, error)
-	Set(ctx context.Context, entity *entity.Session, expiration time.Duration) error
+	Get(ctx context.Context, sessionID string) (*entity.SessionRecord, error)
+	GetAll(ctx context.Context) ([]*entity.SessionRecord, error)
+	Set(ctx context.Context, entity *entity.SessionRecord, expiration time.Duration) error
 	SetExpiration(ctx context.Context, sessionID string, expiration time.Duration) error
 	Delete(ctx context.Context, sessionID string) error
 }
