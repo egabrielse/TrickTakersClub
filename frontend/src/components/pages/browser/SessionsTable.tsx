@@ -16,7 +16,7 @@ import { PLAYER_COUNT } from "../../../constants/game";
 import { useAppSelector } from "../../../store/hooks";
 import authSlice from "../../../store/slices/auth.slice";
 import { Session } from "../../../types/session";
-import SessionTableRow from "./SessionTableRow";
+import SessionsTableRow from "./SessionsTableRow";
 
 type SessionTableProps = {
   sessions: Session[];
@@ -87,7 +87,7 @@ export default function SessionsTable({ sessions }: SessionTableProps) {
                 </TableCell>
               </TableRow>
               {mySessions.map((session) => (
-                <SessionTableRow key={session.id} session={session} />
+                <SessionsTableRow key={session.id} session={session} />
               ))}
               <TableRow>
                 <TableCell
@@ -102,7 +102,7 @@ export default function SessionsTable({ sessions }: SessionTableProps) {
           )}
           {openSessions.length > 0 ? (
             openSessions.map((session) => (
-              <SessionTableRow key={session.id} session={session} />
+              <SessionsTableRow key={session.id} session={session} />
             ))
           ) : (
             <TableRow>

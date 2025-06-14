@@ -11,7 +11,7 @@ type SessionTableRowProps = {
   session: Session;
 };
 
-export default function SessionTableRow({ session }: SessionTableRowProps) {
+export default function SessionsTableRow({ session }: SessionTableRowProps) {
   const navigate = useNavigate();
 
   const navigateToSession = (sessionId: string) => {
