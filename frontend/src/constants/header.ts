@@ -10,5 +10,10 @@ export const HEADER_PAGE_TABS = {
         id: "rules",
         label: "Rules",
         path: PATHS.RULES,
+    },
+    BROWSER: {
+        id: "browser",
+        label: "Browser",
+        path: PATHS.BROWSER,
     }
 }

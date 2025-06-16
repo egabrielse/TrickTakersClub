@@ -1,0 +1,29 @@
+.NameTag {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &-Name {
+        display: flex;
+        flex-direction: column;
+        font-weight: bolder;
+        font-size: 18px;
+        transition: all 0.2s ease-in-out;
+        white-space: nowrap;
+        gap: 0.25rem;
+
+        &-Flares {
+            font-size: 14px;
+            display: flex;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+            max-width: 200px;
+            letter-spacing: 1px;
+            width: max-content;
+        }
+    }
+
+    &.disconnected {
+        opacity: 0.5;
+    }
+}

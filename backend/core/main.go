@@ -14,29 +14,34 @@ import (
 
 func main() {
 	// Load environment variables
-	env.LoadEnvironmentVariables()
+	env.LoadEnvFile()
 
 	// Configure logger
 	logging.ConfigureLogger()
 
 	// Initialize Firebase app
-	projectID := env.GetEnvironmentVariable("FIREBASE_PROJECT_ID")
+	projectID := env.GetEnvVar("FIREBASE_PROJECT_ID")
 	clients.InitFirebaseClients(projectID)
 
-	// Initialize Ably client
-	key := env.GetEnvironmentVariable("ABLY_API_KEY")
-	clients.InitAblyRestClient(key)
-
 	// Instantiate the Firestore-based repository implementations
-	store := clients.GetFirebaseStoreClient()
-	repository.InitTableRepo(implementation.NewTableRepoImplementation(store))
-	repository.InitSettingsRepo(implementation.NewSettingsRepoImplementation(store))
+	firestore := clients.GetFirebaseStoreClient()
+	repository.InitSettingsRepo(implementation.NewSettingsRepoImplementation(firestore))
+
+	// Initialize Redis client
+	redisHost := env.GetEnvVar("REDIS_HOST")
+	redisPort := env.GetEnvVar("REDIS_PORT")
+	redisPass := env.GetEnvVar("REDIS_PASS")
+	rdb := clients.InitRedisClient(redisHost, redisPort, redisPass)
+
+	// Initialize redis-based storage repositories
+	repository.InitSessionRepo(implementation.NewSessionRepoRedisImplementation(rdb))
+	repository.InitGameRepo(implementation.NewGameRepoRedisImplementation(rdb))
 
 	// Initialize router
 	router := routing.InitRouter()
 
 	// Start listening for requests
-	port := ":" + env.GetEnvironmentVariable("PORT")
+	port := ":" + env.GetEnvVar("PORT")
 	logrus.Infof("Listening on port %s", port)
 	logrus.Fatal(http.ListenAndServe(port, *router))
 }

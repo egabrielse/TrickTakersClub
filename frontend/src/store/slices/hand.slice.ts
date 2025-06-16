@@ -6,22 +6,9 @@ import {
     Trick,
     UpdateMessages,
 } from "../../types/game";
-import {
-    BlindPickedMessage,
-    CalledCardMessage,
-    CardPlayedMessage,
-    NewTrickMessage,
-    PartnerRevealedMessage,
-    UpNextMessage,
-} from "../../types/message/broadcast";
-import { MessageData } from "../../types/message/data";
-import {
-    BuriedCardsMessage,
-    DealHandMessage,
-    InitializeMessage,
-    PickedCardsMessage,
-} from "../../types/message/direct";
 import { sortCards } from "../../utils/card";
+import { MessageData } from "../../types/message";
+import { BlindPickedEvent, BuriedCardsEvent, CardCalledEvent, CardPlayedEvent, DealHandEvent, NewTrickEvent, PartnerRevealedEvent, PickedCardsEvent, UpNextEvent, WelcomeEvent } from "../../types/message/event";
 
 interface HandState {
     dealerId: string;
@@ -62,7 +49,7 @@ const handSlice = createSlice({
     initialState,
     reducers: {
         reset: () => initialState,
-        initialize: (state, action: PayloadAction<MessageData<InitializeMessage>>) => {
+        welcome: (state, action: PayloadAction<MessageData<WelcomeEvent>>) => {
             const { phase, isLastHand, hand, bury, calledCard, tricks } = action.payload;
             state.dealerId = action.payload.dealerId || "";
             state.upNextId = action.payload.upNextId || "";
@@ -79,7 +66,7 @@ const handSlice = createSlice({
             state.completedTricks = tricks.length > 0 ? tricks.slice(0, -1) : [];
             state.updates = [];
         },
-        dealHand: (state, action: PayloadAction<MessageData<DealHandMessage>>) => {
+        dealHand: (state, action: PayloadAction<MessageData<DealHandEvent>>) => {
             state.dealerId = action.payload.dealerId;
             state.hand = action.payload.cards.sort(sortCards);
             // Reset state for a new hand
@@ -96,7 +83,7 @@ const handSlice = createSlice({
             state.noPickHand = false;
             state.phase = HAND_PHASE.PICK;
         },
-        startNewTrick: (state, action: PayloadAction<MessageData<NewTrickMessage>>) => {
+        startNewTrick: (state, action: PayloadAction<MessageData<NewTrickEvent>>) => {
             if (state.currentTrick) {
                 state.completedTricks.push({ ...state.currentTrick });
             }
@@ -105,7 +92,7 @@ const handSlice = createSlice({
                 cards: {},
             };
         },
-        upNext: (state, action: PayloadAction<MessageData<UpNextMessage>>) => {
+        upNext: (state, action: PayloadAction<MessageData<UpNextEvent>>) => {
             state.upNextId = action.payload.playerId;
             state.phase = action.payload.phase;
         },
@@ -114,19 +101,19 @@ const handSlice = createSlice({
         },
         blindPicked: (
             state,
-            action: PayloadAction<MessageData<BlindPickedMessage>>,
+            action: PayloadAction<MessageData<BlindPickedEvent>>,
         ) => {
             state.pickerId = action.payload.playerId;
         },
         pickedCards: (
             state,
-            action: PayloadAction<MessageData<PickedCardsMessage>>,
+            action: PayloadAction<MessageData<PickedCardsEvent>>,
         ) => {
             state.hand = [...state.hand, ...action.payload.cards].sort(sortCards);
         },
         buriedCards: (
             state,
-            action: PayloadAction<MessageData<BuriedCardsMessage>>,
+            action: PayloadAction<MessageData<BuriedCardsEvent>>,
         ) => {
             const { cards } = action.payload;
             // Remove the buried cards from the player's hand
@@ -138,7 +125,7 @@ const handSlice = createSlice({
         },
         calledCard: (
             state,
-            action: PayloadAction<MessageData<CalledCardMessage>>,
+            action: PayloadAction<MessageData<CardCalledEvent>>,
         ) => {
             state.calledCard = action.payload.card;
         },
@@ -147,7 +134,7 @@ const handSlice = createSlice({
         },
         cardPlayed: (
             state,
-            action: PayloadAction<MessageData<CardPlayedMessage>>,
+            action: PayloadAction<MessageData<CardPlayedEvent>>,
         ) => {
             const { playerId, card } = action.payload;
             // Remove played card from player's hand
@@ -160,7 +147,7 @@ const handSlice = createSlice({
         },
         partnerRevealed: (
             state,
-            action: PayloadAction<MessageData<PartnerRevealedMessage>>,
+            action: PayloadAction<MessageData<PartnerRevealedEvent>>,
         ) => {
             state.partnerId = action.payload.playerId;
         },

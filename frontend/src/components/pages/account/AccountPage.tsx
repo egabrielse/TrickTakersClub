@@ -40,7 +40,6 @@ export default function AccountPage() {
             onClick={() =>
               dispatch(
                 settingsSlice.actions.asyncUpdateSettings({
-                  ...settings,
                   soundOn: !settings.soundOn,
                 }),
               )

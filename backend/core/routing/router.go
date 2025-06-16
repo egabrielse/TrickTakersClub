@@ -16,32 +16,22 @@ func InitRouter() *http.Handler {
 	router := httprouter.New()
 
 	// 2. Define routes and their handlers
-	// -> Ably routes
-	router.GET("/api/core/v1/ably/token", request.HandleWith(
-		handlers.AblyAuth,
-		decorators.RequestLogging,
-		decorators.TokenAuthentication,
-	))
-
 	// -> Index routes
 	router.GET("/api/core/v1", request.HandleWith(
 		handlers.HealthCheck,
 		decorators.RequestLogging,
 	))
 
-	// -> Table routes
-	router.POST("/api/core/v1/table", request.HandleWith(
-		handlers.CreateTable,
+	// -> Game routes
+	router.GET("/api/core/v1/game", request.HandleWith(
+		handlers.FetchSavedGameList,
 		decorators.RequestLogging,
 		decorators.TokenAuthentication,
 	))
-	router.GET("/api/core/v1/table/:id", request.HandleWith(
-		handlers.GetTable,
-		decorators.RequestLogging,
-		decorators.TokenAuthentication,
-	))
-	router.DELETE("/api/core/v1/table/:id", request.HandleWith(
-		handlers.DeleteTable,
+
+	// -> Session routes
+	router.GET("/api/core/v1/session", request.HandleWith(
+		handlers.FetchSessionList,
 		decorators.RequestLogging,
 		decorators.TokenAuthentication,
 	))
@@ -66,7 +56,7 @@ func InitRouter() *http.Handler {
 	))
 
 	// 3. Add CORS request
-	allowedOrigin := env.GetEnvironmentVariable("ALLOWED_ORIGIN")
+	allowedOrigin := env.GetEnvVar("ALLOWED_ORIGIN")
 	cors := cors.New(cors.Options{
 		AllowedOrigins: []string{allowedOrigin},
 		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPatch, http.MethodPut, http.MethodOptions},

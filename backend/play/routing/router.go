@@ -16,27 +16,26 @@ func InitRouter() *http.Handler {
 	router := httprouter.New()
 
 	// 2. Define routes and their handlers
-	// -> Connect route
 	router.GET("/api/play/v1/connect/:sessionId", request.HandleWith(
 		handlers.Connect,
+		decorators.RequestLogging,
+		decorators.ParamAuthentication,
+	))
+
+	router.POST("/api/play/v1/session", request.HandleWith(
+		handlers.NewGameSession,
 		decorators.RequestLogging,
 		decorators.TokenAuthentication,
 	))
 
-	// -> Game routes
-	router.POST("/api/play/v1/create", request.HandleWith(
-		handlers.NewGame,
-		decorators.RequestLogging,
-		decorators.TokenAuthentication,
-	))
-	router.POST("/api/play/v1/revive/:sessionId", request.HandleWith(
+	router.POST("/api/play/v1/session/:gameId", request.HandleWith(
 		handlers.ReviveGame,
 		decorators.RequestLogging,
 		decorators.TokenAuthentication,
 	))
 
 	// 3. Add CORS middleware
-	allowedOrigin := env.GetEnvironmentVariable("ALLOWED_ORIGIN")
+	allowedOrigin := env.GetEnvVar("ALLOWED_ORIGIN")
 	cors := cors.New(cors.Options{
 		AllowedOrigins: []string{allowedOrigin},
 		AllowedMethods: []string{http.MethodPost, http.MethodGet},

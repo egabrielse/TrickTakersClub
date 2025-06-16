@@ -3,12 +3,12 @@ import handSlice from "./slices/hand.slice";
 import { countCardPoints, hasCard, isTrumpCard } from "../utils/card";
 import authSlice from "./slices/auth.slice";
 import gameSlice from "./slices/game.slice";
-import tableSlice from "./slices/table.slice";
 import { getTakerId, isTrickDone } from "../utils/game";
 import { CARD_RANK, CARD_SUIT } from "../constants/card";
 import { Card, FailSuit } from "../types/card";
 import { HAND_PHASE, HAND_SIZE } from "../constants/game";
 import { Trick } from "../types/game";
+import sessionSlice from "./slices/session.slice";
 
 /**
  * True if the user is the picker, false otherwise.
@@ -55,19 +55,20 @@ export const isHost = (uid: string, hostId: string) => hostId === uid;
 // Selector for isHost
 export const selectIsHost = createSelector([
     authSlice.selectors.uid,
-    tableSlice.selectors.hostId,
+    sessionSlice.selectors.hostId,
 ], isHost);
 
 /**
- * True if the user is seated at the table, false otherwise.
+ * True if the user is present in the session, false otherwise.
  */
-export const isSeated = (seating: string[], uid: string) => seating.includes(uid);
+export const isPresent = (presence: string[], uid: string) => presence.includes(uid);
 
-// Selector for isSeated
-export const selectIsSeated = createSelector([
-    tableSlice.selectors.seating,
+// Selector for isPresent
+export const selectIsPresent = createSelector([
+    sessionSlice.selectors.presence,
     authSlice.selectors.uid,
-], isSeated);
+], isPresent);
+
 
 /**
  * Returns a list of playable cards for the user.
@@ -157,30 +158,30 @@ export const selectCallableAces = createSelector([
 /**
  * Returns the player order starting with the user.
  */
-export const playerOrderStartingWithUser = (playerOrder: string[], uid: string) => {
-    const index = playerOrder.indexOf(uid);
+export const seatingStartingWithUser = (seating: string[], uid: string) => {
+    const index = seating.indexOf(uid);
     if (index === -1) {
-        return playerOrder
+        return seating
     }
-    return [...playerOrder.slice(index), ...playerOrder.slice(0, index)];
+    return [...seating.slice(index), ...seating.slice(0, index)];
 }
 
-// Selector for playerOrderStartingWithUser
-export const selectPlayerOrderStartingWithUser = createSelector([
-    gameSlice.selectors.playerOrder,
+// Selector for seatingStartingWithUser
+export const selectSeatingStartingWithUser = createSelector([
+    gameSlice.selectors.seating,
     authSlice.selectors.uid,
-], playerOrderStartingWithUser);
+], seatingStartingWithUser);
 
 
 /**
  * Sums the number of tricks and points won by each player.
- * @param playerOrder list of player IDs
+ * @param seating list of player IDs
  * @param completedTricks list of completed tricks to tally
  * @return Map of player IDs to [number of tricks won, total points won]
  */
-export const tallyCompletedTricks = (playerOrder: string[], completedTricks: Trick[]) => {
+export const tallyCompletedTricks = (seating: string[], completedTricks: Trick[]) => {
     const count: Record<string, [number, number]> = {};
-    playerOrder.forEach((playerId) => {
+    seating.forEach((playerId) => {
         count[playerId] = [0, 0];
     });
     completedTricks.filter((trick) => isTrickDone(trick)).forEach((trick) => {
@@ -196,7 +197,7 @@ export const tallyCompletedTricks = (playerOrder: string[], completedTricks: Tri
 
 // Selector for tallyCompletedTricks
 export const selectTallyCompletedTricks = createSelector([
-    gameSlice.selectors.playerOrder,
+    gameSlice.selectors.seating,
     handSlice.selectors.completedTricks,
 ], tallyCompletedTricks);
 
@@ -205,10 +206,10 @@ export const selectTallyCompletedTricks = createSelector([
  * Calculates the number of cards left in each player's hand.
  * @returns Map of player IDs to the number of cards left in their hand
  */
-export const cardsInHandCounts = (playerOrder: string[], completedTricks: number, currentTrick: Trick | null, phase: string, pickerId: string | undefined) => {
+export const cardsInHandCounts = (seating: string[], completedTricks: number, currentTrick: Trick | null, phase: string, pickerId: string | undefined) => {
     // Calculate how many cards each player has left in their hand
     const handCounts: Record<string, number> = {};
-    playerOrder.forEach((playerId) => {
+    seating.forEach((playerId) => {
         // Each player starts with 6 cards
         handCounts[playerId] = HAND_SIZE;
         // Subtract cards played in completed tricks
@@ -227,7 +228,7 @@ export const cardsInHandCounts = (playerOrder: string[], completedTricks: number
 
 // Selector for cardsInHandCounts
 export const selectCardsInHandCounts = createSelector([
-    gameSlice.selectors.playerOrder,
+    gameSlice.selectors.seating,
     handSlice.selectors.countOfCompletedTricks,
     handSlice.selectors.currentTrick,
     handSlice.selectors.phase,

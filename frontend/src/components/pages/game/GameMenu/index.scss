@@ -1,0 +1,12 @@
+.GameMenu {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+
+    &-Bottom {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+}

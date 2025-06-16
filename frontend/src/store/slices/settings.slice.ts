@@ -3,6 +3,7 @@ import { SettingsEntity } from "../../types/settings";
 import { ASYNC_STATUS, } from "../../constants/api";
 import { fetchSettings, saveSettings } from "../../api/settings.api";
 import { AsyncStatus } from "../../types/api";
+import { RootState } from "..";
 
 
 const initialState: {
@@ -28,8 +29,12 @@ const asyncFetchSettings = createAsyncThunk(
 
 const asyncUpdateSettings = createAsyncThunk(
     'user/saveSettings',
-    async (settings: SettingsEntity): Promise<SettingsEntity> => {
-        const res = await saveSettings(settings);
+    async (settings: Partial<SettingsEntity>, { getState }): Promise<SettingsEntity> => {
+        const state = getState() as RootState;
+        const res = await saveSettings({
+            ...state.settings.settings,
+            ...settings,
+        });
         return res;
     }
 )
@@ -59,7 +64,10 @@ const settingsSlice = createSlice({
             state.status = ASYNC_STATUS.PENDING;
             state.error = null;
             // Update settings optimistically (if fails, will revert back on page refresh)
-            state.settings = action.meta.arg;
+            state.settings = {
+                ...state.settings,
+                ...action.meta.arg,
+            };
         });
         builder.addCase(asyncUpdateSettings.fulfilled, (state, action) => {
             state.status = ASYNC_STATUS.FULFILLED;

@@ -21,11 +21,12 @@ import LoginPage from "./pages/auth/LoginPage";
 import PrivateRoutes from "./pages/auth/PrivateRoutes";
 import RegisterPage from "./pages/auth/RegisterPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
+import BrowserPage from "./pages/browser/BrowserPage";
 import ErrorBoundary from "./pages/error/ErrorBoundary";
 import ErrorPage from "./pages/error/ErrorPage";
+import GamePage from "./pages/game/GamePage";
+import SessionProvider from "./pages/game/SessionProvider";
 import HomePage from "./pages/home/HomePage";
-import ConnectionProvider from "./pages/table/ConnectionProvider";
-import TablePage from "./pages/table/TablePage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -34,9 +35,12 @@ const router = createBrowserRouter(
         <Route index element={<HomePage />} />
         <Route path={PATHS.HOME} element={<HomePage />} />
         <Route path={PATHS.RULES} element={<RulesPage />} />
+
         <Route element={<PrivateRoutes />}>
+          <Route path={PATHS.BROWSER} element={<BrowserPage />} />
           <Route path={PATHS.ACCOUNT} element={<AccountPage />} />
         </Route>
+
         <Route element={<AuthenticatedRouter />}>
           <Route path={PATHS.LOGIN} element={<LoginPage />} />
           <Route path={PATHS.REGISTER} element={<RegisterPage />} />
@@ -45,11 +49,11 @@ const router = createBrowserRouter(
       </Route>
       <Route element={<PrivateRoutes />}>
         <Route
-          path={PATHS.TABLE}
+          path={PATHS.SESSION}
           element={
-            <ConnectionProvider>
-              <TablePage />
-            </ConnectionProvider>
+            <SessionProvider>
+              <GamePage />
+            </SessionProvider>
           }
         />
       </Route>

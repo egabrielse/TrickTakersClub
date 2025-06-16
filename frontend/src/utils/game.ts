@@ -1,13 +1,13 @@
 import { Scoreboard, Trick } from "../types/game";
 import { compareCards } from "./card";
 
-export const createNewScoreboard = (playerOrder?: string[]) => {
+export const createNewScoreboard = (seating?: string[]) => {
     const scoreboard: Scoreboard = {
         rows: {},
         handsPlayed: 0,
     };
-    if (playerOrder) {
-        playerOrder.forEach((playerId) => {
+    if (seating) {
+        seating.forEach((playerId) => {
             scoreboard.rows[playerId] = ({ score: 0, handsWon: 0 });
         });
     }

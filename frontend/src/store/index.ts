@@ -1,12 +1,12 @@
 import { Middleware, configureStore } from '@reduxjs/toolkit';
 import loggerMiddleware from './middleware/logger';
-import tableSlice from './slices/table.slice';
 import gameSlice from './slices/game.slice';
 import handSlice from './slices/hand.slice';
 import authSlice from './slices/auth.slice';
 import userSlice from './slices/user.slice';
 import dialogSlice from './slices/dialog.slice';
 import settingsSlice from './slices/settings.slice';
+import sessionSlice from './slices/session.slice';
 
 const additionalMiddleware: Middleware[] = [];
 
@@ -20,8 +20,8 @@ export const store = configureStore({
         dialog: dialogSlice.reducer,
         hand: handSlice.reducer,
         game: gameSlice.reducer,
-        table: tableSlice.reducer,
         user: userSlice.reducer,
+        session: sessionSlice.reducer,
         settings: settingsSlice.reducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(additionalMiddleware),

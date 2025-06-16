@@ -36,6 +36,7 @@ const authSlice = createSlice({
         email: (state: AuthState) => state.email,
         displayName: (state: AuthState) => state.displayName,
         uid: (state: AuthState) => state.uid,
+        token: (state: AuthState) => state.token,
     }
 });
 
