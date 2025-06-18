@@ -7,7 +7,11 @@ import {
   BROADCAST_RECEIVER,
   SESSION_WORKER_ID,
 } from "../../../constants/message";
-import { CLOSE_REASON, CONNECTION_STATUS } from "../../../constants/socket";
+import {
+  CLOSE_REASON,
+  CONNECTION_STATUS,
+  MAX_RETRIES,
+} from "../../../constants/socket";
 import { PATHS } from "../../../constants/url";
 import auth from "../../../firebase/auth";
 import { useAppDispatch } from "../../../store/hooks";
@@ -54,6 +58,7 @@ export default function SessionProvider({
     (EventMessage | ChatMessage | UnknownMessage)[]
   >([]);
   const [error, setError] = useState<Error | null>(null);
+  const [retries, setRetries] = useState<number>(0);
   const [status, setStatus] = useState<ConnectionStatus>(
     CONNECTION_STATUS.DISCONNECTED,
   );
@@ -140,14 +145,24 @@ export default function SessionProvider({
             break;
         }
         setStatus(CONNECTION_STATUS.DISCONNECTED);
-      } else {
+      } else if (retries < MAX_RETRIES) {
         console.log("WebSocket closed unexpectedly:", event);
         console.log("Attempting to reconnect in 5 seconds...");
         // Abnormal closure, attempt to reconnect
         setStatus(CONNECTION_STATUS.RECONNECTING);
+        setRetries((prevRetries) => prevRetries + 1);
         setTimeout(() => {
           establishWebsocketConnection();
         }, 5000); // Retry after 5 seconds
+      } else if (retries >= MAX_RETRIES) {
+        console.error("Max retries reached, giving up.");
+        setError(
+          new ErrorPageError(
+            "Connection Error",
+            "Failed to connect after multiple attempts.",
+          ),
+        );
+        setStatus(CONNECTION_STATUS.DISCONNECTED);
       }
     };
 

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/sirupsen/logrus"
 )
 
 // TokenAuthentication is a decorator that checks if the request has a valid token
@@ -35,10 +36,12 @@ func ParamAuthentication(handler request.RequestHandler) request.RequestHandler 
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) (int, any) {
 		token := r.URL.Query().Get("token")
 		if token == "" {
+			logrus.Errorf("Missing token")
 			return http.StatusUnauthorized, "Missing token"
 		}
 		auth := clients.GetFirebaseAuthClient()
 		if token, err := auth.VerifyIDToken(r.Context(), token); err != nil {
+			logrus.Errorf("Invalid token: %v", err)
 			return http.StatusUnauthorized, "Invalid token"
 		} else {
 			p = append(p, httprouter.Param{
