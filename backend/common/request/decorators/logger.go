@@ -13,12 +13,17 @@ func RequestLogging(handler request.RequestHandler) request.RequestHandler {
 		// Call the inner handler function to get the response status code and body.
 		status, body := handler(w, r, p)
 
-		// Log request information (not including parameters, which could contain sensitive information).
-		logrus.WithFields(logrus.Fields{
+		fields := logrus.Fields{
 			"method": r.Method,
 			"path":   r.URL.Path,
 			"status": status,
-		}).Info()
+		}
+
+		if status >= 400 {
+			logrus.WithFields(fields).Error()
+		} else {
+			logrus.WithFields(fields).Info()
+		}
 
 		// Return the response status status and body.
 		return status, body

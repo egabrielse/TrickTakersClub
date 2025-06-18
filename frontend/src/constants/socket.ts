@@ -12,3 +12,5 @@ export const CLOSE_REASON = {
     SESSION_NOT_FOUND: "session-not-found",
     SESSION_FULL: "session-full",
 } as const;
+
+export const MAX_RETRIES = 3;

@@ -8,6 +8,7 @@ import (
 	"play/socket"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/sirupsen/logrus"
 )
 
 func Connect(w http.ResponseWriter, r *http.Request, p httprouter.Params) (int, any) {
@@ -17,6 +18,7 @@ func Connect(w http.ResponseWriter, r *http.Request, p httprouter.Params) (int, 
 	// Upgrade the connection to a websocket connection.
 	conn, err := socket.NewConnectionUpgrader().Upgrade(w, r, nil)
 	if err != nil {
+		logrus.Errorf("Failed to upgrade connection: %v", err)
 		return http.StatusInternalServerError, err
 	}
 	rdb := clients.GetRedisClient()
