@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
+	"github.com/sirupsen/logrus"
 )
 
 func NewConnectionUpgrader() *websocket.Upgrader {
@@ -14,6 +15,7 @@ func NewConnectionUpgrader() *websocket.Upgrader {
 		CheckOrigin: func(r *http.Request) bool {
 			requestOrigin := r.Header.Get("Origin")
 			allowedOrigin := env.GetEnvVar("ALLOWED_ORIGIN")
+			logrus.Info("Checking origin:", requestOrigin, "against allowed origin:", allowedOrigin)
 			return requestOrigin == allowedOrigin
 		},
 	}
