@@ -26,11 +26,10 @@ func main() {
 	}
 
 	// Initialize Redis client
-	redisHost := env.GetEnvVar("REDIS_HOST")
-	redisPort := env.GetEnvVar("REDIS_PORT")
+	redisAddr := env.GetEnvVar("REDIS_ADDR")
 	redisPass := env.GetEnvVar("REDIS_PASS")
 	redisCert := env.GetEnvVar("REDIS_CERT")
-	if err := clients.InitRedisClient(redisHost, redisPort, redisPass, redisCert); err != nil {
+	if err := clients.InitRedisClient(redisAddr, redisPass, redisCert); err != nil {
 		logrus.Fatal("Error initializing Redis client: ", err)
 	}
 	rdb := clients.GetRedisClient()
