@@ -16,7 +16,7 @@ export default function LinkButton({ variant = "default" }: LinkButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const copyLink = () => {
-    const url = `${window.location.origin}/${PATHS.SESSION}/${sessionId}`;
+    const url = `${window.location.origin}${PATHS.SESSION.replace(":sessionId", sessionId)}`;
     navigator.clipboard.writeText(url);
     setCopied(true);
     // reset the copied state after 3 seconds
