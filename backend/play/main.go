@@ -21,13 +21,19 @@ func main() {
 
 	// Initialize Firebase app (used for authentication)
 	projectID := env.GetEnvVar("FIREBASE_PROJECT_ID")
-	clients.InitFirebaseClients(projectID)
+	if err := clients.InitFirebaseClients(projectID); err != nil {
+		logrus.Fatal("Error initializing Firebase clients: ", err)
+	}
 
 	// Initialize Redis client
 	redisHost := env.GetEnvVar("REDIS_HOST")
 	redisPort := env.GetEnvVar("REDIS_PORT")
 	redisPass := env.GetEnvVar("REDIS_PASS")
-	rdb := clients.InitRedisClient(redisHost, redisPort, redisPass)
+	redisCert := env.GetEnvVar("REDIS_CERT")
+	if err := clients.InitRedisClient(redisHost, redisPort, redisPass, redisCert); err != nil {
+		logrus.Fatal("Error initializing Redis client: ", err)
+	}
+	rdb := clients.GetRedisClient()
 
 	// Initialize redis-based storage repositories
 	repository.InitSessionRepo(implementation.NewSessionRepoRedisImplementation(rdb))
