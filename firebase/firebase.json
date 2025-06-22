@@ -1,29 +1,4 @@
 {
-  "hosting": {
-    "rewrites": [
-      {
-        "source": "/api/core/**",
-        "run": {
-          "serviceId": "core-service",
-          "region": "us-central1"
-        }
-      },
-      {
-        "source": "/api/play/**",
-        "run": {
-          "serviceId": "play-service",
-          "region": "us-central1"
-        }
-      },
-      {
-        "source": "**",
-        "run": {
-          "serviceId": "frontend-service",
-          "region": "us-central1"
-        }
-      }
-    ]
-  },
   "emulators": {
     "singleProjectMode": true,
     "auth": {

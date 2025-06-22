@@ -1,15 +1,15 @@
 version: '3.7'
 services:
   # LOCAL PROXY
-  local-proxy:
+  load-balancer:
     build:
-      context: ./local-proxy
+      context: ./load-balancer
       dockerfile: Dockerfile
     depends_on:
       - frontend
       - core
       - play
-    image: local-proxy
+    image: load-balancer
     ports:
       - "80:80"
   
