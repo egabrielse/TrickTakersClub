@@ -6,8 +6,8 @@ WORKDIR /app
 # Copy over files from firebase project directory to the container
 COPY . /app
 
-# Install pesky JDK
-RUN apk add openjdk11
+# Install JDK
+RUN apk add openjdk21
 
 # Install the firebase cli
 RUN npm install -g firebase-tools
